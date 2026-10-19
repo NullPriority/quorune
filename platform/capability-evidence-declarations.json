@@ -73381,6 +73381,54 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
       "official_rule_ids": [
         "604.1",
@@ -73549,6 +73597,54 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
       "official_rule_ids": [
         "604.1",
@@ -73665,6 +73761,30 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_losing_negative_keyword_filter_is_killed_by_fresh_original_gravitational_shift",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -73929,6 +74049,102 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryCompilerTests.test_keyword_rejecting_characteristic_consumers_remain_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryCompilerTests.test_negative_keyword_query_preserves_control_exclusion_and_positive_grammar",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryCompilerTests.test_withdrawn_power_toughness_owner_keeps_negative_keyword_clause_residual",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_runtime_query_cannot_omit_its_registered_power_toughness_authority",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -74293,6 +74509,54 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
       "official_rule_ids": [
         "604.1",
@@ -74385,6 +74649,54 @@
         "commander_review"
       ],
       "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -74529,6 +74841,54 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_keyword_queries.PublicNegativeKeywordQueryRuntimeTests.test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed layer7c P/T queries may exclude a represented current keyword through the existing typed ObjectQuerySpec.keywords_none. Counter and resolved keyword grants, source departure, current controller and source exclusion retain normal admission, private projection, rollback, pending load and pre-action replay. Layer6 grant, cycle-sensitive condition, resolution-characteristic and counter-set consumers retain their unadopted-keyword boundaries."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",

@@ -34,6 +34,13 @@ information rules. Casting validation still rejects missing and wrong-domain
 selections before payment.
 
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
+Fixed layer-7c P/T queries can select creatures without a represented current
+keyword. The shared public predicate retains controller and source-exclusion
+scope, and reads completed layer-6 grants and keyword counters. Within continuous
+characteristic subjects, negative keywords require an explicit P/T consumer
+opt-in; layer-6 grants, cycle-sensitive
+count conditions, resolution characteristic sets and fixed counter sets keep
+their existing unadopted-keyword boundaries.
 `target_cardinality.py` provides an immutable announced-X count descriptor and
 a pure binding to exact or up-to integer bounds, including zero. Casting and
 typed activation-X owners bind that descriptor before the ordinary target

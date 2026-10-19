@@ -58,6 +58,7 @@ def fixed_resolution_characteristic_query_is_closed(
         or query.types_any
         or query.colors_any
         or query.keywords_all
+        or query.keywords_none
         or query.tapped is not None
         or query.include_phased_out
         or query.known_to_actor is not None

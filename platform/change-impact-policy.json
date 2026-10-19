@@ -6216,6 +6216,23 @@
         "test_targeting_v070",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "public-negative-keyword-query-contract",
+      "patterns": [
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "quorune/compiler/counter_placement_templates.py",
+        "tests/test_public_negative_keyword_queries.py",
+        "tests/fixtures/public-negative-keyword-cards.json"
+      ],
+      "test_modules": [
+        "test_public_negative_keyword_queries",
+        "test_public_negative_colors",
+        "test_fixed_public_state_characteristics",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

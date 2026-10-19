@@ -1034,6 +1034,7 @@ def fixed_counter_set_spec_is_closed(
         or query.colors_all
         or query.colors_none
         or query.colorless is not None
+        or query.keywords_none
     ):
         return False
     subtypes = tuple(query.subtypes_all)

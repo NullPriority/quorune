@@ -66,7 +66,7 @@ class PublicNegativeColorModelTests(unittest.TestCase):
             self.assertEqual((color,),query.colors_none)
             self.assertIsNotNone(fixed_query_keyword_grant_handler('Non'+name+' creatures have vigilance.'))
         for text in ('Nonwhite or blue creatures','Noncolorless creatures','Nonwhite creatures of your choice',
-                'Creatures without flying','Creatures you control with a counter on it'):
+                'Creatures without flying','Creatures you control with exactly two counters on it'):
             self.assertIsNone(fixed_characteristic_battlefield_query_subject(text),text)
 
     def test_specialized_consumers_reject_unowned_negative_color_fields(self):

@@ -208,7 +208,7 @@ def _controller_relation_suffix(
 
 def _public_query_qualifiers(
     subject: str,
-) -> tuple[str, str, bool, str | None, dict[str, Any]] | None:
+) -> tuple[str, str, bool, dict[str, tuple[str, ...]], dict[str, Any]] | None:
     text = " ".join(subject.strip().split())
     prefix = re.match(
         r"^(?:(?P<each>Each) )?(?P<other>Other )?",
@@ -228,18 +228,19 @@ def _public_query_qualifiers(
     if total_counter is not None:
         text = total_counter['body']
     ability_qualifier = re.fullmatch(
-        r"(?P<body>.+?) with (?P<ability>[A-Za-z][A-Za-z ]+)",
+        r"(?P<body>.+?) (?P<relation>with|without) (?P<ability>[A-Za-z][A-Za-z ]+)",
         text,
         re.IGNORECASE,
     )
-    required_ability = None
+    keyword_fields: dict[str, tuple[str, ...]] = {}
     if ability_qualifier is not None:
         candidate = " ".join(
             ability_qualifier.group("ability").casefold().split()
         )
         if candidate.title() not in FIXED_CHARACTERISTIC_KEYWORDS:
             return None
-        required_ability = candidate
+        field = "keywords_none" if ability_qualifier["relation"].casefold() == "without" else "keywords_all"
+        keyword_fields[field] = (candidate,)
         text = ability_qualifier.group("body")
 
     state_fields: dict[str, Any] = {'minimum_total_counter_count': 1} if total_counter is not None else {}
@@ -278,7 +279,7 @@ def _public_query_qualifiers(
     if stripped is None:
         return None
     text, relation = stripped
-    return text, relation, exclude_source, required_ability, state_fields
+    return text, relation, exclude_source, keyword_fields, state_fields
 
 
 def _negative_supertype_fields(text: str) -> dict[str, Any] | None:
@@ -511,7 +512,7 @@ def _extended_public_battlefield_query(
     qualified = _public_query_qualifiers(subject)
     if qualified is None:
         return None
-    text, relation, exclude_source, required_ability, state_fields = qualified
+    text, relation, exclude_source, keyword_fields, state_fields = qualified
     parsed = _public_query_characteristic_fields(text)
     if parsed is None:
         return None
@@ -522,10 +523,10 @@ def _extended_public_battlefield_query(
         relation = relation_override
     if state_fields:
         fields["state_predicate"] = PermanentStatePredicateSpec(**state_fields)
-    if required_ability is not None:
+    if keyword_fields:
         if "creature" not in fields.get("types_all", ()):
             return None
-        fields["keywords_all"] = (required_ability,)
+        fields.update(keyword_fields)
     return relation, ObjectQuerySpec(**fields), exclude_source
 
 
@@ -737,6 +738,7 @@ def fixed_battlefield_query_subject(
 
 def fixed_characteristic_battlefield_query_subject(
     subject: str,
+    *, allow_negative_keyword: bool = False,
 ) -> tuple[str, ObjectQuerySpec, bool] | None:
     """Return the one shared live query admitted by layer-6 and layer-7c owners."""
 
@@ -758,6 +760,7 @@ def fixed_characteristic_battlefield_query_subject(
         or predicate.tapped is not None
         or predicate.include_phased_out
         or predicate.known_to_actor is not None
+        or (predicate.keywords_none and not allow_negative_keyword)
     ):
         return None
     return parsed
@@ -816,7 +819,7 @@ def fixed_power_toughness_battlefield_query(
     """Apply the closed layer-7c subject policy before parsing its query."""
 
     del oracle_line
-    parsed = fixed_characteristic_battlefield_query_subject(subject)
+    parsed = fixed_characteristic_battlefield_query_subject(subject, allow_negative_keyword=True)
     if parsed is None or not (
         "creature" in parsed[1].types_all
         or (not parsed[1].types_all and (parsed[1].subtypes_all or parsed[1].subtypes_any))
@@ -950,7 +953,7 @@ def _controller_query_count_condition(
     if parsed is None:
         return None
     query, exclude_source = parsed
-    if query.keywords_all:
+    if query.keywords_all or query.keywords_none:
         # Dynamic set counts stop at the cycle-safe layer-5 boundary.
         return None
     return _query_count_condition(

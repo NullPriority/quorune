@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 396,
+  "registry_version": 397,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12766,7 +12766,9 @@
         "test_fixed_battlefield_query_extensions_share_one_canonical_condition",
         "test_global_other_plural_uses_canonical_subtype_without_controller_filter",
         "test_measured_50_card_lower_bound_is_capability_closed",
+        "test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
         "test_public_object_state_and_query_conditions_compile_closed",
         "test_registered_anthem_component_replaces_name_dispatch",
@@ -12779,7 +12781,10 @@
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_anthem_component_rejects_malformed_descriptors",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+        "test_keyword_rejecting_characteristic_consumers_remain_closed",
+        "test_negative_keyword_query_preserves_control_exclusion_and_positive_grammar",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_runtime_query_cannot_omit_its_registered_power_toughness_authority",
         "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
@@ -12787,7 +12792,8 @@
         "test_source_counter_anthem_missing_authority_and_producer_remain_residual",
         "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
         "test_static_label_dispatch_omission_mutant_is_killed",
-        "test_unknown_nouns_and_class_level_context_remain_residual"
+        "test_unknown_nouns_and_class_level_context_remain_residual",
+        "test_withdrawn_power_toughness_owner_keeps_negative_keyword_clause_residual"
       ],
       "interaction_tests": [
         "test_ability_presence_query_uses_shared_layer_six_dependency_order",
@@ -12799,7 +12805,9 @@
         "test_live_fixed_queries_track_relations_source_identity_and_phasing",
         "test_live_public_object_state_and_layer_five_queries_recompute",
         "test_multiple_anthem_components_stack_and_respect_control",
+        "test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
         "test_subtype_union_recomputes_after_layer_four_and_excludes_source"
       ],
@@ -12807,12 +12815,16 @@
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_live_fixed_queries_track_relations_source_identity_and_phasing",
+        "test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
         "test_static_anthem_is_controller_scoped_in_four_player_evaluation"
       ],
       "privacy_tests": [
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+        "test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
+        "test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "replay_tests": [
@@ -12820,7 +12832,9 @@
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_anthem_component_replays_exactly",
         "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_negative_keyword_lord_uses_current_controller_and_excludes_its_source",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_gravitational_shift_follows_counter_and_actual_flying_grants_and_source_departure",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "required_evidence": [
