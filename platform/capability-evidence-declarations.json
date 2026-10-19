@@ -77231,6 +77231,1306 @@
       "applicability_note": "Replay from the checkpoint before the real activation through payment, target commitment, and the full fixed characteristic result."
     },
     {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_bonds_group_removal_locks_only_current_opponents",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_bonds_group_removal_locks_only_current_opponents",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_fresh_original_claws_kills_temporary_removal_producer_omission",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalCompilerTests.test_source_and_target_owner_withdrawals_keep_exact_removal_residual",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_all_fifteen_original_candidates_have_complete_admission_and_runtime_variant_authority",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_preflight_keyword_and_cost_coverage_requires_exact_existing_owners",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalCompilerTests.test_closed_fixed_removal_modifier_and_grants_keep_selection_and_legacy_boundaries",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_bonds_group_removal_locks_only_current_opponents",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_bonds_group_removal_locks_only_current_opponents",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_bonds_group_removal_locks_only_current_opponents",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_keyword_removal.TemporaryKeywordRemovalRuntimeTests.test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished explicit schema11 temporary keyword removal. Existing layer journal owns mutation, locked membership and cleanup; complete normal source/native/authority/rollback/privacy/load/replay/mutation evidence must pass before new gains are accepted."
+    },
+    {
       "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_cast_decline_success_haste_and_control_change",

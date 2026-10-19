@@ -6356,6 +6356,28 @@
         "test_attached_static_characteristics",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "temporary-fixed-keyword-removal-contract",
+      "patterns": [
+        "quorune/compiler/temporary_keyword_removal_templates.py",
+        "quorune/rules/temporary_keyword_removal.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py",
+        "quorune/compiler/preflight_keyword_coverage.py",
+        "quorune/compiler/activated_ability_catalog.py",
+        "quorune/preflight.py",
+        "tests/test_temporary_keyword_removal.py",
+        "tests/fixtures/temporary-keyword-removal-cards.json"
+      ],
+      "test_modules": [
+        "test_temporary_keyword_removal",
+        "test_fixed_source_characteristic_effects",
+        "test_static_keyword_removal",
+        "test_fixed_public_state_characteristics",
+        "test_cleanup_step_rules",
+        "test_preflight_v080",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

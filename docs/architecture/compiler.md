@@ -753,6 +753,20 @@ replaces only creature subtypes under CR 205.1b. An explicit "still" or
 descriptors retain their historical operation path. Copy, dynamic/chosen values, text/control,
 attached-object subjects, declarations, quoted grants, conditional/optional
 instructions, unsupported keywords, and other durations remain residual.
+`compiler/temporary_keyword_removal_templates.py` adds an explicit
+schema-11 variant to the same temporary-characteristic operation. It combines
+represented fixed keyword removals, optional fixed grants and integral P/T
+deltas without setting base P/T. Source, one creature target and closed public
+creature-query selections retain their existing predicate owners. The rules
+decoder validates the complete descriptor before the existing continuous-effect
+journal commits layer-6 and optional layer-7c components. Query membership and
+incarnations are locked at resolution; later entries do not join, source
+departure does not undo a resolved effect, and normal cleanup ends it.
+Removal permits later grants under ordinary timestamp order. A separate fine
+capability and runtime-derived requirements guard this variant. Choices,
+prohibitions, other durations, triggered-fragment removals and independently
+unsupported siblings remain residual. Earlier schemas keep their payloads.
+
 An actual pre-extension action record is rejected at the existing versioned
 runtime-trust boundary before reinterpretation; preserved v1 instruction
 execution and current exact replay are separate tested claims.

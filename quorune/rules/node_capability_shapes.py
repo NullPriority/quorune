@@ -898,6 +898,10 @@ def fixed_target_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed targeted fixed characteristic effect."""
 
+    if any(effect.get('schema_version')==11 and effect.get('op')=='apply_source_characteristics_until_end_of_turn' for effect in effects):
+        from .temporary_keyword_removal import temporary_keyword_removal_capabilities
+        return temporary_keyword_removal_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+
     if any(effect.get('schema_version') == 6 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .target_characteristic_sets import target_characteristic_set_capabilities
         return target_characteristic_set_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
@@ -951,6 +955,9 @@ def fixed_source_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed source characteristic effect."""
 
+    if any(effect.get('schema_version')==11 and effect.get('op')=='apply_source_characteristics_until_end_of_turn' for effect in effects):
+        from .temporary_keyword_removal import temporary_keyword_removal_capabilities
+        return temporary_keyword_removal_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if any(effect.get('schema_version') == 10 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .block_capacity_effect import temporary_block_capacity_capabilities
         return temporary_block_capacity_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)

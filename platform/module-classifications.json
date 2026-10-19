@@ -4642,6 +4642,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/preflight_keyword_coverage.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/preparation_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -5708,6 +5723,21 @@
     },
     {
       "file": "quorune/compiler/temporary_declaration_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/temporary_keyword_removal_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -12160,6 +12190,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/temporary_keyword_removal.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/temporary_target_interaction_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -16729,5 +16773,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "6161b5c71d83292f7abbac7149c9606eaeacc7a44ec985d179d18ad44c8b6a33"
+  "fingerprint": "8380baf257d50d55c430e19eda12765e923b605151d6e6534db045bbae1a428b"
 }

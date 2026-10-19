@@ -5,6 +5,9 @@ from __future__ import annotations
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     version=effect.get('schema_version')
+    if version==11:
+        from ..rules.temporary_keyword_removal import apply_temporary_keyword_removal
+        return True,apply_temporary_keyword_removal(host,effect,actor=actor,reason=reason)
     if version == 10:
         from ..rules.block_capacity_effect import apply_temporary_block_capacity
         return True, apply_temporary_block_capacity(host, effect, actor=actor, reason=reason)

@@ -91,6 +91,11 @@ def compile_activated_ability_catalog(
     }
 
 
+def specialize_compiled_activation_costs(abilities,*,source_name):
+    """Share canonical specialization with preflight's normalized source view."""
+    return tuple(_specialize_compiled_ability(ability,source_name=source_name) for ability in abilities)
+
+
 def _specialize_compiled_ability(
     ability: ActivatedAbility,
     *,

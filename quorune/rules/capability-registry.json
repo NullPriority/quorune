@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 403,
+  "registry_version": 404,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -33762,6 +33762,142 @@
       "dependency_fail_closed_rationale": "Source and runtime dependencies reject absent hand-count/scalar/target ownership and unrepresented target schemas; focused witnesses must pass before acceptance.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original spell witnesses must distinguish the selected player hand from the caster hand and zero before acceptance.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.resolution.fixed_keyword_removal",
+      "version": 1,
+      "official_rules": [
+        "608.2b",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Apply fixed keyword removals, optional fixed keyword grants and integral P/T deltas through existing incarnation-locked resolution continuous components until end of turn.",
+        "inputs": [
+          "one source incarnation, direct creature target or closed public creature query",
+          "fixed represented removed/granted keywords and integral stat deltas"
+        ],
+        "outputs": [
+          "layer6 removals/grants and optional layer7c delta",
+          "ordinary locked membership and cleanup",
+          "unchanged base P/T and later timestamp grants"
+        ],
+        "exclusions": [
+          "choices, prohibitions, indefinite or next-turn durations",
+          "triggered-fragment removals, dynamic values and unrepresented selections",
+          "unsupported complete-card siblings"
+        ]
+      },
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "implementation_components": [
+        "quorune.compiler.temporary_keyword_removal_templates.temporary_keyword_removal_template",
+        "quorune.rules.temporary_keyword_removal.temporary_keyword_removal_instruction",
+        "quorune.rules.temporary_keyword_removal.temporary_keyword_removal_capabilities",
+        "quorune.rules.temporary_keyword_removal.temporary_keyword_removal_runtime_dependencies",
+        "quorune.rules.temporary_keyword_removal.apply_temporary_keyword_removal",
+        "quorune.continuous_effect_state.create_resolution_continuous_effect_components"
+      ],
+      "positive_tests": [
+        "test_closed_fixed_removal_modifier_and_grants_keep_selection_and_legacy_boundaries",
+        "test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+        "test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+        "test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+        "test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+        "test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+        "test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+        "test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+        "test_original_bonds_group_removal_locks_only_current_opponents",
+        "test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+        "test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+        "test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+        "test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund"
+      ],
+      "negative_tests": [
+        "test_source_and_target_owner_withdrawals_keep_exact_removal_residual",
+        "test_all_fifteen_original_candidates_have_complete_admission_and_runtime_variant_authority",
+        "test_preflight_keyword_and_cost_coverage_requires_exact_existing_owners"
+      ],
+      "interaction_tests": [
+        "test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+        "test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+        "test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+        "test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+        "test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+        "test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+        "test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+        "test_original_bonds_group_removal_locks_only_current_opponents",
+        "test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+        "test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+        "test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+        "test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund"
+      ],
+      "multiplayer_tests": [
+        "test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+        "test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+        "test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+        "test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+        "test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+        "test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+        "test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+        "test_original_bonds_group_removal_locks_only_current_opponents",
+        "test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+        "test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+        "test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+        "test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund"
+      ],
+      "privacy_tests": [
+        "test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+        "test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+        "test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+        "test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+        "test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+        "test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+        "test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+        "test_original_bonds_group_removal_locks_only_current_opponents",
+        "test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+        "test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+        "test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+        "test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund"
+      ],
+      "replay_tests": [
+        "test_original_claws_cast_and_flashback_remove_flying_without_changing_stats",
+        "test_original_sentinel_removes_defender_and_grants_flying_for_same_incarnation",
+        "test_original_whiteout_locks_existing_group_and_does_not_affect_later_drake",
+        "test_originals_activate_source_remove_and_grant_with_their_complete_fixed_costs",
+        "test_original_radjan_tap_cost_removes_only_selected_flying_and_survives_source_departure",
+        "test_original_moloch_sacrifices_exactly_three_controlled_lands_before_removing_defender",
+        "test_original_landfall_and_white_cast_triggers_remove_defender_and_cleanup_restores_it",
+        "test_original_bonds_group_removal_locks_only_current_opponents",
+        "test_original_snow_and_ordinary_target_activations_keep_tap_and_mana_obligations",
+        "test_original_second_draw_trigger_removes_defender_and_grants_vigilance",
+        "test_source_departure_while_sentinel_activation_pending_does_not_modify_new_incarnation",
+        "test_countered_claws_and_departed_sole_target_have_no_removal_or_mana_refund"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The compiler and runtime require complete removal/selection/keyword ownership; focused omissions must pass before acceptance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original Canopy Claws witness must fail when the dedicated complete removal producer is omitted.",
       "blockers": [],
       "status": "trusted"
     }

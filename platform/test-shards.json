@@ -106,6 +106,7 @@
       "test_single_object_zone_transition",
       "test_source_block_pair",
       "test_targeted_exile_effect_clauses",
+      "test_temporary_keyword_removal",
       "test_trigger_targeting",
       "test_triggered_abilities",
       "test_turn_priority_owner",
