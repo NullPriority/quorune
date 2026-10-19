@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 394,
+  "registry_version": 395,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -19866,23 +19866,135 @@
     {
       "id": "damage.batch.fixed_set",
       "version": 3,
-      "official_rules": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Snapshot a closed public player/permanent recipient set, then delegate one nonnegative resolved amount to the canonical simultaneous damage owner. Zero deals no damage and creates no damage replacement, prevention, or result event.",
-        "inputs": ["nonnegative resolved integer damage amount", "typed ordered recipient groups", "effective public battlefield characteristics and state", "optional source logical reference", "optional targeted player's controller scope", "current APNAP player order"],
-        "outputs": ["immutable deduplicated affected-set snapshot", "one canonical replacement-aware damage batch for positive amounts", "zero-count no-op", "stable per-recipient event identities"],
-        "exclusions": ["unowned variable or divided amounts", "chosen, linked-result, history-derived, and dynamic-characteristic predicates", "additive affected groups that cannot be identity-deduplicated", "multiple independent damage instructions", "linked life, draw, scry, or conditional riders", "unpreventable wording"]
+        "inputs": [
+          "nonnegative resolved integer damage amount",
+          "typed ordered recipient groups",
+          "effective public battlefield characteristics and state",
+          "optional source logical reference",
+          "optional targeted player's controller scope",
+          "current APNAP player order"
+        ],
+        "outputs": [
+          "immutable deduplicated affected-set snapshot",
+          "one canonical replacement-aware damage batch for positive amounts",
+          "zero-count no-op",
+          "stable per-recipient event identities"
+        ],
+        "exclusions": [
+          "unowned variable or divided amounts",
+          "chosen, linked-result, history-derived, and dynamic-characteristic predicates",
+          "additive affected groups that cannot be identity-deduplicated",
+          "multiple independent damage instructions",
+          "linked life, draw, scry, or conditional riders",
+          "unpreventable wording"
+        ]
       },
-      "dependencies": ["damage.amount.positive"],
-      "implementation_components": ["quorune.fixed_damage_set_model.FixedDamageSetSpec", "quorune.fixed_damage_set.snapshot_fixed_damage_set", "quorune.fixed_damage_set.resolve_fixed_damage_set", "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities", "quorune.semantic_runtime.fixed_damage_set_handlers.FixedDamageSetHandler"],
-      "positive_tests": ["test_fixed_set_snapshot_is_immutable_canonical_and_deduplicated", "test_source_exclusion_is_typed_backward_compatible_and_applied", "test_closed_mass_damage_grammar_lowers_typed_queries_and_spans", "test_compiled_mass_damage_resolves_one_canonical_batch", "test_real_zero_cast_amounts_are_paid_no_ops_across_result_owners"],
-      "negative_tests": ["test_fixed_set_handler_rejects_malformed_or_unrepresented_groups", "test_unsupported_mass_damage_wording_remains_residual"],
-      "interaction_tests": ["test_fixed_set_damage_uses_effective_types_and_replacement_order", "test_public_predicate_set_excludes_source_and_negative_keyword"],
-      "multiplayer_tests": ["test_compiled_mass_damage_resolves_one_canonical_batch"],
-      "privacy_tests": ["test_fixed_set_damage_projects_no_hidden_zone_cards"],
-      "replay_tests": ["test_compiled_mass_damage_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "damage.amount.positive"
+      ],
+      "implementation_components": [
+        "quorune.fixed_damage_set_model.FixedDamageSetSpec",
+        "quorune.fixed_damage_set.snapshot_fixed_damage_set",
+        "quorune.fixed_damage_set.resolve_fixed_damage_set",
+        "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities",
+        "quorune.semantic_runtime.fixed_damage_set_handlers.FixedDamageSetHandler"
+      ],
+      "positive_tests": [
+        "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+        "test_closed_mass_damage_grammar_lowers_typed_queries_and_spans",
+        "test_compiled_mass_damage_resolves_one_canonical_batch",
+        "test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+        "test_fixed_and_announced_amounts_preserve_whole_source_and_existing_authority",
+        "test_fixed_set_snapshot_is_immutable_canonical_and_deduplicated",
+        "test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+        "test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+        "test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+        "test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+        "test_original_magmaquake_unions_overlapping_creature_walkers_once",
+        "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+        "test_original_thunder_counts_current_beast_permanents_including_kindred",
+        "test_qualified_creature_group_and_public_second_group_form_one_damage_set",
+        "test_real_zero_cast_amounts_are_paid_no_ops_across_result_owners",
+        "test_source_exclusion_is_typed_backward_compatible_and_applied"
+      ],
+      "negative_tests": [
+        "test_ambiguous_targeted_extra_or_repeated_groups_and_riders_stay_residual",
+        "test_executable_union_rejects_undeclared_registered_handler_dependency",
+        "test_existing_damage_and_predicate_authority_withdrawal_keeps_composition_residual",
+        "test_fixed_set_handler_rejects_malformed_or_unrepresented_groups",
+        "test_unsupported_mass_damage_wording_remains_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+        "test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+        "test_fixed_set_damage_uses_effective_types_and_replacement_order",
+        "test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+        "test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+        "test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+        "test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+        "test_original_magmaquake_unions_overlapping_creature_walkers_once",
+        "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+        "test_original_thunder_counts_current_beast_permanents_including_kindred",
+        "test_public_predicate_set_excludes_source_and_negative_keyword"
+      ],
+      "multiplayer_tests": [
+        "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+        "test_compiled_mass_damage_resolves_one_canonical_batch",
+        "test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+        "test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+        "test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+        "test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+        "test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+        "test_original_magmaquake_unions_overlapping_creature_walkers_once",
+        "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+        "test_original_thunder_counts_current_beast_permanents_including_kindred"
+      ],
+      "privacy_tests": [
+        "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+        "test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+        "test_fixed_set_damage_projects_no_hidden_zone_cards",
+        "test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+        "test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+        "test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+        "test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+        "test_original_magmaquake_unions_overlapping_creature_walkers_once",
+        "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+        "test_original_thunder_counts_current_beast_permanents_including_kindred"
+      ],
+      "replay_tests": [
+        "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+        "test_compiled_mass_damage_replays_exactly",
+        "test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+        "test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+        "test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+        "test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+        "test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+        "test_original_magmaquake_unions_overlapping_creature_walkers_once",
+        "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+        "test_original_thunder_counts_current_beast_permanents_including_kindred"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The node capability shape requires canonical positive damage and the typed handler refuses malformed or unsupported recipient queries before any mutation.",
       "implementation_mutation_status": "killed",

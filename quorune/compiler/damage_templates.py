@@ -489,6 +489,33 @@ def _public_fixed_mass_damage_spec(
     )
 
 
+def _compound_public_mass_damage_spec(
+    normalized: str,
+) -> tuple[FixedDamageSetSpec, bool, bool] | None:
+    """Join one closed public permanent set to one untargeted public set."""
+
+    match = re.fullmatch(
+        r"(?P<first>each .+?) and (?P<second>each player|each planeswalker)",
+        normalized,
+    )
+    if match is None or match.group("first") == match.group("second"):
+        return None
+    first = _public_fixed_mass_damage_spec(match.group("first"))
+    if first is None or first[1] or first[2] or len(first[0].groups) != 1:
+        return None
+    group = first[0].groups[0]
+    if not isinstance(group, PermanentDamageGroup):
+        return None
+    second = (
+        PlayerDamageGroup(PlayerDamageRelation.ALL)
+        if match.group("second") == "each player"
+        else _permanent_group(types_all=("planeswalker",))
+    )
+    if group == second:
+        return None
+    return FixedDamageSetSpec((group, second)), False, False
+
+
 def _fixed_mass_damage_spec(
     recipient_text: str,
 ) -> tuple[FixedDamageSetSpec, bool, bool] | None:
@@ -563,6 +590,9 @@ def _fixed_mass_damage_spec(
     }
     if normalized in exact:
         return FixedDamageSetSpec(exact[normalized]), False, False
+    compound = _compound_public_mass_damage_spec(normalized)
+    if compound is not None:
+        return compound
     if normalized == "each creature target opponent controls":
         return (
             FixedDamageSetSpec(

@@ -6162,6 +6162,27 @@
         "test_cascade_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "compound-public-damage-recipient-union-contract",
+      "patterns": [
+        "quorune/compiler/damage_templates.py",
+        "quorune/fixed_damage_set.py",
+        "quorune/fixed_damage_set_model.py",
+        "quorune/semantic_runtime/fixed_damage_set_handlers.py",
+        "quorune/rules/damage_capability_shapes.py",
+        "quorune/object_query.py",
+        "tests/test_compound_damage_recipients.py",
+        "tests/fixtures/compound-damage-recipient-cards.json"
+      ],
+      "test_modules": [
+        "test_compound_damage_recipients",
+        "test_fixed_mass_damage",
+        "test_declared_effect_amounts",
+        "test_casting_payment_keywords",
+        "test_fixed_damage_source_lki",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

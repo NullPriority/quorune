@@ -2424,14 +2424,20 @@ fixed effect sentence matches. Static, variable, repeated, optional,
 conditional, unrepresented predicates, multiple-target, damage-linked,
 delayed, and linked-result forms remain outside this family.
 
-Fixed mass-damage lowering uses the same complete `ObjectQuerySpec` descriptor
+Public mass-damage lowering uses the same complete `ObjectQuerySpec` descriptor
 consumed by the runtime affected-set snapshot. The compiler emits ordered
 player/permanent groups and an optional exact target-opponent controller; it
-does not encode card names or reparse Oracle text during resolution. Only the
-closed positive predicates represented by the object-query vocabulary are
-accepted. Negative keyword or subtype predicates, divided or variable damage,
-multiple damage clauses, and linked result riders remain source-spanned
-residuals until their own typed families exist.
+does not encode card names or reparse Oracle text during resolution. One
+independently closed public permanent set may join all players or all
+planeswalkers in the same damage instruction. A qualified creature set retains
+its predicate, and an overlapping creature-planeswalker is one recipient. The
+existing amount owners supply the same fixed, announced-X, or independently
+closed public-query amount to both groups. Membership uses current public facts
+when the instruction resolves, so
+a prior flying change matters; these public sets do not target their members.
+Only predicates accepted by the typed damage-set model are admitted.
+Target-dependent second groups, extra or repeated groups, divided damage,
+unknown amount links and unrepresented result riders remain residual.
 
 Fixed additive damage replacement lowers `that much damage plus N` through the
 shared damage-quantity capability and the v2 runtime component. The descriptor

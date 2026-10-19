@@ -37,6 +37,7 @@
     "tests/fixtures/commander-learn-cards.json",
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
+    "tests/fixtures/compound-damage-recipient-cards.json",
     "tests/fixtures/conditional-chosen-characteristic-cards.json",
     "tests/fixtures/conditional-color-grant-cards.json",
     "tests/fixtures/conditional-copy-value-cards.json",

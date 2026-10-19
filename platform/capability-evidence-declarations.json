@@ -90612,6 +90612,168 @@
     {
       "capability_id": "damage.batch.fixed_set",
       "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_magmaquake_unions_overlapping_creature_walkers_once",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_thunder_counts_current_beast_permanents_including_kindred",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_mass_damage.FixedMassDamageInteractionTests.test_fixed_set_damage_uses_effective_types_and_replacement_order",
       "official_rule_ids": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -90628,6 +90790,168 @@
     {
       "capability_id": "damage.batch.fixed_set",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_magmaquake_unions_overlapping_creature_walkers_once",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_thunder_counts_current_beast_permanents_including_kindred",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_mass_damage.FixedMassDamageRuntimeTests.test_compiled_mass_damage_resolves_one_canonical_batch",
       "official_rule_ids": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -90636,10 +90960,100 @@
     {
       "capability_id": "damage.batch.fixed_set",
       "evidence_class": "mutation",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_losing_the_grounded_filter_is_killed_by_a_fresh_native_earthquake",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_losing_the_player_group_is_killed_by_a_fresh_native_earthquake",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_mass_damage.FixedDamageSetModelTests.test_fixed_set_snapshot_order_and_predicate_mutants_are_killed",
       "official_rule_ids": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a query-owner mutant that admits objects outside the typed damageable affected set."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageCompilerTests.test_ambiguous_targeted_extra_or_repeated_groups_and_riders_stay_residual",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageCompilerTests.test_existing_damage_and_predicate_authority_withdrawal_keeps_composition_residual",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_executable_union_rejects_undeclared_registered_handler_dependency",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
     },
     {
       "capability_id": "damage.batch.fixed_set",
@@ -90656,6 +91070,204 @@
       "official_rule_ids": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Leave dynamic quantities, divided selection, damage-history predicates, and linked riders as precise material residuals."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageCompilerTests.test_fixed_and_announced_amounts_preserve_whole_source_and_existing_authority",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageCompilerTests.test_qualified_creature_group_and_public_second_group_form_one_damage_set",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_magmaquake_unions_overlapping_creature_walkers_once",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_thunder_counts_current_beast_permanents_including_kindred",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
     },
     {
       "capability_id": "damage.batch.fixed_set",
@@ -90700,10 +91312,334 @@
     {
       "capability_id": "damage.batch.fixed_set",
       "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_magmaquake_unions_overlapping_creature_walkers_once",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_thunder_counts_current_beast_permanents_including_kindred",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_mass_damage.FixedMassDamageRuntimeTests.test_fixed_set_damage_projects_no_hidden_zone_cards",
       "official_rule_ids": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project only public damage recipients and results without exposing opposing hand identities."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_countered_original_earthquake_has_no_recipient_results_or_mana_refund",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_cloudthresher_evoke_orders_preserve_both_damage_groups_and_source_lki",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_earthquake_includes_all_players_and_grounded_hexproof_without_targets",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_howling_gale_flashback_keeps_groups_and_exiles_the_paid_spell",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_hurricane_uses_the_positive_keyword_group_and_zero_amount",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_magmaquake_unions_overlapping_creature_walkers_once",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_compound_damage_recipients.CompoundDamageRuntimeTests.test_original_thunder_counts_current_beast_permanents_including_kindred",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One independently closed public permanent query joins all players or planeswalkers in one canonical damage instruction. Native fixed/declared/public-query amounts, current predicates, overlap, activation source LKI, Flashback and both Evoke orders retain normal source admission, privacy, rollback, pending load and exact replay."
     },
     {
       "capability_id": "damage.batch.fixed_set",

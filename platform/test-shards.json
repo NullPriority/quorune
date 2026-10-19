@@ -312,6 +312,7 @@
       "test_closed_effect_programs",
       "test_combat_damage_rules",
       "test_combat_keyword_rules",
+      "test_compound_damage_recipients",
       "test_conditional_exile",
       "test_copy_objects",
       "test_counted_spell_additional_costs",
