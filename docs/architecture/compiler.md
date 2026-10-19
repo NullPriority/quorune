@@ -687,17 +687,28 @@ Unsupported numeric, token, face-down and counter predicates remain residual
 until the normalized source snapshot represents those distinctions.
 
 `compiler/source_counter_anthems.py` extends the existing live static anthem
-owner with fixed signed power/toughness coefficients per named counter on the
-source. The creature recipient query remains independently closed and live;
+owner with fixed signed power/toughness coefficients per named counter or per
+individual counter of any kind on the source. The recipient query stays live;
 the shared continuous source context supplies the current counter count for
 layer 7c. Source departure or ability removal ends applicability, and later
 matching creatures receive the current bonus. Version-three anthem descriptors
-add only `source_counter`; fixed version-two descriptors retain their decoder.
-Ambiguous recipient pronouns, all-counter totals, counters on other objects,
+add only `source_counter`; version four explicitly selects the source total.
+Fixed version-two descriptors retain their decoder. Ambiguous recipient
+pronouns, counters on another object,
 and unrelated quantity expressions remain residual in this production.
 Chosen-color or chosen-type wrappers validate their nested descriptor against
 the existing chosen-characteristic owner before exact lowering. A source-counter
 anthem inside that unrepresented wrapper remains residual.
+
+Public creature sets and direct targets also represent “with a counter on it”
+through the version-three permanent-state predicate. Its minimum counts
+individual counters of every kind, while named-counter predicates retain their
+old shapes. Current static grants and Defender exceptions recheck the predicate;
+target results revalidate it, and resolution characteristic sets lock recipients.
+Public counter-total quantities use the existing layer-five collection reducer,
+so a controlled-creature total counts counters rather than qualifying creatures.
+Both counter query authorities are explicit compiler/runtime dependencies.
+Unsealed event-time counter links and unrelated result clauses remain residual.
 
 Modular entry descriptors declare the same quantity-replacement capability
 required by their registered self-entry counter component. Missing replacement

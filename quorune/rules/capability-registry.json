@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 392,
+  "registry_version": 393,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -32472,6 +32472,223 @@
       "dependency_fail_closed_rationale": "Compiler and runtime both derive the explicit negative-color capability from complete canonical schema9 queries. Withdrawal and omission must fail normal admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh normally admitted original Crovax actual-cast witness detects removal of the shared negative-color match. All legacy query field sets1through8 roundtrip unchanged.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "state_query.permanent.any_counter",
+      "version": 1,
+      "official_rules": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Typed schema3 public any-kind counter presence with positive individual counts. Current static/target queries use the same owner; legacy state shapes remain unchanged.",
+        "inputs": [
+          "validated public counter snapshot",
+          "closed typed source/controller/current object scope"
+        ],
+        "outputs": [
+          "shared current predicate or exact public counter total",
+          "correct current versus locked incarnation selection"
+        ],
+        "exclusions": [
+          "unknown event-time links, delayed returns, amount-result links and independent source siblings",
+          "hidden queries or unrepresented aggregate predicates"
+        ]
+      },
+      "dependencies": [
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.counter_snapshot.permanent_counter_total",
+        "quorune.object_predicate.PermanentStatePredicateSpec",
+        "quorune.object_predicate.object_query_capabilities",
+        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.compiler.direct_target._strip_public_state_predicate",
+        "quorune.compiler.public_state_queries._fixed_public_state_condition"
+      ],
+      "positive_tests": [
+        "test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+        "test_any_counter_presence_uses_positive_individual_counts_not_names",
+        "test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+        "test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+        "test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+        "test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+        "test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+        "test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+        "test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+        "test_public_and_direct_queries_preserve_named_and_any_counter_boundaries",
+        "test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load"
+      ],
+      "negative_tests": [
+        "test_capability_withdrawal_preserves_any_counter_and_total_residuals",
+        "test_executable_counter_query_and_total_reject_missing_capability_dependencies",
+        "test_public_and_direct_queries_preserve_named_and_any_counter_boundaries"
+      ],
+      "interaction_tests": [
+        "test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+        "test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+        "test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+        "test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+        "test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+        "test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+        "test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+        "test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+        "test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load"
+      ],
+      "multiplayer_tests": [
+        "test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+        "test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+        "test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+        "test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+        "test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+        "test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+        "test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+        "test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+        "test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load"
+      ],
+      "privacy_tests": [
+        "test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+        "test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+        "test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+        "test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+        "test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+        "test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+        "test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+        "test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+        "test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load"
+      ],
+      "replay_tests": [
+        "test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+        "test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+        "test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+        "test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+        "test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+        "test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+        "test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+        "test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+        "test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Compiler and runtime derive the separately declared counter query authority; withdrawal and omission must reject normal admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh normally admitted originals detect loss of any-counter matching, counting distinct names instead of individual counters, or omission of the source total. Parent assertions directly run fresh native witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "quantity_expression.public_counter_total",
+      "version": 1,
+      "official_rules": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Typed public/source counter-total reductions count individual counters, with current controller/type scopes and separate source-anthem descriptor.",
+        "inputs": [
+          "validated public counter snapshot",
+          "closed typed source/controller/current object scope"
+        ],
+        "outputs": [
+          "shared current predicate or exact public counter total",
+          "correct current versus locked incarnation selection"
+        ],
+        "exclusions": [
+          "unknown event-time links, delayed returns, amount-result links and independent source siblings",
+          "hidden queries or unrepresented aggregate predicates"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.counter_snapshot.permanent_counter_total",
+        "quorune.object_predicate.PermanentStatePredicateSpec",
+        "quorune.object_predicate.object_query_capabilities",
+        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.compiler.source_counter_anthems.source_counter_anthem_handler",
+        "quorune.semantic_runtime.continuous_components.FixedQueryPowerToughnessAnthemHandler"
+      ],
+      "positive_tests": [
+        "test_all_counter_reduction_sums_individual_counters_over_matched_rows",
+        "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+        "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+        "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+        "test_total_source_anthem_is_explicit_and_keeps_named_counter_descriptor"
+      ],
+      "negative_tests": [
+        "test_capability_withdrawal_preserves_any_counter_and_total_residuals",
+        "test_executable_counter_query_and_total_reject_missing_capability_dependencies",
+        "test_original_backstreet_total_preserves_controller_type_and_individual_count"
+      ],
+      "interaction_tests": [
+        "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+        "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+        "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"
+      ],
+      "multiplayer_tests": [
+        "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+        "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+        "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"
+      ],
+      "privacy_tests": [
+        "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+        "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+        "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"
+      ],
+      "replay_tests": [
+        "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+        "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+        "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Compiler and runtime derive the separately declared counter query authority; withdrawal and omission must reject normal admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh normally admitted originals detect loss of any-counter matching, counting distinct names instead of individual counters, or omission of the source total. Parent assertions directly run fresh native witnesses.",
       "blockers": [],
       "status": "trusted"
     }

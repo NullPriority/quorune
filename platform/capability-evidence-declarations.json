@@ -121072,6 +121072,534 @@
       "applicability_note": "Original Ghalta uses current own total power for a real cast, loses its affordable offer after actual bounce, rejects a stale offer, restores the offer after recasting the body, preserves colored payment, and loads/replays from before actions."
     },
     {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_distinct_counter_names_mutant_is_killed_by_a_fresh_original_total",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_source_total_omission_is_killed_by_a_fresh_original_kyler",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterModelTests.test_capability_withdrawal_preserves_any_counter_and_total_residuals",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_executable_counter_query_and_total_reject_missing_capability_dependencies",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterModelTests.test_all_counter_reduction_sums_individual_counters_over_matched_rows",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterModelTests.test_total_source_anthem_is_explicit_and_keeps_named_counter_descriptor",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "quantity_expression.public_counter_total",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
       "capability_id": "quantity_expression.public_player_count",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
@@ -131356,6 +131884,1230 @@
         "commander_review"
       ],
       "applicability_note": "CR 700.5/700.5a symbol unions use copy/control/text timing and current typed devotion increases; actual Daxos and Disciple casts, source ability removal/departure, foreign-controller exclusion and complete private command replay preserve the result."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_any_counter_matching_omission_is_killed_by_a_fresh_native_original",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterModelTests.test_capability_withdrawal_preserves_any_counter_and_total_residuals",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterModelTests.test_public_and_direct_queries_preserve_named_and_any_counter_boundaries",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_executable_counter_query_and_total_reject_missing_capability_dependencies",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterModelTests.test_any_counter_presence_uses_positive_individual_counts_not_names",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterModelTests.test_public_and_direct_queries_preserve_named_and_any_counter_boundaries",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_actual_last_counter_removal_ends_demon_wall_attack_permission",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_last_counter_loss_after_declaration_does_not_undo_original_demon_attack",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_razorfin_returns_a_charge_counter_creature_and_rejects_zero",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_original_rishkar_preserves_sickness_and_loses_grant_after_actual_counter_removal",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
+    },
+    {
+      "capability_id": "state_query.permanent.any_counter",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_any_counters.PublicAnyCounterRuntimeTests.test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.2",
+        "122.3",
+        "400.7",
+        "608.2b",
+        "611.2c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Native original counter presence/individual totals: actual scoped offers and actions, current grants and target revalidation, resolution locks/expiry, stabilization, four-player privacy, unauthorized rollback, pending load and exact pre-action replay. No gain claim from source recognition."
     },
     {
       "capability_id": "state_query.permanent.negative_color",

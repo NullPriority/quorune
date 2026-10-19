@@ -35,6 +35,7 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap
 from ..continuous_conditions import FixedPublicStateConditionSnapshot
 from ..defender_permission import DefenderAttackPermission
+from ..counter_snapshot import permanent_counter_total, COUNTER_TOTAL_CAPABILITY
 from ..block_capacity_model import BlockCapacitySpec
 from ..as_unblocked import AsUnblockedAssignmentPermission
 from ..declaration_fragments import (
@@ -83,6 +84,7 @@ class FixedQueryPowerToughnessAnthemNode:
     power: int
     toughness: int
     source_counter: str | None = None
+    source_counter_total: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -474,7 +476,7 @@ class FixedQueryPowerToughnessAnthemHandler:
             )
         exact_fields(
             modifier,
-            {"power", "toughness", *(("source_counter",) if version == 3 else ())},
+            {"power", "toughness", *(("source_counter",) if version == 3 else ("source_counter_total",) if version == 4 else ())},
             field="runtime handler modifier",
         )
         power = modifier["power"]
@@ -483,6 +485,8 @@ class FixedQueryPowerToughnessAnthemHandler:
             raise SemanticNodeError(
                 "fixed query anthem modifiers must be integers"
             )
+        if version == 4 and modifier['source_counter_total'] is not True:
+            raise SemanticNodeError('Total-counter anthem requires its explicit true selector')
         counter = None
         if version == 3:
             counter = modifier['source_counter']
@@ -505,6 +509,7 @@ class FixedQueryPowerToughnessAnthemHandler:
             power=power,
             toughness=toughness,
             source_counter=counter,
+            source_counter_total=version == 4,
         )
 
     def lower(
@@ -513,7 +518,8 @@ class FixedQueryPowerToughnessAnthemHandler:
         context: ContinuousEffectSourceContext,
     ) -> tuple[ContinuousEffect, ...]:
         node = self.validate(descriptor)
-        multiplier = context.source_counters.get(node.source_counter, 0) if node.source_counter is not None else 1
+        multiplier = (permanent_counter_total(context.source_counters) if node.source_counter_total
+            else context.source_counters.get(node.source_counter, 0) if node.source_counter is not None else 1)
         predicate = _fixed_query_effect_predicate(
             node.predicate,
             target_controller=node.target_controller,
@@ -1423,6 +1429,9 @@ def default_continuous_effect_component_registry(
             FixedPublicStateGrantedAbilityHandler(),
             ConditionalColorGrantHandler(),
             ConditionalFlashKeywordHandler(),
+            FixedQueryPowerToughnessAnthemHandler(
+                handler_id='continuous.anthem.source-counter-total-query.v4', schema_version=4,
+                capability_dependencies=('continuous.power_toughness.fixed_anthem', COUNTER_TOTAL_CAPABILITY)),
             ConditionalDefenderPermissionHandler(),
             DefenderDeclarationPermissionHandler(),
             ConditionalAsUnblockedAssignmentHandler(),

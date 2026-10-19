@@ -5,6 +5,7 @@ from typing import Any, Iterable, Mapping
 
 from .counter_names import CounterStateError, normalized_counter_name
 from .target_numeric import TargetNumericCharacteristicSpec
+from .counter_snapshot import permanent_counter_total, ANY_COUNTER_QUERY_CAPABILITY, COUNTER_TOTAL_CAPABILITY
 
 
 class ObjectQueryError(ValueError):
@@ -65,6 +66,7 @@ _PERMANENT_STATE_FIELDS = _LEGACY_PERMANENT_STATE_FIELDS | {
     "monstrous",
 }
 
+_TOTAL_COUNTER_STATE_FIELDS = _PERMANENT_STATE_FIELDS | {"minimum_total_counter_count"}
 
 @dataclass(frozen=True, slots=True)
 class PermanentStatePredicateSpec:
@@ -80,6 +82,7 @@ class PermanentStatePredicateSpec:
     monstrous: bool | None = None
     counter_name: str | None = None
     minimum_counter_count: int | None = None
+    minimum_total_counter_count: int | None = None
     _serialization_version: int = field(
         default=1,
         repr=False,
@@ -88,6 +91,8 @@ class PermanentStatePredicateSpec:
     )
 
     def __post_init__(self) -> None:
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3}:
+            raise ObjectQueryError('Permanent-state predicate serialization version is unsupported')
         if type(self.entered_this_turn) is not bool:
             raise ObjectQueryError(
                 "Permanent-state entered-this-turn must be a boolean"
@@ -106,6 +111,9 @@ class PermanentStatePredicateSpec:
                 raise ObjectQueryError(
                     f"Permanent-state {field_name} value must be boolean or null"
                 )
+        total = self.minimum_total_counter_count
+        if total is not None and (type(total) is not int or total <= 0 or self.counter_name is not None):
+            raise ObjectQueryError('Any-counter minimum requires a positive integer and no named-counter selector')
         counter_name = self.counter_name
         minimum = self.minimum_counter_count
         if counter_name is None:
@@ -137,6 +145,7 @@ class PermanentStatePredicateSpec:
             and self.modified is None
             and self.monstrous is None
             and counter_name is None
+            and total is None
         ):
             raise ObjectQueryError(
                 "Permanent-state predicate must constrain public state"
@@ -154,14 +163,16 @@ class PermanentStatePredicateSpec:
         )
         if extended and self._serialization_version == 1:
             object.__setattr__(self, "_serialization_version", 2)
+        if total is not None:
+            object.__setattr__(self, "_serialization_version", 3)
         if (
             type(self._serialization_version) is not int
-            or self._serialization_version not in {1, 2}
+            or self._serialization_version not in {1, 2, 3}
         ):
             raise ObjectQueryError(
                 "Permanent-state predicate serialization version is unsupported"
             )
-        if extended and self._serialization_version != 2:
+        if extended and self._serialization_version not in {2, 3}:
             raise ObjectQueryError(
                 "Extended permanent-state predicates require serialization version 2"
             )
@@ -173,7 +184,7 @@ class PermanentStatePredicateSpec:
             "counter_name": self.counter_name,
             "minimum_counter_count": self.minimum_counter_count,
         }
-        if self._serialization_version == 2:
+        if self._serialization_version in {2, 3}:
             value.update(
                 {
                     "attacking": self.attacking,
@@ -184,6 +195,8 @@ class PermanentStatePredicateSpec:
                     "monstrous": self.monstrous,
                 }
             )
+        if self._serialization_version == 3:
+            value['minimum_total_counter_count'] = self.minimum_total_counter_count
         return value
 
     @classmethod
@@ -194,11 +207,12 @@ class PermanentStatePredicateSpec:
         if not isinstance(value, Mapping) or frozenset(value) not in {
             _LEGACY_PERMANENT_STATE_FIELDS,
             _PERMANENT_STATE_FIELDS,
+            _TOTAL_COUNTER_STATE_FIELDS,
         }:
             raise ObjectQueryError(
                 "Permanent-state predicate fields are incomplete or unknown"
             )
-        extended = frozenset(value) == _PERMANENT_STATE_FIELDS
+        extended = frozenset(value) in {_PERMANENT_STATE_FIELDS, _TOTAL_COUNTER_STATE_FIELDS}
         return cls(
             entered_this_turn=value["entered_this_turn"],
             tapped=value["tapped"],
@@ -210,7 +224,8 @@ class PermanentStatePredicateSpec:
             monstrous=value.get("monstrous"),
             counter_name=value["counter_name"],
             minimum_counter_count=value["minimum_counter_count"],
-            _serialization_version=2 if extended else 1,
+            minimum_total_counter_count=value.get("minimum_total_counter_count"),
+            _serialization_version=3 if frozenset(value) == _TOTAL_COUNTER_STATE_FIELDS else 2 if extended else 1,
         )
 
 
@@ -266,6 +281,13 @@ def permanent_state_predicate_matches(
     ):
         expected = getattr(spec, field_name)
         if expected is not None and value is not expected:
+            return False
+    if spec.minimum_total_counter_count is not None:
+        try:
+            total = permanent_counter_total(counters)
+        except ValueError as exc:
+            raise ObjectQueryError(str(exc)) from exc
+        if total < spec.minimum_total_counter_count:
             return False
     if spec.counter_name is not None:
         raw = counters.get(spec.counter_name, 0)
@@ -701,10 +723,16 @@ def validate_chosen_damage_source_predicate(
 
 def object_query_capabilities(value: Any) -> tuple[str, ...]:
     """Derive authority only from complete typed public-query descriptors."""
+    if isinstance(value, PermanentStatePredicateSpec):
+        return (ANY_COUNTER_QUERY_CAPABILITY,) if value.minimum_total_counter_count is not None else ()
     if isinstance(value, ObjectQuerySpec):
-        return (NEGATIVE_COLOR_QUERY_CAPABILITY,) if value.colors_none else ()
+        return tuple(sorted({*((NEGATIVE_COLOR_QUERY_CAPABILITY,) if value.colors_none else ()),
+            *object_query_capabilities(value.state_predicate)}))
     if isinstance(value, Mapping):
-        own = ()
+        own = (COUNTER_TOTAL_CAPABILITY,) if value.get('reduction') == 'total_counters' else ()
+        if frozenset(value) == _TOTAL_COUNTER_STATE_FIELDS:
+            state = PermanentStatePredicateSpec.from_dict(value)
+            own = (ANY_COUNTER_QUERY_CAPABILITY,) if state.minimum_total_counter_count is not None else ()
         if frozenset(value) == _COLOR_EXCLUSION_QUERY_FIELDS:
             query = ObjectQuerySpec.from_dict(value)
             own = (NEGATIVE_COLOR_QUERY_CAPABILITY,) if query.colors_none else ()

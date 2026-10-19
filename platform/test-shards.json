@@ -458,6 +458,7 @@
       "test_monarch_rules",
       "test_paid_entry_copy",
       "test_player_speed",
+      "test_public_any_counters",
       "test_public_negative_colors",
       "test_public_negative_supertypes",
       "test_public_scalar_stat_definitions",

@@ -37,7 +37,7 @@ def bind_semantic_program_runtime(
     required: set[str] = set()
     blockers: set[str] = set()
     try:
-        required.update(object_query_capabilities((program.effects, program.handlers)))
+        required.update(object_query_capabilities((program.effects, program.handlers, program.target_schema)))
     except (TypeError, ValueError) as exc:
         blockers.add(f'runtime_query:invalid:{exc}')
     unregistered_operations: set[str] = set()

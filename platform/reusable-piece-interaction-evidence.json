@@ -17292,6 +17292,96 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual normally admitted original Gloomdrifter at six versus seven graveyard cards distinguishes the conditionally present entry trigger. Only the threshold case resolves the complete nonblack penalty; black controls remain unchanged and private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+      "piece_ids": [
+        "capability.mana.activated.fixed_output",
+        "capability.state_query.permanent.any_counter"
+      ],
+      "capability_ids": [
+        "mana.activated.fixed_output",
+        "state_query.permanent.any_counter"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Rishkar grants green tap mana to a normally registered charge-counter creature. Actual auto-paid Growth taps that creature as payment, then untaps and buffs it on resolution. Private projection and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load",
+      "piece_ids": [
+        "capability.permanent.return.owner_hand",
+        "capability.state_query.permanent.any_counter"
+      ],
+      "capability_ids": [
+        "permanent.return.owner_hand",
+        "state_query.permanent.any_counter"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Razorfin pays its actual mana/tap costs and targets a charged creature. An actual counter-removal response removes its final counter before resolution; after pending load the target remains on the battlefield, payment remains committed and private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+      "piece_ids": [
+        "capability.state_query.permanent.any_counter",
+        "capability.trigger.keyword.ward.fixed_generic"
+      ],
+      "capability_ids": [
+        "state_query.permanent.any_counter",
+        "trigger.keyword.ward.fixed_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Cathedral Acolyte grants Ward for a charge counter. An opponent actual Unsummon creates the opponent-owned payment choice; wrong-principal rejection is atomic, decline counters the spell, and pending load/private replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.any_counter"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.any_counter"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Baxter entry locks only controlled counter-qualified recipients. Actual counter removal preserves the old flying grant, later counter placement adds no earlier recipient, and a real empty attack/turn transition expires the grant. Private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "piece_ids": [
+        "capability.combat.attack.defender_permission",
+        "capability.quantity_expression.public_counter_total"
+      ],
+      "capability_ids": [
+        "combat.attack.defender_permission",
+        "quantity_expression.public_counter_total"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Backstreet counts individual counters on controlled creatures, including itself. One counter, foreign counters and own artifact counters reject; split counters qualify, while stabilized plus/minus counters cancel before selection. Offers/acceptance and private replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+      "piece_ids": [
+        "capability.continuous.power_toughness.fixed_anthem",
+        "capability.quantity_expression.public_counter_total"
+      ],
+      "capability_ids": [
+        "continuous.power_toughness.fixed_anthem",
+        "quantity_expression.public_counter_total"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Kyler sums charge, lore and +1/+1 counters on its current source. A real Human entry adds a +1/+1 counter and increases the bonus; actual charge removal reduces it. Opponent Humans stay unmodified and private replay agrees."
     }
   ]
 }

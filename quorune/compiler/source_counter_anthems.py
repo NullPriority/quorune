@@ -5,7 +5,8 @@ from __future__ import annotations
 import re
 from typing import Any, Callable
 
-from ..characteristic_fragments import CharacteristicQuantityScope
+from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantityReduction
+from ..counter_snapshot import COUNTER_TOTAL_CAPABILITY
 from .query_characteristic_templates import query_characteristic_quantity
 
 
@@ -27,6 +28,12 @@ def source_counter_anthem_handler(
     if base is None:
         return None
     template, raw, capabilities = base
+    if quantity.reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS:
+        handler = {**raw, 'handler_id': 'continuous.anthem.source-counter-total-query.v4', 'schema_version': 4,
+            'modifier': {**raw['modifier'], 'source_counter_total': True}}
+        return template + '-source-counter-total-v4', handler, tuple(sorted({
+            *((capabilities,) if isinstance(capabilities, str) else capabilities), COUNTER_TOTAL_CAPABILITY}))
+
     handler = {**raw, 'handler_id': 'continuous.anthem.source-counter-query.v3', 'schema_version': 3,
                'modifier': {**raw['modifier'], 'source_counter': quantity.counter_name}}
     return template + '-source-counter-v3', handler, capabilities

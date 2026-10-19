@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..object_predicate import object_query_capabilities
+
 """Closed capability shapes for shared permanent predicates."""
 
 from typing import Any, Mapping
@@ -44,6 +46,7 @@ def direct_target_predicate_capabilities(
 
     target_spec = DirectPermanentTargetSpec.from_target_schema(target_schema)
     return (
+        *object_query_capabilities(target_spec.state_predicate),
         *(
             ("target.permanent.characteristic_predicate",)
             if target_spec.uses_compound_characteristics
@@ -68,7 +71,7 @@ def public_state_query_capabilities(
     """Return the shared owner for a typed affected-set state predicate."""
 
     return (
-        (PUBLIC_PERMANENT_STATE_CAPABILITY,)
+        (PUBLIC_PERMANENT_STATE_CAPABILITY, *object_query_capabilities(state_predicate))
         if state_predicate is not None
         else ()
     )

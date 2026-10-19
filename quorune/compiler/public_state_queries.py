@@ -224,6 +224,9 @@ def _public_query_qualifiers(
     if stripped is None:
         return None
     text, relation = stripped
+    total_counter = re.fullmatch(r'(?P<body>.+?) with (?:a|one or more) counters? on (?:it|them)', text, re.I)
+    if total_counter is not None:
+        text = total_counter['body']
     ability_qualifier = re.fullmatch(
         r"(?P<body>.+?) with (?P<ability>[A-Za-z][A-Za-z ]+)",
         text,
@@ -239,7 +242,7 @@ def _public_query_qualifiers(
         required_ability = candidate
         text = ability_qualifier.group("body")
 
-    state_fields: dict[str, Any] = {}
+    state_fields: dict[str, Any] = {'minimum_total_counter_count': 1} if total_counter is not None else {}
     state_match = re.fullmatch(
         r"(?P<body>.+?) that are (?P<state>enchanted|equipped|modified)",
         text,
@@ -1414,6 +1417,21 @@ def _fixed_public_state_condition(
     normalized = normalize_public_condition_surface(text.strip().rstrip("."))
     if normalized.casefold() in {"it's your turn","it’s your turn"}:
         normalized='your turn'
+    total = re.fullmatch(r'there are (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+) or more counters among creatures you control', normalized, re.I)
+    if total is not None:
+        from ..characteristic_fragments import CharacteristicQuantityReduction
+        amount = _fixed_condition_amount(total['amount'])
+        if amount is None or amount <= 0:
+            return None
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+            amount=amount, schema_version=2, quantity=CharacteristicQuantitySpec(
+                scope=CharacteristicQuantityScope.CONTROLLER_ZONE, schema_version=2,
+                query=ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)),
+                reduction=CharacteristicQuantityReduction.TOTAL_COUNTERS))
+    if re.fullmatch(rf"{_condition_source_subject_pattern(source_name)} has (?:a|one or more) counters? on it", normalized, re.I):
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+            schema_version=2, predicate=ObjectQuerySpec(zones=('battlefield',),
+                state_predicate=PermanentStatePredicateSpec(minimum_total_counter_count=1)))
     numeric = re.fullmatch(r'you control a creature with (?P<stat>power|toughness) (?P<amount>[0-9]+) or (?P<bound>greater|less)', normalized, re.I)
     if numeric is not None:
         return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,

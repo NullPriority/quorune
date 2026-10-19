@@ -1,0 +1,658 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned any-counter originals and explicit generic counter-changing controls. No fixture identity selects production behavior.",
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Backstreet Bruiser",
+      "oracle_id": "354d9db1-18a6-4701-be3c-c4ded900e2ff",
+      "oracle_text": "Defender\nAs long as there are two or more counters among creatures you control, this creature can attack as though it didn't have defender.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-04-29",
+      "toughness": "3",
+      "type_line": "Creature — Octopus Rogue"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Cathedral Acolyte",
+      "oracle_id": "85fa4ed3-14e3-4eb0-b31b-62e2088321d0",
+      "oracle_text": "Each creature you control with a counter on it has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\n{T}: Put a +1/+1 counter on target creature that entered this turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "2",
+      "type_line": "Creature — Human Cleric"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Menace",
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Demon Wall",
+      "oracle_id": "077b5ed2-05c2-4a16-b5eb-794884ee1c21",
+      "oracle_text": "Defender\nMenace (This creature can't be blocked except by two or more creatures.)\nAs long as this creature has a counter on it, it can attack as though it didn't have defender.\n{5}{B}: Put two +1/+1 counters on this creature.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": "3",
+      "type_line": "Artifact Creature — Demon Wall"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Formation Breaker",
+      "oracle_id": "82f59ac4-bf94-4fa2-9457-f0bec8360bd9",
+      "oracle_text": "Creatures with power less than this creature's power can't block it.\nAs long as you control a creature with a counter on it, this creature gets +1/+2.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "1",
+      "type_line": "Creature — Beast"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Hunter of Eyeblights",
+      "oracle_id": "34d5f249-df46-49d1-a692-da2348fbc51e",
+      "oracle_text": "When this creature enters, put a +1/+1 counter on target creature you don't control.\n{2}{B}, {T}: Destroy target creature with a counter on it.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-10-12",
+      "toughness": "3",
+      "type_line": "Creature — Elf Assassin"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}{W}",
+      "name": "Kyler, Sigardian Emissary",
+      "oracle_id": "726cd041-5d0b-436c-bced-9335f56c0b0d",
+      "oracle_text": "Whenever another Human you control enters, put a +1/+1 counter on Kyler.\nOther Humans you control get +1/+1 for each counter on Kyler.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2021-09-24",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Cleric"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Matt Murdock, Justice Seeker",
+      "oracle_id": "e64efd0d-3de3-42e2-949e-4a152d08def8",
+      "oracle_text": "At the beginning of combat on your turn, you may pay {1}. When you do, put a +1/+1 counter on target creature you control.\nEach creature you control with a counter on it has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Advisor Hero"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Razorfin Abolisher",
+      "oracle_id": "38a2ded4-77c5-4d2b-b411-7dca8108aa02",
+      "oracle_text": "{1}{U}, {T}: Return target creature with a counter on it to its owner's hand.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2008-07-25",
+      "toughness": "2",
+      "type_line": "Creature — Merfolk Wizard"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Rishkar, Peema Renegade",
+      "oracle_id": "761021ce-4559-464e-aa03-85c2fe78e267",
+      "oracle_text": "When Rishkar enters, put a +1/+1 counter on each of up to two target creatures.\nEach creature you control with a counter on it has \"{T}: Add {G}.\"",
+      "power": "2",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2023-08-04",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Elf Druid"
+    },
+    {
+      "cmc": 1,
+      "mana_cost": "{1}",
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:any-counter:put",
+      "name": "Generic Any Counter Charge",
+      "oracle_text": "Put a charge counter on target creature."
+    },
+    {
+      "cmc": 1,
+      "mana_cost": "{1}",
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:any-counter:remove",
+      "name": "Generic Any Counter Removal",
+      "oracle_text": "Remove a charge counter from target creature."
+    },
+    {
+      "cmc": 2,
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:any-counter:artifact",
+      "name": "Generic Any Counter Artifact",
+      "oracle_text": ""
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Baxter, Fly in the Ointment",
+      "oracle_id": "94551fbd-a72c-4a1f-be01-7ba1c7c03eed",
+      "oracle_text": "Whenever Baxter enters or attacks, each creature you control with a counter on it gains flying until end of turn.\nWhenever you draw a card, put a +1/+1 counter on Baxter.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-03-06",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Insect Mutant Scientist"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "The activated ability can target a creature with any kind of counter on it, not just a +1/+1 counter.",
+      "oracle_id": "34d5f249-df46-49d1-a692-da2348fbc51e",
+      "published_at": "2007-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backstreet Bruiser's ability looks for two or more individual counters. It doesn't matter if the counters are the same kind or different kinds or whether they are on the same permanent or different permanents.",
+      "oracle_id": "354d9db1-18a6-4701-be3c-c4ded900e2ff",
+      "published_at": "2022-04-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the targeted creature no longer has any counters on it when the ability resolves, the ability won’t resolve because its only target is illegal. The creature will stay on the battlefield.",
+      "oracle_id": "38a2ded4-77c5-4d2b-b411-7dca8108aa02",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Razorfin Abolisher’s ability can target a creature with any kind of counter on it, not just a -1/-1 counter.",
+      "oracle_id": "38a2ded4-77c5-4d2b-b411-7dca8108aa02",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Kyler enters the battlefield at the same time as other Humans you control, Kyler's first ability will trigger once for each of those Humans.",
+      "oracle_id": "726cd041-5d0b-436c-bced-9335f56c0b0d",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Kyler's second ability counts all counters, not just +1/+1 counters.",
+      "oracle_id": "726cd041-5d0b-436c-bced-9335f56c0b0d",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each creature you control has Rishkar's mana ability as long as that creature has any kind of counter on it. The effect isn't limited to those with +1/+1 counters.",
+      "oracle_id": "761021ce-4559-464e-aa03-85c2fe78e267",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rishkar can be a target of its own triggered ability.",
+      "oracle_id": "761021ce-4559-464e-aa03-85c2fe78e267",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't target the same creature twice to have one recipient get two +1/+1 counters.",
+      "oracle_id": "761021ce-4559-464e-aa03-85c2fe78e267",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You compare Formation Breaker’s power to the power of any creature trying to block it only as blockers are declared. Once Formation Breaker has been legally blocked by a creature, changing the power of either creature won’t change or undo the block.",
+      "oracle_id": "82f59ac4-bf94-4fa2-9457-f0bec8360bd9",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature’s ward ability has triggered, causing that creature to lose ward by removing Cathedral Acolyte won’t affect the ability. The appropriate player will still have to pay {1} or see their spell or ability countered.",
+      "oracle_id": "85fa4ed3-14e3-4eb0-b31b-62e2088321d0",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effect of Cathedral Acolyte’s first ability applies to any creature you control with a counter on it, not just ones with +1/+1 counters.",
+      "oracle_id": "85fa4ed3-14e3-4eb0-b31b-62e2088321d0",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    }
+  ]
+}

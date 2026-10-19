@@ -243,7 +243,7 @@ class CounterTargetPredicateCompilerTests(unittest.TestCase):
             "target equipped creature",
             "target enchanted creature",
             "target creature with flying and vigilance",
-            "target creature with a counter on it",
+            "target creature with a counter on it that entered last turn",
             "target creature that entered last turn",
             "target artifact or Vehicle",
         )

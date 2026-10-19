@@ -6089,6 +6089,47 @@
         "test_public_negative_supertypes",
         "test_query_scaled_counters"
       ]
+    },
+    {
+      "id": "public-any-counter-presence-and-totals-contract",
+      "patterns": [
+        "quorune/card_programs/binding.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/compiler/collection_quantity_templates.py",
+        "quorune/compiler/direct_target.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/source_counter_anthems.py",
+        "quorune/counter_snapshot.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/object_predicate.py",
+        "quorune/oracle_ir.py",
+        "quorune/public_quantity_reductions.py",
+        "quorune/rules/permanent_predicate_capability_shapes.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/public-any-counter-cards.json",
+        "tests/test_public_any_counters.py"
+      ],
+      "test_modules": [
+        "test_public_any_counters",
+        "test_counter_target_predicates",
+        "test_fixed_direct_target_predicates",
+        "test_fixed_counter_removal_effects",
+        "test_fixed_query_keyword_grants",
+        "test_counter_qualified_zone_events",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_public_state_quantity_actions",
+        "test_public_query_effect_amounts",
+        "test_typed_query_self_characteristics",
+        "test_object_query",
+        "test_defender_permission",
+        "test_defender_declaration_numeric",
+        "test_card_program_trust",
+        "test_public_negative_colors",
+        "test_high_risk_interaction_assurance"
+      ]
     }
   ],
   "symbol_rules": [

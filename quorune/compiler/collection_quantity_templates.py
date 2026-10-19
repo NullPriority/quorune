@@ -24,6 +24,12 @@ def fixed_devotion_condition(text: str):
 
 
 def collection_quantity(value: str, *, compile_count) -> CharacteristicQuantitySpec | None:
+    counter_total = re.fullmatch(r'(?:the )?(?:number of )?counters (?:among|on) (?P<objects>.+)', value, re.I)
+    if counter_total is not None:
+        quantity = compile_count(counter_total['objects'])
+        if quantity is None or quantity.schema_version != 1 or quantity.query is None or quantity.query.zones != ('battlefield',):
+            return None
+        return replace(quantity, schema_version=2, reduction=CharacteristicQuantityReduction.TOTAL_COUNTERS)
     devotion = re.fullmatch(r'your devotion to (?P<first>white|blue|black|red|green)(?: and (?P<second>white|blue|black|red|green))?', value, re.I)
     if devotion is not None:
         colors={'white':'W','blue':'U','black':'B','red':'R','green':'G'}

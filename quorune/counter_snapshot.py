@@ -7,6 +7,10 @@ from typing import Any, Mapping
 from .replacement.immutable import FrozenMap
 
 
+ANY_COUNTER_QUERY_CAPABILITY = "state_query.permanent.any_counter"
+COUNTER_TOTAL_CAPABILITY = "quantity_expression.public_counter_total"
+
+
 class CounterSnapshotError(ValueError):
     """A permanent counter snapshot is malformed."""
 
@@ -38,4 +42,9 @@ def permanent_counter_snapshot(counters: Mapping[str, Any]) -> FrozenMap:
     return FrozenMap(dict(sorted(normalized.items())))
 
 
-__all__ = ["CounterSnapshotError", "permanent_counter_snapshot"]
+def permanent_counter_total(counters: Mapping[str, Any]) -> int:
+    """Count individual counters of every kind from one validated public state."""
+    return sum(permanent_counter_snapshot(counters).values())
+
+
+__all__ = ["CounterSnapshotError", "permanent_counter_snapshot", "permanent_counter_total"]

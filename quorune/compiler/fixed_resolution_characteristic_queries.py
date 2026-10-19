@@ -22,6 +22,7 @@ def _public_state_is_closed(
     if state is None:
         return True
     supported = (
+        PermanentStatePredicateSpec(minimum_total_counter_count=1),
         PermanentStatePredicateSpec(attacking=True),
         PermanentStatePredicateSpec(blocking=True),
         PermanentStatePredicateSpec(enchanted=True),

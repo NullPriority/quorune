@@ -894,6 +894,17 @@ public permanent-state predicates such as a named counter minimum. Historical
 schema-v1 through schema-v6 payloads retain their original field sets so Game
 Record v3 replay does not silently rewrite old descriptors.
 
+Version-three permanent-state predicates add an explicit any-kind counter
+minimum. `counter_snapshot.permanent_counter_total` validates and sums individual
+public counters; zero entries do not qualify and malformed amounts reject.
+Named-counter predicates and state schemas one and two keep their field sets.
+Static queries use current counters after stabilization. Direct targets share
+the same matcher and revalidate at resolution, while resolved characteristic
+sets retain their incarnation locks. Public collection and source-total
+quantities use this counter owner without reading later-layer characteristics.
+An attack legally declared under a conditional Defender exception remains
+declared when the final qualifying counter is removed afterward.
+
 Version-nine queries add `colors_none` for negative-color battlefield sets.
 The shared matcher checks current color membership, so colorless objects match
 and a multicolored object containing the excluded color does not. Static

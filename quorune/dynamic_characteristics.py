@@ -15,6 +15,7 @@ from .characteristic_fragments import (
 from .continuous_effects import Layer
 from .object_query import object_matches_query, object_query_result
 from .public_quantity_reductions import reduce_public_quantity
+from .counter_snapshot import permanent_counter_total
 from .util import unique_preserving_order
 
 
@@ -57,6 +58,8 @@ def query_characteristic_count(
             include_modifiers=_enforce_static_component_applicability,
             _enforce_static_component_applicability=_enforce_static_component_applicability) * quantity.multiplier + quantity.offset
     if quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
+        if quantity.reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS:
+            return permanent_counter_total(source.counters) * quantity.multiplier + quantity.offset
         assert quantity.counter_name is not None
         raw = source.counters.get(quantity.counter_name, 0)
         if type(raw) is not int or raw < 0:

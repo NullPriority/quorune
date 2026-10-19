@@ -10,6 +10,7 @@ from ..ability_fragments import (
 )
 from ..characteristic_fragments import (
     CharacteristicQuantityScope,
+    CharacteristicQuantityReduction,
     CharacteristicQuantitySpec,
     PowerToughnessCalculation,
 )
@@ -271,6 +272,11 @@ def query_characteristic_quantity(
     if reduced is not None:
         return reduced
     source = SourceReferenceSpec(source_name).regex_pattern
+    total_counter = re.fullmatch(
+        rf"counters? on (?:it|him|her|this (?:artifact|Aura|creature|enchantment|Equipment|land|permanent|token)|{source})", text, re.I)
+    if total_counter is not None:
+        return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.SOURCE_COUNTER,
+            schema_version=2, reduction=CharacteristicQuantityReduction.TOTAL_COUNTERS)
     counter = re.fullmatch(
         rf"(?P<counter>[A-Za-z0-9+/-]+) counters? on "
         rf"(?:it|him|her|this (?:artifact|Aura|creature|enchantment|Equipment|land|permanent|token)|{source})",
