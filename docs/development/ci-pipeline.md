@@ -104,6 +104,13 @@ validated `git cat-file --batch` response, shared by import-closure traversal
 and version-literal checks. It retains the same source paths and blob identity
 comparison, including removed imports, instead of starting Git for each module.
 
+Pre-corpus source-policy validation also compares the declared transition with
+the latest materialized semantic receipt. Amending an unmerged recorded
+compiler identity retains its stable transition ID and recorded non-harvest
+rationale. A new compiler identity can declare a new
+transition before its corpus exists. This check reads the existing history;
+it does not generate the census or rules queue.
+
 Architecture capsule generation reads and parses the current test import
 inventory once per report, then applies each subsystem's unchanged import
 matching rule to that snapshot. Later reports reread the files, so edits and

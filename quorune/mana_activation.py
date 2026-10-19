@@ -24,6 +24,7 @@ from .mana_source_discovery import mana_plan_abilities
 
 class ManaActivationHost(Protocol):
     state: Any
+    turn_priority: Any
 
     def _mana_output_for_ability(
         self,
@@ -199,8 +200,7 @@ def complete_mana_activation(
     if host._stabilize():
         clear_mana_undo_stack(host.state.players[seat].stats)
         return
-    host.state.priority_player = seat
-    host.state.priority_passes = []
+    host.turn_priority.retain_priority_after_action(seat)
 
 
 def _mana_plan_modes(

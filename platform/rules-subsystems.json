@@ -6660,14 +6660,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v460-paid-mana-plan-correction",
-      "compiler_version": "oracle-ir-v460",
+      "transition_id": "oracle-ir-v461-cost-payment-departure-priority",
+      "compiler_version": "oracle-ir-v461",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct shared automatic mana-source eligibility so filtering abilities cannot skip a separate mana activation price. Retain free modes and explicit fully paid activation with native rollback, privacy and replay evidence; no card-support harvest is claimed."
+      "non_harvest_reason": "Correct shared post-stabilization priority restoration after a legal full-life payment eliminates the actor. Casting, activation, mana activation, land entry, and special actions retain the canonical departure and priority owners with native rollback, privacy, pending load, replay, and mana-undo evidence. No grammar, capability promotion, or card-support harvest is claimed."
     },
 
     "forecast_corrections": [

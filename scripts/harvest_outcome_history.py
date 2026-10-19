@@ -1384,6 +1384,43 @@ def _latest_semantic_receipt(
     return latest
 
 
+def validate_semantic_transition_source_identity(
+    declaration: Mapping[str, Any],
+    materialized_history: Mapping[str, Any],
+    *,
+    repository: Path | None = None,
+) -> None:
+    """Reject a relabelled recorded identity without requiring a new census."""
+
+    validated = validated_semantic_transition_declaration(declaration)
+    entries = materialized_history.get("entries", ())
+    non_harvest = materialized_history.get("non_harvest_transitions", ())
+    if not entries:
+        return
+    candidates = entries if validated["outcome_kind"] == "harvest" else non_harvest
+    if candidates:
+        recorded = candidates[-1]
+        version = recorded.get("compiler_version") or recorded.get("head_receipt", {}).get("compiler_version")
+        if recorded["transition_id"] == validated["transition_id"] and version == validated["compiler_version"]:
+            if (validated["outcome_kind"] == "non_harvest"
+                    and recorded["non_harvest_reason"] != validated["non_harvest_reason"]):
+                raise HarvestOutcomeHistoryError(
+                    "Recorded non-harvest rationale is immutable; retain it "
+                    "or declare a new compiler transition"
+                )
+            return
+    latest = _latest_semantic_receipt(entries, non_harvest, repository=repository)
+    if latest["compiler_version"] != validated["compiler_version"]:
+        # A new source identity is legitimate before its corpus is generated.
+        return
+    if candidates and candidates[-1]["transition_id"] == validated["transition_id"]:
+        return
+    raise HarvestOutcomeHistoryError(
+        "Compiler identity is already recorded; retain its stable semantic "
+        "transition ID when amending the same transition"
+    )
+
+
 def _pending_non_harvest_declaration(value: Any) -> dict[str, Any] | None:
     if not isinstance(value, Mapping) or value.get("outcome_kind") != "non_harvest":
         return None

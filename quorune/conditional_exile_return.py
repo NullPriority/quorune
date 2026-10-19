@@ -82,8 +82,7 @@ def commit_activation_with_conditional_returns(host: Any, proposal: Any, respons
     if finish_conditional_cost_returns(host,waiting) or result is True and not waiting or host._stabilize():
         return
     from .model import YieldPolicy
-    host.state.priority_player = proposal.seat
-    host.state.priority_passes = []
+    host.turn_priority.retain_priority_after_action(proposal.seat)
     host.state.players[proposal.seat].yield_policy = YieldPolicy()
 
 
@@ -92,7 +91,7 @@ def commit_cast_with_conditional_returns(host: Any, proposal: Any, response: Map
     with defer_conditional_cost_returns() as waiting:
         during_resolution=_commit_cast_costs_and_stack(host,proposal,response)
     if finish_conditional_cost_returns(host,waiting) or during_resolution or host._stabilize():return
-    host.state.priority_player=proposal.seat;host.state.priority_passes=[]
+    host.turn_priority.retain_priority_after_action(proposal.seat)
 
 
 def issue_conditional_return_choice(host: Any, required: 'ConditionalReturnChoiceRequired', completed_choice=None) -> None:

@@ -265,7 +265,22 @@ class TurnPriorityDecisionOwner:
         self.state.priority_player = None
         self.state.priority_passes = []
         if not self.host._stabilize():
+            self.retain_priority_after_action(seat)
+
+    def retain_priority_after_action(self, seat: str) -> None:
+        """Restore post-stabilization priority under CR 117.3c and 800.4a.
+
+        Keep the existing epoch: a surviving actor's reversible mana activation
+        still belongs to the same priority window.
+        """
+
+        self.state.priority_passes = []
+        if self.state.game_over or not self.host.active_seats:
+            self.state.priority_player = None
+        elif seat in self.host.active_seats:
             self.state.priority_player = seat
+        else:
+            self.state.priority_player = self.host._next_active_after(seat)
 
     def set_yield(self, seat: str, value: Any) -> None:
         mode = str(value or "none")

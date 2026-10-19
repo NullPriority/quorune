@@ -727,6 +727,56 @@ def _with_large_ability_compiler_harvest(inputs):
 
 
 class RulesSchedulerSourcePolicyTests(unittest.TestCase):
+    def test_pre_corpus_policy_rejects_relabelled_recorded_identity_and_allows_new_version(self):
+        from scripts import update_rules_scheduler
+
+        history = _json("coverage/harvest-outcome-history.json")
+        recorded = history["non_harvest_transitions"][-1]
+        version = recorded["compiler_version"]
+        catalog = _json("platform/rules-subsystems.json")
+        declaration = {
+            "transition_id": recorded["transition_id"], "compiler_version": version,
+            "bundle_id": None, "candidate_ids": [], "family_ids": [], "capability_ids": [],
+            "expected_complete_card_gain": None,
+            "non_harvest_reason": recorded["non_harvest_reason"],
+        }
+        catalog["work_selection"]["semantic_transition_declaration"] = declaration
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "platform" / "rules-subsystems.json"
+            source.parent.mkdir()
+            ledger = root / "coverage" / "harvest-outcome-history.json"
+            ledger.parent.mkdir()
+            ledger.write_text(json.dumps({
+                "entries": [{"transition_id": "fixture-previous-content", "head_receipt": recorded["base_receipt"]}],
+                "non_harvest_transitions": [recorded],
+            }), encoding="utf8")
+            with mock.patch.object(update_rules_scheduler, "ROOT", root), mock.patch.object(
+                update_rules_scheduler, "ORACLE_COMPILER_VERSION", version
+            ), mock.patch("sys.argv", ["update_rules_scheduler.py", "--validate-policy"]), mock.patch.object(
+                update_rules_scheduler, "build_harvest_outcome_history"
+            ) as generate_history, mock.patch.object(
+                update_rules_scheduler, "build_rules_dependency_queue_from_root"
+            ) as generate_queue:
+                source.write_text(json.dumps(catalog), encoding="utf8")
+                self.assertEqual(0, update_rules_scheduler.main())
+                declaration["transition_id"] = "fixture-renamed-recorded-transition"
+                source.write_text(json.dumps(catalog), encoding="utf8")
+                with self.assertRaisesRegex(HarvestOutcomeHistoryError, "already recorded.*stable"):
+                    update_rules_scheduler.main()
+                declaration["transition_id"] = recorded["transition_id"]
+                declaration["non_harvest_reason"] = "Rewrite an already materialized rationale without a new identity."
+                source.write_text(json.dumps(catalog), encoding="utf8")
+                with self.assertRaisesRegex(HarvestOutcomeHistoryError, "rationale is immutable"):
+                    update_rules_scheduler.main()
+                declaration["transition_id"] = "fixture-new-transition"
+                declaration["compiler_version"] = "oracle-ir-v999999"
+                source.write_text(json.dumps(catalog), encoding="utf8")
+                with mock.patch.object(update_rules_scheduler, "ORACLE_COMPILER_VERSION", "oracle-ir-v999999"):
+                    self.assertEqual(0, update_rules_scheduler.main())
+                generate_history.assert_not_called()
+                generate_queue.assert_not_called()
+
     def test_pre_corpus_policy_validation_rejects_invalid_transition_metadata(self):
         from scripts import update_rules_scheduler
 
