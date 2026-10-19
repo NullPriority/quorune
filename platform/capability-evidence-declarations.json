@@ -37193,6 +37193,909 @@
       "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
     },
     {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual normally admitted Deep Freeze removes the original numeric permission while granting Defender; the qualifying controlled creature remains, but offers/acceptance reject atomically and principal privacy/load/replay agree."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_before_declaration_removes_the_offer",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_counts_its_own_current_buffed_power",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_uses_controlled_full_power_and_actual_combat",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual normally admitted Deep Freeze removes the original numeric permission while granting Defender; the qualifying controlled creature remains, but offers/acceptance reject atomically and principal privacy/load/replay agree."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_before_declaration_removes_the_offer",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_counts_its_own_current_buffed_power",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_uses_controlled_full_power_and_actual_combat",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_declaration_condition_omission_is_killed_by_fresh_native_original",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericCompilerTests.test_declaration_descriptor_rejects_unknown_and_nonnumeric_conditions",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericCompilerTests.test_numeric_permission_has_its_own_event_and_keeps_generic_layer_guard",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericCompilerTests.test_withdrawn_declaration_capability_keeps_numeric_permission_residual",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual normally admitted Deep Freeze removes the original numeric permission while granting Defender; the qualifying controlled creature remains, but offers/acceptance reject atomically and principal privacy/load/replay agree."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_executable_declaration_rejects_an_undeclared_permission_capability",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "positive",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericCompilerTests.test_numeric_permission_has_its_own_event_and_keeps_generic_layer_guard",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "positive",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "positive",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_counts_its_own_current_buffed_power",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "positive",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_uses_controlled_full_power_and_actual_combat",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual normally admitted Deep Freeze removes the original numeric permission while granting Defender; the qualifying controlled creature remains, but offers/acceptance reject atomically and principal privacy/load/replay agree."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_before_declaration_removes_the_offer",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_counts_its_own_current_buffed_power",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_uses_controlled_full_power_and_actual_combat",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual normally admitted Deep Freeze removes the original numeric permission while granting Defender; the qualifying controlled creature remains, but offers/acceptance reject atomically and principal privacy/load/replay agree."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_actual_qualifier_departure_before_declaration_removes_the_offer",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_counts_its_own_current_buffed_power",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Declaration-time numeric Defender exception: normal source admission, actual current-state combat, independent restriction controls and atomic replay/private projection witnesses."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.declaration_numeric",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_declaration_numeric.DefenderDeclarationNumericRuntimeTests.test_original_sentry_uses_controlled_full_power_and_actual_combat",
+      "official_rule_ids": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished declaration-time numeric Defender exception; normal source admission and actual combat must assert full current characteristics, scope, independent restrictions, rollback, privacy, load and replay before closure is accepted."
+    },
+    {
       "capability_id": "combat.attack.defender_permission.temporary",
       "evidence_class": "interaction",
       "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_coupled_power_toughness_and_permission_share_timestamp_and_expiry",

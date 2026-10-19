@@ -1378,6 +1378,7 @@ class ContinuousEffectComponentRegistry(
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .conditional_flash import ConditionalFlashKeywordHandler
+    from .defender_declarations import DefenderDeclarationPermissionHandler
     from .conditional_color_grants import ConditionalColorGrantHandler
     from .keyword_prohibitions import OpponentKeywordProhibitionHandler
     from .basic_type_addition import ScopedBasicTypeAdditionHandler
@@ -1423,6 +1424,7 @@ def default_continuous_effect_component_registry(
             ConditionalColorGrantHandler(),
             ConditionalFlashKeywordHandler(),
             ConditionalDefenderPermissionHandler(),
+            DefenderDeclarationPermissionHandler(),
             ConditionalAsUnblockedAssignmentHandler(),
             ConditionalBlockCapacityHandler(),
             ConditionalDeclarationGrantHandler(),

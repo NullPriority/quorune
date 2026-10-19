@@ -847,31 +847,37 @@
     {
       "id": "defender-permission-contract",
       "patterns": [
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/compiler/defender_permission_templates.py",
         "quorune/defender.py",
         "quorune/defender_permission.py",
-        "quorune/compiler/defender_permission_templates.py",
-        "quorune/compiler/closed_static_nodes.py",
+        "quorune/rules/defender_declaration.py",
         "quorune/rules/defender_permission_effect.py",
+        "quorune/semantic_runtime/defender_declarations.py",
+        "tests/fixtures/defender-declaration-numeric-cards.json",
         "tests/fixtures/defender-permission-cards.json"
       ],
       "test_modules": [
+        "test_card_program_trust",
+        "test_combat_declaration_restrictions",
+        "test_combat_keyword_rules",
+        "test_defender_declaration_numeric",
         "test_defender_permission",
         "test_defender_rules",
-        "test_combat_keyword_rules",
+        "test_fixed_disturb",
         "test_fixed_public_state_characteristics",
-        "test_combat_declaration_restrictions",
-        "test_card_program_trust",
-        "test_rules_scheduler",
-        "test_public_state_counter_actions",
-        "test_public_state_event_actions",
-        "test_public_state_mana_actions",
-        "test_public_state_quantity_actions",
         "test_public_state_condition_compiler",
         "test_public_state_condition_runtime",
+        "test_public_state_counter_actions",
+        "test_public_state_event_actions",
         "test_public_state_event_counter_actions",
         "test_public_state_graveyard_arrival_actions",
+        "test_public_state_mana_actions",
         "test_public_state_optional_result_actions",
-        "test_public_state_predefined_token_actions"
+        "test_public_state_predefined_token_actions",
+        "test_public_state_quantity_actions",
+        "test_rules_scheduler",
+        "test_toughness_assignment"
       ]
     },
     {

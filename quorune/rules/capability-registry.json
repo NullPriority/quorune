@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 389,
+  "registry_version": 390,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -32216,6 +32216,120 @@
         "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
         "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced"
       ]
+    },
+    {
+      "id": "combat.attack.defender_permission.declaration_numeric",
+      "version": 1,
+      "official_rules": [
+        "609.4",
+        "702.3b",
+        "508.1a",
+        "508.1c",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.1g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "At attack declaration, disregard only Defender when one trusted source-self current-power/toughness or controlled-creature numeric condition holds against complete current characteristics.",
+        "inputs": [
+          "current source/face/layer-six component and controller",
+          "closed typed numeric public condition",
+          "full characteristic state after layered evaluation finishes"
+        ],
+        "outputs": [
+          "shared offered and accepted Defender exception",
+          "unchanged Defender keyword and all independent attack restrictions",
+          "no generic layer-six numeric feedback"
+        ],
+        "exclusions": [
+          "unknown attack-history/player restrictions, ambiguous subjects and unrepresented siblings",
+          "counter/attachment and aggregate conditions not owned by this numeric declaration slice",
+          "arbitrary effects or attack requirements"
+        ]
+      },
+      "dependencies": [
+        "combat.attack.defender_permission"
+      ],
+      "implementation_components": [
+        "quorune.compiler.defender_permission_templates.declaration_defender_permission_handler",
+        "quorune.semantic_runtime.defender_declarations.DefenderDeclarationPermissionHandler",
+        "quorune.rules.defender_declaration.current_defender_declaration_permission",
+        "quorune.defender.defender_prohibits_attack"
+      ],
+      "positive_tests": [
+        "test_numeric_permission_has_its_own_event_and_keeps_generic_layer_guard",
+        "test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+        "test_original_sentry_counts_its_own_current_buffed_power",
+        "test_original_sentry_uses_controlled_full_power_and_actual_combat"
+      ],
+      "negative_tests": [
+        "test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+        "test_declaration_descriptor_rejects_unknown_and_nonnumeric_conditions",
+        "test_executable_declaration_rejects_an_undeclared_permission_capability",
+        "test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+        "test_numeric_permission_has_its_own_event_and_keeps_generic_layer_guard",
+        "test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+        "test_withdrawn_declaration_capability_keeps_numeric_permission_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+        "test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+        "test_actual_qualifier_departure_before_declaration_removes_the_offer",
+        "test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+        "test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+        "test_original_sentry_counts_its_own_current_buffed_power",
+        "test_original_sentry_uses_controlled_full_power_and_actual_combat"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+        "test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+        "test_actual_qualifier_departure_before_declaration_removes_the_offer",
+        "test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+        "test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+        "test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+        "test_original_sentry_counts_its_own_current_buffed_power",
+        "test_original_sentry_uses_controlled_full_power_and_actual_combat"
+      ],
+      "privacy_tests": [
+        "test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+        "test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+        "test_actual_qualifier_departure_before_declaration_removes_the_offer",
+        "test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+        "test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+        "test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+        "test_original_sentry_counts_its_own_current_buffed_power",
+        "test_original_sentry_uses_controlled_full_power_and_actual_combat"
+      ],
+      "replay_tests": [
+        "test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+        "test_actual_qualifier_departure_after_legal_declaration_does_not_undo_attack",
+        "test_actual_qualifier_departure_before_declaration_removes_the_offer",
+        "test_numeric_exception_preserves_tap_sickness_and_other_attack_prohibitions",
+        "test_opponents_qualifying_power_does_not_offer_or_accept_original_tyrannodon",
+        "test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+        "test_original_sentry_counts_its_own_current_buffed_power",
+        "test_original_sentry_uses_controlled_full_power_and_actual_combat"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The new boundary requires the existing Defender exception capability and validates a closed numeric declaration descriptor.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh fully admitted original Sentry actual-combat witness detects omission of the declaration-time permission query.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

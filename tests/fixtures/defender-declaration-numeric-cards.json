@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned current-numeric Defender sources and explicit public support control; no fixture identity selects runtime rules.",
+  "cards": [
+    {
+      "oracle_id": "05852d99-8f30-4318-913c-d0b1eaf8c222",
+      "name": "Bristlepack Sentry",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Plant Wolf",
+      "oracle_text": "Defender\nAs long as you control a creature with power 4 or greater, this creature can attack as though it didn't have defender.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "dc8c6803-dd87-4f00-8a92-9613dbe90549",
+      "name": "Karsus Depthguard",
+      "mana_cost": "{2}{R}",
+      "type_line": "Creature — Lizard Warrior",
+      "oracle_text": "Defender\nAs long as this creature's power is 5 or greater, it can attack as though it didn't have defender.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "ee811356-ef6a-4972-b827-32c2d329b3c3",
+      "name": "Drowsing Tyrannodon",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "Defender (This creature can't attack.)\nAs long as you control a creature with power 4 or greater, this creature can attack as though it didn't have defender.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "fixture:conditional-defender:large",
+      "name": "Generic Defender Large Body",
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "oracle_id": "fixture:conditional-defender:forbidden",
+      "name": "Generic Numeric Forbidden Defender",
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "Defender\nThis creature can't attack.\nAs long as this creature's power is 5 or greater, it can attack as though it didn't have defender.",
+      "power": "6",
+      "toughness": "6",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Deep Freeze",
+      "oracle_id": "648aead4-dc0b-47bc-911c-8dcd2cfd32d3",
+      "oracle_text": "Enchant creature\nEnchanted creature has base power and toughness 0/4, has defender, loses all other abilities, and is a blue Wall in addition to its other colors and types.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-04-27",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "05852d99-8f30-4318-913c-d0b1eaf8c222",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you raise Bristlepack Sentry’s power to 4 or greater, it fulfills its own condition and it can attack as though it didn’t have defender."
+    },
+    {
+      "oracle_id": "05852d99-8f30-4318-913c-d0b1eaf8c222",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Once Bristlepack Sentry has legally attacked, causing its last ability to not apply by removing other creatures from the battlefield or reducing the power of one or more creatures won’t cause Bristlepack Sentry to stop attacking."
+    },
+    {
+      "oracle_id": "dc8c6803-dd87-4f00-8a92-9613dbe90549",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Once Karsus Depthguard has legally attacked, causing its last ability to not apply by reducing its power to 4 or less won’t cause it to stop attacking."
+    },
+    {
+      "oracle_id": "ee811356-ef6a-4972-b827-32c2d329b3c3",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "Once Drowsing Tyrannodon has attacked, it will remain an attacking creature even if you no longer control a creature with power 4 or greater."
+    },
+    {
+      "oracle_id": "ee811356-ef6a-4972-b827-32c2d329b3c3",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "If Drowsing Tyrannodon's power is raised to 4 or greater, it will allow itself to attack."
+    }
+  ]
+}

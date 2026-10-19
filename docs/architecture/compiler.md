@@ -991,6 +991,14 @@ or supported keywords. Later entrants and new incarnations receive no earlier
 temporary permission. Linked riders, defending-player history, and
 combat-damage assignment rules remain separate unsupported families.
 
+Self permissions conditioned on current power or toughness use a separate
+`combat.attack.permission` event and a closed declaration component. They read
+complete current characteristics when declaring attackers, including a
+qualifying creature controlled by the source's current controller. The generic
+layer-six numeric feedback guard remains in place. An ambiguous conditional
+pronoun, unrepresented condition, or missing capability keeps the ability
+residual; this numeric owner does not admit counter or attachment conditions.
+
 `compiler/as_unblocked_templates.py` owns the separate printed instruction
 to assign combat damage as though a creature were not blocked. Intrinsic,
 attached, public-query and closed source-conditioned forms grant one typed

@@ -380,6 +380,7 @@
       "quorune/untap_selection.py": "typed retained untap-selection choice and continuation owner"
     },
     "read_only_consumers": {
+      "quorune/rules/defender_declaration.py": "read-only trusted current-face declaration component and completed characteristic condition query",
       "quorune/source_damage_death.py": "read-only exact source/victim incarnation predicate over typed committed current-turn damage history",
       "quorune/rampage.py": "read-only sealed block occurrence derivation and current blocker count",
       "quorune/energy_payment.py": "fixed energy cost coordinator delegates counter mutation to the canonical counter transaction",

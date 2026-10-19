@@ -928,6 +928,13 @@ and represented buffs, and reject unavailable numeric facts. Static
 characteristic conditions reject this schema because their cycle-safe read
 boundary remains at layer five.
 
+`rules/defender_declaration.py` evaluates the separate numeric Defender
+exception after the full characteristic query has finished. The source's
+current trusted face and ability must still provide the declaration component.
+Offers and acceptance share this check, which disregards only Defender while
+the numeric condition holds. A later condition change affects the next
+declaration, without removing a creature from an already declared attack.
+
 Fixed public static conditions snapshot the same layer-5 query boundary along
 with canonical aggregate hand/draw counts, typed current-turn spell-cast
 history, named source and player counters, and the public monarch designation.
