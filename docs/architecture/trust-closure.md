@@ -77,7 +77,7 @@ closed. The global inventories are metadata aggregations; family registries
 remain the execution owners.
 
 An activation-catalogue carrier with no resolution effects is structural
-discovery metadata, not a hidden legacy rules program. Binding validates its
+discovery metadata, not a hidden legacy rules program. Preflight may recognize a printed Equip through its source-matching trusted keyword owner on the exact parsed ability line. The fixed price, target restriction and sorcery timing must agree; provisional discovery catalogs do not establish coverage. Source drift and missing keyword capability retain the residual. Binding validates its
 registered closed descriptor and schema/event identity without inventing a
 behavioral capability closure. Any attached resolution effect still requires
 its actual registered capabilities; a catalogue identity cannot excuse it.

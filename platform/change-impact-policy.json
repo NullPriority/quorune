@@ -6324,6 +6324,23 @@
         "test_kicked_same_target_replacements",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "attached-pt-fixed-keyword-removal-contract",
+      "patterns": [
+        "quorune/compiler/continuous_templates.py",
+        "quorune/rules/equip_preflight_coverage.py",
+        "quorune/preflight.py",
+        "tests/test_attached_pt_keyword_removal.py",
+        "tests/fixtures/attached-pt-keyword-removal-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_pt_keyword_removal",
+        "test_attached_static_characteristics",
+        "test_fixed_public_state_characteristics",
+        "test_preflight_v080",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

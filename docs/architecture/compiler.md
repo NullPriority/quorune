@@ -765,7 +765,7 @@ The existing attached-characteristic handler in
 fortified subject wording into one versioned live-relation descriptor. The
 grammar covers fixed and typed public-query power/toughness, base-setting,
 type, subtype, color, and supported keyword addition or removal; compound
-forms remain one descriptor so canonical layer ordering is preserved. The same
+forms remain one descriptor so canonical layer ordering is preserved. Fixed P/T may combine directly with supported keyword removal without an ability grant. Removals retain layer-6 timestamp order; a later keyword grant may restore the ability, and reattachment or source departure updates the live relation. The same
 descriptor may append one or two already-exact declaration requirement or
 restriction fragments, including beside a fixed attached modifier and keyword.
 Typed quantities reuse `query_characteristic_quantity()` and the cycle-safe

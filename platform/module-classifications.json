@@ -10956,6 +10956,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/equip_preflight_coverage.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/event_player_result_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -16715,5 +16729,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "7fce4539364742d2dd95cc4a7b2ec5214aff3d2bed5bf39ade739fc5cee24947"
+  "fingerprint": "6161b5c71d83292f7abbac7149c9606eaeacc7a44ec985d179d18ad44c8b6a33"
 }

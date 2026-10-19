@@ -495,6 +495,7 @@
     ],
     "functional-12": [
       "test_amass_rules",
+      "test_attached_pt_keyword_removal",
       "test_aura_targeting_entry",
       "test_backup_rules",
       "test_block_keyword_compiler",

@@ -828,7 +828,7 @@ def _attached_compound_modifier(body: str) -> dict[str, Any] | None:
     )
     ability_removal = re.fullmatch(
         r"(?:gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and )?"
-        r"(?:(?:has (?P<abilities>.+?) and loses (?P<removed>.+))|"
+        r"(?:(?:(?:has (?P<abilities>.+?) and )?loses (?P<removed>(?!all abilities$).+))|"
         r"(?:loses (?P<all>all abilities)))",
         body,
         re.IGNORECASE,

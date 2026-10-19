@@ -54833,6 +54833,93 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_hammer_cast_equip_reattach_and_departure_keep_both_layers",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_magebane_retains_noncombat_prevention_and_complete_modifier",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
       "official_rule_ids": [
         "301.5",
@@ -55587,6 +55674,93 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_hammer_cast_equip_reattach_and_departure_keep_both_layers",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_magebane_retains_noncombat_prevention_and_complete_modifier",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
       "official_rule_ids": [
         "301.5",
@@ -55848,6 +56022,35 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "mutation",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_losing_combined_modifier_producer_is_killed_by_fresh_original_coils",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
       "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_grant_fragment_omission_is_killed_by_native_recipient_consequences",
       "official_rule_ids": [
         "301.5",
@@ -56018,6 +56221,93 @@
         "commander_review"
       ],
       "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalCompilerTests.test_withdrawn_attached_owner_keeps_combined_original_source_residual",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_equip_preflight_requires_exact_trusted_keyword_line_cost_and_target_contract",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_three_originals_have_complete_preflight_and_bound_attached_authority",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -56453,6 +56743,122 @@
         "traditional"
       ],
       "applicability_note": "Unknown siblings and withdrawn fine Skulk authority prevent exact admission; no partial recognition becomes complete support."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalCompilerTests.test_one_attached_descriptor_retains_both_stat_changes_and_exact_removals",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_hammer_cast_equip_reattach_and_departure_keep_both_layers",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_magebane_retains_noncombat_prevention_and_complete_modifier",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -57066,6 +57472,93 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_hammer_cast_equip_reattach_and_departure_keep_both_layers",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_magebane_retains_noncombat_prevention_and_complete_modifier",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
       "test_id": "tests.test_attached_quote_delimiters.AttachedQuoteDelimiterRuntimeTests.test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
       "official_rule_ids": [
         "301.5",
@@ -57352,6 +57845,93 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_hammer_cast_equip_reattach_and_departure_keep_both_layers",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_magebane_retains_noncombat_prevention_and_complete_modifier",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed attached P/T modifier may combine with represented keyword removals through the unchanged live attachment descriptor and canonical layer6/layer7c owners. Actual original equip/reattach/Aura/departure and later keyword-grant timestamps preserve complete consequences, source independence, privacy, rollback, pending load and replay. Choices, unknown keywords, typed fragments and unsupported siblings stay residual."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",

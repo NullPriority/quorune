@@ -446,6 +446,8 @@ def _trusted_activated_ability_is_covered(
 ) -> bool:
     if f"ability:{ability.ability_id}" in trusted_ids:
         return True
+    from .rules.equip_preflight_coverage import trusted_equip_keyword_covers
+    if trusted_equip_keyword_covers(ability,trusted_programs):return True
     if ability.crew_threshold is None:
         return False
     source_line = ability.line_index + 1
