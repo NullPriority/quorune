@@ -171,6 +171,69 @@ def is_closed_fixed_homogeneous_target_set_program(program: Any) -> bool:
     )
 
 
+def announced_target_set_node_capabilities(
+    *, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    """Validate variable cardinality before projecting to the fixed owner."""
+    from ..compiler.announced_target_sets import ANNOUNCED_TARGET_SET_CAPABILITY, ANNOUNCED_TARGET_SET_MECHANIC
+    from ..query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
+    from ..target_cardinality import bind_announced_target_schema
+    mechanics = set(mechanic_ids)
+    if ANNOUNCED_TARGET_SET_MECHANIC not in mechanics or len(effects) != 1:
+        return ()
+    effect = effects[0]
+    if (set(effect) != {"op", "cards", "maximum_targets", "announced_target_count"}
+            or effect.get("announced_target_count") is not True):
+        return ()
+    try:
+        maximum = CastXAmountSpec.from_dict(effect["maximum_targets"])
+        if maximum.coefficient != 1 or not isinstance(target_schema, Mapping) or "count_parameter" not in target_schema:
+            return ()
+        schema = bind_announced_target_schema(target_schema, 2)
+    except (TypeError, ValueError):
+        return ()
+    fixed = {key: value for key, value in effect.items() if key != "announced_target_count"}
+    fixed["maximum_targets"] = 2
+    owned = fixed_homogeneous_target_set_node_capabilities(effects=(fixed,), target_schema=schema,
+        mechanic_ids=mechanics | {FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC})
+    return (*owned, ANNOUNCED_TARGET_SET_CAPABILITY, DECLARED_AMOUNT_CAPABILITY) if owned else ()
+
+
+def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
+    """Require the new authority even if a producer omits its annotation."""
+    schema = getattr(program, "target_schema", None)
+    parameterized = isinstance(schema, Mapping) and "count_parameter" in schema
+    effects = tuple(effect for effect in program.effects if effect.get("op") in _OPERATION_CAPABILITIES
+        and ("announced_target_count" in effect or isinstance(effect.get("maximum_targets"), Mapping)))
+    if not parameterized and not effects:
+        return ()
+    if not parameterized or not effects:
+        raise ValueError("Announced target effects require their declared target-count schema")
+    required = set()
+    for effect in effects:
+        owned = announced_target_set_node_capabilities(effects=(effect,), target_schema=schema,
+            mechanic_ids=program.coverage)
+        if not owned:
+            raise ValueError("Announced target-count effect or schema is malformed")
+        required.update(owned)
+    return tuple(sorted(required))
+
+
+def is_closed_announced_target_set_program(program: Any) -> bool:
+    spell = str(program.ability_id).startswith("spell:") and program.event == "resolve"
+    if not spell:
+        from ..activation_x import activation_x_symbols, ANNOUNCED_ACTIVATION_X_CAPABILITY
+        cost = program.cost_schema or {}
+        if (program.event != "activate" or ANNOUNCED_ACTIVATION_X_CAPABILITY not in program.capability_dependencies
+                or type(cost.get("announced_x_symbols")) is not int
+                or activation_x_symbols(str(cost.get("text") or "")) != cost["announced_x_symbols"]):
+            return False
+    required = announced_target_set_node_capabilities(effects=program.effects,
+        target_schema=program.target_schema, mechanic_ids=program.coverage)
+    return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
 __all__ = [
     "fixed_homogeneous_target_set_node_capabilities",
     "is_closed_fixed_homogeneous_target_set_program",

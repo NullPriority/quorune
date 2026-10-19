@@ -45,3 +45,14 @@ def chosen_activation_x(ability, response) -> int | None:
     if type(value) is not int or value < 0:
         raise ValueError('Activation X must be an explicit nonnegative integer')
     return value
+
+
+def bind_activation_target_cardinality(ability, schema, response, *, hint=False):
+    from collections.abc import Mapping
+    from .target_cardinality import bind_announced_target_schema
+    if not isinstance(schema, Mapping) or 'count_parameter' not in schema:
+        return schema
+    if ability.announced_x_symbols is None:
+        raise ValueError('Variable target cardinality requires the typed activation-X cost')
+    value = 0 if hint else chosen_activation_x(ability, response)
+    return bind_announced_target_schema(schema, value)

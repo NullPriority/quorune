@@ -1127,6 +1127,7 @@ def _maximum_affordable_x_with_mechanics(
     spend_context: Any,
     limit: int = 100,
     reserved_cards: Sequence[Any] = (),
+    targeted_cost: Mapping[str, Any] | None = None,
 ) -> int:
     maximum = -1
     for value in range(limit + 1):
@@ -1140,6 +1141,10 @@ def _maximum_affordable_x_with_mechanics(
         for raw_option in printed:
             option = copy.deepcopy(raw_option)
             option["requirements"] = host._mana_vector(option["requirements"])
+            if targeted_cost is not None:
+                option['targeted_cost'] = targeted_cost
+                from .targeted_costs import apply_target_cost_increase
+                apply_target_cost_increase(option)
             _apply_static_reductions(
                 host,
                 seat,
@@ -1422,7 +1427,10 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             mechanics,
             spend_context=spend_context,
             reserved_cards=reserved_cards,
+            targeted_cost=option.get('targeted_cost') if 'target_count_parameter' in option else None,
         )
+        from .target_cardinality import target_count_preview_maximum
+        maximum = target_count_preview_maximum(option, maximum)
         if maximum < 0:
             return None
         choice_schema["x"] = {"type": "integer", "minimum": 0, "maximum": maximum}
@@ -1490,8 +1498,18 @@ def build_cast_cost_options(
     if initial is None:
         return ()
     expanded, mandatory, mechanics, has_x = initial
+    target_mana_x = has_x
+    target_schema = getattr(program, "target_schema", None)
+    if not has_x and isinstance(target_schema, Mapping) and "count_parameter" in target_schema:
+        _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
+        if target_mana_x:
+            expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
     result = []
     for option in expanded:
+        from .target_cardinality import bind_target_count_option
+        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x)
+        if option is None:
+            continue
         option_cast_type_line = (
             str(option["cast_type_line"])
             if option.get("cast_type_line")
@@ -1505,6 +1523,9 @@ def build_cast_cost_options(
             )
         )
         from .targeted_costs import target_cost_variants
+        if hint:
+            from .target_cardinality import target_count_cost_preview
+            option = target_count_cost_preview(host, seat, card, program, option)
         for target_option in target_cost_variants(host,seat,card,program,option,submission,hint=hint):
             finalized = _finalize_option(
                 host,

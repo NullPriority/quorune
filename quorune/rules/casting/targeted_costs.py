@@ -37,6 +37,52 @@ def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_target
         yield tuple(targets),grouped
 
 
+def _announced_tax_assignments(host,seat,card,schema,sources):
+    """Minimal witnesses per tax signature, without enumerating target subsets.
+
+    Announced cardinality has one homogeneous distinct group. All references
+    with the same source signature incur the same tax; retaining each required
+    reference preserves offer availability while unioning signatures once.
+    """
+    plan=target_plan(schema)
+    if len(plan.groups)!=1:return
+    group,=plan.groups
+    candidates=host._target_candidate_map(seat,plan,
+        acting_source=spell_targeting_source(host,card),source_ref=card.ref)
+    refs=candidates[group.group_id]
+    signatures={ref:frozenset(source.component_id for source in sources
+        if ref in source.eligible_target_refs) for ref in refs}
+    representatives={}
+    for ref in refs:representatives.setdefault(signatures[ref],ref)
+    for required in (None,*refs):
+        initial=() if required is None else (required,)
+        states={frozenset() if required is None else signatures[required]:initial}
+        for signature,ref in representatives.items():
+            for applied,chosen in tuple(states.items()):
+                union=applied|signature
+                if union==applied:continue
+                witness=(*chosen,ref)
+                if union not in states or len(witness)<len(states[union]):states[union]=witness
+        for chosen in states.values():
+            grouped={group.group_id:list(chosen)}
+            try:targets=validate_grouped_target_assignment(host,plan,grouped,candidates)
+            except (ValueError,GameRuleError):continue
+            yield tuple(targets),grouped
+
+
+def _announced_tax_variants(host,seat,card,schema,sources,option,modes):
+    """Price each signature once, retaining its separate target witnesses."""
+    signatures={}
+    for targets,grouped in _announced_tax_assignments(host,seat,card,schema,sources):
+        fact=target_cost_fact(sources,targets)
+        key=tuple(row['component_id'] for row in fact['sources'])
+        signatures.setdefault(key,(fact,[]))[1].append({'targets':grouped,'modes':list(modes)})
+    for fact,witnesses in signatures.values():
+        smallest=min(witnesses,key=lambda w:sum(len(refs) for refs in w['targets'].values()))
+        yield {**option,'targeted_cost':fact,'target_cost_witness':smallest,
+            'target_cost_witnesses':witnesses}
+
+
 def target_cost_variants(host,seat,card,program,option,response,*,hint):
     sources=targeted_spell_cost_sources(host,seat)
     if not sources:yield option;return
@@ -49,6 +95,9 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
         targets,_=host._validate_semantic_targets(seat,program,host._normalize_target_submission(response.get('targets')),
             modes=modes,acting_source=spell_targeting_source(host,card), source_ref=card.ref,target_schema=schema)
         yield {**option,'targeted_cost':target_cost_fact(sources,targets)};return
+    if 'target_count_preview_limit' in option:
+        yield from _announced_tax_variants(host,seat,card,schema,sources,option,modes)
+        return
     mode_sets=(modes,)
     if schema is not None and available_modes(schema) and not modes:
         names=available_modes(schema);minimum=int(schema.get('min_modes',schema.get('mode_count',1)));maximum=int(schema.get('max_modes',schema.get('mode_count',1)))
@@ -87,12 +136,17 @@ def consolidate_target_cost_options(options,*,hint):
     result={};witnesses={};prices={}
     for option in options:
         raw=option.to_dict()
-        if 'target_cost_witness' in raw:witnesses.setdefault(option.option_id,[]).append(raw['target_cost_witness'])
+        if 'target_cost_witness' in raw:
+            maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum')
+            candidates=raw.get('target_cost_witnesses',[raw['target_cost_witness']])
+            witnesses.setdefault(option.option_id,[]).extend(w for w in candidates
+                if maximum is None or sum(len(refs) for refs in w['targets'].values())<=maximum)
         if 'targeted_cost' in raw:
             modes=tuple(raw.get('target_cost_witness',{}).get('modes',()))
             components=tuple(row['component_id'] for row in raw['targeted_cost']['sources'])
             prices.setdefault(option.option_id,{})[(modes,components)]={'modes':list(modes),'components':list(components),
-                'requirements':raw['requirements']}
+                'requirements':raw['requirements'], **({'maximum_x':raw['choice_schema']['x']['maximum']}
+                    if 'target_count_parameter' in raw and 'x' in raw.get('choice_schema',{}) else {})}
         prior=result.get(option.option_id)
         if prior is None or sum(option.to_dict()['requirements'].values())<sum(prior.to_dict()['requirements'].values()):result[option.option_id]=option
     return tuple(CastCostOption.from_dict({**option.to_dict(),**({'payable_target_witnesses':witnesses[oid],

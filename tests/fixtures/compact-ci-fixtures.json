@@ -9,6 +9,7 @@
     "tests/fixtures/aftermath-cards.json",
     "tests/fixtures/aggregated-zone-event-triggers.json",
     "tests/fixtures/amass-rules-cards.json",
+    "tests/fixtures/announced-target-cardinality-cards.json",
     "tests/fixtures/announced-x-activation-cards.json",
     "tests/fixtures/announced-x-additional-cost-cards.json",
     "tests/fixtures/as-unblocked-assignment-cards.json",

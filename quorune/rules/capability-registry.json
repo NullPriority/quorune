@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 395,
+  "registry_version": 396,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -32991,6 +32991,169 @@
       "dependency_fail_closed_rationale": "Compiler and runtime derive the declared additional-cost authority from the typed cost schema; withdrawal or omission rejects normal admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh native original must detect skipped mandatory life or exile payment before unpublished closure is accepted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "target.cardinality.mana_announced_x",
+      "version": 1,
+      "official_rules": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One typed mana-announced X controls exact or up-to homogeneous public targets in a spell or ordinary activation, shared cost/target binding, and canonical repeated effects. Zero targets and above-six X are supported; independent owned atomic siblings compose in printed order.",
+        "inputs": [
+          "immutable count parameter",
+          "persisted announced X",
+          "one owned public target predicate"
+        ],
+        "outputs": [
+          "bound target schema before legality",
+          "same X in the effect target limit"
+        ],
+        "exclusions": [
+          "unrepresented text-defined X and target roles",
+          "unowned result or cost siblings"
+        ]
+      },
+      "dependencies": [
+        "resolution.effect.fixed_homogeneous_target_set",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "implementation_components": [
+        "quorune.activation_x.bind_activation_target_cardinality",
+        "quorune.compiler.announced_target_sets.announced_target_clause_compiler",
+        "quorune.compiler.announced_target_sets.announced_target_set_effect_template",
+        "quorune.rules.casting.target_cardinality.bind_target_count_option",
+        "quorune.rules.casting.target_cardinality.target_count_cost_preview",
+        "quorune.rules.fixed_homogeneous_target_set_capability_shapes.announced_target_set_node_capabilities",
+        "quorune.semantic_runtime.fixed_target_set_handlers",
+        "quorune.target_cardinality.AnnouncedTargetCardinality"
+      ],
+      "positive_tests": [
+        "test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+        "test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+        "test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+        "test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+        "test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+        "test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+        "test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+        "test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+        "test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+        "test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+        "test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+        "test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+        "test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+        "test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+        "test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+        "test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+        "test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once"
+      ],
+      "negative_tests": [
+        "test_unrepresented_self_exile_sibling_keeps_original_wildest_dreams_residual",
+        "test_original_gridlock_tax_preview_excludes_a_target_when_x_and_tax_cannot_be_paid",
+        "test_executable_count_rejects_undeclared_and_malformed_parameter_authority",
+        "test_declared_count_rejects_malformed_values_and_mixed_authority"
+      ],
+      "interaction_tests": [
+        "test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+        "test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+        "test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+        "test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+        "test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+        "test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+        "test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+        "test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+        "test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+        "test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+        "test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+        "test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+        "test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+        "test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+        "test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+        "test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+        "test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once"
+      ],
+      "multiplayer_tests": [
+        "test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+        "test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+        "test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+        "test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+        "test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+        "test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+        "test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+        "test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+        "test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+        "test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+        "test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+        "test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+        "test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+        "test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+        "test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+        "test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+        "test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once"
+      ],
+      "privacy_tests": [
+        "test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+        "test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+        "test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+        "test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+        "test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+        "test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+        "test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+        "test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+        "test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+        "test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+        "test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+        "test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+        "test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+        "test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+        "test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+        "test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once"
+      ],
+      "replay_tests": [
+        "test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+        "test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+        "test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+        "test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+        "test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+        "test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+        "test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+        "test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+        "test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+        "test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+        "test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+        "test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+        "test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+        "test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+        "test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+        "test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+        "test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "New count schemas and effect selectors derive their explicit runtime authority independently of compiler annotations.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Gridlock and By Force witnesses kill replacing the announced binding and restoring the fixed-six selector limit. A fresh immutable count contract also kills clipping X to six.",
       "blockers": [],
       "status": "trusted"
     }

@@ -306,6 +306,7 @@
     ],
     "functional-08": [
       "test_aggregated_zone_event_triggers",
+      "test_announced_target_cardinality",
       "test_announced_x_additional_costs",
       "test_bound_effect_programs",
       "test_casting_payment_keywords",

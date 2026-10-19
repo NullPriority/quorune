@@ -66,6 +66,11 @@ def declared_effect_amount_template(
     if type(cast_x_available) is not bool or type(forbid_public_x) is not bool:
         return None
     normalized = text.strip()
+    if cast_x_available:
+        from .announced_target_sets import announced_target_set_effect_template
+        target_set = announced_target_set_effect_template(normalized)
+        if target_set is not None:
+            return target_set
     mill = re.fullmatch(r'(?P<head>(?:(?:you|target player|target opponent|each player|each opponent) )?mills?) '
         r'cards equal to (?P<quantity>[^.]+?)\.?', normalized, re.I)
     if mill is not None:

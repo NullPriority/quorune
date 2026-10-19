@@ -92,6 +92,7 @@ from ..rules.node_capability_shapes import (
 )
 from ..rules.fixed_homogeneous_target_set_capability_shapes import (
     is_closed_fixed_homogeneous_target_set_program,
+    is_closed_announced_target_set_program,
 )
 from ..rules.token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
@@ -1276,6 +1277,7 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     return (
+        is_closed_announced_target_set_program,
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
         is_closed_fixed_instruction_program,

@@ -146,9 +146,10 @@ def reviewed_effect_template_composition(
             return declared
     query_counters = ordered_quantity_sequence_template(text, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed)
     if query_counters is not None:return query_counters
+    from .announced_target_sets import announced_target_clause_compiler
     sequence = fixed_effect_clause_sequence_template(
         text,
-        compile_clause=compile_atomic,
+        compile_clause=announced_target_clause_compiler(compile_atomic) if cast_x_available else compile_atomic,
     )
     if sequence is not None:
         return sequence.compiled()

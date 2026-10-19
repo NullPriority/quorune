@@ -1503,7 +1503,8 @@ def _commit_cast_costs_and_stack(
         spent,
         costs,
     )
-    item.x_value = selected_option.get("announced_additional_x", response.get("x"))
+    item.x_value = selected_option.get("announced_target_x",
+        selected_option.get("announced_additional_x", response.get("x")))
     commit_reveal_additional_costs(host,proposal,card,item,selected_option)
     item.notes = str(response.get("note") or "")
     prior_spell_count = prior_storm_spell_count(host)

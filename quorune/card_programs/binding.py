@@ -11,6 +11,7 @@ from ..semantic_runtime import (
 from ..util import stable_json
 from ..object_predicate import object_query_capabilities
 from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
+from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
 from ..semantic_runtime.activated_abilities import (
     is_structural_activated_ability_catalog_program,
     activated_abilities_from_descriptors,
@@ -37,6 +38,10 @@ def bind_semantic_program_runtime(
     component_identities: list[dict[str, Any]] = []
     required: set[str] = set()
     blockers: set[str] = set()
+    try:
+        required.update(announced_target_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f"runtime_target_count:invalid:{exc}")
     try:
         required.update(object_query_capabilities((program.effects, program.handlers, program.target_schema)))
     except (TypeError, ValueError) as exc:

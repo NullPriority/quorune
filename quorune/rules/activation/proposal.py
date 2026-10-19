@@ -309,8 +309,13 @@ def build_activation_proposal(
     target_schema = (
         thaw_value(ability.target_schema)
         if ability.target_schema is not None
-        else None
+        else getattr(program, "target_schema", None)
     )
+    from ...activation_x import bind_activation_target_cardinality
+    try:
+        target_schema = bind_activation_target_cardinality(ability, target_schema, response)
+    except ValueError as exc:
+        raise ActivationProposalError(str(exc), reason="invalid_announced_target_count") from exc
     targets, target_groups = host._validate_semantic_targets(
         request.actor,
         program,
@@ -521,6 +526,12 @@ def build_activation_offer(
         if selected.target_schema is not None
         else program.target_schema if program is not None else None
     )
+    unbound_target_schema = target_schema
+    from ...activation_x import bind_activation_target_cardinality
+    try:
+        target_schema = bind_activation_target_cardinality(selected, target_schema, {}, hint=True)
+    except ValueError:
+        return ActivationProposalResult("unavailable", "invalid_announced_target_count")
     public_schema = None
     if target_schema is not None:
         public_schema = host._public_target_schema(
@@ -615,6 +626,9 @@ def build_activation_offer(
     if choice_schema is not None:
         payload["choice_schema"] = choice_schema
     if public_schema is not None:
+        if isinstance(unbound_target_schema, Mapping) and 'count_parameter' in unbound_target_schema:
+            from ...target_cardinality import link_announced_public_bounds
+            public_schema = link_announced_public_bounds(public_schema, unbound_target_schema['count_parameter'])
         payload["target_schema"] = public_schema
     offer = ActionOffer(
         action_id=f"activate:{source.ref}:{selected.ability_id}",

@@ -853,6 +853,8 @@ def _cast_offer_payload(
         if public_schema is not None:
             from .targeted_costs import public_payable_target_schema
             public_schema=public_payable_target_schema(public_schema,raw)
+            from .target_cardinality import public_target_count_schema
+            public_schema = public_target_count_schema(public_schema, raw)
             projected["target_schema"] = public_schema
             from .targeted_costs import public_target_costs
             prices=public_target_costs(host,seat,raw)

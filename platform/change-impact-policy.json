@@ -6183,6 +6183,39 @@
         "test_fixed_damage_source_lki",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "mana-announced-target-cardinality-contract",
+      "patterns": [
+        "quorune/target_cardinality.py",
+        "quorune/activation_x.py",
+        "quorune/compiler/announced_target_sets.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/rules/fixed_homogeneous_target_set_capability_shapes.py",
+        "quorune/semantic_runtime/fixed_target_set_handlers.py",
+        "quorune/rules/casting/target_cardinality.py",
+        "quorune/rules/casting/targeted_costs.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/activation/proposal.py",
+        "quorune/card_programs/binding.py",
+        "tests/test_announced_target_cardinality.py",
+        "web/src/choices.ts",
+        "web/unit/choices.test.ts",
+        "tests/fixtures/announced-target-cardinality-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_target_cardinality",
+        "test_fixed_homogeneous_target_sets",
+        "test_announced_activation_x",
+        "test_declared_effect_amounts",
+        "test_targeted_spell_costs",
+        "test_fixed_effect_clause_sequences",
+        "test_targeting_v070",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

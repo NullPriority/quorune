@@ -517,7 +517,9 @@ Offers advertise the numeric choice, and acceptance rechecks the chosen price.
 The canonical `StackItem.x_value` retains each activation's independent value
 through source departure, save/load and replay; existing result owners consume
 it. Non-X descriptors and records preserve the field's historical absence.
-Text-defined or restricted X, variable target domains and nonordinary or
+The typed target-cardinality owner also binds homogeneous exact or up-to X
+targets before shared target legality, retaining the same X on the stack.
+Text-defined or restricted X, unrepresented target roles and nonordinary or
 nonmana X costs remain outside this boundary. Activated-ability copying has
 no represented owner and gains no execution path here.
 

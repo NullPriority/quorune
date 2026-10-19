@@ -149,6 +149,7 @@ from .fixed_effect_clause_shapes import (
 )
 from .fixed_homogeneous_target_set_capability_shapes import (
     fixed_homogeneous_target_set_node_capabilities,
+    announced_target_set_node_capabilities,
 )
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
@@ -295,6 +296,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
     'commander-learn': ('keyword_action.learn.commander',),
@@ -1117,6 +1119,7 @@ def _targeted_effect_capabilities(
         fixed_counter_placement_set_node_capabilities,
         fixed_counter_placement_target_set_node_capabilities,
         fixed_homogeneous_target_set_node_capabilities,
+        announced_target_set_node_capabilities,
         fixed_player_counter_placement_node_capabilities,
         optional_fixed_counter_event_trigger_node_capabilities,
         fixed_target_characteristics_node_capabilities, temporary_target_interaction_node_capabilities,

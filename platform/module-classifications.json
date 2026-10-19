@@ -1822,6 +1822,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/announced_target_sets.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/as_unblocked_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10390,6 +10405,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/casting/target_cardinality.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/casting/targeted_costs.py",
       "layer": "rules",
       "owning_subsystem": "casting_activation_and_costs",
@@ -15713,6 +15742,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/target_cardinality.py",
+      "layer": "domain",
+      "owning_subsystem": "targeting",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/target_characteristics.py",
       "layer": "rules",
       "owning_subsystem": "targeting",
@@ -16585,5 +16626,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4a28949a12030a3643b0fd1174406e97d4da5a95fcfe7d3a797e2f8bdb488623"
+  "fingerprint": "af36b9de4e9de427f3e784ea362e82560e46160704f4eadc97f800356689c36e"
 }

@@ -56,7 +56,7 @@ class AnnouncedActivationXCompilerTests(unittest.TestCase):
                 '{X}: This creature deals X damage to each creature and each player. Spend only black mana on X.',
                 '{X}{G}: This creature gets +X/+X until end of turn. X can\'t be 0.',
                 '{X}, {T}: Put a +1/+1 counter on target creature with power X.',
-                '{X}: Tap X target creatures.'):
+                '{X}: Tap X target creatures and X target lands.'):
             with self.subTest(text=text):
                 ir=compile_oracle_card(record(text,'Creature'),capability_registry=registry,capability_profile='commander_review')
                 self.assertNotEqual('exact',ir.status)

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3054b09fbe184bb47c1b2d94cd5db9db101b59b9be8870574e0d94b12ff34c7b",
-  "declaration_source_fingerprint": "8d2432acef707c7a9693056a60409b46a4674202d52742dc52557a0f1bd5dbe8",
+  "registry_fingerprint": "21e76119ae0de60c28fbb2d0f29350e8686503481f37999236050e9031b02523",
+  "declaration_source_fingerprint": "3662d84bea9fbcadec010af17bd63966770661107fee53ce94d0d0688be17c61",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -174083,6 +174083,1938 @@
       "applicability_note": "Closed public condition surfaces retain all existing immutable query/history semantics, current controller/type/color, basic supertype distinction, event-time entry incarnation, actual target/cost legality and full issued-decision replay."
     },
     {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_restored_fixed_six_handler_bound_is_killed_by_a_fresh_original_by_force",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_wrong_announced_binding_is_killed_by_a_fresh_original_gridlock",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_zero_only_tax_preview_is_killed_by_a_fresh_original_gridlock",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.AnnouncedTargetCardinalityModelTests.test_clipping_announced_x_to_six_is_killed_by_fresh_count_contract",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_executable_count_rejects_undeclared_and_malformed_parameter_authority",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_tax_preview_excludes_a_target_when_x_and_tax_cannot_be_paid",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_unrepresented_self_exile_sibling_keeps_original_wildest_dreams_residual",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.AnnouncedTargetCardinalityModelTests.test_declared_count_rejects_malformed_values_and_mixed_authority",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_countered_original_gridlock_does_not_tap_or_refund_the_announced_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_by_force_can_destroy_nine_targets_without_a_fixed_six_cap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_activation_binds_nine_targets_through_typed_x_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_candelabra_zero_and_partial_target_departure_keep_paid_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_death_denied_returns_only_chosen_owned_graveyard_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_floodwater_dam_prices_two_mana_x_symbols_but_selects_only_x_lands",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_glimpse_zero_target_scry_keeps_private_pending_choice_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_above_six_targets_adds_each_of_three_tax_sources_once",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_advertises_and_pays_targeted_tax_with_the_same_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_all_chosen_targets_illegal_is_distinct_from_zero_target_cast",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_partial_target_loss_taps_only_the_surviving_incarnation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_original_gridlock_zero_x_casts_without_any_targets_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_count_keeps_paid_x_above_eligible_count_and_allows_zero_selected",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_up_to_tax_preview_keeps_zero_targets_and_paid_x_without_offering_an_unpayable_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_zero_selected_targets_resolves_independent_draw_but_all_illegal_targets_do_not",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
       "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_current_effective_characteristics_govern_offer_command_and_resolution",
@@ -229440,5 +231372,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "3647e29766c997725f7f87e6d55f078bc62087531d6eff048bb6b16491aacd41"
+  "fingerprint": "6b6148a65d57ffa9b2205293fa3dac7ca226497a47de8427d80f34c70dfd8c01"
 }
