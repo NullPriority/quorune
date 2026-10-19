@@ -23,6 +23,7 @@ from scripts.harvest_outcome_history import (
     HarvestOutcomeHistoryError,
     build_harvest_outcome_history,
     validated_semantic_transition_declaration,
+    validate_semantic_transition_source_identity,
 )
 
 
@@ -223,6 +224,13 @@ def main() -> int:
             if validated["compiler_version"] != ORACLE_COMPILER_VERSION:
                 raise HarvestOutcomeHistoryError(
                     "Semantic transition compiler version does not match the source compiler"
+                )
+            history_path = ROOT / "coverage" / "harvest-outcome-history.json"
+            if history_path.is_file():
+                validate_semantic_transition_source_identity(
+                    declaration,
+                    json.loads(history_path.read_text(encoding="utf-8")),
+                    repository=ROOT,
                 )
         return 0
     harvest_history = build_harvest_outcome_history(

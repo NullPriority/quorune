@@ -6660,7 +6660,7 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v461-multiplayer-departure-completion",
+      "transition_id": "oracle-ir-v461-cost-payment-departure-priority",
       "compiler_version": "oracle-ir-v461",
       "bundle_id": null,
       "candidate_ids": [],
