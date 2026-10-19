@@ -6975,20 +6975,21 @@ class CommanderEngine(
                     if card.zone == "stack":
                         self.state.stack = [item for item in self.state.stack if item.card_object_id != card.object_id]
                         card.zone = "outside"
-                    elif hidden_identity:
-                        # A player leaving is not a reveal instruction. Preserve
-                        # object identity authoritatively while retaining only
-                        # knowledge that existed before the player left.
+                    elif hidden_identity or not self.active_seats:
+                        # Outside is not a zone (CR 400.11). Final departure
+                        # cannot request a replacement choice with no players.
                         self._remove_from_zone(card)
                         self._reset_zone_change(card, "outside")
                         card.zone = "outside"
-                        card.annotations["hidden_after_owner_left"] = True
-                        card.known_to = sorted(set(card.known_to).union({card.owner}))
-                        card.revealed_to = [
-                            viewer
-                            for viewer in card.revealed_to
-                            if viewer in card.known_to
-                        ]
+                        if hidden_identity:
+                            # Leaving is not a reveal instruction.
+                            card.annotations["hidden_after_owner_left"] = True
+                            card.known_to = sorted(set(card.known_to).union({card.owner}))
+                            card.revealed_to = [
+                                viewer
+                                for viewer in card.revealed_to
+                                if viewer in card.known_to
+                            ]
                     else:
                         ZoneTransitionOwner(self).move_card(card.object_id, "outside", reason="owner left game", log=False, defer_control_sync=True)
             control_effects.end_player_control_effects(self.state, seat)

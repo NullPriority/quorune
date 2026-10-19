@@ -425,6 +425,14 @@ round (CR 118.3b and 800.4a). A surviving actor retains the current priority
 epoch so reversible mana activations remain in the same window. Pending
 stabilization choices and game completion prevent priority restoration.
 
+When every remaining player loses simultaneously, final departure removes the
+last player's owned objects without requesting ordinary zone replacement or
+APNAP choices: outside the game is not a zone (CR 104.4a and 400.11). The
+existing replacement-aware removal path remains in use while any player
+survives. Public knowledge and previously hidden identity retain their existing
+boundaries, and the replacement snapshot model still requires a nonempty APNAP
+order for ordinary transitions.
+
 ## Casting, activation, and action offers
 
 `rules/action_catalog.py` composes executable offers from the same pure casting

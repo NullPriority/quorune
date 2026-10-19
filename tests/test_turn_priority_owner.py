@@ -356,6 +356,8 @@ class CostPaymentDeparturePriorityTests(unittest.TestCase):
             ("Generic Full Life Mana", "Artifact", "Pay 40 life: Add {B}."),
             ("Generic Full Life Land", "Land",
              "As this land enters, you may pay 2 life. If you don't, it enters tapped."),
+            ("Generic Simultaneous Loss", "Instant",
+             "Generic Simultaneous Loss deals 2 damage to each player."),
         ]):
             cards.append({"oracle_id": f"00000000-0000-4000-8000-{7290+index:012d}",
                 "name": name, "mana_cost": "{1}", "cmc": 1, "type_line": type_line,
@@ -529,6 +531,94 @@ class CostPaymentDeparturePriorityTests(unittest.TestCase):
         self.assertTrue(session.state.game_over)
         owner.retain_priority_after_action("D")
         self.assertIsNone(session.state.priority_player)
+
+    def test_actual_all_player_loss_removes_owned_objects_and_records_draw_without_apnap(self):
+        import json
+        session = self.session(729007)
+        source = self.add(session.engine, "Generic Simultaneous Loss", zone="hand")
+        bodies = [self.add(session.engine, "Generic Bound Body", seat=seat, ref="draw-body-"+seat)
+            for seat in "ABCD"]
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        for player in session.state.players.values():
+            player.life = 2
+        self.prepare(session)
+        action = self.action(session, source)
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.game_over)
+        self.assertTrue(session.state.draw)
+        self.assertIsNone(session.state.winner)
+        self.assertIsNone(session.state.priority_player)
+        self.assertFalse(session.state.stack)
+        self.assertEqual(set("ABCD"), set(session.state.eliminated_players))
+        self.assertTrue(all(not p.in_game and p.life == 0 for p in session.state.players.values()))
+        self.assertTrue(all(card.zone == "outside" for card in session.state.cards.values()))
+        self.assertTrue(session.state.cards[private.object_id].annotations["hidden_after_owner_left"])
+        self.assertNotIn("hidden_after_owner_left", session.state.cards[bodies[-1].object_id].annotations)
+        self.assertEqual(set("ABCD"), set(session.state.cards[bodies[-1].object_id].known_to))
+        for viewer in "ABD":
+            self.assertNotIn(private.ref, json.dumps(session.packet("pilot:"+viewer, full=True)))
+        self.replay(session, load=True)
+
+    def test_final_departure_ordinary_zone_routing_mutant_is_killed(self):
+        from unittest.mock import patch
+        from quorune.zone_transitions import ZoneTransitionOwner
+        original = ZoneTransitionOwner.remove_from_zone
+
+        def route_final_public_removal(owner, card):
+            if not owner.host.active_seats and card.zone in {"battlefield", "command", "exile", "graveyard"}:
+                owner.move_card(card.object_id, "outside", log=False)
+            else:
+                original(owner, card)
+
+        with patch.object(ZoneTransitionOwner, "remove_from_zone", new=route_final_public_removal):
+            method = "test_actual_all_player_loss_removes_owned_objects_and_records_draw_without_apnap"
+            with self.assertRaisesRegex(AssertionError, "complete APNAP order"):
+                getattr(type(self)(method), method)()
+
+    def test_ordinary_zone_snapshot_still_rejects_an_empty_apnap_order(self):
+        from dataclasses import replace
+        from quorune.semantic_runtime.zone_replacements import capture_zone_change_replacement_snapshot
+        from quorune.semantic_runtime.zone_replacement_model import ZoneReplacementError
+        session = self.session(729009)
+        body = self.add(session.engine, "Generic Bound Body")
+        self.prepare(session)
+        before = authoritative_state_hash(session.state)
+        snapshot = capture_zone_change_replacement_snapshot(session.engine, [(body.object_id, "graveyard")])
+        self.assertEqual(tuple("ABCD"), snapshot.apnap_order)
+        with self.assertRaisesRegex(ZoneReplacementError, "complete APNAP order"):
+            replace(snapshot, apnap_order=())
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_simultaneous_loss_with_survivors_retains_ordinary_departure_and_priority(self):
+        import json
+        session = self.session(729008)
+        source = self.add(session.engine, "Generic Simultaneous Loss", zone="hand")
+        departed = self.add(session.engine, "Generic Bound Body", seat="D", ref="departed-last-seat")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        for seat, player in session.state.players.items():
+            player.life = 2 if seat in "AD" else 3
+        self.prepare(session)
+        action = self.action(session, source)
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(session.state.game_over)
+        self.assertEqual({"B", "C"}, set(session.engine.active_seats))
+        self.assertEqual("B", session.state.priority_player)
+        self.assertEqual(1, session.state.players["B"].life)
+        self.assertEqual(1, session.state.players["C"].life)
+        self.assertEqual("outside", session.state.cards[departed.object_id].zone)
+        self.assertTrue(session.act("pilot:B", {"action_id": "pass"}).ok)
+        for viewer in "ABD":
+            self.assertNotIn(private.ref, json.dumps(session.packet("pilot:"+viewer, full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet("pilot:C", full=True)))
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":
