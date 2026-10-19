@@ -369,6 +369,7 @@
       "test_regeneration_rules",
       "test_repeatable_object_action_triggers",
       "test_scalar_effect_amounts",
+      "test_scalar_mill_wording",
       "test_source_counter_amounts",
       "test_source_pronoun_results",
       "test_split_second_rules",

@@ -1017,7 +1017,9 @@
         "test_public_state_event_counter_actions",
         "test_public_state_graveyard_arrival_actions",
         "test_public_state_optional_result_actions",
-        "test_public_state_predefined_token_actions"
+        "test_public_state_predefined_token_actions",
+        "test_scalar_mill_wording",
+        "test_soulbond"
       ]
     },
     {
@@ -1713,7 +1715,9 @@
         "test_public_query_action_registration",
         "test_public_query_effect_amounts",
         "test_token_creation_replacements",
-        "test_typed_query_self_characteristics"
+        "test_typed_query_self_characteristics",
+        "test_scalar_mill_wording",
+        "test_soulbond"
       ],
       "test_suites": [
         "events-replacement-zone"
@@ -1867,7 +1871,9 @@
         "test_card_program_trust",
         "test_closed_effect_programs",
         "test_bound_effect_programs",
-        "test_zone_trigger_events"
+        "test_zone_trigger_events",
+        "test_scalar_mill_wording",
+        "test_soulbond"
       ],
       "test_suites": [
         "targets-choices-continuations",
@@ -2807,7 +2813,9 @@
         "test_scalar_effect_amounts",
         "test_declared_effect_amounts",
         "test_card_program_trust",
-        "test_counter_qualified_zone_events"
+        "test_counter_qualified_zone_events",
+        "test_scalar_mill_wording",
+        "test_soulbond"
       ]
     },
     {
@@ -4374,7 +4382,9 @@
         "test_surveil_rules",
         "test_fixed_counter_event_triggers",
         "test_card_program_trust",
-        "test_game_record_v3"
+        "test_game_record_v3",
+        "test_scalar_mill_wording",
+        "test_soulbond"
       ]
     },
     {
@@ -5820,7 +5830,8 @@
         "test_fixed_query_quoted_ability_grants",
         "test_graft_rules",
         "test_conditional_copy_values",
-        "test_activating_abilities_rules"
+        "test_activating_abilities_rules",
+        "test_scalar_mill_wording"
       ]
     },
     {
@@ -5883,6 +5894,21 @@
         "test_batch_interaction_recovery",
         "test_high_risk_interaction_assurance",
         "test_devour"
+      ]
+    },
+    {
+      "id": "scalar-mill-wording-and-locked-result-contract",
+      "patterns": [
+        "tests/test_scalar_mill_wording.py",
+        "tests/fixtures/scalar-mill-wording-cards.json"
+      ],
+      "test_modules": [
+        "test_scalar_mill_wording",
+        "test_scalar_effect_amounts",
+        "test_declared_effect_amounts",
+        "test_soulbond",
+        "test_mill_rules",
+        "test_high_risk_interaction_assurance"
       ]
     }
   ],

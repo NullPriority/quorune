@@ -66,6 +66,10 @@ def declared_effect_amount_template(
     if type(cast_x_available) is not bool or type(forbid_public_x) is not bool:
         return None
     normalized = text.strip()
+    mill = re.fullmatch(r'(?P<head>(?:(?:you|target player|target opponent|each player|each opponent) )?mills?) '
+        r'cards equal to (?P<quantity>[^.]+?)\.?', normalized, re.I)
+    if mill is not None:
+        normalized = f"{mill['head']} X cards, where X is {mill['quantity']}."
     library_definition = _LIBRARY_DEFINITION.fullmatch(normalized)
     definition = library_definition or _DEFINITION.fullmatch(normalized)
     quantity = None

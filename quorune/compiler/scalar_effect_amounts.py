@@ -104,6 +104,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         quantity = match["quantity"].rstrip(".")
         multiplier = 2 if match["twice"] else 1
         body = re.sub(r"\bdraw cards X\b", "Draw X cards", body, flags=re.I)
+        body = re.sub(r"\b(mills?) cards X\b", r"\1 X cards", body, flags=re.I)
         body = re.sub(r"\b(deals?) damage X\b", r"\1 X damage", body, flags=re.I)
         body = re.sub(r"\b(gain|gains|lose|loses) life X\b", r"\1 X life", body, flags=re.I)
     def canonical_fixed(text):

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 384,
+  "registry_version": 385,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11606,7 +11606,7 @@
     },
     {
       "id": "quantity_expression.scalar_effect_amount",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "107.1b",
         "107.2",
@@ -11628,7 +11628,8 @@
           "complete source-spanned result instruction",
           "explicit source, singleton direct target, normalized zone-event object, committed event amount, or public-history origin",
           "same logical incarnation and expected public zone",
-          "existing fixed result and target shapes"
+          "existing fixed result and target shapes",
+          "mandatory mill equal-to or explicit-X wording retaining the locked result subject"
         ],
         "outputs": [
           "resolution-time current information or immediate departure LKI",
@@ -11653,6 +11654,8 @@
         "quorune.semantic_runtime.values.resolve_semantic_value"
       ],
       "positive_tests": [
+        "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+        "test_complete_equal_to_source_mill_matches_explicit_definition_and_spans",
         "test_current_then_immediate_departure_lki_never_reads_new_incarnation",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_referenced_and_sealed_quantities_lower_through_existing_results",
@@ -11668,32 +11671,41 @@
         "test_own_phased_reference_remains_explicitly_unavailable",
         "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
         "test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
+        "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
         "test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins"
       ],
       "interaction_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
         "test_actual_live_counter_changes_are_read_at_resolution_then_blink_uses_lki",
         "test_actual_maga_entry_and_pending_target_read_replaced_current_count",
+        "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_committed_event_amount_is_not_current_life_or_damage_request",
         "test_declaration_freezes_once_but_independent_reads_remain_live",
         "test_departure_pin_does_not_read_or_cache_unrelated_references",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
+        "test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
         "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays"
       ],
       "multiplayer_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
+        "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "privacy_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
+        "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "replay_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
+        "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_actual_sacrifice_cost_preserves_original_counter_count",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
+        "test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
         "test_trusted_scalar_actions_controller_privacy_and_replay",
         "test_trusted_scalar_source_departure_reentry_and_replay",
         "test_unrelated_phased_scalar_preserves_actual_group_blink_and_replay",
@@ -11710,40 +11722,122 @@
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "No unconditional result owner exists for the primitive; emitted nodes retain every target, characteristic, event, history and actual result dependency.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation.",
+      "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "quantity_expression.declared_effect_amount",
-      "version": 2,
-      "official_rules": ["107.3a", "107.3b", "601.2b", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Bind a signed ordinary announced spell-cost X or one explicitly scoped public X definition to closed numeric result slots without changing the existing target, payment, or result owners.",
-        "inputs": ["one source-spanned instruction", "ordinary printed spell mana cost with one or more X symbols, or one complete public object-count definition", "canonical persisted stack X and locked controller", "explicit declaration identity scoped by its Oracle node", "invariant existing fixed operation, target schema, and dependency shapes"],
-        "outputs": ["unchanged canonical cost choice and payment", "signed typed resolution amount", "one public definition value retained across sibling results and replacement resumption", "zero, copy-controller, and principal-correct behavior", "separate values for independent declaration scopes"],
-        "exclusions": ["undefined X, X-dependent target domains, and X-dependent target cardinalities", "variable activation costs, source or linked characteristics, arithmetic, division, and unrepresented quantities", "cost X defined by Oracle rather than announced through the supported cost owner", "hybrid, Phyrexian, snow, restricted, and otherwise nonordinary X mana costs", "nested declaration programs or independently unsupported effects, qualifications, and siblings"]
+        "inputs": [
+          "one source-spanned instruction",
+          "ordinary printed spell mana cost with one or more X symbols, or one complete public object-count definition",
+          "canonical persisted stack X and locked controller",
+          "explicit declaration identity scoped by its Oracle node",
+          "invariant existing fixed operation, target schema, and dependency shapes",
+          "mandatory mill equal-to wording normalized to one existing public count definition"
+        ],
+        "outputs": [
+          "unchanged canonical cost choice and payment",
+          "signed typed resolution amount",
+          "one public definition value retained across sibling results and replacement resumption",
+          "zero, copy-controller, and principal-correct behavior",
+          "separate values for independent declaration scopes"
+        ],
+        "exclusions": [
+          "undefined X, X-dependent target domains, and X-dependent target cardinalities",
+          "variable activation costs, source or linked characteristics, arithmetic, division, and unrepresented quantities",
+          "cost X defined by Oracle rather than announced through the supported cost owner",
+          "hybrid, Phyrexian, snow, restricted, and otherwise nonordinary X mana costs",
+          "nested declaration programs or independently unsupported effects, qualifications, and siblings"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.declared_effect_amounts.declared_effect_amount_template", "quorune.compiler.declared_effect_amounts.declared_amount_shape_context", "quorune.compiler.effect_template_composition.reviewed_effect_template_composition", "quorune.compiler.program_generation._is_closed_declared_amount_program", "quorune.query_effect_amount_model.CastXAmountSpec", "quorune.query_effect_amount_model.PublicQueryAmountSpec", "quorune.query_effect_amount_model.scope_declared_amount_bindings", "quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount", "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount", "quorune.semantic_runtime.values.resolve_semantic_value"],
-      "positive_tests": ["test_announced_spell_x_uses_existing_result_families", "test_public_definition_can_bind_multiple_result_slots", "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure", "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays"],
-      "negative_tests": ["test_undefined_x_dynamic_targets_and_open_definitions_remain_residual", "test_amount_versions_and_cast_values_reject_malformed_inputs", "test_declaration_source_scopes_and_cache_signatures_cannot_alias", "test_declared_amount_capability_and_result_dependencies_cannot_be_omitted", "test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned", "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure"],
-      "interaction_tests": ["test_explicit_public_binding_is_frozen_and_independent_expressions_are_not", "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays"],
-      "multiplayer_tests": ["test_real_announced_x_offer_payment_rollback_privacy_and_replay", "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"],
-      "privacy_tests": ["test_real_announced_x_offer_payment_rollback_privacy_and_replay", "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"],
-      "replay_tests": ["test_real_announced_x_offer_payment_rollback_privacy_and_replay", "test_real_public_definition_is_frozen_before_draw_and_replays", "test_actual_v233_numeric_result_record_is_explicitly_incompatible_not_reinterpreted", "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay", "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
+        "quorune.compiler.declared_effect_amounts.declared_amount_shape_context",
+        "quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+        "quorune.compiler.program_generation._is_closed_declared_amount_program",
+        "quorune.query_effect_amount_model.CastXAmountSpec",
+        "quorune.query_effect_amount_model.PublicQueryAmountSpec",
+        "quorune.query_effect_amount_model.scope_declared_amount_bindings",
+        "quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount",
+        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+        "quorune.semantic_runtime.values.resolve_semantic_value"
+      ],
+      "positive_tests": [
+        "test_announced_spell_x_uses_existing_result_families",
+        "test_mandatory_public_land_count_uses_existing_quantity_and_preserves_surface",
+        "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
+        "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+        "test_public_definition_can_bind_multiple_result_slots",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response"
+      ],
+      "negative_tests": [
+        "test_amount_versions_and_cast_values_reject_malformed_inputs",
+        "test_declaration_source_scopes_and_cache_signatures_cannot_alias",
+        "test_declared_amount_capability_and_result_dependencies_cannot_be_omitted",
+        "test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned",
+        "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
+        "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+        "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual",
+        "test_unknown_quantity_antecedents_and_material_tails_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_explicit_public_binding_is_frozen_and_independent_expressions_are_not",
+        "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response"
+      ],
+      "multiplayer_tests": [
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+        "test_real_announced_x_offer_payment_rollback_privacy_and_replay",
+        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"
+      ],
+      "privacy_tests": [
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+        "test_real_announced_x_offer_payment_rollback_privacy_and_replay",
+        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_v233_numeric_result_record_is_explicitly_incompatible_not_reinterpreted",
+        "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+        "test_real_announced_x_offer_payment_rollback_privacy_and_replay",
+        "test_real_public_definition_is_frozen_before_draw_and_replays",
+        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This primitive has no unconditional dependency; each emitted node separately requires its actual cost, query, target, and result owners.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused implementation mutations omit the instruction cache or discard the signed cast coefficient; assertions on repeated public reads and negative cast amounts kill both mutants.",
+      "implementation_mutation_rationale": "Focused implementation mutations omit the instruction cache or discard the signed cast coefficient; assertions on repeated public reads and negative cast amounts kill both mutants. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 10,
+      "version": 11,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -11780,7 +11874,8 @@
           "current layer-5 characteristic query",
           "copy-controller-correct and multiplayer-correct result",
           "current direct-target revalidation and granted-ability applicability",
-          "hidden-identity-free hand count"
+          "hidden-identity-free hand count",
+          "mandatory Mill through the unchanged fixed-subject zone-transition owner"
         ],
         "exclusions": [
           "source-counter, attachment-derived, opponent-relative, source-excluding, ability-presence, combat-state, tapped-state, hidden-identity, and later-layer effect quantities",
@@ -11817,7 +11912,9 @@
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
         "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result"
       ],
       "negative_tests": [
@@ -11825,10 +11922,12 @@
         "test_library_amount_result_capabilities_cannot_be_omitted",
         "test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+        "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
         "test_public_quantity_registration_rejects_malformed_and_missing_dependencies",
         "test_public_query_amount_grammar_and_schema_fail_closed",
         "test_source_scalar_adaptation_consumes_all_fixed_components",
         "test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed",
+        "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
         "test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "interaction_tests": [
@@ -11836,6 +11935,7 @@
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_public_query_amount_compiler_and_resolver_mutants_are_killed",
         "test_public_query_amount_resolver_mutant_is_killed",
         "test_query_amounts_delegate_to_draw_and_token_owners",
@@ -11851,12 +11951,14 @@
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "privacy_tests": [
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
@@ -11866,6 +11968,7 @@
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
@@ -11880,7 +11983,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Every admitted node declares the amount capability in addition to its existing effect and target dependencies; blocking the shared quantity owner leaves the complete CardProgram unresolved before stack execution.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient, subject, controller relation, target revalidation, or layer-5 query; exact compiler, runtime characteristic, copy-controller, multiplayer, projection, cleanup, and replay assertions reject each survivor.",
+      "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient, subject, controller relation, target revalidation, or layer-5 query; exact compiler, runtime characteristic, copy-controller, multiplayer, projection, cleanup, and replay assertions reject each survivor. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer.",
       "blockers": [],
       "status": "trusted"
     },

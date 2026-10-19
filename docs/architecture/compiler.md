@@ -497,8 +497,8 @@ life-total setting, exchanges, and unequal drains remain
 source-spanned residuals.
 
 `compiler/mill_templates.py` owns one mandatory positive fixed-count Mill
-instruction for the controller, one target player, one target opponent, or
-every active player.
+instruction for the controller, one target player, one target opponent, every
+active player, or every active opponent.
 The same grammar is consumed by spell, triggered, and activated contexts and
 feeds one immutable current-library-top plan into the canonical simultaneous
 zone-transition owner. All-player instructions snapshot every affected
@@ -507,7 +507,7 @@ replacement choices and normalized trigger placement. A short library mills as
 many cards as possible; an empty library alone causes no loss from milling.
 destination replacements, actual public results, target revalidation, APNAP
 zone triggers, rollback, privacy, and replay remain shared. Optional and cost
-Mill, dynamic or half-library quantities, opponent groups, linked
+Mill, unrepresented dynamic or half-library quantities, linked
 cards-milled-this-way consumers, and graveyard-order-sensitive interactions
 while CR 404.3 is blocked remain source-spanned residuals or explicit trust
 exclusions.
@@ -2464,7 +2464,11 @@ The existing token compiler still rejects unrepresented abilities and definition
 
 `compiler/declared_effect_amounts.py` binds ordinary announced spell-cost X or
 one complete public count definition to numeric result slots in existing typed
-instructions. Two fixed-value compilations must retain identical operations,
+instructions. Mandatory `mill cards equal to` wording normalizes to the same
+explicit public definition before the existing quantity owner runs. It retains
+the printed player subject and reads one current public count at execution;
+optional mill and unresolved quantities remain residuals.
+Two fixed-value compilations must retain identical operations,
 target schemas, and dependencies; only supported result fields may vary. The
 original fixed template identity is retained for runtime admission. Public
 declarations carry explicit Oracle-node-scoped identities and persist their
@@ -2641,7 +2645,12 @@ granted, and open-arithmetic forms remain source-spanned residuals.
 
 `compiler/scalar_effect_amounts.py` extends the existing numeric result
 projection with complete referenced-characteristic, committed-event, and
-represented current-turn definitions. Its fixed-value differential proof
+represented current-turn definitions. Mandatory `mills cards equal to` and
+explicit-X mill definitions share the same result projection. Source attack
+triggers read the referenced creature's current characteristic, or its immediate
+departure information for the same incarnation, while retaining the locked
+trigger controller and one amount across an opponent batch.
+Its fixed-value differential proof
 retains the operation, target schema, and dependency owner; only result slots
 receive scalar data. Explicit source references, singleton direct battlefield
 targets, and represented zone-event objects remain distinct origins. Ambiguous

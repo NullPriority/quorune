@@ -16680,6 +16680,96 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual admitted Ground Seal removes and atomically rejects graveyard-targeting Raise Dead actions with sufficient mana, while admitted Lantern Bearer can still be cast via Disturb targeting a battlefield creature. Native Unsummon removes that target and the back Aura spell exiles instead of entering its graveyard. Four-seat private draw/projection, foreign rollback, pending load and full replay agree. The named corpus carrier Dennick remains whole-card residual for its independent back-face trigger; no trust is forced."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "piece_ids": [
+        "capability.continuous.soulbond.paired_grant",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.soulbond.paired_grant",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual admitted Imperious Mindbreaker grants its paired Wight an attack trigger with one current toughness amount. First opponent mill changes Wight toughness, but every opponent mills the originally resolved one; controller mills zero. Pending load, private projection, foreign rollback and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
+      "piece_ids": [
+        "capability.pairing.soulbond",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "pairing.soulbond",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real control response ends pairing and changes the referenced Wight toughness from three to one. Its pending A attack trigger survives and mills B/C/D one each, retaining current information and locked trigger control with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.trigger.event.normalized_self_attack"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "trigger.event.normalized_self_attack"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual paired-recipient attack produces one normalized source attack trigger and uses that attacking incarnation for the scalar, with authenticated command rollback and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real Giant Growth then Unsummon responses leave a pending attack trigger whose source departure LKI is six. All opponents mill six while the new hand incarnation has toughness one; pairing has ended, privacy and replay hold."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "piece_ids": [
+        "capability.quantity_expression.declared_effect_amount",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "quantity_expression.declared_effect_amount",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual admitted constructed entrant reads its declared public land count only after a real Zuran Orb sacrifice response. It mills one own card rather than the occurrence-time two; foreign command rollback and pending/full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Mandatory equal-to mill uses the existing current public battlefield quantity and fixed controller subject; a real sacrificed own land reduces count from two to one while three foreign lands remain excluded. Four-seat privacy and replay agree."
     }
   ]
 }

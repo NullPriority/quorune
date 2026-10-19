@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5f1a28599b384a9283bb463a9364971cbb2a62cc524b0b4e8a64c331049c42f6",
-  "declaration_source_fingerprint": "45892457ae60985e99fe7e16b3ea5ecf4fd54631e7f7062a48f34422fb43b34d",
+  "registry_fingerprint": "c55fdb291ef4ace280d4e783874a469c511e302b76c9722376bdd1c43055decb",
+  "declaration_source_fingerprint": "859e1ddcc9b62e9475b2803b79f4a9182995764bf2c7e067cf087211f9b78b51",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -142840,6 +142840,23 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
       "official_rule_ids": [
         "107.3a",
@@ -142874,6 +142891,23 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
       "official_rule_ids": [
         "107.3a",
@@ -142904,6 +142938,23 @@
         "commander_review"
       ],
       "applicability_note": "Executable owner mutations omit declaration persistence or signed cost-X multiplication; semantic assertions kill both."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_scalar_and_public_quantity_producer_omissions_are_killed_by_native_witnesses",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted referenced-characteristic and public-count producers before claimed gameplay support."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -142993,6 +143044,40 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Direct equal-to and explicit-X wording preserve fixed controller, player target, and opponent group result shapes over existing public battlefield and graveyard counts. Removing either declared-amount or public-query dependency fails closed."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_unknown_quantity_antecedents_and_material_tails_remain_residual",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Secret or ambiguous quantities, unsupported tails and invalid mill conjugation remain source-spanned material residuals."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
       "official_rule_ids": [
         "107.3a",
@@ -143061,6 +143146,57 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_mandatory_public_land_count_uses_existing_quantity_and_preserves_surface",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete scalar or public-count mill definitions retain original source spans and existing fixed result ownership."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Direct equal-to and explicit-X wording preserve fixed controller, player target, and opponent group result shapes over existing public battlefield and graveyard counts. Removing either declared-amount or public-query dependency fails closed."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
       "official_rule_ids": [
         "107.3a",
@@ -143108,6 +143244,23 @@
         "commander_review"
       ],
       "applicability_note": "The acting player sees newly drawn identities while the other three principal projections do not."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -143176,6 +143329,23 @@
         "commander_review"
       ],
       "applicability_note": "A genuine synthetic command record first replays under archived v233 source, then the current real replay path explicitly rejects superseded exact-runtime provenance without reinterpretation."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -144622,6 +144792,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_pride_and_priest_count_foreign_noncreature_elves",
       "official_rule_ids": [
         "109.2",
@@ -144897,6 +145092,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_pride_and_priest_count_foreign_noncreature_elves",
       "official_rule_ids": [
         "109.2",
@@ -145018,6 +145238,31 @@
         "commander_review"
       ],
       "applicability_note": "TypedBFtapped/untappedquantity usescurrentpublicflag andcyclesafefixedquery. Hiddenhand/GYtapdomain, malformedcodec, withdrawnpublicqueryauthorityandcompileromissionreject; promotedintegrationboundarynowpositive andhistoricalstatecounterexampleretained."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_scalar_and_public_quantity_producer_omissions_are_killed_by_native_witnesses",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted referenced-characteristic and public-count producers before claimed gameplay support."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -145422,6 +145667,56 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Direct equal-to and explicit-X wording preserve fixed controller, player target, and opponent group result shapes over existing public battlefield and graveyard counts. Removing either declared-amount or public-query dependency fails closed."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_unknown_quantity_antecedents_and_material_tails_remain_residual",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Secret or ambiguous quantities, unsupported tails and invalid mill conjugation remain source-spanned material residuals."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
       "official_rule_ids": [
         "109.2",
@@ -145822,6 +146117,56 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Direct equal-to and explicit-X wording preserve fixed controller, player target, and opponent group result shapes over existing public battlefield and graveyard counts. Removing either declared-amount or public-query dependency fails closed."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
       "official_rule_ids": [
         "109.2",
@@ -146068,6 +146413,31 @@
         "commander_review"
       ],
       "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -146347,6 +146717,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "replay",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed mandatory land-count entrant resolves after a real Zuran Orb response sacrifices one of two own lands. Controller mills one, opponents zero; foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_pride_and_priest_count_foreign_noncreature_elves",
       "official_rule_ids": [
         "109.2",
@@ -146502,6 +146897,66 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted Imperious Mindbreaker pairs with Wight of Precinct Six and grants its real attack trigger. One amount is fixed before the first opponent graveyard changes Wight toughness; B/C/D mill one and A mills zero. Foreign command rollback, four-principal private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real control response changes the referenced Wight controller and toughness and ends pairing; the existing A trigger retains its controller while reading current toughness one for the three opponents."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real Giant Growth then Unsummon responses change toughness three to six and return a new hand incarnation with printed toughness one; the pending trigger uses departure LKI six, preserves locked controller, and replays exactly."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -146582,6 +147037,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted Imperious Mindbreaker pairs with Wight of Precinct Six and grants its real attack trigger. One amount is fixed before the first opponent graveyard changes Wight toughness; B/C/D mill one and A mills zero. Foreign command rollback, four-principal private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -146658,6 +147133,26 @@
         "commander_review"
       ],
       "applicability_note": "A mutant that falsely binds an unrelated departure to the future scalar exposes the prohibited phased-reference evaluation."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_scalar_and_public_quantity_producer_omissions_are_killed_by_native_witnesses",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted referenced-characteristic and public-count producers before claimed gameplay support."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -146822,6 +147317,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_unknown_quantity_antecedents_and_material_tails_remain_residual",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Secret or ambiguous quantities, unsupported tails and invalid mill conjugation remain source-spanned material residuals."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_source_counter_amounts.SourceCounterAmountCompilerTests.test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins",
       "official_rule_ids": [
         "107.1b",
@@ -146962,6 +147477,46 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_complete_equal_to_source_mill_matches_explicit_definition_and_spans",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete scalar or public-count mill definitions retain original source spans and existing fixed result ownership."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted Imperious Mindbreaker pairs with Wight of Precinct Six and grants its real attack trigger. One amount is fixed before the first opponent graveyard changes Wight toughness; B/C/D mill one and A mills zero. Foreign command rollback, four-principal private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_source_counter_amounts.SourceCounterAmountCompilerTests.test_source_counter_amounts_preserve_typed_identity_and_span",
       "official_rule_ids": [
         "107.1b",
@@ -147038,6 +147593,26 @@
         "commander_review"
       ],
       "applicability_note": "Each principal receives the ordinary projection, never an authoritative checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted Imperious Mindbreaker pairs with Wight of Precinct Six and grants its real attack trigger. One amount is fixed before the first opponent graveyard changes Wight toughness; B/C/D mill one and A mills zero. Foreign command rollback, four-principal private projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -147178,6 +147753,66 @@
         "commander_review"
       ],
       "applicability_note": "An actual return-to-owner-hand command uses the single-object zone owner successfully from a constructed pre-action checkpoint and reproduces the exact resulting state on load and replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted Imperious Mindbreaker pairs with Wight of Precinct Six and grants its real attack trigger. One amount is fixed before the first opponent graveyard changes Wight toughness; B/C/D mill one and A mills zero. Foreign command rollback, four-principal private projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real control response changes the referenced Wight controller and toughness and ends pairing; the existing A trigger retains its controller while reading current toughness one for the three opponents."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real Giant Growth then Unsummon responses change toughness three to six and return a new hand incarnation with printed toughness one; the pending trigger uses departure LKI six, preserves locked controller, and replays exactly."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -215831,5 +216466,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "aacfe5a2bd0351227a92cbdc0c47c0f8eec2a0d5834c13c4f1fe1c4e3d1a2656"
+  "fingerprint": "0562a2a902f6156f312bba7c065b44264c8750760e171245258658ac55acf681"
 }

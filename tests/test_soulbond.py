@@ -219,7 +219,7 @@ class SoulbondRuntimeTests(unittest.TestCase):
             profile='commander_review')['strict_capability_ready'])
 
     def test_original_soulbond_cards_close_only_with_independent_paired_children(self):
-        boundaries = {'Donna Noble', 'Imperious Mindbreaker', 'Breathkeeper Seraph', 'Mirage Phalanx'}
+        boundaries = {'Donna Noble', 'Breathkeeper Seraph', 'Mirage Phalanx'}
         fixture = json.loads((ROOT/'tests/fixtures/soulbond-cards.json').read_text(encoding='utf-8'))
         semantics = SemanticRegistry()
         for row in fixture['cards']:
