@@ -132,7 +132,8 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         path = Path(cls.temp.name) / 'disturb.sqlite3'
-        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json', FIXTURE], path)
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json', FIXTURE,
+            ROOT / 'tests/fixtures/target-restriction-cards.json'], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Disturb witness', [DeckEntry('Generic Bound Commander', 1, 'commander'),
@@ -542,3 +543,59 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
         self.assertFalse(result.errors)
         self.assertEqual(1, len(result.failures))
         self.assertIn('self.assertNotIn(token_identity', result.failures[0][1])
+
+    def test_graveyard_target_prohibition_allows_disturb_and_preserves_back_exile(self):
+        session = self.session(70214690)
+        engine = session.engine
+        seal = self.add(engine, 'Ground Seal', zone='hand', ref='disturb-ground-seal')
+        source = self.add(engine, "Lantern Bearer // Lanterns' Lift", zone='graveyard', ref='sealed-disturb-source')
+        corpse = self.add(engine, 'Generic Bound Body', zone='graveyard', ref='sealed-graveyard-target')
+        recover = self.add(engine, 'Raise Dead', zone='hand', ref='sealed-targeted-return')
+        target = self.add(engine, 'Generic Bound Body', seat='B', ref='sealed-disturb-aura-target')
+        bounce = self.add(engine, 'Unsummon', seat='B', zone='hand', ref='sealed-disturb-bounce')
+        private = self.add(engine, 'Generic Bound Growth', seat='C', zone='hand', ref='sealed-disturb-private')
+        for card in (seal, source, recover, bounce):
+            self.assert_closed(session, card)
+        # The corpus carrier's separate back-face trigger is still unrepresented.
+        dennick = self.db.lookup('Dennick, Pious Apprentice // Dennick, Pious Apparition')
+        program = compile_best_available_card_program(self.db, dennick, semantic_registry=engine.semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        self.assertFalse(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        engine.state.players['B'].mana_pool['U'] = 1
+        self.prepare(session, mana={'G':4, 'U':4, 'B':4, 'C':10})
+        initial = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        return_offer = next(row for row in initial if row['id'] == 'cast:' + recover.ref)
+        self.assertIn(corpse.ref, return_offer['target_schema']['legal_refs'])
+        self.checkpoint(session)
+        before_hand = set(session.state.players['A'].zones['hand'])
+        self.cast(session, 'A', seal)
+        self.assertIsNone(self.resolve(session))
+        drawn_id, = set(session.state.players['A'].zones['hand']) - before_hand
+        self.assertEqual('battlefield', session.state.cards[seal.object_id].zone)
+        self.assertGreaterEqual(session.state.players['A'].mana_pool['B'], 1)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'] == 'cast:' + recover.ref for row in actions))
+        self.reject(session, return_offer['id'], targets=[corpse.ref], pay='auto')
+        back = "Lanterns' Lift"
+        action_id = f'cast:{source.ref}:face:{back}'
+        offered = next(row for row in actions if row['id'] == action_id)
+        self.assertIn(target.ref, offered['target_schema']['legal_refs'])
+        self.assertNotIn(corpse.ref, offered['target_schema']['legal_refs'])
+        self.reject(session, action_id, 'D', face=back, cost_option='disturb', targets=[target.ref], pay='auto')
+        self.disturb(session, source, [target.ref])
+        session = self.replay(session, load=True)
+        self.cast(session, 'B', bounce, [session.state.cards[target.object_id].ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(('exile', None, None), (current.zone, current.active_face, current.attached_to))
+        self.assertEqual('hand', session.state.cards[target.object_id].zone)
+        self.assertEqual('graveyard', session.state.cards[corpse.object_id].zone)
+        self.assertEqual('hand', session.state.cards[recover.object_id].zone)
+        for viewer in 'BCD':
+            packet = json.dumps(session.packet('pilot:' + viewer, full=True))
+            self.assertNotIn(session.state.cards[drawn_id].ref, packet)
+            if viewer != 'C':
+                self.assertNotIn(private.ref, packet)
+        self.replay(session, load=True)

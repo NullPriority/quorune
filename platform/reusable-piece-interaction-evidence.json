@@ -16665,6 +16665,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Shielding Plax enchants an opponent creature, privately draws for its Aura controller, permits that controller own spell and ability, and denies the protected creature controller spell and ability. Canopy Cover is the parallel no-draw control. Four-seat projection, unauthorized rollback and full pre-cast replay retain each subject."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_graveyard_target_prohibition_allows_disturb_and_preserves_back_exile",
+      "piece_ids": [
+        "capability.target.prohibition.fixed_source_quality",
+        "capability.zone.change.self_graveyard_exile"
+      ],
+      "capability_ids": [
+        "target.prohibition.fixed_source_quality",
+        "zone.change.self_graveyard_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual admitted Ground Seal removes and atomically rejects graveyard-targeting Raise Dead actions with sufficient mana, while admitted Lantern Bearer can still be cast via Disturb targeting a battlefield creature. Native Unsummon removes that target and the back Aura spell exiles instead of entering its graveyard. Four-seat private draw/projection, foreign rollback, pending load and full replay agree. The named corpus carrier Dennick remains whole-card residual for its independent back-face trigger; no trust is forced."
     }
   ]
 }
