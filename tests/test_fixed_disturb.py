@@ -536,13 +536,11 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
             values.pop(COPIABLE_FACE_FIELD, None)
             return values
 
-        result = unittest.TestResult()
-        witness = type(self)('test_actual_token_back_copy_exiles_instead_of_dying')
         with mock.patch.object(engine_module, 'copiable_card_characteristics', omitted):
-            witness.run(result)
-        self.assertFalse(result.errors)
-        self.assertEqual(1, len(result.failures))
-        self.assertIn('self.assertNotIn(token_identity', result.failures[0][1])
+            # Provenance loss now fails the canonical prepared-move guard
+            # before a wrong graveyard transition can commit.
+            with self.assertRaisesRegex(AssertionError, 'Prepared zone replacement does not match the proposed move'):
+                type(self)('test_actual_token_back_copy_exiles_instead_of_dying').test_actual_token_back_copy_exiles_instead_of_dying()
 
     def test_graveyard_target_prohibition_allows_disturb_and_preserves_back_exile(self):
         session = self.session(70214690)

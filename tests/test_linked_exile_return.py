@@ -138,7 +138,12 @@ class LinkedExileReturnRuntimeContractTests(unittest.TestCase):
 
     def test_return_keyword_uses_new_identity_and_cleanup_expiration(self):
         from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
+        from quorune.model import GameState
         host,card,_=self.host()
+        host.state=GameState(game_id='linked-return-contract',config=GameConfig(seed=1),players={},
+            cards=host.state.cards,deck_names={},commander_oracle_ids={},turn_order=list(host.active_seats),
+            current_turn=None,last_normal_turn_player=None,stack=host.state.stack,turn_sequence=1,event_sequence=1)
+        host._effective_card_data=lambda current:{'prohibited_keywords':()}
         card.zone="exile";card.logical_object_id="exile@2"
         host.state.continuous_effects=[]
         host._next_ref=lambda prefix:prefix+"1"
@@ -150,6 +155,8 @@ class LinkedExileReturnRuntimeContractTests(unittest.TestCase):
         with patch("quorune.linked_exile_return.ZoneTransitionOwner.move_cards_simultaneously",move):
             self.assertEqual([card.ref],return_linked_exiled_objects(host,effect,actor="A",operation=effect["op"],reason="fixture"))
         self.assertEqual("returned@3",host.state.continuous_effects[0].locked_objects[0].logical_object_id)
+        self.assertEqual('add_ability',host.state.continuous_effects[0].operations[0].op)
+        self.assertEqual('First Strike',host.state.continuous_effects[0].operations[0].value)
         self.assertEqual(1,expire_end_of_turn_continuous_effects(host.state))
         self.assertEqual([],host.state.continuous_effects)
 

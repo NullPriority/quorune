@@ -289,7 +289,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
 
     def test_typed_activation_restriction_tails_preserve_full_source_spans(self):
         expected = {
-            "Foggy Swamp Vinebender": False,
+            "Foggy Swamp Vinebender": True,
             "Invigorating Hot Spring": True,
             "Licia, Sanguine Tribune": True,
             "Tetzimoc, Primal Death": False,
@@ -315,6 +315,9 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                     )
                 )
                 self.assertIs(exact, node.exact)
+                if name == 'Foggy Swamp Vinebender':
+                    self.assertIn('cost.waterbend.fixed', node.capability_dependencies)
+                    self.assertEqual({'schema_version':1, 'kind':'waterbend', 'generic':5}, node.cost['waterbend'])
                 self.assertEqual(
                     node.text,
                     record.oracle_text[node.span.start : node.span.end],

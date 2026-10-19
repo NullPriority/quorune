@@ -2173,6 +2173,7 @@
         "tests/fixtures/self-spell-cost-reduction-cards.json"
       ],
       "test_modules": [
+        "test_bestow_rules",
         "test_card_program_trust",
         "test_fixed_spell_cost_reductions",
         "test_rules_scheduler"
@@ -2214,6 +2215,7 @@
         "tests/fixtures/fixed-casting-surface-cards.json"
       ],
       "test_modules": [
+        "test_bestow_rules",
         "test_card_program_trust",
         "test_exact_mishra_closure",
         "test_fixed_casting_surface",
@@ -2437,16 +2439,18 @@
         "quorune/zone_object_state.py"
       ],
       "test_modules": [
-        "test_copy_objects",
         "test_aura_targeting_entry",
-        "test_entry_designations",
-        "test_copied_self_entry_counters",
-        "test_persist_undying_rules",
-        "test_fixed_token_creation_effects",
         "test_card_program_trust",
-        "test_game_record_v3",
         "test_cascade_rules",
-        "test_hexproof_targeting"
+        "test_copiable_entry_ability_grants",
+        "test_copied_self_entry_counters",
+        "test_copy_objects",
+        "test_entry_designations",
+        "test_fixed_disturb",
+        "test_fixed_token_creation_effects",
+        "test_game_record_v3",
+        "test_hexproof_targeting",
+        "test_persist_undying_rules"
       ]
     },
     {
@@ -4849,10 +4853,11 @@
         "tests/test_fixed_copy_type_exceptions.py"
       ],
       "test_modules": [
+        "test_card_program_trust",
+        "test_copiable_entry_ability_grants",
         "test_copy_objects",
         "test_fixed_copy_type_exceptions",
-        "test_paid_entry_copy",
-        "test_card_program_trust"
+        "test_paid_entry_copy"
       ]
     },
     {
@@ -5229,12 +5234,13 @@
         "tests/test_opponent_keyword_prohibition.py"
       ],
       "test_modules": [
-        "test_opponent_keyword_prohibition",
-        "test_continuous_effect_duration",
-        "test_fixed_query_keyword_grants",
-        "test_continuous_effect_components",
         "test_card_program_trust",
-        "test_entry_keyword_counter_choices"
+        "test_continuous_effect_components",
+        "test_continuous_effect_duration",
+        "test_entry_keyword_counter_choices",
+        "test_fixed_query_keyword_grants",
+        "test_linked_exile_return",
+        "test_opponent_keyword_prohibition"
       ]
     },
     {
@@ -5341,6 +5347,7 @@
         "tests/test_conditional_flash.py"
       ],
       "test_modules": [
+        "test_bestow_rules",
         "test_card_program_trust",
         "test_conditional_flash",
         "test_fixed_mana_abilities",
@@ -5383,13 +5390,14 @@
         "tests/fixtures/fixed-self-cost-surface-cards.json"
       ],
       "test_modules": [
+        "test_bestow_rules",
+        "test_card_program_trust",
+        "test_conditional_flash",
         "test_fixed_self_cost_surfaces",
         "test_fixed_spell_cost_reductions",
-        "test_public_state_condition_compiler",
-        "test_public_state_condition_runtime",
-        "test_conditional_flash",
         "test_nonmana_morph",
-        "test_card_program_trust"
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime"
       ]
     },
     {
@@ -5550,16 +5558,17 @@
         "tests/fixtures/waterbend-cards.json"
       ],
       "test_modules": [
-        "test_waterbend",
-        "test_fixed_tap_additional_costs",
-        "test_fixed_reveal_additional_costs",
-        "test_casting_payment_keywords",
-        "test_fixed_mana_abilities",
         "test_activated_abilities",
-        "test_typed_activated_ability_catalog",
-        "test_oracle_ir",
         "test_card_program_trust",
-        "test_choice_forms"
+        "test_casting_payment_keywords",
+        "test_choice_forms",
+        "test_fixed_counter_placement_effects",
+        "test_fixed_mana_abilities",
+        "test_fixed_reveal_additional_costs",
+        "test_fixed_tap_additional_costs",
+        "test_oracle_ir",
+        "test_typed_activated_ability_catalog",
+        "test_waterbend"
       ]
     },
     {
@@ -5660,16 +5669,17 @@
         "quorune/granted_activation_model.py"
       ],
       "test_modules": [
-        "test_entry_copy_values",
-        "test_copy_objects",
-        "test_copiable_entry_ability_grants",
-        "test_fixed_copy_type_exceptions",
-        "test_ordinary_crew",
-        "test_prototype_rules",
-        "test_card_program_trust",
-        "test_preparation",
         "test_attack_counter_triggers",
-        "test_fixed_combat_entry_keyword_lifecycles"
+        "test_card_program_trust",
+        "test_copiable_entry_ability_grants",
+        "test_copy_objects",
+        "test_entry_copy_values",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_copy_type_exceptions",
+        "test_fixed_disturb",
+        "test_ordinary_crew",
+        "test_preparation",
+        "test_prototype_rules"
       ]
     },
     {
@@ -5684,13 +5694,14 @@
         "tests/fixtures/entry-copy-predicate-cards.json"
       ],
       "test_modules": [
+        "test_card_program_trust",
+        "test_copiable_entry_ability_grants",
+        "test_copy_objects",
         "test_entry_copy_predicates",
         "test_entry_copy_values",
-        "test_copy_objects",
-        "test_turn_history_rules",
-        "test_card_program_trust",
+        "test_history_entry_counters",
         "test_record_lifecycle_v060",
-        "test_history_entry_counters"
+        "test_turn_history_rules"
       ]
     },
     {
@@ -5721,12 +5732,13 @@
         "quorune/replacement/application.py"
       ],
       "test_modules": [
-        "test_nested_entry_copy",
-        "test_copy_objects",
         "test_conditional_copy_values",
+        "test_copiable_entry_ability_grants",
         "test_copied_self_entry_counters",
-        "test_replacement_model_hardening",
-        "test_replacement_event_ordering"
+        "test_copy_objects",
+        "test_nested_entry_copy",
+        "test_replacement_event_ordering",
+        "test_replacement_model_hardening"
       ]
     },
     {
@@ -5818,10 +5830,11 @@
         "quorune/self_cast_reductions.py"
       ],
       "test_modules": [
-        "test_undaunted",
+        "test_bestow_rules",
+        "test_casting_activation_proposal_equivalence",
         "test_fixed_self_cost_surfaces",
         "test_fixed_spell_cost_reductions",
-        "test_casting_activation_proposal_equivalence"
+        "test_undaunted"
       ]
     },
     {
@@ -5837,6 +5850,22 @@
         "test_resolution_public_conditions",
         "test_public_state_condition_compiler",
         "test_public_state_condition_runtime"
+      ]
+    },
+    {
+      "id": "promoted-entry-choice-and-target-prohibition-consumer-expectations",
+      "patterns": [
+        "quorune/compiler/fixed_self_entry_counter_templates.py",
+        "quorune/compiler/target_restriction_nodes.py",
+        "quorune/choice_forms.py"
+      ],
+      "test_modules": [
+        "test_fixed_keyword_entry_counters",
+        "test_entry_keyword_counter_choices",
+        "test_shroud_targeting",
+        "test_target_restrictions",
+        "test_choice_forms",
+        "test_untap_selection_limits"
       ]
     }
   ],

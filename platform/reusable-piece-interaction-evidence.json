@@ -7254,7 +7254,7 @@
         "damage.batch.fixed_set"
       ],
       "interaction_order": 2,
-      "assertion": "Caldera Hellion compiles its fixed simultaneous-set damage trigger while Devour's unsupported entry replacement applicability remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
+      "assertion": "A constructed variable-life-payment entry replacement remains unrepresented while its fixed simultaneous-set damage trigger compiles exactly. Both replacement applicability and ordering residuals remain material, so the complete CardProgram is unavailable at strict and compatible runtime admission. Supported original Caldera Hellion is separately checked as a positive Devour/damage composition."
     },
     {
       "evidence_class": "interaction",
@@ -7268,7 +7268,7 @@
         "damage.batch.fixed_set"
       ],
       "interaction_order": 2,
-      "assertion": "Caldera Hellion's exact fixed-set damage trigger cannot lower or bypass Devour's unsupported self-replacement and CR 616 ordering boundary, so the complete CardProgram remains unavailable at strict or compatible runtime admission."
+      "assertion": "A constructed variable-life-payment entry replacement remains unrepresented while its fixed simultaneous-set damage trigger compiles exactly. Both replacement applicability and ordering residuals remain material, so the complete CardProgram is unavailable at strict and compatible runtime admission. Supported original Caldera Hellion is separately checked as a positive Devour/damage composition."
     },
     {
       "evidence_class": "interaction",

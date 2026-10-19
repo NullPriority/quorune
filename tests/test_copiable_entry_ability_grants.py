@@ -215,7 +215,7 @@ class CopiableEntryAbilityRuntimeTests(unittest.TestCase):
         self.replay(session,load=True)
 
     def test_original_copiable_grant_carriers_require_normal_registration_and_child_closure(self):
-        expected={'Mercurial Pretender','Phantasmal Image','Copycrook'}
+        expected={'Mercurial Pretender','Phantasmal Image','Copycrook',"Machine God's Effigy"}
         controls={'Clone','Humble','Unsummon','Fervor'}
         for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if raw['name'] in controls:continue

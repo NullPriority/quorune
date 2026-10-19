@@ -437,6 +437,17 @@ _WITNESSES = {
         power="3",
         toughness="3",
     ),
+    "variable-life-entry-damage-boundary": _Witness(
+        "Generic Variable Life Entry Damage",
+        "Creature — Hellion",
+        "As this creature enters, you may pay any amount of life. "
+        "This creature enters with that many +1/+1 counters on it.\n"
+        "When this creature enters, it deals 3 damage to each creature.",
+        "{3}{R}{R}",
+        (),
+        power="3",
+        toughness="3",
+    ),
     "decode-transmissions": _Witness(
         "Decode Transmissions",
         "Sorcery",
@@ -1584,7 +1595,7 @@ _bind(
     *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
 )
 _bind(
-    "caldera-hellion",
+    "variable-life-entry-damage-boundary",
     *FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
 )
 _bind("dauthi-voidwalker", ZONE_AND_CHOICE_PAIRS[0])

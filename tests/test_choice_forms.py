@@ -74,10 +74,17 @@ class ChoiceFormTests(unittest.TestCase):
         self.assertEqual([0,2],field['allowed_cardinalities'])
         self.assertTrue(field['distinct'])
         self.assertEqual({'cards'},delegated_choice_fields(action,decision_kind='semantic.choice',context={}))
-        legacy={**action,'choice_schema':{key:value for key,value in action['choice_schema'].items()if key!='allowed_cardinalities'}}
-        legacy_field=build_action_form(legacy,decision_kind='semantic.choice',context={})['fields'][0]
-        self.assertNotIn('allowed_cardinalities',legacy_field)
-        self.assertNotIn('distinct',legacy_field)
+        continuous_range={**action,'choice_schema':{key:value for key,value in action['choice_schema'].items()if key!='allowed_cardinalities'}}
+        continuous_field=build_action_form(continuous_range,decision_kind='semantic.choice',context={})['fields'][0]
+        self.assertNotIn('allowed_cardinalities',continuous_field)
+        self.assertEqual((0,2),(continuous_field['minimum'],continuous_field['maximum']))
+        self.assertIs(continuous_field['distinct'],True)
+        plain={**action,'choice_schema':{key:value for key,value in continuous_range['choice_schema'].items()if key!='distinct'}}
+        plain_field=build_action_form(plain,decision_kind='semantic.choice',context={})['fields'][0]
+        self.assertNotIn('distinct',plain_field)
+        explicit_false={**continuous_range,'choice_schema':{**continuous_range['choice_schema'],'distinct':False}}
+        false_field=build_action_form(explicit_false,decision_kind='semantic.choice',context={})['fields'][0]
+        self.assertIs(false_field['distinct'],False)
 
     def test_ordered_partition_preserves_private_scry_groups(self):
         action = {

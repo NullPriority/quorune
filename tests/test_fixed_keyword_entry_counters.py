@@ -593,7 +593,7 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
             "This creature enters with a +1/+1 counter on it for each time it was kicked.",
             "This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control last turn.",
             "This creature enters with X +1/+1 counters on it, where X is the amount of life opponents have lost this turn.",
-            "This creature enters with your choice of a flying counter or a reach counter on it.",
+            "This creature enters with your choice of a flying counter, a reach counter, or a vigilance counter on it.",
             "Each other creature you control enters with an additional +1/+1 counter on it.",
             "This creature enters with a +1/+1 counter and a shield counter on it.",
         )
@@ -633,6 +633,20 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
         )
         self.assertFalse(dynamic.exact)
         self.assertTrue(dynamic.residual_ids)
+
+    def test_keyword_counter_choice_uses_its_own_entry_production(self):
+        from quorune.keyword_counters import (
+            FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY, KeywordCounterEntryChoiceSpec,
+        )
+        text = 'This creature enters with your choice of a flying counter or a reach counter on it.'
+        source = replace(self.db.lookup('Dynamic X Entrant'), oracle_text=text)
+        ir = compile_oracle_card(source, capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertNotEqual(DYNAMIC_SELF_ENTRY_COUNTER_TEMPLATE, node.template_id)
+        self.assertIn(FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY, node.capability_dependencies)
+        self.assertEqual(('flying', 'reach'), KeywordCounterEntryChoiceSpec.from_descriptor(node.handlers[0]).counter_names)
+        self.assertEqual(text, source.oracle_text[node.span.start:node.span.end])
 
     def test_dynamic_self_entry_counter_compiler_mutant_is_killed(self):
         record = self.db.lookup("Dynamic X Entrant")
