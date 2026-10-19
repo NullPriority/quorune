@@ -6233,6 +6233,20 @@
         "test_scalar_effect_amounts",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "empty-homogeneous-target-batch-contract",
+      "patterns": [
+        "quorune/semantic_runtime/fixed_target_set_handlers.py",
+        "quorune/semantic_runtime/zone_replacement_model.py",
+        "tests/test_fixed_homogeneous_target_sets.py",
+        "tests/fixtures/empty-fixed-target-batch-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_homogeneous_target_sets",
+        "test_fixed_effect_clause_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

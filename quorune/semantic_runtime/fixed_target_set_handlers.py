@@ -81,6 +81,18 @@ def _fixed_target_fields(
     )
 
 
+def _target_set_plan(
+    operation: str, handler_id: str, cards: tuple[str, ...], intent: Any,
+) -> IntentPlan:
+    """The intent is constructed and validated even when there is no work."""
+    return IntentPlan(
+        operation=operation,
+        handler_id=handler_id,
+        intents=(intent,) if cards else (),
+        result_shape="single" if cards else "by_player",
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class DestroyPermanentTargetSetHandler:
     handler_id: str = "generic.destroy-permanent-target-set.v1"
@@ -112,16 +124,13 @@ class DestroyPermanentTargetSetHandler:
             operation=self.operation,
             replacements=True,
         )
-        return IntentPlan(
-            operation=self.operation,
-            handler_id=self.handler_id,
-            intents=(
-                DestroyPermanentTargetsIntent(
-                    actor=context.actor,
-                    object_refs=cards,
-                    reason=reason,
-                    replacement_selections=selections,
-                ),
+        return _target_set_plan(
+            self.operation, self.handler_id, cards,
+            DestroyPermanentTargetsIntent(
+                actor=context.actor,
+                object_refs=cards,
+                reason=reason,
+                replacement_selections=selections,
             ),
         )
 
@@ -155,19 +164,16 @@ class MoveFixedTargetSetHandler:
             operation=self.operation,
             replacements=True,
         )
-        return IntentPlan(
-            operation=self.operation,
-            handler_id=self.handler_id,
-            intents=(
-                MoveObjectsSimultaneouslyIntent(
-                    actor=context.actor,
-                    object_refs=cards,
-                    expected_zones=(self.expected_zone,),
-                    destination=self.destination,
-                    reason=reason,
-                    owned_only=self.owned_only,
-                    replacement_selections=selections,
-                ),
+        return _target_set_plan(
+            self.operation, self.handler_id, cards,
+            MoveObjectsSimultaneouslyIntent(
+                actor=context.actor,
+                object_refs=cards,
+                expected_zones=(self.expected_zone,),
+                destination=self.destination,
+                reason=reason,
+                owned_only=self.owned_only,
+                replacement_selections=selections,
             ),
         )
 
@@ -199,16 +205,13 @@ class SetFixedTargetSetTappedHandler:
             operation=self.operation,
             replacements=False,
         )
-        return IntentPlan(
-            operation=self.operation,
-            handler_id=self.handler_id,
-            intents=(
-                SetPermanentsTappedIntent(
-                    object_refs=cards,
-                    actor=context.actor,
-                    tapped=self.tapped,
-                    reason=reason,
-                ),
+        return _target_set_plan(
+            self.operation, self.handler_id, cards,
+            SetPermanentsTappedIntent(
+                object_refs=cards,
+                actor=context.actor,
+                tapped=self.tapped,
+                reason=reason,
             ),
         )
 

@@ -17269,23 +17269,116 @@
     {
       "id": "resolution.effect.fixed_homogeneous_target_set",
       "version": 1,
-      "official_rules": ["115.1", "115.3", "608.2b", "608.2c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and execute one bounded homogeneous set of interchangeable public targets through one shared count, legality, resolution-revalidation, and typed effect boundary.",
-        "inputs": ["one closed destroy, exile, tap, untap, battlefield return, own-graveyard return, or public-graveyard exile clause", "one homogeneous public target predicate", "an exact, one-or-two, or up-to bound from one through six", "stable selected object identities"],
-        "outputs": ["one canonical target group with explicit minimum and maximum", "distinct legal target advertisement", "partial-illegality survivor set", "one typed simultaneous zone or destruction transaction where required", "exact command replay"],
-        "exclusions": ["heterogeneous target roles", "divided quantities", "dynamic target counts", "linked results", "compound tails", "conditional effects", "hidden target zones", "battlefield returns", "same-layer characteristic dependencies", "public-graveyard same-origin constraints other than one shared owner"]
+        "inputs": [
+          "one closed destroy, exile, tap, untap, battlefield return, own-graveyard return, or public-graveyard exile clause",
+          "one homogeneous public target predicate",
+          "an exact, one-or-two, or up-to bound from one through six",
+          "stable selected object identities"
+        ],
+        "outputs": [
+          "one canonical target group with explicit minimum and maximum",
+          "distinct legal target advertisement",
+          "partial-illegality survivor set",
+          "one typed simultaneous zone or destruction transaction where required",
+          "exact command replay"
+        ],
+        "exclusions": [
+          "heterogeneous target roles",
+          "divided quantities",
+          "dynamic target counts",
+          "linked results",
+          "compound tails",
+          "conditional effects",
+          "hidden target zones",
+          "battlefield returns",
+          "same-layer characteristic dependencies",
+          "public-graveyard same-origin constraints other than one shared owner"
+        ]
       },
-      "dependencies": ["target.revalidate_resolution"],
-      "implementation_components": ["quorune.compiler.fixed_homogeneous_target_sets.FixedHomogeneousTargetSetTemplate", "quorune.rules.fixed_homogeneous_target_set_capability_shapes.fixed_homogeneous_target_set_node_capabilities", "quorune.targets.TargetGroup", "quorune.semantic_runtime.fixed_target_set_handlers", "quorune.destruction.destroy_permanent_refs", "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent"],
-      "positive_tests": ["test_fixed_homogeneous_target_sets_compile_across_contexts"],
-      "negative_tests": ["test_fixed_homogeneous_target_set_grammar_stays_closed", "test_fixed_target_set_shape_and_handler_mutants_fail_closed"],
-      "interaction_tests": ["test_multi_target_destruction_preserves_protections_and_replay", "test_partial_illegality_resolves_surviving_target_atomically", "test_tap_and_untap_sets_reuse_scalar_stun_owner"],
-      "multiplayer_tests": ["test_four_player_same_graveyard_offer_resolution_and_replay"],
-      "privacy_tests": ["test_four_player_same_graveyard_offer_resolution_and_replay"],
-      "replay_tests": ["test_four_player_same_graveyard_offer_resolution_and_replay", "test_multi_target_destruction_preserves_protections_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_homogeneous_target_sets.FixedHomogeneousTargetSetTemplate",
+        "quorune.rules.fixed_homogeneous_target_set_capability_shapes.fixed_homogeneous_target_set_node_capabilities",
+        "quorune.targets.TargetGroup",
+        "quorune.semantic_runtime.fixed_target_set_handlers",
+        "quorune.destruction.destroy_permanent_refs",
+        "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent"
+      ],
+      "positive_tests": [
+        "test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+        "test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+        "test_fixed_homogeneous_target_sets_compile_across_contexts",
+        "test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+        "test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+        "test_zero_target_lowering_has_no_mutations_and_nonempty_lowering_retains_one_intent",
+        "test_zero_target_zone_instruction_continues_to_independent_private_draw"
+      ],
+      "negative_tests": [
+        "test_empty_and_duplicate_ordinary_zone_snapshots_remain_invalid",
+        "test_empty_target_set_does_not_skip_descriptor_validation",
+        "test_fixed_homogeneous_target_set_grammar_stays_closed",
+        "test_fixed_target_set_shape_and_handler_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+        "test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+        "test_multi_target_destruction_preserves_protections_and_replay",
+        "test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+        "test_partial_illegality_resolves_surviving_target_atomically",
+        "test_tap_and_untap_sets_reuse_scalar_stun_owner",
+        "test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+        "test_zero_target_lowering_has_no_mutations_and_nonempty_lowering_retains_one_intent",
+        "test_zero_target_zone_instruction_continues_to_independent_private_draw"
+      ],
+      "multiplayer_tests": [
+        "test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+        "test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+        "test_four_player_same_graveyard_offer_resolution_and_replay",
+        "test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+        "test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+        "test_zero_target_zone_instruction_continues_to_independent_private_draw"
+      ],
+      "privacy_tests": [
+        "test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+        "test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+        "test_four_player_same_graveyard_offer_resolution_and_replay",
+        "test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+        "test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+        "test_zero_target_zone_instruction_continues_to_independent_private_draw"
+      ],
+      "replay_tests": [
+        "test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+        "test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+        "test_four_player_same_graveyard_offer_resolution_and_replay",
+        "test_multi_target_destruction_preserves_protections_and_replay",
+        "test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+        "test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+        "test_zero_target_zone_instruction_continues_to_independent_private_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The closed node shape requires resolution-time target revalidation in addition to the exact typed owner for its lifted effect operation; blocking either owner prevents trust.",
       "implementation_mutation_status": "killed",

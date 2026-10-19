@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d190edb0bdc46b3869e73918228a0a3b240ea0d9994ac322e79737fb6937db35",
-  "declaration_source_fingerprint": "f200273395e87a3d96f9cc233b3933cd4333b3fd025b3ca3d4d94a7b5cb4ebdd",
+  "registry_fingerprint": "108f22ec07f6cb82f8ee0e42985ca56349b7864232b00fcfd127380468308b58",
+  "declaration_source_fingerprint": "69be4dff56c5d85259730e5ae875929838702039badc2e70d7cf9ab3b3c12c77",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -159922,10 +159922,119 @@
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchModelTests.test_zero_target_lowering_has_no_mutations_and_nonempty_lowering_retains_one_intent",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_zone_instruction_continues_to_independent_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_multi_target_destruction_preserves_protections_and_replay",
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -159943,6 +160052,7 @@
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -159960,6 +160070,7 @@
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -159973,10 +160084,101 @@
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_zone_instruction_continues_to_independent_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_four_player_same_graveyard_offer_resolution_and_replay",
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -159990,10 +160192,29 @@
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_empty_move_intent_mutation_is_killed_by_fresh_native_zero_target_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_target_set_shape_and_handler_mutants_fail_closed",
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -160007,10 +160228,47 @@
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchModelTests.test_empty_target_set_does_not_skip_descriptor_validation",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_empty_and_duplicate_ordinary_zone_snapshots_remain_invalid",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_homogeneous_target_set_grammar_stays_closed",
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -160024,10 +160282,119 @@
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchModelTests.test_zero_target_lowering_has_no_mutations_and_nonempty_lowering_retains_one_intent",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_zone_instruction_continues_to_independent_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_homogeneous_target_sets_compile_across_contexts",
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -160041,10 +160408,101 @@
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_zone_instruction_continues_to_independent_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_four_player_same_graveyard_offer_resolution_and_replay",
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -160058,10 +160516,101 @@
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_activation_keeps_source_payment_and_later_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.EmptyFixedTargetBatchRuntimeTests.test_zero_target_zone_instruction_continues_to_independent_private_draw",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "115.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR115.6/608.2b/c: fully validated empty homogeneous target sets emit no mutation intents. Zero chosen targets allow independent later results; all chosen targets becoming illegal retains whole-spell resolution legality. Nonempty movement, strict zone snapshots, privacy, rollback, pending load and pre-action replay remain owned by existing authorities."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_four_player_same_graveyard_offer_resolution_and_replay",
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -160079,6 +160628,7 @@
       "official_rule_ids": [
         "115.1",
         "115.3",
+        "115.6",
         "608.2b",
         "608.2c"
       ],
@@ -231732,5 +232282,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "9b91fc12ab5a84f6a186004c89688eea3c532adc216da87b7226dd5979fa5a41"
+  "fingerprint": "ddf6ada087c6f7ac5a343994eddc49d6baf99e1b56bb6c179d70e843ef6ab8e9"
 }

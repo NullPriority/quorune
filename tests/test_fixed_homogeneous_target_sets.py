@@ -964,5 +964,205 @@ class AnnouncedTargetCardinalityModelTests(unittest.TestCase):
             self.assertEqual(before, json.dumps(source, separators=(",", ":")))
 
 
+class EmptyFixedTargetBatchRuntimeTests(unittest.TestCase):
+    """CR115.6/608.2b/c: zero chosen targets differ from all chosen illegal."""
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Controls
+    register_fixture_cards_on_add = True
+    session = _Controls.session
+    add = _Controls.add
+    ready = _Controls.ready
+    checkpoint = _Controls.checkpoint
+    resolve = _Controls.resolve
+    replay = _Controls.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'empty-targets.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/empty-fixed-target-batch-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Empty target witnesses', [DeckEntry('Generic Bound Commander',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close(); cls.temporary.cleanup()
+
+    def assert_admitted(self, session, source):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        program = compile_best_available_card_program(self.db, self.db.by_oracle_id(source.oracle_id),
+            semantic_registry=session.engine.semantics, capability_registry=self.registry,
+            capability_profile='commander_review')
+        bound = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(bound['strict_capability_ready'], bound['blockers'])
+
+    def assert_private_replay(self, session, private):
+        for viewer in 'ABD':
+            self.assertNotIn(private.ref, json.dumps(session.packet('pilot:'+viewer, full=True)))
+        self.replay(session, load=True)
+
+    def test_zero_target_zone_instruction_continues_to_independent_private_draw(self):
+        session = self.session(729301)
+        source = self.add(session.engine, 'Generic Empty Exile Draw', zone='hand')
+        private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        self.assert_admitted(session, source)
+        action = self.ready(session, source, {'C':1}); self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:B', {'action_id':action['id'], 'targets':[], 'pay':'auto'})
+        self.assertFalse(rejected.ok); self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', {'action_id':action['id'], 'targets':[], 'pay':'auto'})
+        self.assertTrue(result.ok, result.summary)
+        hand = len(session.state.players['A'].zones['hand'])
+        library = len(session.state.players['A'].zones['library'])
+        session = self.replay(session, load=True); self.assertIsNone(self.resolve(session))
+        self.assertEqual(hand+1, len(session.state.players['A'].zones['hand']))
+        self.assertEqual(library-1, len(session.state.players['A'].zones['library']))
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        self.assert_private_replay(session, private)
+
+    def test_all_existing_homogeneous_operations_resolve_zero_targets_without_object_mutation(self):
+        for kind in ('Destruction','Permanent Exile','Permanent Return','Graveyard Return',
+                'Graveyard Exile','Tap','Untap'):
+            session = self.session(729302)
+            source = self.add(session.engine, 'Generic Empty '+kind, zone='hand')
+            body = self.add(session.engine, 'Generic Bound Body', seat='B')
+            body.tapped = kind == 'Untap'
+            private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand')
+            self.assert_admitted(session, source)
+            action = self.ready(session, source, {'C':1}); self.checkpoint(session)
+            result = session.act('pilot:A', {'action_id':action['id'], 'targets':[], 'pay':'auto'})
+            self.assertTrue(result.ok, result.summary)
+            session = self.replay(session, load=True); self.assertIsNone(self.resolve(session))
+            self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+            self.assertEqual('battlefield', session.state.cards[body.object_id].zone)
+            self.assertEqual(kind == 'Untap', session.state.cards[body.object_id].tapped)
+            self.assert_private_replay(session, private)
+
+    def test_nonempty_graveyard_targets_still_move_together_and_reject_mixed_owners(self):
+        session = self.session(729303)
+        source = self.add(session.engine, 'Generic Empty Graveyard Exile', zone='hand')
+        cards = [self.add(session.engine, 'Generic Bound Body', seat='B', zone='graveyard', ref='empty-control-'+str(i)) for i in range(2)]
+        other = self.add(session.engine, 'Generic Bound Body', seat='D', zone='graveyard', ref='empty-foreign')
+        private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        self.assert_admitted(session, source)
+        action = self.ready(session, source, {'C':1}); self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        for refs in ([cards[0].ref]*2, [cards[0].ref,other.ref], [private.ref]):
+            denied = session.act('pilot:A', {'action_id':action['id'], 'targets':refs, 'pay':'auto'})
+            self.assertFalse(denied.ok); self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {'action_id':action['id'], 'targets':[c.ref for c in cards], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        session = self.replay(session, load=True); self.assertIsNone(self.resolve(session))
+        self.assertTrue(all(session.state.cards[c.object_id].zone=='exile' for c in cards))
+        self.assertEqual('graveyard', session.state.cards[other.object_id].zone)
+        self.assert_private_replay(session, private)
+
+    def test_empty_and_duplicate_ordinary_zone_snapshots_remain_invalid(self):
+        from quorune.semantic_runtime.zone_replacements import capture_zone_change_replacement_snapshot
+        from quorune.semantic_runtime.zone_replacement_model import ZoneReplacementError
+        session = self.session(729304)
+        source = self.add(session.engine, 'Generic Empty Graveyard Exile', zone='hand')
+        body = self.add(session.engine, 'Generic Bound Body', seat='B')
+        self.ready(session, source, {'C':1})
+        before = authoritative_state_hash(session.state)
+        snapshot = capture_zone_change_replacement_snapshot(session.engine, [(body.object_id,'graveyard')])
+        for subjects in ((), (snapshot.subjects[0],snapshot.subjects[0])):
+            with self.assertRaisesRegex(ZoneReplacementError, 'unique affected objects'):
+                replace(snapshot, subjects=subjects)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_zero_target_activation_keeps_source_payment_and_later_private_draw(self):
+        session = self.session(729305)
+        source = self.add(session.engine, 'Generic Empty Activation')
+        private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        self.assert_admitted(session, source)
+        action = self.ready(session, source, {'C':1}); self.checkpoint(session)
+        self.assertTrue(action['id'].startswith('activate:'+source.ref+':'))
+        hand = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id':action['id'], 'targets':[], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        session = self.replay(session, load=True); self.assertIsNone(self.resolve(session))
+        self.assertEqual(hand+1, len(session.state.players['A'].zones['hand']))
+        self.assertEqual('battlefield', session.state.cards[source.object_id].zone)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assert_private_replay(session, private)
+
+    def test_all_actually_chosen_targets_becoming_illegal_still_stops_the_later_draw(self):
+        session = self.session(729306)
+        source = self.add(session.engine, 'Generic Empty Destroy Draw', zone='hand')
+        body = self.add(session.engine, 'Generic Bound Body', seat='B')
+        murder = self.add(session.engine, 'Murder', seat='C', zone='hand')
+        private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        session.state.players['C'].mana_pool.update({'B':2,'C':1})
+        for card in (source,murder):self.assert_admitted(session, card)
+        action = self.ready(session, source, {'C':1}); self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id':action['id'], 'targets':[body.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        hand = len(session.state.players['A'].zones['hand'])
+        library = len(session.state.players['A'].zones['library'])
+        for _ in range(8):
+            if session.pending_principals()[0]=='pilot:C':break
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:C', full=True)['decision']['ctx']['legal']['actions']
+        reply = next(row for row in actions if row.get('card')==murder.ref)
+        accepted = session.act('pilot:C', {'action_id':reply['id'], 'targets':[body.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        session = self.replay(session, load=True); self.assertIsNone(self.resolve(session))
+        self.assertEqual(hand, len(session.state.players['A'].zones['hand']))
+        self.assertEqual(library, len(session.state.players['A'].zones['library']))
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.assertEqual('graveyard', session.state.cards[body.object_id].zone)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        self.assert_private_replay(session, private)
+
+    def test_empty_move_intent_mutation_is_killed_by_fresh_native_zero_target_draw(self):
+        from quorune.semantic_runtime.fixed_target_set_handlers import MoveFixedTargetSetHandler
+        original = MoveFixedTargetSetHandler.lower
+        def restore_empty_move(handler, effect, context):
+            plan = original(handler, effect, context)
+            if effect.get('cards') == []:
+                from quorune.semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+                return replace(plan, result_shape='single', intents=(MoveObjectsSimultaneouslyIntent(actor=context.actor,
+                    object_refs=(), expected_zones=(handler.expected_zone,), destination=handler.destination,
+                    reason=context.default_reason, owned_only=handler.owned_only, replacement_selections=()),))
+            return plan
+        with patch.object(MoveFixedTargetSetHandler, 'lower', new=restore_empty_move):
+            method = 'test_zero_target_zone_instruction_continues_to_independent_private_draw'
+            with self.assertRaises(AssertionError): getattr(type(self)(method), method)()
+
+
+class EmptyFixedTargetBatchModelTests(unittest.TestCase):
+    def test_zero_target_lowering_has_no_mutations_and_nonempty_lowering_retains_one_intent(self):
+        context = ReadOnlyHandlerContext.from_sequences(actor='A', default_reason='Empty target contract',
+            seats='ABCD', active_seats='ABCD', apnap_order='ABCD')
+        for handler in FIXED_TARGET_SET_HANDLERS:
+            for refs in ([], ['B1']):
+                effect = {'op':handler.operation, 'cards':refs, 'maximum_targets':2}
+                plan = handler.lower(effect, context)
+                self.assertEqual(int(bool(refs)), len(plan.intents), handler.operation)
+                self.assertEqual(handler.operation, plan.operation)
+
+    def test_empty_target_set_does_not_skip_descriptor_validation(self):
+        context = ReadOnlyHandlerContext.from_sequences(actor='A', default_reason='Empty target contract',
+            seats='ABCD', active_seats='ABCD', apnap_order='ABCD')
+        for handler in FIXED_TARGET_SET_HANDLERS:
+            source = {'op':handler.operation, 'cards':[], 'maximum_targets':2}
+            for change in ({'unknown':1}, {'op':'invented'}, {'maximum_targets':True},
+                    {'maximum_targets':0}, {'cards':['B1','B1']}, {'reason':False}):
+                with self.assertRaises(SemanticNodeError): handler.lower({**source,**change}, context)
+            for refs in ([], ['B1']):
+                for invalid in (123, None, True):
+                    with self.assertRaises(ValueError):
+                        handler.lower({**source, 'cards':refs, '_replacement_selections':[invalid]}, context)
+
+
 if __name__ == "__main__":
     unittest.main()

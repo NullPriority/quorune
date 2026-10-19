@@ -15,6 +15,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve legal zero-target homogeneous effects without creating empty mutation
+  batches, preserving independent later results and ordinary target revalidation.
+
 - Apply fixed opponent keyword prohibitions through layer 6, preserving
   current control and source abilities, static and counter grant resumption,
   denied resolving grants, unrelated spell consequences, and exact replay.
