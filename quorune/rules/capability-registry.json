@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 397,
+  "registry_version": 398,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1316,37 +1316,84 @@
         "resolution.effect.public_condition"
       ],
       "implementation_components": [
+        "quorune.compiler.kicked_self_replacement_templates.kicked_self_replacement_template",
         "quorune.compiler.public_self_replacement_templates.fixed_public_self_replacement_template",
         "quorune.resolution_conditions.validate_resolution_condition_instruction",
         "quorune.rules.resolution_condition_shapes.resolution_condition_node_capabilities",
         "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
       ],
       "positive_tests": [
+        "test_complete_branches_declare_cast_fact_self_replacement_and_each_child_owner",
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
         "test_fixed_default_and_alternative_are_typed_independent_complete_branches",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants"
       ],
       "negative_tests": [
+        "test_closed_schema_and_unselected_branch_are_validated_before_result_selection",
+        "test_each_required_authority_withdrawal_keeps_both_branch_programs_residual",
+        "test_executable_condition_rejects_withdrawn_capability_closure",
         "test_optional_ambiguous_target_and_variable_self_replacements_remain_residual",
+        "test_replacement_residual_owner_retains_exact_unowned_node_contract",
         "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+        "test_unsupported_targets_variable_results_and_permanent_trigger_contexts_stay_residual",
         "test_withdrawn_self_replacement_capability_prevents_admission"
       ],
       "interaction_tests": [
-        "test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
         "test_actual_demise_and_pride_replace_the_whole_fixed_modifier_once",
-        "test_pending_self_replacement_uses_locked_controller_after_real_control_change",
-        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw"
+        "test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+        "test_pending_self_replacement_uses_locked_controller_after_real_control_change"
       ],
       "multiplayer_tests": [
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_pending_self_replacement_uses_locked_controller_after_real_control_change"
       ],
       "privacy_tests": [
-        "test_actual_secrets_selects_self_replacement_before_external_draw_doubling"
+        "test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set"
       ],
       "replay_tests": [
-        "test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
         "test_actual_demise_and_pride_replace_the_whole_fixed_modifier_once",
-        "test_pending_self_replacement_uses_locked_controller_after_real_control_change",
-        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw"
+        "test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+        "test_pending_self_replacement_uses_locked_controller_after_real_control_change"
       ],
       "required_evidence": [
         "positive",
@@ -16761,6 +16808,7 @@
         "continuous.characteristics.fixed_public_state"
       ],
       "implementation_components": [
+        "quorune.compiler.kicked_self_replacement_templates.kicked_self_replacement_template",
         "quorune.compiler.resolution_condition_templates.resolution_condition_template",
         "quorune.resolution_conditions._card_only_graveyard_count",
         "quorune.resolution_conditions.validate_resolution_condition_instruction",
@@ -16768,39 +16816,85 @@
         "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
       ],
       "positive_tests": [
+        "test_complete_branches_declare_cast_fact_self_replacement_and_each_child_owner",
         "test_condition_keeps_printed_order_and_child_capability_shapes",
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
         "test_four_originals_and_card_only_condition_keep_complete_admission",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
         "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
         "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "negative_tests": [
+        "test_closed_schema_and_unselected_branch_are_validated_before_result_selection",
         "test_conditional_exclusions_are_fully_consumed",
         "test_derived_conditional_results_remain_residual_without_timing_proof",
+        "test_each_required_authority_withdrawal_keeps_both_branch_programs_residual",
+        "test_executable_condition_rejects_withdrawn_capability_closure",
         "test_handler_binds_controller_and_rejects_unavailable_facts",
         "test_legacy_card_queries_remain_closed_but_other_v2_quantities_stay_excluded",
         "test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
-        "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants"
+        "test_replacement_residual_owner_retains_exact_unowned_node_contract",
+        "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
+        "test_unsupported_targets_variable_results_and_permanent_trigger_contexts_stay_residual"
       ],
       "interaction_tests": [
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
         "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
         "test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
         "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_trusted_death_prefix_updates_history_before_condition_and_replays",
         "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "multiplayer_tests": [
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
         "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "privacy_tests": [
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
         "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
       "replay_tests": [
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
         "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
         "test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
         "test_original_unholy_hunger_reads_resolution_time_own_cards_with_private_replay",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_trusted_death_prefix_updates_history_before_condition_and_replays",
         "test_trusted_prefix_changes_condition_before_private_result_and_replay"
       ],
@@ -22470,36 +22564,83 @@
         "resolution.effect.public_condition"
       ],
       "implementation_components": [
+        "quorune.compiler.kicked_self_replacement_templates.kicked_self_replacement_template",
         "quorune.compiler.kicked_spell_conditions.kicked_spell_condition_template",
         "quorune.resolution_conditions.KickedCastCondition",
         "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
       ],
       "positive_tests": [
+        "test_complete_branches_declare_cast_fact_self_replacement_and_each_child_owner",
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer",
         "test_kicked_result_is_separate_from_mandatory_prefix",
-        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
-        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope"
       ],
       "negative_tests": [
         "test_cast_condition_rejects_self_replacement_open_targets_and_unknown_fields",
-        "test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller",
+        "test_closed_schema_and_unselected_branch_are_validated_before_result_selection",
+        "test_each_required_authority_withdrawal_keeps_both_branch_programs_residual",
+        "test_executable_condition_rejects_withdrawn_capability_closure",
         "test_illegal_roil_target_skips_kicked_draw_even_though_fact_is_paid",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer",
         "test_missing_cast_fact_is_rejected_before_conditional_result",
-        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
+        "test_replacement_residual_owner_retains_exact_unowned_node_contract",
+        "test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller",
+        "test_unsupported_targets_variable_results_and_permanent_trigger_contexts_stay_residual"
       ],
       "interaction_tests": [
-        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
-        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope"
       ],
       "multiplayer_tests": [
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
       ],
       "privacy_tests": [
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
         "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
       ],
       "replay_tests": [
-        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
-        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+        "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+        "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+        "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+        "test_original_field_research_selects_two_or_three_private_draws_never_both",
+        "test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+        "test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+        "test_original_self_replacement_precedes_external_draw_and_token_doubling",
+        "test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope"
       ],
       "required_evidence": [
         "positive",

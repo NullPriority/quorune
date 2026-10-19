@@ -35,6 +35,7 @@ def reviewed_contextual_effect_template(
     compile_atomic: Callable[..., CompiledEffectTemplate],
     compile_fixed: Callable[..., CompiledEffectTemplate],
     cast_x_available: bool = False, forbid_public_x: bool = False,
+    kicked_self_replacement_available: bool = False,
     **source_context: Any,
 ) -> CompiledEffectTemplate:
     """Bind source context before composing the same closed leaf owners."""
@@ -56,6 +57,12 @@ def reviewed_contextual_effect_template(
             source_is_permanent=source_context.get("source_is_permanent"),
             source_card_types=tuple(source_context.get("source_card_types", ())),
         ) or current
+
+    if kicked_self_replacement_available is True:
+        from .kicked_self_replacement_templates import kicked_self_replacement_template
+        replacement=kicked_self_replacement_template(text,compile_component=atomic_with_characteristics)
+        if replacement is not None:
+            return replacement
 
     # Preserve the certified v1 one-mana/one-leaf payload before using v2.
     legacy_payment=fixed_optional_mana_payment_template(text,compile_effect=atomic_with_characteristics)

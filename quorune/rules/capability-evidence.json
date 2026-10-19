@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "108f22ec07f6cb82f8ee0e42985ca56349b7864232b00fcfd127380468308b58",
-  "declaration_source_fingerprint": "69be4dff56c5d85259730e5ae875929838702039badc2e70d7cf9ab3b3c12c77",
+  "registry_fingerprint": "d4df2ca5b676ea30e931dc340ff6dd00a7e55a137eb899b419ae5eb079f01508",
+  "declaration_source_fingerprint": "e87d52adef0c9eedd535ab106f3de6abe245eb465e76a0112d79f2b9508ec66f",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -159542,6 +159542,166 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_actual_kicked_counter_result_keeps_source_attribution_after_prefix",
       "official_rule_ids": [
         "608.2b",
@@ -159642,6 +159802,166 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
       "official_rule_ids": [
         "608.2b",
@@ -159658,6 +159978,46 @@
         "commander_review"
       ],
       "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_compiler_omission_is_killed_by_fresh_native_field_research",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_fresh_native_field_research_kills_additive_and_unpaid_branch_mutants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -159698,6 +160058,106 @@
         "commander_review"
       ],
       "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_closed_schema_and_unselected_branch_are_validated_before_result_selection",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_each_required_authority_withdrawal_keeps_both_branch_programs_residual",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_replacement_residual_owner_retains_exact_unowned_node_contract",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_unsupported_targets_variable_results_and_permanent_trigger_contexts_stay_residual",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_executable_condition_rejects_withdrawn_capability_closure",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -159802,6 +160262,186 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_complete_branches_declare_cast_fact_self_replacement_and_each_child_owner",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
       "official_rule_ids": [
         "608.2b",
@@ -159862,6 +160502,166 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
       "official_rule_ids": [
         "608.2b",
@@ -159878,6 +160678,166 @@
         "commander_review"
       ],
       "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -160642,6 +161602,150 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_actual_demise_and_pride_replace_the_whole_fixed_modifier_once",
       "official_rule_ids": [
         "109.5",
@@ -160714,6 +161818,150 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_pending_self_replacement_uses_locked_controller_after_real_control_change",
       "official_rule_ids": [
         "109.5",
@@ -160732,6 +161980,42 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_compiler_omission_is_killed_by_fresh_native_field_research",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_fresh_native_field_research_kills_additive_and_unpaid_branch_mutants",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "mutation",
       "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_fixed_default_and_alternative_are_typed_independent_complete_branches",
       "official_rule_ids": [
         "109.5",
@@ -160746,6 +162030,96 @@
         "commander_review"
       ],
       "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_closed_schema_and_unselected_branch_are_validated_before_result_selection",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_each_required_authority_withdrawal_keeps_both_branch_programs_residual",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_replacement_residual_owner_retains_exact_unowned_node_contract",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_unsupported_targets_variable_results_and_permanent_trigger_contexts_stay_residual",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_executable_condition_rejects_withdrawn_capability_closure",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
@@ -160804,6 +162178,168 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_complete_branches_declare_cast_fact_self_replacement_and_each_child_owner",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_fixed_default_and_alternative_are_typed_independent_complete_branches",
       "official_rule_ids": [
         "109.5",
@@ -160840,6 +162376,150 @@
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
       "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementRuntimeTests.test_actual_secrets_selects_self_replacement_before_external_draw_doubling",
       "official_rule_ids": [
         "109.5",
@@ -160854,6 +162534,150 @@
         "commander_review"
       ],
       "applicability_note": "Actual Secrets chooses2/3 before ThoughtReflection doubles to4/6, with private draw/replay. Actual Demise/Pride select one fixed affected set/modifier. A pending ETB trigger uses its locked actor after a real control change; earlier life prefix remains and hand-count condition is tested before default draw. Both branches require complete independent ownership; old public/kicked variants stay unchanged."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_public_self_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2h",
+        "614.1a",
+        "614.15"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.fixed_public_self_replacement",
@@ -160968,6 +162792,174 @@
         "commander_review"
       ],
       "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.public_condition",
@@ -161056,6 +163048,174 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
         "108.2",
@@ -161094,6 +163254,48 @@
         "commander_review"
       ],
       "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_compiler_omission_is_killed_by_fresh_native_field_research",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_fresh_native_field_research_kills_additive_and_unpaid_branch_mutants",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.public_condition",
@@ -161157,6 +163359,111 @@
         "commander_review"
       ],
       "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_closed_schema_and_unselected_branch_are_validated_before_result_selection",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_each_required_authority_withdrawal_keeps_both_branch_programs_residual",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_replacement_residual_owner_retains_exact_unowned_node_contract",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_unsupported_targets_variable_results_and_permanent_trigger_contexts_stay_residual",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_executable_condition_rejects_withdrawn_capability_closure",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.public_condition",
@@ -161266,6 +163573,195 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementCompilerTests.test_complete_branches_declare_cast_fact_self_replacement_and_each_child_owner",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_self_replacement_results.PublicSelfReplacementCompilerTests.test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
       "official_rule_ids": [
         "108.2",
@@ -161329,6 +163825,174 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
         "108.2",
@@ -161388,6 +164052,174 @@
         "commander_review"
       ],
       "applicability_note": "Restore the existing controller-bound conditional spell consumer for schema2 plain card-only graveyard counts; native resolution-time response, own/opponent distinction, self-onstack exclusion, private projection, pending load, exact replay and fresh omission mutant."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_field_research_selects_two_or_three_private_draws_never_both",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_reverberate_copies_paid_choice_for_new_controller_without_repaying",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_saproling_migration_reuses_recipe_with_two_or_four_tokens",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_self_replacement_precedes_external_draw_and_token_doubling",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_self_replacements.KickedSelfReplacementRuntimeTests.test_original_wild_onslaught_replaces_counter_count_for_current_controller_set",
+      "official_rule_ids": [
+        "108.2",
+        "108.2b",
+        "109.2",
+        "109.5",
+        "111.6",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An ordinary single-face spell selects exactly one independently closed fixed untargeted result using the sealed paid Kicker cast fact. Self-replacement precedes external event replacements; copied spells inherit the choice under their own controller without repayment. Both branches retain complete child ownership, strict admission, rollback, private draws, pending load and pre-action replay. Target changes, dynamic quantities and permanent trigger contexts remain residual."
     },
     {
       "capability_id": "resolution.effect.public_condition",
@@ -232282,5 +235114,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ddf6ada087c6f7ac5a343994eddc49d6baf99e1b56bb6c179d70e843ef6ab8e9"
+  "fingerprint": "f5855b0793a2b3467ddf17042ca6e6c7c63f18b03aae181d81cb87136d6bf4c7"
 }

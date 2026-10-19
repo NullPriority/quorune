@@ -50,12 +50,12 @@ def resolution_condition_node_capabilities(
     dependencies = {RESOLUTION_CONDITION_CAPABILITY}
     from ..characteristic_fragments import characteristic_quantity_capabilities
     dependencies.update(characteristic_quantity_capabilities(_condition.to_dict()))
-    if wrapper.get('schema_version')==3:
+    if wrapper.get('schema_version') in {3,4}:
         from ..resolution_conditions import PUBLIC_SELF_REPLACEMENT_CAPABILITY
         dependencies.add(PUBLIC_SELF_REPLACEMENT_CAPABILITY)
     if _condition.kind == FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
         dependencies.add('condition.creature.fixed_numeric_exists')
-    if wrapper.get('schema_version') == 2:
+    if wrapper.get('schema_version') in {2,4}:
         from ..resolution_conditions import CAST_FACT_CONDITION_CAPABILITY, CAST_FACT_CONDITION_MECHANIC
         if CAST_FACT_CONDITION_MECHANIC not in mechanics or wrapper['cast_fact'] != '$context.kicked':
             return ()

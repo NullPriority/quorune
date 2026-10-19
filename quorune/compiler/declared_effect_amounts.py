@@ -155,7 +155,8 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
     available = bool(is_spell and not record.faces and symbols and set(symbols) == {"X"})
     return partial(compile_effect,
         cast_x_available=available and re.search(r"\bX (?:is|can't|cannot)\b",oracle_text) is None,
-        forbid_public_x=available)
+        forbid_public_x=available,
+        kicked_self_replacement_available=bool(is_spell and not record.faces))
 
 
 def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:

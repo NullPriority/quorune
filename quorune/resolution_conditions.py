@@ -120,8 +120,8 @@ def validate_resolution_condition_instruction(
         "op", "player", "condition", "effects",
         "mechanic_ids", "prefix_mechanic_ids",
     }
-    cast_fact = effect.get('schema_version') == 2
-    replacing=effect.get('schema_version')==3
+    cast_fact = effect.get('schema_version') in {2,4}
+    replacing=effect.get('schema_version') in {3,4}
     if cast_fact:
         expected_fields |= {'schema_version', 'cast_fact'}
     if replacing:expected_fields|={'schema_version','otherwise_effects','otherwise_mechanic_ids'}

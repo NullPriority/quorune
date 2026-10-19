@@ -140,6 +140,7 @@
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",
     "tests/fixtures/job-select-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",
+    "tests/fixtures/kicked-self-replacement-cards.json",
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/kindred-subtype-quantities.json",
     "tests/fixtures/land-condition-quantity-cards.json",

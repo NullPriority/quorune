@@ -1289,7 +1289,20 @@ the fixed nontargeted result after its independently closed mandatory prefix.
 A copy preserves that fact; missing history rejects instead of becoming unpaid.
 Invalidated mandatory targets still prevent the whole spell from resolving.
 Counter-source attribution remains data owned by the existing counter
-transaction. Instead branches and additional conditional targets remain residual.
+transaction. Additional conditional targets remain residual.
+
+`compiler/kicked_self_replacement_templates.py` composes the sealed Kicker
+fact with the same owner's self-replacement contract using schema version 4.
+An ordinary single-face instant or sorcery selects exactly one complete fixed
+untargeted branch. Both branches retain independent child capability closure,
+and self-replacement precedes external draw or token replacements. A fixed
+"those tokens" count preserves the original token's complete recipe through
+the existing token-count vocabulary. Copied spells inherit the paid choice
+under the copy's controller without paying again. Target changes, dynamic
+quantities, permanent triggers and unsupported siblings remain residual.
+`compiler/replacement_residual_nodes.py` owns the marker boundary after closed
+static dispatch, retaining the original source span, ordering blockers and
+unowned replacement node when neither reviewed self-replacement closes.
 
 Public self-death and attached-creature death returns bind the event card and
 its exact post-departure zone-change counter. The existing graveyard-return

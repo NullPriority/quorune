@@ -6247,6 +6247,27 @@
         "test_fixed_effect_clause_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "kicked-self-replacement-contract",
+      "patterns": [
+        "quorune/compiler/kicked_self_replacement_templates.py",
+        "quorune/compiler/replacement_residual_nodes.py",
+        "quorune/resolution_conditions.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/semantic_choices/resolution_condition.py",
+        "quorune/semantic_choices/resolution_result_validation.py",
+        "tests/test_kicked_self_replacements.py",
+        "tests/fixtures/kicked-self-replacement-cards.json"
+      ],
+      "test_modules": [
+        "test_kicked_self_replacements",
+        "test_kicked_spell_conditions",
+        "test_public_self_replacement_results",
+        "test_resolution_public_conditions",
+        "test_fixed_stack_spell_copy",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -4027,6 +4027,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/kicked_self_replacement_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/kicked_spell_conditions.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -5003,6 +5018,21 @@
     },
     {
       "file": "quorune/compiler/regeneration_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/replacement_residual_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -16626,5 +16656,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "af36b9de4e9de427f3e784ea362e82560e46160704f4eadc97f800356689c36e"
+  "fingerprint": "84274d149d8a9e278444216f677ca6436ba0a9c824b641a3c9f34f76913fe58e"
 }

@@ -325,6 +325,7 @@
       "test_graveyard_resolution_conditions",
       "test_interactions_v070",
       "test_intrinsic_entry_counters",
+      "test_kicked_self_replacements",
       "test_landwalk",
       "test_library_selection_remainders",
       "test_madness_rules",
