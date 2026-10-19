@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "0a750c0e81c6e028136ab2fd782ed880dd269f8246fcd3bdb20fbf357474b511"
+verified: "2a9d77d99b3f289d773494100cf7e99163145f0bc84cb2833edeccc15257ff4e"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -36,7 +36,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Kaldheim // Pyre of the World Tree | 208 | 26 | 7 | 4 | 5 | 22 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
-| The Legend of Kuruk // Avatar Kuruk | 208 | 30 | 6 | 6 | 10 | 5 | `blocked` |
 | Twisted Fealty | 208 | 40 | 6 | 5 | 1 | 9 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
 | Tovolar, Dire Overlord // Tovolar, the Midnight Scourge | 206 | 34 | 6 | 6 | 5 | 12 | `blocked` |
@@ -44,6 +43,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
 | Fable of the Mirror-Breaker // Reflection of Kiki-Jiki | 201 | 23 | 8 | 5 | 6 | 13 | `blocked` |
+| The Legend of Kuruk // Avatar Kuruk | 201 | 29 | 6 | 6 | 8 | 5 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 199 | 29 | 6 | 6 | 11 | 10 | `blocked` |

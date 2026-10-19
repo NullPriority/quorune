@@ -2,7 +2,7 @@
 title: "Commander card-unlock frontier"
 status: "generated"
 authoritative_source: "coverage/card-unlock-frontier.json.gz"
-verified: "8a1fd0f4c8eca187940524abefb0ca0f7d44d041fe6ba49f8c3e7a58dd5cae8c"
+verified: "6937c546251c894ccf0c9b5a8709316a61fdd084c033500a5782271d0a881825"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,18 +14,18 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 ## Snapshot
 
 - Cards considered: 31,623
-- Oracle states: `{"exact":14890,"partial":9055,"unresolved":7678}`
-- CardProgram states: `{"residual":16735,"trusted":14888}`
+- Oracle states: `{"exact":15112,"partial":8920,"unresolved":7591}`
+- CardProgram states: `{"residual":16513,"trusted":15110}`
 - Hard construction failures: 0
-- Frontier fingerprint: `8a1fd0f4c8eca187940524abefb0ca0f7d44d041fe6ba49f8c3e7a58dd5cae8c`
+- Frontier fingerprint: `6937c546251c894ccf0c9b5a8709316a61fdd084c033500a5782271d0a881825`
 
 ## Highest-leverage single families
 
 | Family | Occurrences | Cards | Sole-blocker cards | Exact abilities | Readiness | Risk |
 |---|---:|---:|---:|---:|---|---|
-| `continuous_layer:continuous-effect-layers-and-dependencies` | 3,092 | 2,570 | 1,392 | 3,092 | missing_lowering | very_high |
-| `effect_clause:typed-spell-additional-cost-clause` | 102 | 102 | 20 | 20 | missing_lowering | high |
+| `continuous_layer:continuous-effect-layers-and-dependencies` | 2,892 | 2,383 | 1,269 | 2,892 | missing_lowering | very_high |
 | `keyword_dependency:banding` | 24 | 24 | 19 | 24 | missing_contract | medium |
+| `effect_clause:typed-spell-additional-cost-clause` | 97 | 97 | 16 | 16 | missing_lowering | high |
 | `replacement:damage-prevention` | 123 | 121 | 14 | 25 | missing_lowering | very_high |
 | `keyword_dependency:cipher` | 15 | 15 | 11 | 15 | missing_contract | medium |
 | `activated_effect:create-token` | 233 | 228 | 10 | 34 | missing_lowering | high |
@@ -33,7 +33,7 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 | `activated_effect:unparsed-you-get-an` | 69 | 69 | 8 | 67 | missing_lowering | high |
 | `keyword_dependency:fuse` | 34 | 17 | 8 | 34 | missing_contract | medium |
 | `activated_effect:exile` | 260 | 246 | 8 | 20 | missing_lowering | high |
-| `effect_clause:return` | 432 | 419 | 8 | 18 | missing_lowering | high |
+| `effect_clause:return` | 431 | 418 | 8 | 18 | missing_lowering | high |
 | `activated_effect:unparsed-target-creature-can` | 15 | 15 | 7 | 10 | missing_lowering | high |
 | `effect_clause:create-token` | 424 | 413 | 6 | 49 | missing_lowering | high |
 | `effect_clause:life-change` | 358 | 356 | 6 | 18 | missing_lowering | high |
@@ -53,26 +53,26 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 
 | Families | Exact cards | Exact abilities | Residuals |
 |---|---:|---:|---:|
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:banding` | 1,432 | 3,136 | 3,218 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:job-select` | 1,430 | 3,135 | 3,135 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:job-select` | 1,430 | 3,131 | 3,213 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, replacement:damage-prevention` | 1,426 | 3,141 | 3,141 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, replacement:damage-prevention` | 1,426 | 3,137 | 3,219 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, replacement:damage-prevention, keyword_dependency:job-select` | 1,424 | 3,136 | 3,136 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:create-token` | 1,423 | 3,150 | 3,157 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 1,423 | 3,146 | 3,235 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:cipher` | 1,423 | 3,131 | 3,131 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:cipher` | 1,423 | 3,127 | 3,209 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:unparsed-you-get-an` | 1,421 | 3,183 | 3,185 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:unparsed-you-get-an` | 1,421 | 3,179 | 3,263 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:job-select` | 1,421 | 3,145 | 3,152 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:exile` | 1,421 | 3,136 | 3,138 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:exile` | 1,421 | 3,132 | 3,216 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:assist` | 1,421 | 3,132 | 3,132 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:assist` | 1,421 | 3,128 | 3,210 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, keyword_dependency:job-select` | 1,421 | 3,126 | 3,126 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:fuse` | 1,420 | 3,150 | 3,150 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:fuse` | 1,420 | 3,146 | 3,228 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:typed-spell-additional-cost-clause` | 1,305 | 2,932 | 3,013 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, replacement:damage-prevention` | 1,303 | 2,941 | 2,941 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:create-token` | 1,300 | 2,950 | 2,957 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:cipher` | 1,300 | 2,931 | 2,931 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, replacement:damage-prevention` | 1,299 | 2,933 | 3,014 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:unparsed-you-get-an` | 1,298 | 2,983 | 2,985 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:exile` | 1,298 | 2,936 | 2,938 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:assist` | 1,298 | 2,932 | 2,932 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:fuse` | 1,297 | 2,950 | 2,950 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:return` | 1,297 | 2,934 | 2,934 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 1,296 | 2,942 | 3,030 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:unparsed-target-creature-can` | 1,296 | 2,926 | 2,926 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:cipher` | 1,296 | 2,923 | 3,004 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:create-token` | 1,295 | 2,965 | 2,965 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:life-change` | 1,295 | 2,934 | 2,934 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:destroy-mass` | 1,295 | 2,933 | 2,933 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:counter` | 1,295 | 2,928 | 2,928 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:phasing` | 1,295 | 2,928 | 2,928 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:life-change` | 1,295 | 2,927 | 2,927 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:put-onto-battlefield` | 1,295 | 2,927 | 2,927 |
 
 ## Hard construction failures
 
