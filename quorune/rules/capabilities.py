@@ -319,6 +319,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _CREW_MECHANIC: ("activation.crew.fixed_power",),
     _STATION_MECHANIC: ("counter.producer.station",),
     _EVOLVE_MECHANIC: ("counter.producer.evolve",),
+    'increment':('counter.producer.increment',),
     _PROWESS_MECHANIC: ("trigger.keyword.prowess",),
     _STORM_MECHANIC: ("trigger.keyword.storm",),
     _PERSIST_MECHANIC: ("counter.producer.persist",),

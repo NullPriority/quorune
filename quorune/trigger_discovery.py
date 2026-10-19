@@ -28,6 +28,8 @@ from .creature_power_damage import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
 )
 from .errors import GameRuleError
+from .increment_model import CONDITION_FIELD as INCREMENT_CONDITION_FIELD
+from .rules.increment_condition import current_increment_condition
 from .continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
@@ -233,6 +235,9 @@ def _keyword_intervening_condition_actual(
     context: Mapping[str, Any],
 ) -> bool:
     """Evaluate typed keyword conditions outside the generic dispatcher."""
+    if field==INCREMENT_CONDITION_FIELD:
+        try:return current_increment_condition(host,source,context)
+        except ValueError as exc:raise GameRuleError(str(exc)) from exc
     from .soulbond_model import SOULBOND_SELF_CONDITION, SOULBOND_OTHER_CONDITION
     if field in {SOULBOND_SELF_CONDITION, SOULBOND_OTHER_CONDITION}:
         from .soulbond_state import intervening_pair_available
@@ -438,7 +443,7 @@ def _semantic_condition_actual(
         return bool(
             controlled_values and max(controlled_values) == max(all_values)
         )
-    if field in {EVOLVE_EVENT_CONDITION_FIELD, RENOWN_EVENT_CONDITION_FIELD,
+    if field in {EVOLVE_EVENT_CONDITION_FIELD, RENOWN_EVENT_CONDITION_FIELD,INCREMENT_CONDITION_FIELD,
                  'soulbond_self_entry_available', 'soulbond_other_entry_available'}:
         return _keyword_intervening_condition_actual(
             host,

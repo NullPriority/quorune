@@ -837,6 +837,15 @@ instruction whose captured count is stale. Source reincarnation, ability
 removal, save/load, and public projection all use those typed identities rather
 than Oracle prose.
 
+The current committed spell-cast event adds actual mana spent as a
+nonnegative integer in schema version 7. The cast commit publishes the already
+sealed paid stack fact, including additional costs and reductions; it does not
+reconstruct payment from mana value or current prices. Earlier event versions
+retain their exact field sets. Printed Increment consumes this fact through
+the ordinary APNAP trigger path and rechecks current source creature P/T before
+the existing counter-placement transaction. Independent instances recheck
+after earlier counters; copies do not become casts.
+
 Committed represented casts dispatch one strict immutable `SpellCastEvent`
 that pins the physical spell, logical incarnation, controller, origin, stack
 reference, and canonical current card types. Ordinary Prowess is lowered once

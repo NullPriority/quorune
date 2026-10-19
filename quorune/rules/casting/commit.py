@@ -1183,7 +1183,7 @@ def _dispatch_cast_events(
         types=cast_types,
     )
     context = SpellCastEvent(
-        schema_version=6,
+        schema_version=7,
         card_ref=card.ref,
         object_id=card.object_id,
         logical_object_id=card.logical_object_id,
@@ -1209,6 +1209,7 @@ def _dispatch_cast_events(
         phase=host.state.phase,
         targets=proposal.targets,
         creature_target_controllers=_cast_creature_target_controllers(host, item),
+        mana_spent_total=item.context.get('mana_spent_total'),
     ).to_context()
     event_sources = _ordered_event_sources(host,None)
     if all(source.object_id != card.object_id for source in event_sources):

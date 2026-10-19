@@ -90570,6 +90570,1466 @@
       "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
     },
     {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"rollback","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_stale_fixed_self_entry_aborts_without_card_mutation","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Abort a stale generic entry continuation after the proposed object leaves the stack without placing counters, reentering the object, or mutating any card snapshot."},
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_humble_removes_future_increment_without_erasing_pending_trigger",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_independent_printed_instances_recheck_after_the_first_counter",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_rechecks_current_size_after_actual_growth_response",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_topiary_mana_uses_current_power_after_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_humble_removes_future_increment_without_erasing_pending_trigger",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_independent_printed_instances_recheck_after_the_first_counter",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_rechecks_current_size_after_actual_growth_response",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_topiary_mana_uses_current_power_after_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_fresh_original_humble_kills_current_ability_omission",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_fresh_original_professor_kills_increment_condition_omission",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_increment.IncrementCompilerTests.test_keyword_preflight_coverage_requires_current_trusted_same_line_owner",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_increment.IncrementCompilerTests.test_paid_cast_event_is_versioned_closed_and_does_not_reinterpret_legacy_events",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_increment.IncrementCompilerTests.test_printed_instances_have_independent_nodes_and_withdrawal_keeps_them_residual",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_increment.IncrementCompilerTests.test_runtime_paid_fact_is_required_even_when_zero_would_exceed_negative_power",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_all_five_originals_have_complete_preflight_and_runtime_increment_authority",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementCompilerTests.test_increment_compares_greater_than_either_current_stat_and_requires_creature_and_paid_fact",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_humble_removes_future_increment_without_erasing_pending_trigger",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_independent_printed_instances_recheck_after_the_first_counter",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_rechecks_current_size_after_actual_growth_response",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_topiary_mana_uses_current_power_after_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_humble_removes_future_increment_without_erasing_pending_trigger",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_independent_printed_instances_recheck_after_the_first_counter",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_rechecks_current_size_after_actual_growth_response",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_topiary_mana_uses_current_power_after_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_humble_removes_future_increment_without_erasing_pending_trigger",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_independent_printed_instances_recheck_after_the_first_counter",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_professor_rechecks_current_size_after_actual_growth_response",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_original_topiary_mana_uses_current_power_after_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
+    {
+      "capability_id": "counter.producer.increment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_increment.IncrementRuntimeTests.test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+      "official_rule_ids": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unpublished printed Increment; actual spent mana, current-size OR comparison and source incarnation must pass normal-native,intervening,privacy,rollback,load,replay and fresh mutation evidence before gain acceptance."
+    },
     {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"interaction","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_competing_entry_counter_replacements_order_to_nine_or_ten","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Apply two represented counter-quantity replacements to one intrinsic Planeswalker entry event in either legal affected-controller order."},
     {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"interaction","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_counter_child_tracks_a_later_destination_replacement","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retarget the nested entry-counter event when a later replacement changes the containing zone-change destination."},
     {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"interaction","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resume a token-quantity replacement choice and then a counter-quantity replacement choice from one strict selection journal without duplicating either transformation."},

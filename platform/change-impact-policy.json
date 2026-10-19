@@ -6378,6 +6378,26 @@
         "test_preflight_v080",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "increment-paid-cast-intervening-contract",
+      "patterns": [
+        "quorune/increment_model.py",
+        "quorune/rules/increment_condition.py",
+        "quorune/compiler/increment_nodes.py",
+        "quorune/rules/spell_cast_events.py",
+        "quorune/compiler/generated_program_identity.py",
+        "tests/test_increment.py",
+        "tests/fixtures/increment-cards.json"
+      ],
+      "test_modules": [
+        "test_increment",
+        "test_evolve_counter_placement",
+        "test_prowess_rules",
+        "test_cast_creature_targets",
+        "test_fixed_spell_cost_reductions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

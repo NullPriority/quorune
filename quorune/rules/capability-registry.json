@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 404,
+  "registry_version": 405,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -33898,6 +33898,153 @@
       "dependency_fail_closed_rationale": "The compiler and runtime require complete removal/selection/keyword ownership; focused omissions must pass before acceptance.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original Canopy Claws witness must fail when the dedicated complete removal producer is omitted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.producer.increment",
+      "version": 1,
+      "official_rules": [
+        "601.2h",
+        "601.2i",
+        "603.4",
+        "608.2a",
+        "702.191a",
+        "702.191b",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Printed Increment triggers independently on a controller cast when sealed actual paid mana exceeds current creature power or toughness, rechecking the same source incarnation at resolution.",
+        "inputs": [
+          "version7 committed spell-cast event with exact actual paid mana",
+          "current source creatureP/T and incarnation",
+          "one printed Increment instance"
+        ],
+        "outputs": [
+          "ordinaryAPNAPinterveningtrigger",
+          "onecanonical+1/+1counterifbothchecksqualify",
+          "private deterministic replay with unchanged old event versions"
+        ],
+        "exclusions": [
+          "mana-value substitution or repricing",
+          "copies as casts, missing paid facts, stale/noncreature sources",
+          "unsupported independent source siblings"
+        ]
+      },
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.increment_model.increment_condition_holds",
+        "quorune.rules.increment_condition.current_increment_condition",
+        "quorune.compiler.increment_nodes.increment_keyword_node",
+        "quorune.rules.spell_cast_events.SpellCastEvent",
+        "quorune.rules.casting.commit._cast_provenance_context",
+        "quorune.trigger_discovery._keyword_intervening_condition_actual",
+        "quorune.rules.increment_condition.increment_runtime_dependencies"
+      ],
+      "positive_tests": [
+        "test_increment_compares_greater_than_either_current_stat_and_requires_creature_and_paid_fact",
+        "test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+        "test_original_professor_rechecks_current_size_after_actual_growth_response",
+        "test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+        "test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+        "test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+        "test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+        "test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+        "test_independent_printed_instances_recheck_after_the_first_counter",
+        "test_original_topiary_mana_uses_current_power_after_increment",
+        "test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+        "test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+        "test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+        "test_actual_humble_removes_future_increment_without_erasing_pending_trigger"
+      ],
+      "negative_tests": [
+        "test_paid_cast_event_is_versioned_closed_and_does_not_reinterpret_legacy_events",
+        "test_runtime_paid_fact_is_required_even_when_zero_would_exceed_negative_power",
+        "test_keyword_preflight_coverage_requires_current_trusted_same_line_owner",
+        "test_printed_instances_have_independent_nodes_and_withdrawal_keeps_them_residual",
+        "test_all_five_originals_have_complete_preflight_and_runtime_increment_authority"
+      ],
+      "interaction_tests": [
+        "test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+        "test_original_professor_rechecks_current_size_after_actual_growth_response",
+        "test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+        "test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+        "test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+        "test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+        "test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+        "test_independent_printed_instances_recheck_after_the_first_counter",
+        "test_original_topiary_mana_uses_current_power_after_increment",
+        "test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+        "test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+        "test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+        "test_actual_humble_removes_future_increment_without_erasing_pending_trigger"
+      ],
+      "multiplayer_tests": [
+        "test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+        "test_original_professor_rechecks_current_size_after_actual_growth_response",
+        "test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+        "test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+        "test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+        "test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+        "test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+        "test_independent_printed_instances_recheck_after_the_first_counter",
+        "test_original_topiary_mana_uses_current_power_after_increment",
+        "test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+        "test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+        "test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+        "test_actual_humble_removes_future_increment_without_erasing_pending_trigger"
+      ],
+      "privacy_tests": [
+        "test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+        "test_original_professor_rechecks_current_size_after_actual_growth_response",
+        "test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+        "test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+        "test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+        "test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+        "test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+        "test_independent_printed_instances_recheck_after_the_first_counter",
+        "test_original_topiary_mana_uses_current_power_after_increment",
+        "test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+        "test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+        "test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+        "test_actual_humble_removes_future_increment_without_erasing_pending_trigger"
+      ],
+      "replay_tests": [
+        "test_original_professor_receives_one_counter_then_one_private_sibling_draw",
+        "test_original_professor_rechecks_current_size_after_actual_growth_response",
+        "test_actual_two_growth_responses_make_intervening_condition_false_at_resolution",
+        "test_actual_reduction_uses_three_paid_mana_not_four_mana_value",
+        "test_actual_kicker_payment_uses_six_paid_mana_instead_of_three_mana_value",
+        "test_actual_opponent_cast_and_actual_copy_do_not_become_controller_casts",
+        "test_source_departure_in_response_does_not_transfer_increment_to_returned_card",
+        "test_independent_printed_instances_recheck_after_the_first_counter",
+        "test_original_topiary_mana_uses_current_power_after_increment",
+        "test_original_tabulator_surveil_entry_stays_private_before_later_increment",
+        "test_typed_free_cast_permission_seam_emits_zero_paid_mana_and_no_increment",
+        "test_actual_announced_x_and_counter_replacement_keep_paid_amount_and_counter_owner",
+        "test_actual_humble_removes_future_increment_without_erasing_pending_trigger"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Printed capability/source closure and exact paid-fact validation must pass focused omissions before gain acceptance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh original Professor cast must detect omitted Increment condition before acceptance.",
       "blockers": [],
       "status": "trusted"
     }

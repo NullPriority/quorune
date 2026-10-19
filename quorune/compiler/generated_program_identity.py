@@ -73,6 +73,7 @@ def generated_ability_id(
                 _EVOLVE_MECHANIC,
                 _CASCADE_MECHANIC,
                 _PROWESS_MECHANIC,
+                'increment',
                 AFTERLIFE_MECHANIC_ID,
                 "chapter",
                 "backup",

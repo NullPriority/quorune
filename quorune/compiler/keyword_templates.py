@@ -22,7 +22,7 @@ _KEYWORD_WITH_VALUE = re.compile(
 _KNOWN_BARE_KEYWORDS = frozenset(
     "deathtouch|defender|double strike|first strike|flash|flying|haste|"
     "flanking|hexproof|indestructible|infect|lifelink|menace|reach|shadow|shroud|"
-    "trample|vigilance|wither|umbra armor|split second|extort|aftermath|start your engines!".split("|")
+    "trample|vigilance|wither|umbra armor|split second|extort|increment|aftermath|start your engines!".split("|")
 ) | frozenset(QUALIFIED_LANDWALK_KEYWORDS)
 _TYPECYCLING = re.compile(
     r"^(?:basic land|plains|island|swamp|mountain|forest|artifact land|"

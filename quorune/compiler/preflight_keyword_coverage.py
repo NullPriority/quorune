@@ -11,5 +11,13 @@ def static_lines_without_keyword_owners(lines,*,record,trusted_programs):
     result=[]
     for line in lines:
         mechanics=keyword_mechanics(line,record.keywords)
-        if mechanics is None or not set(mechanics)<=covered:result.append(line)
+        if mechanics is not None and set(mechanics)<=covered:continue
+        if mechanics==('increment',):
+            from ..increment_model import CAPABILITY
+            source_lines=record.oracle_text.splitlines()
+            matches=[index+1 for index,text in enumerate(source_lines) if text.split(' (',1)[0].strip().casefold()==line.strip().casefold()]
+            if any(program.trust_level=='trusted' and program.event=='spell.cast' and 'increment' in program.coverage
+                    and CAPABILITY in program.capability_dependencies
+                    and program.provenance.get('source_span',{}).get('line') in matches for program in trusted_programs):continue
+        result.append(line)
     return result

@@ -54,6 +54,7 @@ from .commander_pairing_nodes import (
 from .cascade_nodes import CASCADE_MECHANIC_ID, cascade_keyword_node
 from .storm_nodes import STORM_MECHANIC_ID, storm_keyword_node
 from .extort_nodes import extort_keyword_node
+from .increment_nodes import increment_keyword_node
 from .player_speed_nodes import start_engines_keyword_node
 from .stack_static_keyword_nodes import split_second_keyword_node
 from .bestow_nodes import fixed_mana_bestow_keyword_node
@@ -159,6 +160,7 @@ _PARAMETERIZED_SPLIT_MECHANICS = frozenset(
     }
 )
 _INSTANCE_PART_MECHANICS = (
+    'increment',
     'extort',
     'split second',
     _AFFINITY_MECHANIC,
@@ -251,6 +253,7 @@ def keyword_node_plans(
             _RENOWN_MECHANIC,
             _MODULAR_MECHANIC,
             _ECHO_MECHANIC,
+            'increment',
         }
     )
     if not split_mechanics:
@@ -390,7 +393,7 @@ def closed_special_keyword_node(
     morph = fixed_mana_morph_keyword_node(**values)
     if morph is not None:
         return morph
-    for lower in (graveyard_copy_keyword_node,ordinary_unearth_keyword_node,fixed_mana_kicker_keyword_node):
+    for lower in (graveyard_copy_keyword_node,ordinary_unearth_keyword_node,fixed_mana_kicker_keyword_node,increment_keyword_node):
         node=lower(**values)
         if node is not None:return node
     renown = renown_keyword_node(

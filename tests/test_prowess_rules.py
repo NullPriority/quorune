@@ -543,7 +543,8 @@ class ProwessRuntimeTests(unittest.TestCase):
             self.prepare_noncreature_cast(engine)
             engine._stabilize()
             context = engine.state.stack[-1].context
-            self.assertEqual(6, context["schema_version"])
+            self.assertEqual(7, context["schema_version"])
+            self.assertIs(type(context['mana_spent_total']),int)
             self.assertEqual([], context["targets"])
             self.assertEqual([], context["creature_target_controllers"])
             self.assertTrue(context["object_id"])

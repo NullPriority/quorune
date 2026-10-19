@@ -2609,6 +2609,17 @@ component, so removal, control changes and source departure affect subsequent
 prices. Variable, target-qualified, history-qualified and unrepresented source
 zone forms remain residual. Recognizing a modifier does not remove unrelated
 Companion, return, Adapt or other whole-card residuals.
+Printed Increment uses `compiler/increment_nodes.py` and independent
+source-spanned instance identities. The normalized cast event carries the
+actual committed mana total in explicit version 7, copied from the existing
+paid stack provenance after costs and modifiers. `increment_model.py` owns the
+strict greater-than-power-or-toughness comparison; the rules condition owner
+checks the current creature and source incarnation both at discovery and at
+resolution. Counter placement and replacement use the existing transaction.
+Mana value, free casts, copies and controller identity remain distinct;
+unsupported sibling instructions retain whole-card residuals. Event schemas
+1 through 6 keep their original fields and serialized payloads.
+
 Target-qualified spell-cast predicates consume version-six public cast facts.
 The casting owner reads effective creature types and controllers only for
 selected targets still in their expected zone and incarnation at cast completion

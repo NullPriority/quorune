@@ -3937,6 +3937,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/increment_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/intrinsic_counter_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7939,6 +7954,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/increment_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/intrinsic_basic_land_mana.py",
       "layer": "rules",
       "owning_subsystem": "mana_rules",
@@ -11295,6 +11322,20 @@
     },
     {
       "file": "quorune/rules/impulse_access_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/increment_condition.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -16773,5 +16814,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "8380baf257d50d55c430e19eda12765e923b605151d6e6534db045bbae1a428b"
+  "fingerprint": "4260faad53880ec6ca43ca4281f95a2ddd788b3900ae1a8932c044bc3361b7af"
 }
