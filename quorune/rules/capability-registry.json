@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 387,
+  "registry_version": 388,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11837,12 +11837,14 @@
     },
     {
       "id": "quantity_expression.declared_effect_amount",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -11850,10 +11852,10 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Bind a signed ordinary announced spell-cost X or one explicitly scoped public X definition to closed numeric result slots without changing the existing target, payment, or result owners.",
+        "summary": "Bind a signed ordinary announced spell-cost or ordinary activation-cost X or one explicitly scoped public X definition to closed numeric result slots without changing the existing target, payment, or result owners.",
         "inputs": [
           "one source-spanned instruction",
-          "ordinary printed spell mana cost with one or more X symbols, or one complete public object-count definition",
+          "ordinary printed spell or activation mana cost with one or more X symbols, or one complete public object-count definition",
           "canonical persisted stack X and locked controller",
           "explicit declaration identity scoped by its Oracle node",
           "invariant existing fixed operation, target schema, and dependency shapes",
@@ -11868,7 +11870,7 @@
         ],
         "exclusions": [
           "undefined X, X-dependent target domains, and X-dependent target cardinalities",
-          "variable activation costs, source or linked characteristics, arithmetic, division, and unrepresented quantities",
+          "unrepresented unrepresented unrepresented unrepresented variable activation costs, source or linked characteristics, arithmetic, division, and unrepresented quantities",
           "cost X defined by Oracle rather than announced through the supported cost owner",
           "hybrid, Phyrexian, snow, restricted, and otherwise nonordinary X mana costs",
           "nested declaration programs or independently unsupported effects, qualifications, and siblings"
@@ -11889,12 +11891,21 @@
       ],
       "positive_tests": [
         "test_announced_spell_x_uses_existing_result_families",
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
         "test_mandatory_public_land_count_uses_existing_quantity_and_preserves_surface",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
         "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
         "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
         "test_public_definition_can_bind_multiple_result_slots",
-        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response"
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
       ],
       "negative_tests": [
         "test_amount_versions_and_cast_values_reject_malformed_inputs",
@@ -11907,27 +11918,63 @@
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual"
       ],
       "interaction_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
         "test_explicit_public_binding_is_frozen_and_independent_expressions_are_not",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
-        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response"
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+        "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
       ],
       "multiplayer_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_real_announced_x_offer_payment_rollback_privacy_and_replay",
-        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"
+        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
       ],
       "privacy_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_real_announced_x_offer_payment_rollback_privacy_and_replay",
-        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"
+        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
       ],
       "replay_tests": [
         "test_actual_v233_numeric_result_record_is_explicitly_incompatible_not_reinterpreted",
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_real_announced_x_offer_payment_rollback_privacy_and_replay",
         "test_real_public_definition_is_frozen_before_draw_and_replays",
-        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"
+        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
       ],
       "required_evidence": [
         "positive",
@@ -31865,6 +31912,147 @@
       "implementation_mutation_rationale": "Pure lifetime omission changes independently expected expiry; suppressing the paired-grant lowerer is detected by actual admitted Wingcrafter entry, optional choice and both-creature flying consequences.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "activation.mana_cost.announced_x",
+      "version": 1,
+      "official_rules": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Announce one nonnegative ordinary activation-cost X, price every X symbol before existing generic reductions, and persist that instance value on its activated stack object.",
+        "inputs": [
+          "closed ordinary unrestricted mana cost with one or more X symbols, optionally source tap",
+          "authenticated controlling principal and explicit nonnegative integer X",
+          "independently closed fixed target domain and numeric result slots",
+          "source-pinned exact complete-card admission certificate"
+        ],
+        "outputs": [
+          "canonical combined mana payment and source-tap commitment",
+          "per-activation stack X independent of source current state and other activations",
+          "shared advertised numeric choice and accepted affordability",
+          "historical non-X absence and serialization preserved"
+        ],
+        "exclusions": [
+          "text-defined X, spend-only restrictions and X-not-zero clauses",
+          "variable target domains/cardinalities and unrepresented result bodies",
+          "hybrid/Phyrexian/snow, variable nonmana, mana abilities and nonbattlefield variants"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.activation_x.validate_activation_x_ability",
+        "quorune.compiler.activation_x_costs.announced_x_activation_cost",
+        "quorune.compiler.activation_x_costs.announced_x_activation_effect",
+        "quorune.rules.activation.x_costs.activation_requirements",
+        "quorune.rules.activation.x_costs.validate_activation_x_payment",
+        "quorune.rules.activation.proposal.build_activation_proposal",
+        "quorune.rules.activation.commit._activation_stack_item"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing the cost capability blocks complete admission; omitting its executable-catalog declaration fails runtime binding. Discovery separately requires exact complete-card provenance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native original Armor witnesses detect omitted chosen-X pricing and per-instance stack-value retention.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_announced_cost_x_keeps_fixed_results_and_invariant_target_domain",
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_cost_roundtrip_counts_every_symbol_and_keeps_legacy_absence",
+        "test_double_x_price_and_zero_are_independent_paid_activations",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
+      ],
+      "negative_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_cost_roundtrip_counts_every_symbol_and_keeps_legacy_absence",
+        "test_defined_restricted_and_variable_target_domains_remain_residual",
+        "test_omitted_cost_capability_cannot_bind_executable_catalog",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+        "test_unknown_body_and_partial_sibling_cannot_expose_paid_x_activation",
+        "test_withdrawn_activation_x_authority_keeps_complete_body_residual"
+      ],
+      "interaction_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_double_x_price_and_zero_are_independent_paid_activations",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
+      ],
+      "multiplayer_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_double_x_price_and_zero_are_independent_paid_activations",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
+      ],
+      "privacy_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_double_x_price_and_zero_are_independent_paid_activations",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
+      ],
+      "replay_tests": [
+        "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_double_x_price_and_zero_are_independent_paid_activations",
+        "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+        "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+        "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+        "test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+        "test_original_sands_mills_exact_x_for_only_the_chosen_player",
+        "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+        "test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+        "test_two_original_spider_activations_keep_separate_x_and_colored_payment"
+      ]
     }
   ]
 }

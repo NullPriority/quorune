@@ -503,6 +503,19 @@ and restriction payability, and a stale option rejects before source tap, mana
 spend, life payment, or stack placement. The lot journal is authoritative
 checkpoint state but is not projected as mana-source identity.
 
+Ordinary announced activation X uses that catalog and the same proposal and
+payment path. `activation_x.py` validates the optional symbol count;
+`rules/activation/x_costs.py` prices each symbol at the explicit nonnegative
+integer chosen by the authenticated activator, before existing generic
+reductions. Source-tap costs reserve the source from its own mana payment.
+Offers advertise the numeric choice, and acceptance rechecks the chosen price.
+The canonical `StackItem.x_value` retains each activation's independent value
+through source departure, save/load and replay; existing result owners consume
+it. Non-X descriptors and records preserve the field's historical absence.
+Text-defined or restricted X, variable target domains and nonordinary or
+nonmana X costs remain outside this boundary. Activated-ability copying has
+no represented owner and gains no execution path here.
+
 Ordinary printed `Crew N` is compiled once into a source-spanned activated-
 ability descriptor. `crew.py` owns the immutable current-characteristic
 candidate set and aggregate-power cost plan; activation offers and commits use

@@ -175,6 +175,13 @@ def _revalidate_activation(
             reason=condition_reason or "stale_activation_condition",
         )
     details = thaw_json(proposal.details)
+    if ability.announced_x_symbols is not None:
+        from .x_costs import activation_requirements, validate_activation_x_payment
+        try:
+            expected, value = activation_requirements(host,proposal.seat,source,ability,{'x':details.get('announced_x')})
+            if expected != dict(thaw_json(proposal.requirements)):raise ValueError('Activation X price changed after proposal')
+            validate_activation_x_payment(host,proposal.seat,source,ability,expected)
+        except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_activation_x') from exc
     raw_option = details.get("mana_cost_option")
     mana_option = None
     if ability.mana_cost_options:
@@ -632,6 +639,7 @@ def _activation_stack_item(
         semantic_key=str(proposal.semantic_key or ""),
         targets=list(proposal.targets),
         modes=list(details.get("selected_modes") or []),
+        x_value=details.get('announced_x'),
         notes=str(response.get("note") or ""),
         visibility=list(host.seats),
         context={

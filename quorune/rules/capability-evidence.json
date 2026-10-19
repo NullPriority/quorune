@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "56595c6ff5bd6c0e8bab6ea4d99f3dfcefed6190105d97926a2059e6d23ab6e9",
-  "declaration_source_fingerprint": "12914db48657a00eeabca1a8cf90850d08f019f249e5fc09c085f610ba2c6e35",
+  "registry_fingerprint": "e5ecbeabcc35b8a285efde026f70027ed68e9dc9017320706cd0759d0098baf9",
+  "declaration_source_fingerprint": "7233fa9120c2e82df6d096d6ef1b2e024108e0f3d177efce0e74fb4af7758953",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -2696,6 +2696,1413 @@
         "commander_review"
       ],
       "applicability_note": "Checkpoint and replay the same activation result after the typed loyalty-cost modifier becomes inactive through phasing."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_double_x_price_and_zero_are_independent_paid_activations",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_double_x_price_and_zero_are_independent_paid_activations",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_activation_x_payment_and_retention_omissions_are_killed",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXCompilerTests.test_cost_roundtrip_counts_every_symbol_and_keeps_legacy_absence",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXCompilerTests.test_defined_restricted_and_variable_target_domains_remain_residual",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXCompilerTests.test_withdrawn_activation_x_authority_keeps_complete_body_residual",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_omitted_cost_capability_cannot_bind_executable_catalog",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_unknown_body_and_partial_sibling_cannot_expose_paid_x_activation",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXCompilerTests.test_announced_cost_x_keeps_fixed_results_and_invariant_target_domain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXCompilerTests.test_cost_roundtrip_counts_every_symbol_and_keeps_legacy_absence",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_double_x_price_and_zero_are_independent_paid_activations",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_double_x_price_and_zero_are_independent_paid_activations",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_double_x_price_and_zero_are_independent_paid_activations",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.1b",
+        "107.3a",
+        "107.3k",
+        "602.2a",
+        "602.2b",
+        "601.2f",
+        "601.2h",
+        "113.7a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
     },
     {
       "capability_id": "activation.mana_cost.fixed_complex",
@@ -144601,12 +146008,185 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_declared_amount_survives_draw_choice_checkpoint_without_repeating_effects",
       "official_rule_ids": [
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144623,7 +146203,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144640,7 +146222,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144657,7 +146241,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144674,7 +146260,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144691,7 +146279,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144703,12 +146293,185 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
       "official_rule_ids": [
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144725,7 +146488,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144742,7 +146507,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144759,7 +146526,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144776,7 +146545,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144793,7 +146564,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144810,7 +146583,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144827,7 +146602,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144844,7 +146621,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144861,7 +146640,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144878,7 +146659,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144895,7 +146678,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144912,7 +146697,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144924,12 +146711,185 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_positive_cast_results_use_existing_damage_token_and_characteristic_owners",
       "official_rule_ids": [
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144946,7 +146906,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144963,7 +146925,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144980,7 +146944,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -144997,7 +146963,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145014,7 +146982,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145031,7 +147001,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145048,7 +147020,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145060,12 +147034,185 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
       "official_rule_ids": [
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145082,7 +147229,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145099,7 +147248,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145111,12 +147262,185 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_ballista_uses_current_combat_target_domain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_drana_uses_one_chosen_x_for_target_and_source_results",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_sands_mills_exact_x_for_only_the_chosen_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_original_wolf_run_keeps_colored_zero_price_and_cannot_pay_its_own_tap",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_activation_x.AnnouncedActivationXRuntimeTests.test_two_original_spider_activations_keep_separate_x_and_colored_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
       "official_rule_ids": [
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145133,7 +147457,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145150,7 +147476,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145167,7 +147495,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145184,7 +147514,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -145201,7 +147533,9 @@
         "107.3a",
         "107.3b",
         "601.2b",
-        "608.2h"
+        "608.2h",
+        "107.3k",
+        "602.2b"
       ],
       "supported_profiles": [
         "traditional",
@@ -218841,5 +221175,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "d288aafeca21f9b4723572b27e670551ca9a46ca8b6d89422d8593ef09ebb4ce"
+  "fingerprint": "1f83737a09b27544a005d0705b0914c7f9d6801e2dba2312d1fdbf6bf81d94c9"
 }

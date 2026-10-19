@@ -2474,7 +2474,7 @@ Counted token instructions retain supported trailing keyword abilities as part
 of the complete fixed token definition before lowering the separate quantity.
 The existing token compiler still rejects unrepresented abilities and definitions.
 
-`compiler/declared_effect_amounts.py` binds ordinary announced spell-cost X or
+`compiler/declared_effect_amounts.py` binds ordinary announced cost X or
 one complete public count definition to numeric result slots in existing typed
 instructions. Mandatory `mill cards equal to` wording normalizes to the same
 explicit public definition before the existing quantity owner runs. It retains
@@ -2491,7 +2491,14 @@ beside independently closed ordered components. The compiler preserves the
 original placement subject, counter kind and target schema; the canonical
 placement owner receives the concrete execution-time integer. Unrepresented
 activation costs still block an otherwise recognized result.
-The casting owner remains the sole authority for choosing and paying cost X.
+The casting and activation owners choose and pay their respective cost X.
+`compiler/activation_x_costs.py` admits ordinary unrestricted battlefield
+activation mana costs with one or more X symbols, optionally a source tap.
+The closed catalog retains the symbol count, while the existing declared
+amount projection varies only numeric results and preserves fixed target
+domains. Discovery requires the existing exact complete-card certificate,
+including when the catalog is attached after effect-program generation.
+An exact leaf beside an unknown sibling cannot expose a newly paid X action.
 Target-qualified spell-cast predicates consume version-six public cast facts.
 The casting owner reads effective creature types and controllers only for
 selected targets still in their expected zone and incarnation at cast completion
@@ -2587,8 +2594,8 @@ frontier across revisions of an unmerged batch. Final PR delivery still uses
 immutable base/head corpus receipts and subtracts lost support. Interaction
 coverage distinguishes actual Aura, shroud and target composition from explicit
 rejection of unresolved original-card siblings.
-Undefined X, X-dependent target domains or cardinalities, variable activation
-costs, nonordinary X mana costs, linked or source characteristics, open arithmetic,
+Undefined X, X-dependent target domains or cardinalities, unrepresented variable
+activation costs, nonordinary X mana costs, linked or source characteristics, open arithmetic,
 unrepresented result owners, and nested modal declarations remain residual.
 Ordinary Cycling explicitly
 declares the existing draw handler dependency beside its activation capability;

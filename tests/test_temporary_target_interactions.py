@@ -187,7 +187,7 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
             "Target creature gains flying,, trample until end of turn.",
             "Target creature gets +X/+X until end of turn.",
             "{1}: Target creature gets +X/+X until end of turn.",
-            "{X}: Target creature gets +X/+X until end of turn.",
+            "{X}: Target creature gets +X/+X until end of turn. X can't be 0.",
             "When this creature enters, target creature gets +X/+X until end of turn.",
         )
         for text in excluded:

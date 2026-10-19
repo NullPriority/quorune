@@ -5950,6 +5950,40 @@
         "test_fixed_characteristic_enchant",
         "test_high_risk_interaction_assurance"
       ]
+    },
+    {
+      "id": "announced-ordinary-activation-x-contract",
+      "patterns": [
+        "quorune/activation_x.py",
+        "quorune/compiler/activation_x_costs.py",
+        "quorune/compiler/activated_ability_catalog.py",
+        "quorune/compiler/activated_costs.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/abilities.py",
+        "quorune/activated_ability_descriptor.py",
+        "quorune/rules/activation/**",
+        "quorune/semantic_runtime/activated_abilities.py",
+        "tests/test_announced_activation_x.py",
+        "tests/fixtures/announced-x-activation-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_activation_x",
+        "test_card_program_trust",
+        "test_casting_activation_proposal_equivalence",
+        "test_class_lifecycle",
+        "test_complex_activation_mana_costs",
+        "test_copiable_entry_ability_grants",
+        "test_declared_effect_amounts",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_fixed_source_effect_sequences",
+        "test_high_risk_interaction_assurance",
+        "test_morph_rules",
+        "test_query_scaled_counters",
+        "test_temporary_target_interactions",
+        "test_typed_grant_carriers",
+        "test_waterbend"
+      ]
     }
   ],
   "symbol_rules": [

@@ -138,6 +138,7 @@ from ..semantic_runtime.activated_abilities import (
 from .activated_ability_catalog import (
     catalog_carrier_is_shadowed,
     with_activated_ability_catalog,
+    with_compiled_activated_ability_catalog,
 )
 from .generated_program_identity import (
     generated_ability_id as _generated_ability_id,
@@ -1442,15 +1443,9 @@ def _generated_programs_from_ir(
         generated_coverage=_generated_coverage,
     )
     return list(
-        with_activated_ability_catalog(
-            record,
-            programs,
-            carrier_provenance={
-                "source_oracle_hash": ir.oracle_hash,
-                "source_rulings_hash": rulings_hash,
-                "authored_by": ORACLE_COMPILER_VERSION,
-                "review_status": "generated_review_required",
-            },
+        with_compiled_activated_ability_catalog(
+            record, programs, ir=ir, rulings_hash=rulings_hash,
+            authored_by=ORACLE_COMPILER_VERSION,
         )
     )
 

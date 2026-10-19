@@ -198,7 +198,7 @@ class ComplexActivationManaCompilerTests(unittest.TestCase):
             ActivationManaCostOption.from_dict(malformed)
 
         excluded = (
-            "{X}, {T}: You gain 1 life.",
+            "{X}{S}, {T}: You gain 1 life.",
             "Pay X {E}, {T}: You gain 1 life.",
             "{W/P}, Discard two cards: You gain 1 life.",
         )

@@ -276,6 +276,9 @@ def build_activation_proposal(
         )
     source = _resolve_activation_source(host, request)
     ability = _select_ability(host, source, request.ability_selector)
+    from ...activation_x import chosen_activation_x
+    try: announced_x = chosen_activation_x(ability, response)
+    except ValueError as exc: raise ActivationProposalError(str(exc),reason='invalid_activation_x') from exc
     supplied_fingerprint = response.get("proposal_fingerprint")
     if supplied_fingerprint:
         advertised = build_activation_offer(
@@ -353,12 +356,11 @@ def build_activation_proposal(
             ) from exc
         requirements = dict(mana_option.requirements)
     else:
-        requirements = reduced_requirements(
-            ability,
-            legendary_creatures=host._legendary_creatures_controlled(
-                request.actor
-            ),
-        )
+        from .x_costs import activation_requirements, validate_activation_x_payment
+        requirements, announced_x = activation_requirements(host, request.actor, source, ability, response)
+        if announced_x is not None:
+            try: validate_activation_x_payment(host,request.actor,source,ability,requirements)
+            except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
     waterbend_details={}
     if ability.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
@@ -387,6 +389,7 @@ def build_activation_proposal(
                 "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
                 "builtin_context": context,
+                **({'announced_x':announced_x} if announced_x is not None else {}),
                 **waterbend_details,
                 **(
                     {
@@ -599,6 +602,8 @@ def build_activation_offer(
         payment=activation_waterbend_plan(host,seat,source,selected,requirements,{},hint=True)
         if payment is None:return ActivationProposalResult('unpayable','waterbend_unpayable')
         choice_schema={**(choice_schema or {}),**payment[3]}
+    if selected.announced_x_symbols is not None:
+        choice_schema={**(choice_schema or {}),'x':{'type':'integer','label':'X','minimum':0,'default':0}}
     if choice_schema is not None:
         payload["choice_schema"] = choice_schema
     if public_schema is not None:
