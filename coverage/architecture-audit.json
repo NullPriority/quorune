@@ -15410,7 +15410,7 @@
       "covered_high_risk_pairs": 482,
       "covered_piece_pairs": 1548,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "0bfb4aba1b7ad9f51c221d645f7cd9cb8cc6ea6b0b938bf8ea41d2b0856dde90",
+      "source_fingerprint": "e640e6a1f14a96d7ed07bbc262fa0877528514db6d497d13e33cf0bc2dfec396",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -37930,7 +37930,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 415,
+        "primary_test_count": 416,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -40383,7 +40383,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 372,
+        "primary_test_count": 373,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -43196,7 +43196,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1443,
     "compiler_module_physical_lines": 1505,
-    "compiler_version": "oracle-ir-v462",
+    "compiler_version": "oracle-ir-v463",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -43479,22 +43479,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 1937,
-          "multiplayer": 979,
-          "mutation": 724,
-          "negative": 1590,
-          "positive": 1812,
-          "privacy": 721,
+          "interaction": 1940,
+          "multiplayer": 982,
+          "mutation": 726,
+          "negative": 1591,
+          "positive": 1815,
+          "privacy": 724,
           "property": 113,
-          "replay": 1464,
+          "replay": 1467,
           "rollback": 280
         },
-        "declaration_count": 9620,
-        "declaration_source_fingerprint": "21afe93c69fcaeeaca46c85b8e6cf49be7d608ee5a4ba809d4817eb35c6fb8fd",
-        "fingerprint": "bc371ed58ca4388040cdd28c24be164cefacfee7ae394b455cd6109dff378acf",
-        "registry_fingerprint": "1c3f818e987896653c75851df44ff1395a38d2ecb9d36bb80e3c9f478e7de642"
+        "declaration_count": 9638,
+        "declaration_source_fingerprint": "b99322ecc0267c6dcda21c13d0dfaf2fb257bc1f01eb93db541f686bbbe49e3f",
+        "fingerprint": "b64ee102360adddcb770c10abdd6b88142b45bce0a9525eef8d02cd908734b52",
+        "registry_fingerprint": "7239b89c47a2e5c98793ca4185f1248de5b48f53e90c369cecd7312bee196ecb"
       },
-      "fingerprint": "1c3f818e987896653c75851df44ff1395a38d2ecb9d36bb80e3c9f478e7de642",
+      "fingerprint": "7239b89c47a2e5c98793ca4185f1248de5b48f53e90c369cecd7312bee196ecb",
       "implementation_mutation_status_counts": {
         "killed": 455,
         "not_run": 4
@@ -43504,7 +43504,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 386,
+      "registry_version": 387,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -43876,7 +43876,7 @@
         "contract_fingerprint": "2c3bd519b43f3c3c0fe5e6eec9e6351338313c44a1055e6b79c682d75997621b",
         "exact_cards_with_template": 767,
         "exact_nodes": 914,
-        "fingerprint": "bd6380a9a4deb1dacb59270f0f716054e1c21d3b7a9e4159843097892ad01783",
+        "fingerprint": "b22a2da57669b94283fce3f85da34f12c6c55fdead83ed76a109e4fa92bf2dfc",
         "grammar_source_fingerprint": "00505bb614d182ad0d995f16ea1c5a3acb0fb591292019a7749b063886446355",
         "identity_fingerprint": "566811187fe040231540c100c281eb5572a942f9cec961b927c0e364c8810de1",
         "present": true,
@@ -43888,7 +43888,7 @@
         "contract_fingerprint": "2c3bd519b43f3c3c0fe5e6eec9e6351338313c44a1055e6b79c682d75997621b",
         "exact_cards_with_template": 789,
         "exact_nodes": 947,
-        "fingerprint": "d9a8e09e9fe2f433d45792bb1441f2080d08fd876a55188a81c145cf59660e54",
+        "fingerprint": "e4b5693af83aef584550cf27383a3e6842b143b5d1690115e362c9841fd62457",
         "grammar_source_fingerprint": "00505bb614d182ad0d995f16ea1c5a3acb0fb591292019a7749b063886446355",
         "identity_fingerprint": "c6b3239dee95148295c006b92ccda5e7184c2bd13f9fddcf43ee06642f5971e7",
         "present": true,
@@ -43907,7 +43907,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "86b17501dd5d97f3927c7b664675dae994b82edf67b376ee6b1bbbae41534878",
+      "fingerprint": "918afddd41606051285e89880d616efe60d2865949c95c6bb8e1eaa31a2a7d30",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -44737,7 +44737,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 724,
+      "capability_mutation_declarations": 726,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -44765,8 +44765,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 7321,
-      "discovered_total": 10630,
+      "conventional_ast_cases": 7327,
+      "discovered_total": 10636,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 281,
@@ -44776,7 +44776,7 @@
         "server_named": 55
       },
       "reconciles": true,
-      "test_files": 529
+      "test_files": 530
     }
   }
 }

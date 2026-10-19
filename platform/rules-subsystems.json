@@ -6660,14 +6660,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v462-empty-homogeneous-target-batches",
-      "compiler_version": "oracle-ir-v462",
+      "transition_id": "oracle-ir-v463-zero-valued-target-set-characteristics",
+      "compiler_version": "oracle-ir-v463",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct canonical homogeneous target-set resolution when a legal optional target selection is empty. After full descriptor validation, destruction, simultaneous public-zone movement and tap-state handlers emit no mutation intents for zero selected objects. Preserve nonempty target batches, ordinary zone snapshot invariants, all-chosen-targets-illegal rules, privacy, rollback, pending load and replay. No grammar, capability promotion or card-support harvest is claimed."
+      "non_harvest_reason": "Correct canonical resolution of query-derived target-set characteristic modifiers whose evaluated P/T delta is zero. Preserve complete instruction validation, selected incarnation locking, typed layer commits, keyword-only changes, normal target legality, privacy, rollback, pending load and replay. No grammar, capability promotion or card-support harvest is claimed."
     },
 
     "forecast_corrections": [
