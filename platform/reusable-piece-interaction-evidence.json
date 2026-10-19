@@ -16845,6 +16845,111 @@
       ],
       "interaction_order": 2,
       "assertion": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.power_toughness.fixed_anthem"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.continuous.power_toughness.fixed_anthem"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.control.attached_source"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.continuous.characteristics.query_power_toughness_definition"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "continuous.characteristics.query_power_toughness_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_power_toughness_definition",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_power_toughness_definition",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_power_toughness_definition",
+        "capability.permanent.return.owner_hand"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_power_toughness_definition",
+        "permanent.return.owner_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
     }
   ]
 }

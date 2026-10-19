@@ -356,8 +356,8 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                 "Battle Frenzy": (
                     "Nongreen creatures you control get +1/+0 until end of turn."
                 ),
-                "Flowering of the White Tree": (
-                    "Nonlegendary creatures you control get +1/+1."
+                "Constructed Nonlegendary Attack-History Boundary": (
+                    "Nonlegendary creatures you control that attacked this turn get +1/+1."
                 ),
                 "Secret Plans": (
                     "Face-down creatures you control get +0/+1."

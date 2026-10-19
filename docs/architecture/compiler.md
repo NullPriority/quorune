@@ -2441,6 +2441,13 @@ remain independent of the creature type constraint. Named counter and modified
 state predicates use the existing static quantity form. Attachment facts retain
 the enclosing evaluation's ability-applicability boundary, include only current
 phased-in attachments, and make an Aura controller-relative for modified state.
+Complete nonlegendary-creature and nonbasic-land descriptions reuse the existing
+version-eight supertype exclusion in public battlefield queries. The same
+predicate feeds fixed modifiers, keyword grants, characteristic definitions
+and public result amounts. Basic is a supertype: a nonbasic land can have basic
+land types, and changing those types does not make it basic. Existing complete
+controller, source and state qualifiers retain their fields; unrepresented
+negative qualities, hidden predicates and compound grammar remain residual.
 Keyword and numeric-characteristic predicates remain outside static counts.
 Current compilation uses the source's current controller
 for “your” zones. Fixed public battlefield and graveyard thresholds accept

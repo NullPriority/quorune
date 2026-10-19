@@ -5930,6 +5930,26 @@
         "test_card_program_trust",
         "test_high_risk_interaction_assurance"
       ]
+    },
+    {
+      "id": "public-negative-supertype-query-contract",
+      "patterns": [
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "tests/fixtures/public-negative-supertype-cards.json",
+        "tests/test_public_negative_supertypes.py"
+      ],
+      "test_modules": [
+        "test_public_negative_supertypes",
+        "test_continuous_compiler_hardening",
+        "test_query_power_toughness_definitions",
+        "test_typed_query_self_characteristics",
+        "test_fixed_query_keyword_grants",
+        "test_public_query_effect_amounts",
+        "test_scalar_mill_wording",
+        "test_fixed_characteristic_enchant",
+        "test_high_risk_interaction_assurance"
+      ]
     }
   ],
   "symbol_rules": [

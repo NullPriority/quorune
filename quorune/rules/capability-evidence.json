@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "04204c2cf284c90b75e871f7aea4de7a147009587d6a51a7fc6969f9516ad9a0",
-  "declaration_source_fingerprint": "5eb0ebeba42ddaa21971abb5d7a67c8106820b7b41c90868521c0c20bed1f53d",
+  "registry_fingerprint": "56595c6ff5bd6c0e8bab6ea4d99f3dfcefed6190105d97926a2059e6d23ab6e9",
+  "declaration_source_fingerprint": "12914db48657a00eeabca1a8cf90850d08f019f249e5fc09c085f610ba2c6e35",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -55219,7 +55219,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55240,7 +55243,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55261,7 +55267,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55282,7 +55291,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55303,7 +55315,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55324,7 +55339,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55345,7 +55363,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55366,7 +55387,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55387,7 +55411,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55408,7 +55435,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55429,7 +55459,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55450,7 +55483,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55471,7 +55507,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55492,7 +55531,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55513,7 +55555,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55534,7 +55579,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55555,7 +55603,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -55576,7 +55627,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -55584,6 +55638,30 @@
         "traditional"
       ],
       "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -55597,7 +55675,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55618,7 +55699,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55639,7 +55723,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55660,7 +55747,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55681,7 +55771,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55702,7 +55795,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55723,7 +55819,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55744,7 +55843,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55765,7 +55867,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55786,7 +55891,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55807,7 +55915,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55828,7 +55939,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55849,7 +55963,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -55870,7 +55987,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -55878,6 +55998,30 @@
         "traditional"
       ],
       "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -55891,7 +56035,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55912,7 +56059,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55933,7 +56083,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55954,7 +56107,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55975,7 +56131,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -55996,7 +56155,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56004,6 +56166,30 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_negative_supertype_producer_omission_is_killed_by_fresh_native_cases",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted shared negative-supertype production for the original stat/keyword composition, original all-zone definition and actual public mill amount."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -56017,7 +56203,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56038,7 +56227,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56059,7 +56251,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56080,7 +56275,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56101,7 +56299,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56122,7 +56323,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56143,7 +56347,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56164,7 +56371,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56185,7 +56395,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56206,7 +56419,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56227,7 +56443,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56248,7 +56467,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56269,7 +56491,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56290,7 +56515,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -56298,6 +56526,54 @@
         "traditional"
       ],
       "applicability_note": "Unknown siblings and withdrawn fine Skulk authority prevent exact admission; no partial recognition becomes complete support."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -56311,7 +56587,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56332,7 +56611,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56353,7 +56635,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56374,7 +56659,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56395,7 +56683,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56416,7 +56707,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56437,7 +56731,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56458,7 +56755,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56479,7 +56779,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56500,7 +56803,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56521,7 +56827,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56542,7 +56851,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56563,7 +56875,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56584,7 +56899,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56605,7 +56923,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56626,7 +56947,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56647,7 +56971,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56668,7 +56995,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56689,7 +57019,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56710,7 +57043,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -56731,7 +57067,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -56752,7 +57091,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -56760,6 +57102,54 @@
         "traditional"
       ],
       "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -56773,7 +57163,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56794,7 +57187,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56815,7 +57211,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56836,7 +57235,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56857,7 +57259,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56878,7 +57283,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56899,7 +57307,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56920,7 +57331,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56941,7 +57355,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56962,7 +57379,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -56983,7 +57403,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57004,7 +57427,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -57025,7 +57451,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -57033,6 +57462,30 @@
         "traditional"
       ],
       "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -57046,7 +57499,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57067,7 +57523,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57088,7 +57547,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57109,7 +57571,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57130,7 +57595,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57151,7 +57619,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57172,7 +57643,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57193,7 +57667,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57214,7 +57691,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57235,7 +57715,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57256,7 +57739,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57277,7 +57763,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -57298,7 +57787,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -57306,6 +57798,30 @@
         "traditional"
       ],
       "applicability_note": "Actual original Skeleton Key casting/equipping, holder control change and source departure preserve current holder semantics, four-seat private projection, unauthorized rollback, pending reload and full pre-action replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -57319,7 +57835,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57340,7 +57859,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57361,7 +57883,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57382,7 +57907,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -57403,7 +57931,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78485,6 +79016,29 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
       "official_rule_ids": [
         "109.2",
@@ -78493,7 +79047,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78513,7 +79070,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -78533,7 +79093,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -78553,7 +79116,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -78573,7 +79139,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78593,7 +79162,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78613,7 +79185,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78633,7 +79208,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78653,7 +79231,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78661,6 +79242,29 @@
         "commander_review"
       ],
       "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -78673,7 +79277,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78693,7 +79300,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -78713,7 +79323,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -78733,7 +79346,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78753,7 +79369,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78773,7 +79392,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78781,6 +79403,29 @@
         "commander_review"
       ],
       "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_negative_supertype_producer_omission_is_killed_by_fresh_native_cases",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted shared negative-supertype production for the original stat/keyword composition, original all-zone definition and actual public mill amount."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -78793,7 +79438,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -78813,7 +79461,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78833,7 +79484,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78853,7 +79507,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78873,7 +79530,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78881,6 +79541,52 @@
         "commander_review"
       ],
       "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -78893,7 +79599,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -78913,7 +79622,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78933,7 +79645,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78953,7 +79668,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78973,7 +79691,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -78993,7 +79714,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79001,6 +79725,52 @@
         "commander_review"
       ],
       "applicability_note": "Closed versioned codecs reject Boolean arithmetic, unknown parameters, and nested or unbounded sum operands."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -79013,7 +79783,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79033,7 +79806,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79053,7 +79829,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79073,7 +79852,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79093,7 +79875,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79113,7 +79898,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79133,7 +79921,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79153,7 +79944,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79173,7 +79967,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79181,6 +79978,29 @@
         "commander_review"
       ],
       "applicability_note": "Bare subtype and represented subtype-union quantities retain only subtype predicates; explicit Creature card-type wording stays constrained and unknown subtypes stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -79193,7 +80013,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79213,7 +80036,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79233,7 +80059,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79253,7 +80082,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79273,7 +80105,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79281,6 +80116,29 @@
         "commander_review"
       ],
       "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -79293,7 +80151,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79313,7 +80174,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79333,7 +80197,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79353,7 +80220,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "commander_duel",
@@ -79373,7 +80243,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79393,7 +80266,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79413,7 +80289,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79433,7 +80312,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81247,7 +82129,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81268,7 +82153,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81289,7 +82177,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81310,7 +82201,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81331,7 +82225,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81352,7 +82249,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81373,7 +82273,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81394,7 +82297,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81415,7 +82321,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81436,7 +82345,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81457,7 +82369,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81478,7 +82393,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81486,6 +82404,30 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -81499,7 +82441,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81520,7 +82465,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81541,7 +82489,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81562,7 +82513,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81583,7 +82537,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81604,7 +82561,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81612,6 +82572,30 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -81625,7 +82609,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81646,7 +82633,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81667,7 +82657,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81688,7 +82681,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81696,6 +82692,30 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_negative_supertype_producer_omission_is_killed_by_fresh_native_cases",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted shared negative-supertype production for the original stat/keyword composition, original all-zone definition and actual public mill amount."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -81709,7 +82729,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81730,7 +82753,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81751,7 +82777,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81772,7 +82801,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81793,7 +82825,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81814,7 +82849,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81835,7 +82873,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81856,7 +82897,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81877,7 +82921,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81898,7 +82945,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81906,6 +82956,54 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -81919,7 +83017,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81940,7 +83041,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81961,7 +83065,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81982,7 +83089,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82003,7 +83113,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82024,7 +83137,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82045,7 +83161,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82066,7 +83185,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82087,7 +83209,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82108,7 +83233,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82129,7 +83257,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82150,7 +83281,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82171,7 +83305,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82179,6 +83316,54 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -82192,7 +83377,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82213,7 +83401,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82221,6 +83412,30 @@
         "commander_review"
       ],
       "applicability_note": "Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -82234,7 +83449,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82255,7 +83473,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82276,7 +83497,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82297,7 +83521,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82318,7 +83545,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -82326,6 +83556,30 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -82339,7 +83593,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -144952,7 +146209,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -144977,7 +146237,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -144985,6 +146248,34 @@
         "commander_review"
       ],
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -145002,7 +146293,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145027,7 +146321,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145052,7 +146349,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145077,7 +146377,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145102,7 +146405,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145127,7 +146433,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145152,7 +146461,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145177,7 +146489,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145202,7 +146517,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145227,7 +146545,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145252,7 +146573,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145277,7 +146601,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145302,7 +146629,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145327,7 +146657,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145352,7 +146685,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145377,7 +146713,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145402,7 +146741,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145427,7 +146769,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145452,7 +146797,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145477,7 +146825,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145485,6 +146836,34 @@
         "commander_review"
       ],
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -145502,7 +146881,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145527,7 +146909,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145552,7 +146937,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145577,7 +146965,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145602,7 +146993,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145627,7 +147021,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145652,7 +147049,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145677,7 +147077,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145702,7 +147105,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145710,6 +147116,34 @@
         "commander_review"
       ],
       "applicability_note": "Accepted original Priest of Titania and Wirewood Pride actions count the same foreign noncreature Elf Kindred plus the Priest. Mana production pays its tap price and adds two green mana; the paid targeted spell gives a B-controlled Human +2/+2, preserving costs, public membership and complete pre-activation replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_negative_supertype_producer_omission_is_killed_by_fresh_native_cases",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted shared negative-supertype production for the original stat/keyword composition, original all-zone definition and actual public mill amount."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -145727,7 +147161,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145752,7 +147189,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145777,7 +147217,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145802,7 +147245,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145827,7 +147273,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145852,7 +147301,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145877,7 +147329,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145902,7 +147357,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145910,6 +147368,62 @@
         "commander_review"
       ],
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -145927,7 +147441,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145952,7 +147469,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -145977,7 +147497,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146002,7 +147525,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146027,7 +147553,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146052,7 +147581,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146077,7 +147609,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146102,7 +147637,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146127,7 +147665,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146152,7 +147693,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146177,7 +147721,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146202,7 +147749,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146227,7 +147777,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146252,7 +147805,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146277,7 +147833,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146302,7 +147861,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146327,7 +147889,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146352,7 +147917,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146377,7 +147945,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146402,7 +147973,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146410,6 +147984,62 @@
         "commander_review"
       ],
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeCompilerTests.test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed absent-supertype phrases retain creature/land domain, current source/opponent relation, no Commander or token substitution, existing Other/modified qualifiers and the existing version-eight exclusion codec. Unknown compound primary qualities and hidden quantity scopes reject."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -146427,7 +148057,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146452,7 +148085,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146477,7 +148113,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146502,7 +148141,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146527,7 +148169,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146552,7 +148197,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146577,7 +148225,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146602,7 +148253,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146627,7 +148281,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146652,7 +148309,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146677,7 +148337,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146702,7 +148365,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146727,7 +148393,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146752,7 +148421,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146777,7 +148449,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146802,7 +148477,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146810,6 +148488,34 @@
         "commander_review"
       ],
       "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -146827,7 +148533,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146852,7 +148561,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146877,7 +148589,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146902,7 +148617,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146927,7 +148645,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146952,7 +148673,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -146977,7 +148701,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147002,7 +148729,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147027,7 +148757,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147052,7 +148785,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147060,6 +148796,34 @@
         "commander_review"
       ],
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -147077,7 +148841,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147102,7 +148869,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147127,7 +148897,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147152,7 +148925,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147177,7 +148953,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147202,7 +148981,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147227,7 +149009,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147252,7 +149037,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147277,7 +149065,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147302,7 +149093,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147327,7 +149121,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147352,7 +149149,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -147377,7 +149177,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -217038,5 +218841,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "943fde2ffdea6666696e8ce01df9cd4bda8a5f306d699921fea82e1ef69c85b4"
+  "fingerprint": "d288aafeca21f9b4723572b27e670551ca9a46ca8b6d89422d8593ef09ebb4ce"
 }

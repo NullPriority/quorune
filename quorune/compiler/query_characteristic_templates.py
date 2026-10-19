@@ -116,6 +116,12 @@ def _query_quantity_descriptor(
     elif normalized.startswith("another "):
         normalized = normalized[len("another ") :]
         exclude_source = True
+    from .public_state_queries import _negative_supertype_fields
+    negative = _negative_supertype_fields(normalized)
+    if negative is not None:
+        if zone != 'battlefield':
+            return None
+        return ObjectQuerySpec(zones=(zone,), **negative), exclude_source
     normalized = re.sub(r"\bcards?$", "", normalized).strip()
     fields: dict[str, Any] = {"zones": (zone,)}
     if normalized in {"", "card"}:

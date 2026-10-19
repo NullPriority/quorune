@@ -454,6 +454,7 @@
       "test_monarch_rules",
       "test_paid_entry_copy",
       "test_player_speed",
+      "test_public_negative_supertypes",
       "test_public_scalar_stat_definitions",
       "test_public_self_replacement_results",
       "test_query_power_toughness_definitions",

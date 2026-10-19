@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 386,
+  "registry_version": 387,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -10915,7 +10915,7 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 16,
+      "version": 17,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -10924,7 +10924,10 @@
         "613.1f",
         "613.6",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -10932,13 +10935,14 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Dedicated version-two handlers also grant complete fixed typed Protection fragments to live queried sets, optionally with the same fixed stat query. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers.",
+        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Dedicated version-two handlers also grant complete fixed typed Protection fragments to live queried sets, optionally with the same fixed stat query. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner.",
         "inputs": [
           "active phased-in battlefield source",
           "source-controller, source-opponent, or global target relation",
           "closed battlefield type, subtype conjunction or union, defined Outlaw, token, public-state, or positive ability-presence query",
           "represented attack, block, damage, destruction, targeting, ordinary combat keyword, or fixed-generic Ward fragment",
-          "optional fixed power/toughness modifier or exact declaration fragments over the identical creature query"
+          "optional fixed power/toughness modifier or exact declaration fragments over the identical creature query",
+          "complete public negative-supertype predicate through the shared existing ObjectQuerySpec exclusion"
         ],
         "outputs": [
           "source-bound layer-6 keyword grant",
@@ -10978,133 +10982,141 @@
         "quorune.semantic_runtime.conditional_continuous.ConditionalTypedKeywordHandler"
       ],
       "positive_tests": [
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+        "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+        "test_bare_subtype_keyword_grant_keeps_kindred_permanents_in_scope",
+        "test_bare_subtype_public_queries_do_not_invent_creature_type",
         "test_closed_query_grammar_compiles_exact_with_consumer_capabilities",
-        "test_expanded_query_grammar_and_combined_characteristics_compile_exact",
-        "test_fixed_battlefield_query_extensions_share_one_canonical_condition",
-        "test_measured_50_card_lower_bound_is_capability_closed",
-        "test_public_object_state_and_query_conditions_compile_closed",
         "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners",
-        "test_shared_public_set_query_fans_into_layers_and_resolution",
-        "test_static_query_and_attachment_declaration_grants_compile_closed",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+        "test_conditional_typed_keywords_keep_their_fragments_and_condition",
+        "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
+        "test_expanded_query_grammar_and_combined_characteristics_compile_exact",
+        "test_extended_bare_subtype_queries_preserve_kindred_and_explicit_creature_distinction",
+        "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers",
+        "test_fixed_battlefield_query_extensions_share_one_canonical_condition",
+        "test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
         "test_fixed_public_ward_costs_and_keyword_composition_compile",
         "test_fixed_query_ward_grant_uses_typed_layer_six_fragment",
-        "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers",
-        "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
-        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
         "test_global_other_plural_uses_canonical_subtype_without_controller_filter",
-        "test_bare_subtype_public_queries_do_not_invent_creature_type",
-        "test_bare_subtype_keyword_grant_keeps_kindred_permanents_in_scope",
-        "test_extended_bare_subtype_queries_preserve_kindred_and_explicit_creature_distinction",
         "test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
-        "test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
-        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
-        "test_conditional_typed_keywords_keep_their_fragments_and_condition",
-        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
-        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+        "test_measured_50_card_lower_bound_is_capability_closed",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
-        "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_public_object_state_and_query_conditions_compile_closed",
+        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
+        "test_shared_public_set_query_fans_into_layers_and_resolution",
+        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
+        "test_static_query_and_attachment_declaration_grants_compile_closed",
+        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"
       ],
       "negative_tests": [
-        "test_open_or_unsupported_queries_remain_material_residuals",
-        "test_level_gated_class_keyword_grant_remains_residual",
-        "test_descriptors_fail_closed_and_rejection_has_no_state_effect",
-        "test_raw_oracle_text_without_fragment_does_not_select_behavior",
-        "test_shared_public_query_dependency_fails_closed_across_consumers",
-        "test_static_declaration_grant_dependencies_fail_closed",
-        "test_grant_boundaries_and_missing_evasion_consumer_fail_closed",
-        "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed",
-        "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
-        "test_static_label_dispatch_omission_mutant_is_killed",
-        "test_unknown_nouns_and_class_level_context_remain_residual",
-        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
-        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
+        "test_descriptors_fail_closed_and_rejection_has_no_state_effect",
+        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+        "test_grant_boundaries_and_missing_evasion_consumer_fail_closed",
+        "test_level_gated_class_keyword_grant_remains_residual",
+        "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed",
+        "test_open_or_unsupported_queries_remain_material_residuals",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_raw_oracle_text_without_fragment_does_not_select_behavior",
+        "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_static_declaration_grant_dependencies_fail_closed",
+        "test_static_label_dispatch_omission_mutant_is_killed",
+        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+        "test_unknown_nouns_and_class_level_context_remain_residual",
         "test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual"
       ],
       "interaction_tests": [
+        "test_ability_presence_query_uses_shared_layer_six_dependency_order",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+        "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
+        "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
         "test_aura_attachment_and_query_grant_execute_from_one_exact_card",
         "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners",
-        "test_expanded_query_grants_feed_current_keyword_consumers",
+        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
         "test_exact_grant_executes_while_replacement_siblings_fail_closed",
+        "test_expanded_query_grants_feed_current_keyword_consumers",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
         "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
         "test_multicolor_query_observes_the_cycle_safe_layer_five_boundary",
-        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
-        "test_live_public_object_state_and_layer_five_queries_recompute",
-        "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
-        "test_ability_presence_query_uses_shared_layer_six_dependency_order",
-        "test_static_query_declaration_grant_uses_offer_commit_authority",
-        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
-        "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
-        "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
-        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
-        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
-        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
-        "test_original_archangels_grant_independent_exalted_instances_and_replay",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
-        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_archangels_grant_independent_exalted_instances_and_replay",
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+        "test_static_query_declaration_grant_uses_offer_commit_authority",
+        "test_subtype_union_recomputes_after_layer_four_and_excludes_source"
       ],
       "multiplayer_tests": [
-        "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
-        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
-        "test_projection_and_replay_preserve_grants_without_private_identities",
-        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
-        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
-        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
-        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
+        "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
-        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+        "test_projection_and_replay_preserve_grants_without_private_identities"
       ],
       "privacy_tests": [
-        "test_projection_and_replay_preserve_grants_without_private_identities",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
-        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
-        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+        "test_projection_and_replay_preserve_grants_without_private_identities"
       ],
       "replay_tests": [
-        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
-        "test_live_public_object_state_and_layer_five_queries_recompute",
-        "test_projection_and_replay_preserve_grants_without_private_identities",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
         "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
-        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
-        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
-        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
-        "test_original_archangels_grant_independent_exalted_instances_and_replay",
+        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
         "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
-        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
         "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
-        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_original_archangels_grant_independent_exalted_instances_and_replay",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
-        "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+        "test_projection_and_replay_preserve_grants_without_private_identities"
       ],
       "required_evidence": [
         "positive",
@@ -11117,7 +11129,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents exact admission, while each compiled node also declares and gates every exact combat, damage, destruction, or targeting consumer capability it emits.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused tests remove or rescope the typed layer-6 lowering; exact descriptor, live global/controller applicability, consumer behavior, and CardProgram fingerprint assertions reject the survivors.",
+      "implementation_mutation_rationale": "Focused tests remove or rescope the typed layer-6 lowering; exact descriptor, live global/controller applicability, consumer behavior, and CardProgram fingerprint assertions reject the survivors. Fresh native witnesses also kill omission of the shared negative-supertype producer.",
       "blockers": [],
       "status": "trusted"
     },
@@ -11934,7 +11946,7 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 11,
+      "version": 12,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -11947,7 +11959,10 @@
         "701.22a",
         "701.22b",
         "701.25a",
-        "701.25c"
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -11955,7 +11970,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Resolve a closed current public quantity into an existing typed numeric result owner. Versioned quantities add distinct basic/card types and colors, maximum/total mana value, colored mana symbols, fixed positive multipliers and nonnegative offsets, or exactly two independent public leaf counts; instruction-scoped declarations retain one value. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Complete-value token counts and compiler-bound mandatory controller-scoped doubling compose through the existing token transaction; new source descriptors retain current ability applicability.",
+        "summary": "Resolve a closed current public quantity into an existing typed numeric result owner. Versioned quantities add distinct basic/card types and colors, maximum/total mana value, colored mana symbols, fixed positive multipliers and nonnegative offsets, or exactly two independent public leaf counts; instruction-scoped declarations retain one value. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Complete-value token counts and compiler-bound mandatory controller-scoped doubling compose through the existing token transaction; new source descriptors retain current ability applicability. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner.",
         "inputs": [
           "one source-spanned effect instruction, optionally in a closed existing ordered component program",
           "stack object's locked controller",
@@ -11963,7 +11978,8 @@
           "cycle-safe layer-5 types, subtypes, supertypes, colors, colorlessness, and token state",
           "fixed signed coefficient",
           "existing fixed effect operation and target schema",
-          "source-self or direct-target temporary power/toughness result, optionally beside fixed supported keywords"
+          "source-self or direct-target temporary power/toughness result, optionally beside fixed supported keywords",
+          "complete public negative-supertype predicate through the shared existing ObjectQuerySpec exclusion"
         ],
         "outputs": [
           "one deterministic resolution-time integer",
@@ -11998,8 +12014,10 @@
         "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic"
       ],
       "positive_tests": [
+        "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_compiler_lowers_public_query_amounts_across_contexts",
         "test_compiler_lowers_query_scaled_characteristics_across_contexts",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_counted_token_definition_retains_trailing_keywords",
         "test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
         "test_existing_public_quantity_spell_shapes_are_promotable",
@@ -12015,6 +12033,8 @@
         "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result"
       ],
       "negative_tests": [
+        "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_counted_token_definition_retains_trailing_keywords",
         "test_library_amount_result_capabilities_cannot_be_omitted",
         "test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer",
@@ -12028,6 +12048,7 @@
         "test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "interaction_tests": [
+        "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
@@ -12045,6 +12066,7 @@
         "test_zero_query_amount_and_stale_target_use_existing_target_owner"
       ],
       "multiplayer_tests": [
+        "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
@@ -12053,6 +12075,7 @@
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "privacy_tests": [
+        "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
@@ -12060,6 +12083,7 @@
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "replay_tests": [
+        "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
@@ -12080,13 +12104,13 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Every admitted node declares the amount capability in addition to its existing effect and target dependencies; blocking the shared quantity owner leaves the complete CardProgram unresolved before stack execution.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient, subject, controller relation, target revalidation, or layer-5 query; exact compiler, runtime characteristic, copy-controller, multiplayer, projection, cleanup, and replay assertions reject each survivor. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer.",
+      "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient, subject, controller relation, target revalidation, or layer-5 query; exact compiler, runtime characteristic, copy-controller, multiplayer, projection, cleanup, and replay assertions reject each survivor. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh native witnesses also kill omission of the shared negative-supertype producer.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "continuous.characteristics.query_power_toughness_definition",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -12094,7 +12118,10 @@
         "604.3",
         "611.3a",
         "613.1g",
-        "613.4a"
+        "613.4a",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -12102,12 +12129,13 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Closed scalar arithmetic uses unfiltered public hand size and named source counters; singular instant/sorcery graveyard card definitions use the existing all-zone owner.",
+        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Closed scalar arithmetic uses unfiltered public hand size and named source counters; singular instant/sorcery graveyard card definitions use the existing all-zone owner. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner.",
         "inputs": [
           "one source-spanned source-possessive power, toughness, or paired definition",
           "copied typed all-zone definition fragment",
           "controller, opponent, global, public-graveyard, raw hand-size, or source-counter quantity",
-          "layer-5 object types, subtypes, supertypes, colors, token state, and source exclusion"
+          "layer-5 object types, subtypes, supertypes, colors, token state, and source exclusion",
+          "complete public negative-supertype predicate through the shared existing ObjectQuerySpec exclusion"
         ],
         "outputs": [
           "controller-correct and multiplayer-correct live quantity",
@@ -12138,46 +12166,54 @@
         "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler"
       ],
       "positive_tests": [
-        "test_query_definitions_apply_in_every_zone_and_preserve_undefined_field",
-        "test_query_power_toughness_definition_grammar_compiles_closed_fragments",
-        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
-        "test_definitions_preserve_complete_nested_public_arithmetic",
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
-        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers"
+        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
+        "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+        "test_definitions_preserve_complete_nested_public_arithmetic",
+        "test_query_definitions_apply_in_every_zone_and_preserve_undefined_field",
+        "test_query_power_toughness_definition_grammar_compiles_closed_fragments",
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"
       ],
       "negative_tests": [
+        "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+        "test_hand_arithmetic_reads_only_cardinality_and_counter_arithmetic_remains_closed",
         "test_query_power_toughness_definition_descriptors_fail_closed",
         "test_query_power_toughness_definition_grammar_keeps_open_families_residual",
-        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
-        "test_hand_arithmetic_reads_only_cardinality_and_counter_arithmetic_remains_closed"
+        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"
       ],
       "interaction_tests": [
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
+        "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
         "test_query_definition_ability_removal_sibling_withholds_runtime_admission",
         "test_query_definition_copy_and_control_change_use_current_source",
-        "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a",
-        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
-        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
-        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers"
+        "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a"
       ],
       "multiplayer_tests": [
-        "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
-        "test_query_definition_copy_and_control_change_use_current_source",
-        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
-        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone"
-      ],
-      "privacy_tests": [
-        "test_query_definition_hand_count_projects_without_hidden_identity",
-        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
-        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone"
-      ],
-      "replay_tests": [
-        "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
-        "test_query_definition_save_load_and_replay_exactly",
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
-        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers"
+        "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+        "test_query_definition_copy_and_control_change_use_current_source"
+      ],
+      "privacy_tests": [
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+        "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_query_definition_hand_count_projects_without_hidden_identity"
+      ],
+      "replay_tests": [
+        "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
+        "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
+        "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
+        "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+        "test_query_definition_save_load_and_replay_exactly"
       ],
       "required_evidence": [
         "positive",
@@ -12190,7 +12226,7 @@
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The definition consumes one closed typed quantity through the shared cycle-safe layer-5 characteristic boundary and has no capability dependency.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove a defined field, redirect the quantity relation or layer, or expose hidden identity; exact all-zone, controller, copy, layer-ordering, projection, and replay assertions reject each survivor.",
+      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove a defined field, redirect the quantity relation or layer, or expose hidden identity; exact all-zone, controller, copy, layer-ordering, projection, and replay assertions reject each survivor. Fresh native witnesses also kill omission of the shared negative-supertype producer.",
       "blockers": [],
       "status": "trusted"
     },
@@ -12618,7 +12654,7 @@
     },
     {
       "id": "continuous.power_toughness.fixed_anthem",
-      "version": 10,
+      "version": 11,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -12627,7 +12663,10 @@
         "613.1g",
         "613.4c",
         "109.2",
-        "205.3m"
+        "205.3m",
+        "205.4a",
+        "205.4b",
+        "205.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -12635,14 +12674,15 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier or fixed coefficients per named source counter in layer 7c while the source remains applicable. One shared query preserves controller and source exclusion. Bare canonical creature-subtype sets include Kindred permanents without defining absent power or toughness; explicit creature descriptions retain their type constraint. Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers.",
+        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier or fixed coefficients per named source counter in layer 7c while the source remains applicable. One shared query preserves controller and source exclusion. Bare canonical creature-subtype sets include Kindred permanents without defining absent power or toughness; explicit creature descriptions retain their type constraint. Singular each-object gets/has wording retains the same fixed public query, explicit creature domain, subtype union and source exclusion as plural fixed modifiers. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner.",
         "inputs": [
           "active phased-in source object",
           "source-controller, source-opponent, or global relation",
           "source timestamp",
           "shared typed creature predicate after earlier layers and, when required, layer-6 ability changes",
           "optional source exclusion",
-          "fixed power/toughness modifier or coefficients multiplied by the current named source counter count"
+          "fixed power/toughness modifier or coefficients multiplied by the current named source counter count",
+          "complete public negative-supertype predicate through the shared existing ObjectQuerySpec exclusion"
         ],
         "outputs": [
           "typed layer-7c continuous effect",
@@ -12671,60 +12711,68 @@
         "quorune.compiler.source_counter_anthems.source_counter_anthem_handler"
       ],
       "positive_tests": [
-        "test_registered_anthem_component_replaces_name_dispatch",
-        "test_fixed_battlefield_query_extensions_share_one_canonical_condition",
-        "test_measured_50_card_lower_bound_is_capability_closed",
-        "test_public_object_state_and_query_conditions_compile_closed",
-        "test_shared_public_set_query_fans_into_layers_and_resolution",
-        "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
-        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
-        "test_global_other_plural_uses_canonical_subtype_without_controller_filter",
-        "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
-        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_bare_subtype_combined_grant_preserves_undefined_noncreature_stats",
         "test_bare_subtype_union_modifier_keeps_kindred_and_rejects_unknown_subtypes",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+        "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
+        "test_fixed_battlefield_query_extensions_share_one_canonical_condition",
+        "test_global_other_plural_uses_canonical_subtype_without_controller_filter",
+        "test_measured_50_card_lower_bound_is_capability_closed",
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_public_object_state_and_query_conditions_compile_closed",
+        "test_registered_anthem_component_replaces_name_dispatch",
+        "test_shared_public_set_query_fans_into_layers_and_resolution",
         "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
+        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"
       ],
       "negative_tests": [
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_anthem_component_rejects_malformed_descriptors",
-        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
         "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
-        "test_static_label_dispatch_omission_mutant_is_killed",
-        "test_unknown_nouns_and_class_level_context_remain_residual",
-        "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
         "test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling",
         "test_source_counter_anthem_missing_authority_and_producer_remain_residual",
-        "test_singular_each_query_modifiers_keep_subtype_union_and_source_exclusion",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
+        "test_static_label_dispatch_omission_mutant_is_killed",
+        "test_unknown_nouns_and_class_level_context_remain_residual"
       ],
       "interaction_tests": [
-        "test_multiple_anthem_components_stack_and_respect_control",
-        "test_layer_four_subtype_change_enables_layer_seven_anthem",
-        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
-        "test_exact_continuous_effects_compose_while_replacements_stay_residual",
-        "test_live_fixed_queries_track_relations_source_identity_and_phasing",
-        "test_live_public_object_state_and_layer_five_queries_recompute",
-        "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
         "test_ability_presence_query_uses_shared_layer_six_dependency_order",
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
+        "test_exact_continuous_effects_compose_while_replacements_stay_residual",
+        "test_layer_four_subtype_change_enables_layer_seven_anthem",
+        "test_live_fixed_queries_track_relations_source_identity_and_phasing",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_multiple_anthem_components_stack_and_respect_control",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_subtype_union_recomputes_after_layer_four_and_excludes_source"
       ],
       "multiplayer_tests": [
-        "test_static_anthem_is_controller_scoped_in_four_player_evaluation",
-        "test_live_fixed_queries_track_relations_source_identity_and_phasing",
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+        "test_live_fixed_queries_track_relations_source_identity_and_phasing",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
-        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
+        "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays",
+        "test_static_anthem_is_controller_scoped_in_four_player_evaluation"
       ],
       "privacy_tests": [
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
       "replay_tests": [
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_anthem_component_replays_exactly",
         "test_live_public_object_state_and_layer_five_queries_recompute",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
         "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
         "test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays"
       ],
@@ -12738,7 +12786,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents fixed-query anthem nodes from becoming exact.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_source_counter_scaling_omission_mutant_is_killed_by_original_boon removes only the validated source-counter multiplier and fails after actual Proliferate increases the original source from one to two counters.",
+      "implementation_mutation_rationale": "test_source_counter_scaling_omission_mutant_is_killed_by_original_boon removes only the validated source-counter multiplier and fails after actual Proliferate increases the original source from one to two counters. Fresh native witnesses also kill omission of the shared negative-supertype producer.",
       "blockers": [],
       "status": "trusted"
     },

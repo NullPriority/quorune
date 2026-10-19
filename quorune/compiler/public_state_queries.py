@@ -278,9 +278,24 @@ def _public_query_qualifiers(
     return text, relation, exclude_source, required_ability, state_fields
 
 
+def _negative_supertype_fields(text: str) -> dict[str, Any] | None:
+    quality = {
+        'nonlegendary creature':('creature', 'legendary'),
+        'nonlegendary creatures':('creature', 'legendary'),
+        'nonbasic land':('land', 'basic'),
+        'nonbasic lands':('land', 'basic'),
+    }.get(' '.join(text.casefold().split()))
+    if quality is None:
+        return None
+    return {'types_all':(quality[0],), 'excluded_supertypes':(quality[1],)}
+
+
 def _public_query_primary_fields(text: str) -> dict[str, Any] | None:
     fields: dict[str, Any] = {"zones": ("battlefield",)}
     normalized = text.casefold()
+    negative = _negative_supertype_fields(normalized)
+    if negative is not None:
+        return {**fields, **negative}
     basic_land_types = {
         "plains": "plains",
         "islands": "island",
