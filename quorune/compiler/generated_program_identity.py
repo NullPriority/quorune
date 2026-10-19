@@ -57,6 +57,9 @@ def generated_ability_id(
     if kind == "triggered_ability":
         base = f"trigger:{face_id}:n{line}"
         parts = str(node_id or "").split(":")
+        if (len(parts) >= 3 and parts[-3] == 'soulbond' and parts[-2].isdigit()
+                and parts[-1] in {'self', 'other'}):
+            return f'{base}:soulbond:{parts[-2]}:{parts[-1]}'
         if parts[-1] in {"lifecycle", "last-time-counter"}:
             if len(parts) >= 3 and parts[-2].isdigit() and parts[-3] in FIXED_KEYWORD_ENTRY_MECHANICS:
                 return f"{base}:{parts[-3]}:{parts[-2]}:{parts[-1]}"
@@ -91,6 +94,8 @@ def generated_ability_id(
         if str(node_id or '').endswith(':max-speed-scope'):return f'static:{face_id}:n{line}:max-speed-scope'
         parts = str(node_id or "").split(":")
         suffix = parts[-1]
+        if suffix in {'flash-keyword','flash-stack'}:
+            return f'static:{face_id}:n{line}:{suffix}'
         if suffix in {"unleash-entry", "unleash-block"}:
             if (
                 len(parts) >= 3
@@ -123,6 +128,7 @@ def generated_ability_id(
                 SUNBURST_MECHANIC_ID,
                 _TOXIC_MECHANIC,
                 "affinity",
+                "devour",
             }
         ):
             return f"static:{face_id}:n{line}:{parts[-2]}:{parts[-1]}"

@@ -98,7 +98,7 @@ def _closed_granted_activation(ability: ActivatedAbility) -> bool:
         and ability.source_counter_removal_cost is None
         and not ability.uncompiled_costs
         and ability.generic_reduction_per_legendary_creature == 0
-        and ability.crew_threshold is None
+        and (ability.crew_threshold is None or type(ability.crew_threshold) is int and ability.crew_threshold>=0)
         and ability.color_set_mana_output is None
         and ability.activation_limit is None
         and not ability.library_search_types
@@ -187,7 +187,8 @@ def attached_granted_ability_plan(
                 life_payment=ability.life_payment,
                 choices=tuple(choice.to_dict() for choice in ability.choices),
                 mana_spend_restriction=ability.mana_spend_restriction,
-                schema_version=2 if extended_cost else 1,
+                crew_threshold=ability.crew_threshold,
+                schema_version=3 if ability.crew_threshold is not None else 2 if extended_cost else 1,
             )
         )
         return AttachedGrantedAbilityPlan(
@@ -349,12 +350,14 @@ def compile_attached_granted_ability_nodes(
 ) -> tuple[OracleNode, OracleNode] | None:
     """Compile one accepted attached shell and one independent inner ability."""
 
-    if source_attachment_relation not in {
+    from .soulbond_templates import paired_quoted_text, paired_quoted_handler
+    paired = paired_quoted_text(material_line, source_name=source_name)
+    if paired is None and source_attachment_relation not in {
         AttachmentReferenceKind.ENCHANTED,
         AttachmentReferenceKind.EQUIPPED,
     }:
         return None
-    quoted = attached_quoted_ability_text(
+    quoted = paired or attached_quoted_ability_text(
         material_line,
         source_name=source_name,
     )
@@ -372,7 +375,7 @@ def compile_attached_granted_ability_nodes(
         span=span,
         quoted=quoted,
         compile_shell=lambda fragment, fragment_capabilities: (
-            attached_quoted_ability_handler(
+            (paired_quoted_handler if paired is not None else attached_quoted_ability_handler)(
                 material_line,
                 fragment=fragment,
                 fragment_capabilities=fragment_capabilities,
@@ -491,6 +494,12 @@ def compile_keyword_or_attached_grant_nodes(
     grant_effect_templates: Callable[..., tuple[Any, Any]],
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
+    from .conditional_flash_nodes import conditional_self_flash_nodes
+    conditional_flash = conditional_self_flash_nodes(node_id=node_id,line=line,material_line=material_line,
+        span=span,source_name=source_name,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals)
+    if conditional_flash is not None:
+        return conditional_flash
     from .role_token_nodes import role_token_nodes
     role = role_token_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name, effect_template=effect_template,
@@ -557,7 +566,7 @@ def compile_keyword_or_attached_grant_nodes(
     copied = entry_copy_ability_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
         material_line=material_line,span=span,source_name=source_name,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,compile_inner=compile_inner,
-        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for)
+        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
     if copied is not None:return copied
     from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
     temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,

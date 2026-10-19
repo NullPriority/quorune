@@ -9,6 +9,57 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+`opening_hand.py` owns optional battlefield-entry actions after all multiplayer
+mulligans and bottoming finish. It snapshots eligible final hand incarnations
+and lets the starting player act in any order before proceeding through the
+remaining seats. Each private choice selects one card or finishes that seat;
+unselected hands stay hidden. The canonical zone owner performs each entry
+without casting, paying mana or placing a spell on the stack. Entry replacement
+and Aura choices suspend the same typed frame. Pending trigger batches remain
+held until ordinary first-turn priority. An entry prevented in its original
+hand does not consume that source's later opening action. The existing turn
+owner starts the first turn exactly once after the opening actions finish.
+
+Opening reveals share that ordered phase and require complete-card admission.
+Each eligible final-hand incarnation may be revealed once without casting or
+moving it. The canonical hand-visibility owner retains the reveal until the
+first turn starts; learned identity remains known afterward. A separate
+battlefield action on the same card is still available. Its versioned frame
+retains both action identities and restores pending visibility after load.
+`opening_reveal.py` creates one ordinary delayed trigger for the revealing
+controller. First-global-upkeep, first-own-upkeep and first-own-main conditions
+remain distinct, copies resolve separately, and source departure does not
+cancel an already created delay. All results, including mana, use the ordinary
+stack and their existing mutation owners.
+
+Conditional self-timing evaluates current public facts for the would-be caster
+and selected face before locking costs. Losing the qualifying permanent while
+paying mana or other costs does not undo that legal cast. Actual conditional
+Flash contributes through layer six on the battlefield and stack; “as though”
+permission contributes no keyword. Cost modifiers inspect a detached proposed
+spell under its caster, while completed cast events use its current after-cost
+characteristics. Face-down methods suppress intrinsic timing and keywords.
+
+Self-cost reductions use the selected spell face and current caster's public
+facts or committed cast history. The total cost locks before mana activation,
+so sacrificing a qualifying permanent while paying does not revoke its
+discount. Generic and colored components reduce only their corresponding cost
+requirements, with a zero floor. A face-down casting method suppresses printed
+self-reduction abilities while retaining independently applicable external
+modifiers through the existing cost owner.
+Undaunted uses the same total-cost stage with the casting player's current
+in-game opponents. Eliminated players do not contribute, repeated instances
+accumulate, and a later elimination does not change an already locked cost.
+The generic reduction leaves colored and nonmana payment obligations intact.
+
+Fixed untap participation reads current full characteristics and counter state
+before the simultaneous untap action. A subtype-only subject also matches a
+current noncreature permanent with that subtype. An additional self untap uses
+the current controller and occurs on each other player's untap step; duplicate
+permissions cause one untap attempt. An own-step-only prohibition does not
+block that additional untap. General prohibitions and stun replacement still
+apply, and resulting triggers wait for upkeep and ordinary APNAP placement.
+
 Ordinary Morph, Megamorph and Disguise turn-up offers keep their canonical
 unsuffixed action identity when acceptance reads the printed method from the
 offer payload. Manifested permanents expose distinct suffixed method choices.
@@ -54,6 +105,14 @@ spell payment apply the result once after mana production. Result-bearing
 activations are irreversible for mana undo and retain ordinary transactional
 rollback, replacement continuations and replay.
 
+Automatic mana payment also accepts a represented fixed-output ability whose
+only nonmana cost is sacrificing its source without tapping it. Discovery and
+commit share current source eligibility and ability-condition checks. Such a
+source may be tapped or newly controlled; tap-symbol abilities retain their
+ordinary restrictions. The source can contribute once and its sacrifice uses
+the canonical zone-cost owner. Additional costs and choices outside this
+bounded form require explicit activation.
+
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that
 has haste or has been controlled since the turn began. All choices validate
@@ -95,6 +154,16 @@ current controller. That step does not consume a stun counter on the prohibited
 permanent. Departure removes the old duration through the canonical zone reset.
 Unsupported conditional permissions, standalone activated Exert costs, and
 unrepresented phasing or skipped-step compositions remain outside this family.
+
+Fixed untap selection limits compose as cumulative bounds on current scoped
+sets. The active controller chooses one inclusion-maximal mandatory set before
+simultaneous untapping; overlapping scopes can permit maximal sets of different
+sizes. Optional sources may be omitted. Unaffected mandatory permanents untap
+automatically. Static prohibitions, next-step prohibitions, and exert exclude
+subjects before selection, while selected stun replacements consume a slot
+and remove one counter. The existing tap-state owner commits each attempt.
+No priority is granted during the choice, and held triggers wait for upkeep.
+Server and browser forms share subset bounds and mandatory completion metadata.
 
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
@@ -235,11 +304,25 @@ enters-copy replacement captures layer-one values and activates the selected
 source's typed intrinsic entry producers. Commit retains the physical card's
 Oracle identity and carries separate copied program provenance into effective
 characteristics, static owners, activation catalogs and event discovery.
+An acquired intrinsic copy ability applies before entry. The snapshot captures
+the reachable copiable forms without mutating the entering object. Each form
+enables its own entry producers; unchosen forms contribute no results. Candidate
+alternatives share one replacement occurrence, so acceptance or decline consumes
+that ability's opportunity across later forms under CR 614.5. Distinct acquired
+abilities remain available, and only the final form enters and emits entry events.
 Fixed additive copy exceptions retain other types while adding represented
 card types or creature subtypes. These exceptions are copiable values and
 survive later ability removal; unknown words and unrepresented grants reject.
-Creature-copy entry exceptions can also add one quoted activated or triggered
-ability when its independently compiled child closes over trusted capabilities.
+Version-three copy selectors also choose public creature cards in graveyards.
+Version-three exception values can retain the entering card's full name or
+printed/prototype stats and replace its card types with artifact while retaining
+only applicable artifact subtypes. These values are resolved before entry and
+remain copiable. Fixed P/T replacement removes the copied P/T CDA; additive type
+exceptions retain applicable CDAs. Actual zone return clears the old copy.
+Creature-copy entry exceptions can also add a quoted activated or triggered
+ability or a represented keyword when its independently compiled child closes
+over trusted capabilities. Fixed mana and Crew grants retain their typed costs;
+Dethrone and Myriad retain executable fragments/programs, not just keywords.
 The shared promotion owner recognizes the exact source-return shape through its
 existing capability matcher. Added fragments remain copiable, and repeated
 grants retain their multiplicity. Static, recursive, and unbound-value grants
@@ -268,6 +351,16 @@ logical incarnation. No handler receives mutable state, parses Oracle prose,
 or bypasses target, attachment, commander, replacement, trigger, projection,
 or replay coordination.
 
+Soulbond relationships use `soulbond_model.py` and the narrow
+`soulbond_state.py` mutation owner. Optional entry choices validate both
+unpaired, controlled creature incarnations without targeting them. Control,
+phasing and zone boundaries end the relationship immediately; characteristic
+observers expire pairs that cease being creatures. Returning to the earlier
+state does not restore an expired pair. Losing Soulbond alone leaves an
+established pair intact; paired effects still follow current source-ability
+presence. Typed granted abilities belong to their recipients, and pending
+triggers retain their locked controller and last-known source information.
+
 Continuous characteristics are a shared rules responsibility rather than a
 client reconstruction. `continuous_effect_state.py` owns the authoritative
 resolution-effect journal and expiration; `characteristic_evaluation.py`
@@ -279,6 +372,15 @@ do not enter the layer evaluator. The declaration owner combines them with
 restrictions from current effective static abilities through one read-only
 query, so ability removal affects static restrictions without erasing an
 independent rule that already resolved.
+
+Fixed opponent-creature keyword prohibitions use the same layer-6 owner but
+remain distinct from ordinary keyword removal. A prohibition suppresses that
+keyword regardless of grant timestamp, including keyword counters, while
+leaving other characteristics intact. Static and counter grants resume when
+the prohibition ends. A resolving grant records immutable target-incarnation
+exclusions for keywords it cannot add; ending the prohibition later does not
+create the denied grant. Same-effect type changes and source ability removal
+are evaluated in a detached proposal before those exclusions are committed.
 
 ## Inputs and outputs
 
@@ -432,6 +534,81 @@ the cast event. Historical unversioned discard and sacrifice schemas remain in
 an isolated compatibility query outside `CommanderEngine`. Unsupported cost
 grammar residualizes the entire spell rather than exposing a cost-free result.
 
+A fixed reveal leaf shares the existing alternative additional-cost algebra.
+Its hand query excludes the casting spell and pins one other qualifying owned
+incarnation. Choosing the fixed mana branch adds that payment before ordinary
+total-cost reductions; a free base mana cost still requires the additional
+price. Offer, proposal and commit recheck the same current subtype predicate.
+The hand-visibility owner discloses only the chosen card without moving it.
+That card remains revealed until its spell leaves the stack, including through
+resolution, countering or another canonical departure. Overlapping spells
+retain their independent reveal durations. Ordinary prior disclosure and
+learned identity survive the final duration ending.
+
+Fixed additional tap prices use one identity-pinned reservation over current
+untapped controlled permanents. A type union counts each object once, and
+worded tap costs can use newly controlled creatures without Haste or targeting.
+The offer search reserves those objects before the ordinary mana and payment
+owners run; it searches other selections when an early subset would consume a
+required mana source. Convoke and Improvise use separate objects, while Delve
+retains its graveyard payment and actual remaining mana requirements. Proposal
+and post-mana checks reject a changed incarnation, controller, type, phase or
+tap state before the canonical tap group commits. Free base prices retain the
+mandatory taps; countered spells retain their completed payments.
+
+Fixed Waterbend costs use the same mana solver and canonical tap owner for
+casting and battlefield activations. The compiler retains Waterbend's own
+generic amount separately from the ordinary total requirements. Each selected
+untapped controlled artifact or creature replaces one generic mana, up to that
+amount; an artifact creature counts once. Source tap-symbol costs reserve the
+source separately, while other newly controlled creatures may help.
+The total cost receives ordinary reductions before a Waterbend payment is
+selected. An exact payable-subset search leaves required mana sources available.
+Both proposal and post-mana checks retain selected physical and logical identity.
+The existing mana replacement continuation carries that reservation across
+save/load. One normalized `player.waterbent` occurrence is published when the
+cost is paid, including an all-mana payment. Countering the spell retains costs.
+Optional, linked whether-paid, variable, complex and mixed payment families
+remain outside this fixed contract.
+
+Opponent spell costs may depend on the announced target set. A compiled static
+component increases generic mana once when a spell targets its source or one or
+more commander creatures its controller controls. Independent components add
+their increases, followed by ordinary reductions. Current controller, phasing,
+copied abilities and ability removal determine which components apply. The
+selected cost option remains fixed while its mana is paid; this is a casting
+cost rather than a Ward trigger. Activated abilities and stack copies do not
+cast a spell and do not pay this tax.
+
+The casting offer queries canonical target groups and retains payable target
+witnesses for each cost signature. It preserves untaxed choices when another
+legal target is too expensive. Optional and modal target choices include a
+server-authored price table; choosing several qualifying targets still charges
+each source once. The client displays that table and the server recomputes the
+actual submitted target set through the same cost and legality owners.
+
+Preparation cards have normal permanent characteristics and separate copiable
+prepare-spell characteristics. The physical card casts only with its normal
+characteristics. A compiled enters-prepared replacement gives the entering
+permanent a noncopiable prepared designation and creates one linked noncard
+copy of its inset spell in exile. The existing copy owner allocates that object;
+the state-based owner retains it only while its original permanent incarnation
+remains present and prepared. Departure or unpreparing ends that exception.
+
+Only the prepared permanent's current controller can cast the exile copy, using
+ordinary timing, targets and payment. An offer or a failed payment preserves
+the designation. The accepted cast unprepares the source after the spell enters
+the stack; countering it does not restore preparation. Losing abilities or
+becoming a different copy after preparation leaves the existing link intact.
+A newly copied creature receives the alternative characteristics, but receives
+prepared status only through its own entry replacement. Token copy exceptions
+to its color or base statistics do not alter the inset spell's values.
+
+Phase boundaries preserve the designation, end the old exile copy, and create
+a new copy on phasing in. This lifecycle does not admit general phasing actions,
+which retain their existing unsupported boundary. Broader prepare or unprepare
+instruction grammar remains residual.
+
 Ordinary printed Convoke is a face-pinned typed cast-cost descriptor rather
 than live keyword interpretation. `convoke.py` owns the immutable candidate,
 contribution, whole-vector payment plan, and deterministic fingerprint;
@@ -571,6 +748,11 @@ the existing dispatcher selects the matching normalized event and condition
 while CardProgram projection exposes both trigger entries. Every supported
 subscription shares one battlefield active zone, current-ability
 applicability, APNAP placement, projection, and replay boundary.
+An unqualified source blocks/becomes-blocked pair consumes the canonical
+declaration events: multiple blockers do not multiply its becomes-blocked
+trigger. All defenders finish declaring before APNAP placement. The event pair
+does not substitute the distinct per-blocker occurrence, and one source's block
+cannot satisfy another source's subscription.
 
 `turn_history.py` retains current-turn events plus one bounded per-player
 spell-count summary for the immediately previous turn. `day_night.py` consumes
@@ -698,6 +880,15 @@ Its explicit numeric creature filter reads completed effective power/toughness
 before creating the new effect and locks the selected incarnations. Live
 static quantities retain the separate layer-5 boundary.
 
+One conditional self-color and typed-ability compound begins at layer 5. Its
+fixed color replaces the previous colors; its ability and additive portions
+apply in layers 6 and 7c. Source participation is checked before layer 5, so
+later ability removal preserves already-started portions under CR 613.6.
+Layer-6 timestamps still determine whether a separately removed grant remains.
+Current controller facts govern the live condition. Losing that condition
+ends new activation and trigger availability while stack abilities retain their
+original controller and ordinary target revalidation.
+
 Schema-five public conditions have a separate numeric creature-existence
 predicate. Intervening triggers and resolution instructions read complete
 current effective power or toughness under their locked controller. They
@@ -736,3 +927,29 @@ runtime fidelity gates. The generated
 families. Primary evidence is the deterministic test suite, replay tests,
 privacy tests, mutation/rollback evidence, and source-pinned conformance
 artifacts.
+
+Targeted activation announcement and payment share the ordinary stack owner.
+The announcement exists inside the command transaction before costs can move
+its source. Canonical zone transitions capture its source information, and
+payment finalization preserves that frame rather than rebuilding it from the
+post-cost card. Failed and suspended payments retain the command's atomic
+rollback boundary. [Target legality](target-legality.md) owns the acting-object
+and source-information distinctions.
+
+Version-four intrinsic entry-copy selectors carry one closed eligibility
+predicate. The owner uses the entering controller's current-turn declared
+attack journal, the candidate card's exact current graveyard-arrival incarnation,
+or the entering spell's actual accepted mana payment. Noncast entries and spell
+copies have zero spent mana. Graveyard arrival is distinct from creature death:
+it records origin and arrived incarnation even when a noncreature permanent
+becomes a creature card in that zone. Copy choices remain nontargeted and use
+the existing immutable replacement preparation and selection journal.
+
+Version-five intrinsic copy entry carries a closed conditional exception for an
+explicit Embalm creation origin. The graveyard-copy recipe owns the noncopiable
+creation designation; generic token status or copied name does not supply it.
+Prospective token objects use the same intrinsic copy snapshot coordinator as
+physical cards. The shared entry-result owner validates and commits copied
+values before token entry observers, while the token owner retains allocation,
+counter and trigger ownership. Added Changeling is the existing copiable
+layer-4 CDA, so layer-6 ability removal does not undo its earlier type effect.

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from ..target_source import spell_targeting_source
+from ..rules.casting.face_queries import prospective_cast_card
+
 """Typed public choice owner for one-shot casts from exile during resolution."""
 
 import copy
@@ -266,7 +269,7 @@ class OneShotExileCastChoiceOwnerMixin:
                 public_target_schema = self._public_target_schema(
                     item.controller,
                     target_specification,
-                    source_ref=card.ref,
+                    acting_source=spell_targeting_source(self,prospective_cast_card(self,card,transformed_face)), source_ref=card.ref,
                 )
                 if public_target_schema is None:
                     continue
@@ -406,7 +409,7 @@ class OneShotExileCastChoiceOwnerMixin:
                     public_target_schema = self._public_target_schema(
                         actor,
                         target_specification,
-                        source_ref=card.ref,
+                        acting_source=spell_targeting_source(self,prospective_cast_card(self,card,face_name)), source_ref=card.ref,
                     )
                     if public_target_schema is None:
                         continue
@@ -503,7 +506,7 @@ class OneShotExileCastChoiceOwnerMixin:
                     public_target_schema = self._public_target_schema(
                         actor,
                         target_specification,
-                        source_ref=card.ref,
+                        acting_source=spell_targeting_source(self,prospective_cast_card(self,card,face_name)), source_ref=card.ref,
                     )
                     if public_target_schema is None:
                         continue

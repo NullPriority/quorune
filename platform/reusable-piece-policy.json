@@ -83,6 +83,10 @@
     {"prefix": "damage.", "class_id": "events_mutations"},
     {"prefix": "draw.", "class_id": "events_mutations"},
     {"prefix": "format.", "class_id": "multiplayer_commander"},
+    {
+      "prefix": "game.opening_hand.",
+      "class_id": "actions_permissions"
+    },
     {"prefix": "life.", "class_id": "events_mutations"},
     {"prefix": "mana.", "class_id": "costs_mana"},
     {"prefix": "permanent.", "class_id": "events_mutations"},

@@ -9,7 +9,8 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
-from .action_permission_templates import static_action_permission_handler
+from .action_permission_templates import static_action_permission_handler,opening_hand_battlefield_permission_handler
+from .opening_hand_reveal_templates import opening_hand_reveal_permission_handler
 from .entry_designation_templates import entry_designation_handler, chosen_characteristics_handler
 from .casting_activation_metadata_templates import (
     static_loyalty_cost_modifier_handler,
@@ -72,6 +73,7 @@ class StaticRuntimeTemplate:
     dependency_reason: str
     active_zone: str = "battlefield"
     runtime_coverage: tuple[str, ...] = ()
+    mechanics: tuple[str, ...] = ()
 
 
 def _trigger_multiplier_template(text: str) -> StaticRuntimeTemplate | None:
@@ -194,7 +196,9 @@ def _source_permanent_participation_template(
         text,
         source_name=source_name or "",
     )
-    spell_cost_reduction = static_fixed_spell_cost_reduction_handler(text, source_name=source_name or 'source')
+    from .targeted_spell_costs import targeted_spell_cost_template
+    spell_cost_reduction = (targeted_spell_cost_template(text,source_name=source_name or 'source')
+        or static_fixed_spell_cost_reduction_handler(text, source_name=source_name or 'source'))
     if spell_cost_reduction is not None:
         template_id = spell_cost_reduction[0]
         return StaticRuntimeTemplate(
@@ -209,7 +213,7 @@ def _source_permanent_participation_template(
                 "static_ability",
                 *(
                     (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1"}
+                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1"}
                     else ()
                 ),
             ),
@@ -237,8 +241,11 @@ def _source_permanent_participation_template(
             ),
             runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
-    action_permission = static_action_permission_handler(text)
+    action_permission = (opening_hand_reveal_permission_handler(text,source_name=source_name)
+        or opening_hand_battlefield_permission_handler(text,source_name=source_name)
+        or static_action_permission_handler(text))
     if action_permission is not None:
+        opening_hand=action_permission[0] in {'opening-hand-battlefield-permission-v1','opening-hand-reveal-permission-v1'}
         return StaticRuntimeTemplate(
             compiled=action_permission,
             kind="static_ability",
@@ -247,10 +254,13 @@ def _source_permanent_participation_template(
                 "generic controller action permission requires its closed "
                 "typed runtime capability"
             ),
-            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            active_zone='hand' if opening_hand else 'battlefield',
+            runtime_coverage=() if opening_hand else (CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
+    from .untap_selection_templates import fixed_untap_selection_limit_handler
     untap_step = (
-        static_untap_step_handler(text, source_name=source_name)
+        (fixed_untap_selection_limit_handler(text, source_name=source_name)
+         or static_untap_step_handler(text, source_name=source_name))
         if source_name is not None
         else None
     )
@@ -263,6 +273,7 @@ def _source_permanent_participation_template(
                 "generic untap-step participation requires its closed "
                 "typed runtime capability"
             ),
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
     entry_state = static_entry_state_handler(
         text,
@@ -359,6 +370,12 @@ def _continuous_static_runtime_template(
     source_name: str | None,
     source_is_class: bool,
 ) -> StaticRuntimeTemplate | None:
+    from .keyword_prohibition_templates import opponent_keyword_prohibition_handler
+    prohibition = None if source_is_class else opponent_keyword_prohibition_handler(text)
+    if prohibition is not None:
+        return StaticRuntimeTemplate(compiled=prohibition, kind='static_ability', event='characteristics.evaluate',
+            dependency_reason='Fixed keyword denial requires its prohibition and keyword gameplay owners',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,))
     """Select one closed continuous-characteristic production."""
 
     label = re.fullmatch(r"(?P<label>[A-Za-z][A-Za-z ',-]*[A-Za-z])\s+—\s+(?P<body>.+)", text)
@@ -494,6 +511,11 @@ def _continuous_static_runtime_template(
 
 
 def _constant_static_characteristic_template(text, *, source_name, source_is_class):
+    from .soulbond_templates import paired_characteristics_handler
+    paired = paired_characteristics_handler(text, source_name=source_name or 'source')
+    if paired is not None:
+        return StaticRuntimeTemplate(compiled=paired, kind='static_ability', event='characteristics.evaluate',
+            dependency_reason='Paired grants require trusted pairing and independently closed modifier capabilities')
     from .attached_control_templates import attached_control_handler
     control = attached_control_handler(text)
     if control is not None:
@@ -518,13 +540,17 @@ def _self_entry_counter_runtime_template(
 ) -> StaticRuntimeTemplate | None:
     if source_name is None or source_is_class:
         return None
-    fixed = fixed_self_entry_counter_handler(text, source_name=source_name)
+    from .fixed_self_entry_counter_templates import fixed_keyword_counter_entry_choice_handler
+    from ..keyword_counters import KeywordCounterEntryChoiceSpec
+    choice = fixed_keyword_counter_entry_choice_handler(text, source_name=source_name)
+    fixed = choice or fixed_self_entry_counter_handler(text, source_name=source_name)
     if fixed is not None:
         return StaticRuntimeTemplate(
             compiled=fixed,
             kind="replacement_effect",
             event="zone.change",
             active_zone="all",
+            mechanics=KeywordCounterEntryChoiceSpec.from_descriptor(choice[1]).mechanics if choice else (),
             dependency_reason=(
                 "generic fixed self-entry counters depend on the canonical "
                 "zone and counter replacement owners"
@@ -679,7 +705,10 @@ def static_runtime_template(
                 "rules capability"
             ),
         )
-    static_damage = static_damage_handler(text, card_name=source_name)
+    from .counter_prevention_templates import fixed_counter_prevention_handler
+    static_damage = (fixed_counter_prevention_handler(text, source_name=source_name or '')
+                     if source_permanent and not source_is_class else None)
+    static_damage = static_damage or static_damage_handler(text, card_name=source_name)
     if static_damage is None:
         return None
     if (
@@ -713,7 +742,7 @@ def static_runtime_template(
         runtime_coverage=(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
             if static_damage[1]["handler_id"]
-            == "prevention.damage.all.v1"
+            in {"prevention.damage.all.v1", "prevention.damage.fixed-self-counter.v1"}
             else ()
         ),
     )

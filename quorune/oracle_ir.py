@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v430"
+ORACLE_COMPILER_VERSION = "oracle-ir-v459"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -675,6 +675,10 @@ def _keyword_nodes(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> tuple[OracleNode, ...]:
+    from .compiler.devour_nodes import devour_keyword_nodes
+    devour=devour_keyword_nodes(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if devour is not None:return devour
     chapter_nodes = ordinary_saga_chapter_nodes(node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name, printed_subtypes=printed_subtypes, declared_chapters=saga_chapters, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals, effect_template=effect_template)
     if chapter_nodes is not None: return chapter_nodes
 
@@ -685,7 +689,7 @@ def _keyword_nodes(
     if mechanics is None:
         return ()
 
-    multi_nodes = multi_keyword_nodes(**locals())
+    multi_nodes = multi_keyword_nodes(**locals(), compile_single_keyword=_keyword_node_for_mechanics)
     if multi_nodes is not None: return multi_nodes
     if mechanics in {("madness",), ("partner with",), ("learn",)}: return ()
 
@@ -989,6 +993,11 @@ def _typed_additional_cost_face(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleFaceIR | None:
+    from .compiler.additional_cost_payment_faces import compile_additional_cost_payment_face
+    composed=compile_additional_cost_payment_face(record=record,face_id=face_id,face_name=face_name,oracle_text=oracle_text,
+        material_rows=material_rows,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if composed is not None:return composed
     node = typed_additional_cost_spell_node(
         node_id=f"{face_id}:n1",
         rows=material_rows,

@@ -12,6 +12,7 @@ class TargetProtectionError(ValueError):
 
 class TargetProtectionVerdict(str, Enum):
     ALLOWED = "allowed"
+    SOURCE_PROHIBITION = "source_prohibition"
     PLAYER_PROTECTION = "player_protection"
     CONTROLLER_HEXPROOF_FROM_COLOR = "controller_hexproof_from_color"
     SHROUD = "shroud"

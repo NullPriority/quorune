@@ -88,6 +88,30 @@ class UntapStepParticipation:
 
 
 @dataclass(frozen=True, slots=True)
+class FixedUntapSelectionLimit(UntapStepParticipation):
+    """Current fine-capability limit; historical generic LIMIT stays unsupported."""
+
+    def __post_init__(self) -> None:
+        UntapStepParticipation.__post_init__(self)
+        if (self.instruction is not UntapInstruction.LIMIT or self.subject_relation is not UntapSubjectRelation.QUERY
+                or self.turn_relation is not UntapTurnRelation.SUBJECT_CONTROLLER
+                or type(self.maximum) is not int or not 0 <= self.maximum <= 10):
+            raise UntapStepError('Fixed selection limits require a closed own-step query and maximum')
+
+
+@dataclass(frozen=True, slots=True)
+class UntapSelectionConstraint:
+    object_ids: tuple[str, ...]
+    maximum: int
+
+    def __post_init__(self) -> None:
+        if (type(self.object_ids) is not tuple or len(set(self.object_ids)) != len(self.object_ids)
+                or any(type(v) is not str or not v for v in self.object_ids)
+                or type(self.maximum) is not int or not 0 <= self.maximum <= 10):
+            raise UntapStepError('Untap selection constraint is malformed')
+
+
+@dataclass(frozen=True, slots=True)
 class UntapStepPlan:
     active_player: str
     prohibited_object_ids: tuple[str, ...]
@@ -95,6 +119,7 @@ class UntapStepPlan:
     unsupported_source_object_id: str | None = None
     supporting_source_refs: tuple[str, ...] = ()
     optional_object_ids: tuple[str, ...] = ()
+    selection_limits: tuple[UntapSelectionConstraint, ...] = ()
 
     def __post_init__(self) -> None:
         if type(self.active_player) is not str or not self.active_player:
@@ -128,6 +153,10 @@ class UntapStepPlan:
             raise UntapStepError(
                 "Unsupported untap-step source identity must be nonempty"
             )
+        if type(self.selection_limits) is not tuple or any(
+            not isinstance(v, UntapSelectionConstraint) for v in self.selection_limits
+        ):
+            raise UntapStepError('Untap plan selection constraints must be typed')
 
 
 def _matching_subjects(
@@ -189,6 +218,7 @@ def plan_untap_step(
     optional: set[str] = set()
     supporting_refs: set[str] = set()
     unsupported_source: str | None = None
+    limits: dict[tuple[str, ...], int] = {}
     for participation in normalized:
         matches = tuple(
             row
@@ -199,8 +229,15 @@ def plan_untap_step(
             continue
         supporting_refs.add(participation.source_ref)
         if participation.instruction is UntapInstruction.LIMIT:
-            unsupported_source = participation.source_object_id
-            break
+            if not isinstance(participation, FixedUntapSelectionLimit):
+                unsupported_source = participation.source_object_id
+                break
+            if participation.maximum == 0:
+                prohibited.update(row.object_id for row in matches)
+                continue
+            identities = tuple(sorted(row.object_id for row in matches))
+            limits[identities] = min(limits.get(identities, participation.maximum), participation.maximum)
+            continue
         if participation.instruction is UntapInstruction.PROHIBIT:
             prohibited.update(row.object_id for row in matches)
         elif participation.instruction is UntapInstruction.OPTIONAL:
@@ -221,6 +258,7 @@ def plan_untap_step(
         unsupported_source_object_id=unsupported_source,
         supporting_source_refs=tuple(sorted(supporting_refs)),
         optional_object_ids=tuple(sorted(optional)),
+        selection_limits=tuple(UntapSelectionConstraint(ids, maximum) for ids, maximum in sorted(limits.items())),
     )
 
 

@@ -1,0 +1,436 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_entry_keyword_counter_choice",
+  "source": "Pinned Oracle records and rulings for fixed self-entry keyword counter choices and direct native interaction controls.",
+  "cards": [
+    {
+      "oracle_id": "0264b059-75cb-41e6-9e51-262ac22b4c60",
+      "name": "Flycatcher Giraffid",
+      "mana_cost": "{4}{G}",
+      "type_line": "Creature \u2014 Antelope Lizard",
+      "oracle_text": "This creature enters with your choice of a vigilance counter or a reach counter on it.",
+      "power": "3",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "cmc": 5.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "name": "Soul Summons",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Manifest"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4a7fef1e-3f11-4350-86da-6f1315fedc53",
+      "name": "Ferocious Tigorilla",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature \u2014 Cat Ape",
+      "oracle_text": "This creature enters with your choice of a trample counter or a menace counter on it. (A creature with menace can't be blocked except by two or more creatures.)",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8bcdb107-3827-4280-9e5e-7f1e771ef0c5",
+      "name": "Helica Glider",
+      "mana_cost": "{2}{W}",
+      "type_line": "Creature \u2014 Nightmare Squirrel",
+      "oracle_text": "This creature enters with your choice of a flying counter or a first strike counter on it.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e6337404-2978-47a8-a5ae-4a70add2df69",
+      "name": "Boot Nipper",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature \u2014 Beast",
+      "oracle_text": "This creature enters with your choice of a deathtouch counter or a lifelink counter on it.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "cmc": 2.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "name": "Humility",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "All creatures lose all abilities and have base power and toughness 1/1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-05-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f7db3bd9-ef67-4d64-a503-08a3c03404b2",
+      "name": "Wingfold Pteron",
+      "mana_cost": "{5}{U}",
+      "type_line": "Creature \u2014 Dinosaur",
+      "oracle_text": "This creature enters with your choice of a flying counter or a hexproof counter on it. (A creature with hexproof can't be the target of spells or abilities your opponents control.)",
+      "power": "3",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "cmc": 6.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "A permanent that turns face up or face down changes characteristics but is otherwise the same permanent. Spells and abilities that were targeting that permanent, as well as Auras and Equipment that were attached to the permanent, aren't affected."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "Any time you have priority, you may turn a manifested creature face up by revealing that it's a creature card (ignoring any copy effects or type-changing effects that might be applying to it) and paying its mana cost. This is a special action. It doesn't use the stack and can't be responded to."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "At any time, you can look at a face-down permanent you control. You can't look at face-down permanents you don't control unless an effect allows you to or instructs you to."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "Because face-down creatures don't have names, they can't have the same name as any other creature, even another face-down creature."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "Because the permanent is on the battlefield both before and after it's turned face up, turning a permanent face up doesn't cause any enters-the-battlefield abilities to trigger."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "If a double-faced card is manifested, it will be put onto the battlefield face down. While face down, it can't transform. If the front face of the card is a creature card, you can turn it face up by paying its mana cost. If you do, its front face will be up."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "If a face-down permanent you control leaves the battlefield, you must reveal it. You must also reveal all face-down spells and permanents you control if you leave the game or if the game ends."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "If a manifested creature would have morph if it were face up, you may also turn it face up by paying its morph cost."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "The face-down permanent is a 2/2 creature with no name, mana cost, creature types, or abilities. It's colorless and has a mana value of 0. Other effects that apply to the permanent can still grant or change any of these characteristics."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "There are no cards in the Fate Reforged set that would turn a face-down instant or sorcery card on the battlefield face up, but some older cards can try to do this. If something tries to turn a face-down instant or sorcery card on the battlefield face up, reveal that card to show all players it's an instant or sorcery card. The permanent remains on the battlefield face down. Abilities that trigger when a permanent turns face up won't trigger, because even though you revealed the card, it never turned face up."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "Turning a permanent face up or face down doesn't change whether that permanent is tapped or untapped."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "Unlike a face-down creature that was cast using the morph ability, a manifested creature may still be turned face up after it loses its abilities if it's a creature card."
+    },
+    {
+      "oracle_id": "0f5b79ca-9f80-420b-a6c5-bb2a9a95c7e7",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "You must ensure that your face-down spells and permanents can easily be differentiated from each other. You're not allowed to mix up the cards that represent them on the battlefield in order to confuse other players. The order they entered the battlefield should remain clear. Common methods for indicating this include using markers or dice, or simply placing them in order on the battlefield. You must also track how each became face down (manifested, cast face down using the morph ability, and so on)."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2006-02-01",
+      "source": "wotc",
+      "comment": "With a Humility and two Opalescences on the battlefield, if Humility has the latest timestamp, then all creatures are 1/1 with no abilities. If the timestamp order is Opalescence, Humility, Opalescence, the second Opalescence is 1/1, and the Humility and first Opalescence are 4/4. If Humility has the earliest timestamp, then everything is 4/4."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "Removes all creature abilities. This includes mana abilities. Animated lands will also lose the ability to tap for mana."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "This is the current interaction between Humility and Opalescence: The type-changing effect applies at layer 4, but the rest happens in the applicable layers. The rest of it will apply even if the permanent loses its ability before it's finished applying. So if Opalescence, Humility, and Worship are on the battlefield and Opalescence entered before Humility, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments. (Opalescence). Layer 6: Humility and Worship each lose their abilities. (Humility) Layer 7b: Humility becomes 4/4 and Worship becomes 4/4. (Opalescence). Humility becomes 1/1 and Worship becomes 1/1 (Humility). But if Humility entered before Opalescence, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments (Opalescence). Layer 6: Humility and Worship each lose their abilities (Humility). Layer 7b: Humility becomes 1/1 and Worship becomes 1/1 (Humility). Humility becomes 4/4 and Worship becomes 4/4 (Opalescence)."
+    }
+  ]
+}

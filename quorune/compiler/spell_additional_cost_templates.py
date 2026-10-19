@@ -24,6 +24,8 @@ from ..util import mana_cost_to_vector
 from .creature_subtypes import canonical_creature_subtype
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .counted_zone_costs import fixed_counted_zone_change_cost_clause
+from ..rules.reveal_additional_cost import FixedRevealAdditionalCost
+from ..rules.tap_additional_cost import FixedTapAdditionalCost
 
 
 _COUNTER_NAME = (
@@ -349,10 +351,47 @@ class FixedManaPaymentAdditionalCostTemplate:
         }
 
 
+@dataclass(frozen=True,slots=True)
+class FixedRevealAdditionalCostTemplate:
+    subtype: str
+
+    @property
+    def template_id(self):return 'spell-additional-cost-fixed-reveal-hand-v1'
+
+    @property
+    def descriptor(self):return FixedRevealAdditionalCost(self.subtype).to_descriptor()
+
+
+@dataclass(frozen=True,slots=True)
+class FixedTapAdditionalCostTemplate:
+    count: int
+    permanent_types: tuple[str,...]
+
+    @property
+    def template_id(self):return 'spell-additional-cost-fixed-tap-v1'
+
+    @property
+    def descriptor(self):return FixedTapAdditionalCost(self.count,self.permanent_types).to_descriptor()
+
+    @property
+    def cost_schema(self):return {'additional_costs':[self.descriptor]}
+
+
+def fixed_tap_additional_cost_template(text):
+    match=re.fullmatch(rf'As an additional cost to cast this spell, tap (?P<count>an|{FIXED_COUNT_PATTERN}) untapped '
+        r'(?P<types>artifacts?, creatures?, and/or lands?|creatures? and/or lands?|artifacts?|creatures?|lands?) you control\.?',text.strip(),re.I)
+    if match is None:return None
+    types=tuple(sorted(t for t in ('artifact','creature','land') if re.search(r'\b'+t+r's?\b',match['types'],re.I)))
+    count=fixed_number(match['count'])
+    return FixedTapAdditionalCostTemplate(count,types) if count>0 else None
+
+
 FixedAlternativeLeafTemplate = (
     FixedZoneChangeAdditionalCostTemplate
     | FixedLifePaymentAdditionalCostTemplate
     | FixedManaPaymentAdditionalCostTemplate
+    | FixedRevealAdditionalCostTemplate
+    | FixedTapAdditionalCostTemplate
 )
 
 
@@ -723,6 +762,13 @@ def _fixed_zone_change_additional_cost_leaf_template(
 def _fixed_alternative_leaf_template(
     text: str,
 ) -> FixedAlternativeLeafTemplate | None:
+    tap=fixed_tap_additional_cost_template('As an additional cost to cast this spell, '+text.strip()+'.')
+    if tap is not None:return tap
+    reveal=re.fullmatch(r'reveal (?P<article>a|an) (?P<subtype>.+?) card from your hand',text.strip(),re.I)
+    if reveal is not None:
+        subtype=canonical_creature_subtype(reveal['subtype'])
+        if subtype is None or not _article_matches(reveal['article'],subtype):return None
+        return FixedRevealAdditionalCostTemplate(subtype)
     mana = _fixed_mana_additional_cost_leaf_template(text)
     if mana is not None:
         return mana

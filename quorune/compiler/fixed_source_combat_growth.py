@@ -27,6 +27,7 @@ _ADMITTED_BINDINGS = frozenset(
     {
         ("creature.attacks", "source_attacks"),
         ("creature.blocks", "this_creature_blocks"),
+        ("creature.blocks", "source_blocks_or_becomes_blocked"),
         ("creature.blocks", "this_creature_blocks_flying"),
         ("creature.becomes_blocked", "this_creature_becomes_blocked"),
         ("damage.dealt.self", "source_combat_damage_player"),

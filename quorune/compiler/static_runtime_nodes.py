@@ -6,7 +6,7 @@ from typing import AbstractSet, Any, Mapping
 
 from ..rules.capabilities import CapabilityRegistry
 from ..characteristic_fragments import characteristic_quantity_capabilities
-from .dependency_gate import explicit_capabilities_gate
+from .dependency_gate import dependency_gate, explicit_capabilities_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
 from .runtime_templates import static_runtime_template
 
@@ -28,6 +28,7 @@ def runtime_handler_node(
     event: str,
     active_zone: str = "battlefield",
     runtime_coverage: tuple[str, ...] = (),
+    mechanics: tuple[str, ...] = (),
     dependency_reason: str,
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
@@ -41,12 +42,15 @@ def runtime_handler_node(
         if isinstance(raw_handlers, tuple)
         else (raw_handlers,)
     )
-    gate = explicit_capabilities_gate(
-        (*((capabilities,) if isinstance(capabilities, str) else capabilities),
-            *characteristic_quantity_capabilities(handlers)),
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-    )
+    required = (*((capabilities,) if isinstance(capabilities, str) else capabilities),
+                *characteristic_quantity_capabilities(handlers))
+    if mechanics:
+        gate = dependency_gate(mechanics=mechanics, effects=(), target_schema=None,
+            trusted_mechanics=frozenset(), capability_registry=capability_registry,
+            capability_profile=capability_profile, explicit_capabilities=required)
+    else:
+        gate = explicit_capabilities_gate(required, capability_registry=capability_registry,
+            capability_profile=capability_profile)
     residual_ids = (
         (
             append_residual(
@@ -74,6 +78,7 @@ def runtime_handler_node(
         template_id=template_id,
         handlers=handlers,
         runtime_coverage=runtime_coverage,
+        mechanics=mechanics,
         residual_ids=residual_ids,
         capability_dependencies=gate.capabilities,
         capability_closure=closure.reachable if closure is not None else (),
@@ -135,6 +140,7 @@ def static_runtime_node(
         event=template.event,
         active_zone=template.active_zone,
         runtime_coverage=template.runtime_coverage,
+        mechanics=template.mechanics,
         dependency_reason=template.dependency_reason,
         capability_registry=capability_registry,
         capability_profile=capability_profile,

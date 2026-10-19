@@ -201,6 +201,7 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
         self.assertEqual(
             [
                 "prevention.damage.all.v1",
+                "prevention.damage.fixed-self-counter.v1",
                 "prevention.damage.fixed.v1",
                 "prevention.damage.fixed.v2",
                 "replacement.damage.quantity.v1",

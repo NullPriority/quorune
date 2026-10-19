@@ -8,6 +8,7 @@ from .model import StackItem
 from .semantic_runtime.static_cast_rules import static_stack_item_uncounterable
 from .zone_trigger_events import ZoneTransitionKind
 from .combat_entry_activations import cleanup_ninjutsu_reveal
+from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
 
 
 INTRINSIC_COUNTER_PROHIBITION_CAPABILITY = (
@@ -106,6 +107,7 @@ def counter_stack_item(
         return item
     host.state.stack.remove(item)
     cleanup_ninjutsu_reveal(host, item)
+    cleanup_stack_cost_hand_reveals(host,item)
     if item.card_object_id:
         card = host.state.cards[item.card_object_id]
         if card.zone == "stack":

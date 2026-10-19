@@ -824,6 +824,8 @@ def _apply_grant_keyword_until_end_of_turn(
     if not temporary_target_condition_matches(host, effect, card):
         return card.ref
     keyword = str(effect["keyword"])
+    if keyword.casefold() in host._effective_card_data(card).get('prohibited_keywords', ()):
+        return card.ref
     if not _commit_temporary_characteristic_effect(
         host,
         effect,

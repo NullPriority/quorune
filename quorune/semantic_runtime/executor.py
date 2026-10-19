@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..city_blessing_model import AscendIntent
+from .soulbond_intent import PairSoulbondIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
@@ -366,7 +367,7 @@ def prepare_draw_resolution(
 
 
 PermanentObjectIntent = (
-    GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
+    PairSoulbondIntent | GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
@@ -377,6 +378,7 @@ PermanentObjectIntent = (
     | ReturnGraveyardCardToOwnerHandIntent
 )
 PERMANENT_OBJECT_INTENT_TYPES = (
+    PairSoulbondIntent,
     GainControlIntent, GainControlSetIntent,
     CreateRegenerationShieldIntent,
     DestroyPermanentIntent,
@@ -394,6 +396,13 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, PairSoulbondIntent):
+        from ..soulbond_state import commit_soulbond_pair
+        pair = commit_soulbond_pair(sink, pair_id=intent.pair_id,
+            source_ref=intent.source_ref, partner_ref=intent.partner_ref, controller=intent.actor,
+            source_identity=intent.source_identity, partner_identity=intent.partner_identity,
+            entered_ref=intent.entered_ref, entered_identity=intent.entered_identity)
+        return 'pair', pair.pair_id
     if isinstance(intent, GainControlIntent):
         return intent.object_ref, sink.gain_control_intent(intent)
     if isinstance(intent, GainControlSetIntent):
@@ -708,6 +717,14 @@ def _execute_tap_state_intent(
     return intent.actor, result
 
 
+def _synchronize_instruction_observers(sink):
+    from ..rules.city_blessing import synchronize_citys_blessing
+    synchronize_citys_blessing(sink, reason='semantic instruction committed')
+    if getattr(getattr(sink, 'state', None), 'soulbond_pairs', None):
+        from ..soulbond_state import reconcile_soulbond_pairs
+        reconcile_soulbond_pairs(sink)
+
+
 def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
     if any(isinstance(intent, DrawCardsIntent) for intent in plan.intents):
         raise SemanticNodeError(
@@ -848,8 +865,7 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             results.append((intent.operation, result))
             continue
         raise TypeError(f"Unsupported semantic intent {type(intent).__name__}")
-    from ..rules.city_blessing import synchronize_citys_blessing
-    synchronize_citys_blessing(sink,reason='semantic instruction committed')
+    _synchronize_instruction_observers(sink)
     if plan.result_shape == "by_player":
         return dict(results)
     return results[0][1]

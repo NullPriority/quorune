@@ -275,6 +275,10 @@ def complete_aura_entry_choice(
     *,
     error_type: type[Exception],
 ) -> None:
+    if 'opening_hand_entry' in decision.continuation:
+        from ..opening_hand import resume_opening_hand_aura
+        resume_opening_hand_aura(host,decision)
+        return
     if decision.continuation.get('conditional_aura_return') is True:
         from ..conditional_exile_return import resume_conditional_aura_choice
         resume_conditional_aura_choice(host,decision,error_type=error_type)

@@ -235,6 +235,9 @@ def _field(
             field["minimum"] = int(minimum)
         if maximum is not None:
             field["maximum"] = int(maximum)
+        for constraint in ('subset_maxima','maximal_refs','distinct'):
+            if constraint in value:
+                field[constraint] = copy.deepcopy(value[constraint])
         if value.get("allowed_cardinalities") is not None:
             field["allowed_cardinalities"] = list(value["allowed_cardinalities"])
             if value.get("distinct") is not None:
@@ -362,6 +365,7 @@ def _variant_form(
         fields = _schema_fields(row.get("choice_schema"), context)
         target = _target_field(row.get("target_schema"))
         if target is not None:
+            if isinstance(row.get('target_costs'),Mapping):target['target_costs']=copy.deepcopy(dict(row['target_costs']))
             fields.append(target)
         variants.append(
             {

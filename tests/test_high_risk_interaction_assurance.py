@@ -51,6 +51,28 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.db.close()
 
+    def test_original_caldera_devour_damage_closes_while_variable_entry_payment_remains_residual(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        card = self.db.lookup('Caldera Hellion')
+        ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
+        program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(),
+            capability_registry=registry, capability_profile='commander_review')
+        row = analyze_card_unlocks(ir, program=program, program_error=None,
+            capabilities=registry, profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.assertTrue({'capability.zone.entry.devour', 'capability.damage.batch.fixed_set'} <= _observed_piece_ids(row))
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=registry,
+            profile='commander_review')['strict_capability_ready'])
+        assert_high_risk_boundary_pairs(self, FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS, database=self.db)
+
     def test_event_recipient_promotions_preserve_original_residual_admission_boundaries(self):
         from high_risk_interaction_support import _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime

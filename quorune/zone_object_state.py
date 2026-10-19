@@ -279,6 +279,7 @@ def reset_card_after_zone_change(
         retained_annotation_keys.update(
             {"copied_from", "copy_overrides"}
         )
+        if destination=='stack':retained_annotation_keys.add('prepared_spell_copy')
     if stack_to_battlefield:
         retained_annotation_keys.update(
             {

@@ -151,6 +151,7 @@ def execute_mana_choice_capable_priority_action(
         "_mana_replacement_selections",
         "_counted_cost_replacement_sequence",
         "_random_discard_cost_refs",
+        "_waterbend_payment",
     }
     if not trusted_resume and internal_fields.intersection(response):
         raise GameRuleError(

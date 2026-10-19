@@ -9,6 +9,83 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/action_permission_templates.py` lowers the complete optional
+opening-hand battlefield clause to a hand-scoped permission in the existing
+action registry. Named self-references and ordinary object pronouns use the
+shared compiler reference owner. The descriptor requires the existing
+complete-card admission certificate: an independently trusted fragment cannot
+authorize entry when material siblings remain unclosed. The separate
+`compiler/opening_hand_reveal_templates.py` production uses that same admission
+boundary for optional opening reveals. It closes the complete clause around
+one represented result and a first-global-upkeep, first-own-upkeep or
+first-own-main timing. Result lowering happens at compilation through the
+existing fixed Scry, token, mana, actual-life-transfer and library-selection
+owners. Paid reveals, unknown results and unrepresented timing remain residual.
+
+The existing binary additional-cost production also accepts a canonical
+creature-subtype card revealed from the caster's hand. The reveal leaf uses
+the same typed alternative-price schema as the fixed mana branch, for both
+permanents and instant/sorcery results. Optional linked cast-fact reveals,
+Behold and unknown qualifiers remain residual. Complete result admission stays
+independent of recognizing the casting price.
+
+Fixed additional tap prices compile a positive count and a closed union of
+controlled permanent types. The existing alternative-price production may
+pair one with a fixed mana payment. The separate
+`compiler/additional_cost_payment_faces.py` composer preserves independently
+lowered literal Convoke, Improvise and Delve nodes beside an admitted price and
+one complete result. Each node retains its original source span, including
+payment keywords between the price and result. Repeated instances retain their
+ordinary redundancy. Concurrent Convoke and Improvise still require a mixed
+tap-payment owner and remain residual, as do variable tap discounts and unknown
+price or keyword qualifiers.
+
+Fixed Waterbend costs compile into an optional typed activation cost field or
+one mandatory casting-price descriptor. The existing result owners keep their
+source spans and capabilities. A separate price/result composition capability
+validates the complete Waterbend price and the independently admitted result;
+recognizing the price does not admit an unknown result. Printed Waterbend
+action observers bind the acting player through the normalized public-action
+event owner. Optional and variable Waterbend grammar remains residual.
+
+`compiler/targeted_spell_costs.py` lowers opponent spell-cost increases for the
+source itself and one or more controlled commander creatures. Descriptors bind
+the fixed generic amount and target subject; the existing cast-cost component
+registry and current static-ability fragments own runtime applicability.
+Subtype targets, activation taxes, self-spell discounts and colored or variable
+increases remain residual under this production.
+
+`compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
+face of a preparation card to closed inset instant or sorcery characteristics.
+The handler requires complete-card admission, including the inset result.
+Current static-ability presence controls the entry replacement; alternative
+characteristics remain copiable independently of later ability removal.
+An inset copy has only its inset characteristics and does not acquire another
+prepare spell. Individual preparation names remain selectable by the existing
+card-name choice owner; the database's combined display name is not a name
+choice. Unknown preparation clauses and unsupported inset types stay residual.
+
+`compiler/conditional_flash_nodes.py` lowers complete conditional self-timing
+clauses against represented public-state predicates. An “as though” clause
+grants timing permission without granting the Flash keyword. An explicit
+conditional “has flash” clause additionally emits separate battlefield and
+stack characteristic programs. Same-line contributions retain distinct stable
+program identities and their complete original source span. Unrepresented
+source-attribute conditions, compound numeric timing conditions and cyclic
+keyword conditions remain residual.
+
+`compiler/cast_cost_modifier_templates.py` lowers fixed ordinary mana bundles
+for a carrying spell's self-reduction, including separate generic and colored
+components. Its public queries cover current land subtypes, fixed own-graveyard
+card thresholds and conjunctive card-type exclusions. New graveyard quantities
+explicitly exclude tokens; historical serialized predicates retain their
+existing decoder. Counted graveyard condition captures normalize subtype and
+card-type whitespace before constructing the same immutable query values.
+`compiler/undaunted_nodes.py` lowers each printed Undaunted instance through
+that owner with an active-opponent quantity. Repeated instances contribute
+independent terms; reminder text stays in the original source span. Unknown
+keyword modifications and independently unsupported spell bodies remain residual.
+
 `compiler/cleave_spell_faces.py` derives normal and bracket-removed forms,
 including ordinary ordered body paragraphs. It shares paired-program assembly
 with Overload while preserving each form's target schema. Balanced source
@@ -503,6 +580,10 @@ their conditional read timing is represented; their unconditional owners remain
 available. Existing typed
 leaf validators also participate in the common closed-component gate; no leaf
 grammar or mutation owner is duplicated.
+Card-only graveyard conditions retain their versioned token exclusion at this
+consumer boundary. A plain public graveyard object count is admitted without
+enabling other quantity reductions or arithmetic. Historical version-one
+queries retain their earlier decoding and admission behavior.
 The mandatory delayed-draw leaf retains its separate temporal scope and is not
 lifted into optional or closed multi-result programs by this component gate.
 
@@ -688,6 +769,15 @@ The attached grammar includes enchanted lands, and fixed live-query subjects
 include controlled tokens, Foods, Treasures, Clues, and basic lands. Both the
 query and attached forms emit a separately keyed inner CardProgram and
 a typed layer-6 fragment; the runtime never reparses the quote. The fragment
+uses the recipient as the granted ability's source and locks a triggered
+ability's controller when it triggers. Removing the attachment or grant later
+does not remove an ability already on the stack.
+An Oracle list comma immediately inside the closing quote can separate the
+quoted child from a following outer conjunction. The compiler preserves the
+original source span and validates both the complete outer attachment shell
+and independent inner body; inner punctuation and unsupported tails remain
+material. A supported ability grant can also compose with an additive type
+or subtype without requiring a P/T modifier. The fragment
 preserves only activation costs already committed by the canonical activation
 transaction, including fixed mana, tap or untap, source sacrifice, life
 payment, selected public objects, and the represented restricted-mana profile.
@@ -713,13 +803,17 @@ through `compiler/entry_copy_templates.py` and the registered
 `semantic_runtime/entry_copy.py` replacement owner. Its nontarget choice
 captures current public copiable values, applies the existing typed copy
 exceptions and runs at the enters-copy replacement priority. Copied intrinsic
-entry producers activate only after that choice. The canonical entry owner
+entry producers activate only after that choice. Acquired intrinsic copy
+abilities participate before entry: immutable form conditions activate only
+the current form, and candidate alternatives share one ability occurrence.
+Accepting or declining that occurrence consumes its opportunity for the same
+entry event, including when a later copy reacquires it. The canonical entry owner
 retains physical Oracle identity while copied program provenance selects the
 copied static, activated and triggered descriptors. Source departure preserves
 the snapshot; zone departure clears the copy. A copied Aura uses the existing
 attachment choice before entry, with a retained replacement result through
 save/load and replay. Unknown quoted exceptions, hidden-zone references,
-recursive intrinsic copy choices and unsupported copied programs remain
+unrepresented copy selectors and unsupported copied programs remain
 outside the represented composition.
 
 `compiler/conditional_granted_ability_templates.py` wraps one independently
@@ -729,6 +823,15 @@ the same condition. A distinct schema-v2 runtime handler emits the typed
 fragment through the shared layer-6 owner; the earlier characteristic-only
 schema remains strict. An unsupported condition, quoted child, nested static
 grant, multiple quotation, or material sibling prevents complete-card closure.
+
+`compiler/conditional_color_grants.py` extends that shell with one fixed
+self-color replacement and the same independently compiled child. Its fine
+capability retains coupled ordinary keywords and signed additive modifiers.
+The registered component begins in layer 5 and shares the existing source
+incarnation, condition snapshot, layer-6 grant, and layer-7c modifier owners.
+Characteristic-dependent conditions that can feed back into the color change,
+additional or variable colors, wider recipients, and unsupported children stay
+residual. Earlier characteristic-only descriptors retain their strict shape.
 
 The same compiler also combines a closed public-state predicate with an
 independently compiled keyword grant. Fixed generic ward, protection, and
@@ -1572,18 +1675,55 @@ the existing layer-two journal and custody history, without reading Oracle
 text during play. Exchange, dynamic subjects, unsupported durations, and
 independently unsupported siblings remain residuals.
 
+`compiler/untap_step_templates.py` lowers mandatory self untaps on other
+players' turns and fixed untap prohibitions against nonbasic lands, legendary
+creatures, represented subtype sets, inclusive fixed power thresholds, or named
+counter minima. The untap-specific numeric grammar reuses immutable object
+queries without widening continuous characteristic generators. Color unions
+use one current controlled set; attached subjects retain their stated type.
+Current untap components carry ability-fragment presence, so ability removal
+suppresses their participation. Historical programs retain their recorded
+coverage. Choice-dependent, variable, unrepresented conditional and compound
+subjects remain residual.
+
 The source-only optional untap clause lowers to a separate component in the
 existing static untap participation family. `untap.step.optional_source`
 authorizes the active controller's retained zero-or-more choice. The planner
 and physical untap coordinator own participation and simultaneous untapping;
 optional additional untaps on other players' turns, wider optional queries,
-selection limits, and phasing execution remain outside this contract.
+and phasing execution remain outside this optional-source contract.
+
+`compiler/untap_selection_templates.py` lowers fixed zero-through-ten limits
+over permanents, artifacts, creatures, lands, or nonbasic lands to
+`untap.step.fixed_selection_limit`. Global limits and limits during the source
+controller's own step share the existing participation registry and planner.
+The optional untapped-source condition reads the source before any untapping.
+Current ability fragments govern component presence. Variable bounds and
+other-player-step limits remain residual; historical generic limit descriptors
+retain their fail-closed execution path.
 
 `compiler/public_state_queries.py` owns the shared fixed battlefield-query and
 public-state condition grammar consumed by continuous characteristics, typed
 queried ability grants, resolution-locked characteristic sets, and untap-step
 participation. It accepts only battlefield sets representable by one immutable
 `ObjectQuerySpec` over a source-controller, source-opponent, or global relation.
+
+`compiler/public_condition_surfaces.py` owns closed source-language aliases and
+fixed condition-subject predicates. Contracted graveyard presence, canonical
+permanent self-descriptions, and equivalent other-creature entry wording reuse
+the existing condition codecs and history facts. Colorless creatures, fixed
+nontoken color qualifiers, and nonbasic lands retain every query restriction;
+basic land subtypes do not substitute for the basic supertype. Runtime owners
+receive only the compiled descriptors.
+
+Land-condition quantities reuse the canonical land-subtype vocabulary and
+the snow supertype. Explicit repeated articles in a controller disjunction
+form separate closed predicates, preserving source exclusion in each branch.
+Desert battlefield/graveyard alternatives and snow-qualified attachment
+conditions use the existing flat Boolean codec. Current graveyard-card
+conditions emit the existing version-two card-only quantity, excluding tokens
+and noncard copies; historical quantity and condition decoders retain their
+earlier shapes.
 
 Live query and attachment keyword grants may carry fixed typed combat and
 spell-cast trigger fragments for already-represented keywords. The shared
@@ -1673,14 +1813,19 @@ only the public seat.
 action family. It lowers one source Equipment entry attachment, one source Aura
 reattachment, fixed-mana Equip restricted to a creature token, commander,
 legendary creature, or one creature subtype, and the ordinary Living Weapon and
-For Mirrodin! entry triggers. Resolution revalidates the source incarnation and
+For Mirrodin! and Job select entry triggers. Resolution revalidates the source incarnation and
 current target before delegating to the existing reciprocal attachment owner;
 the keyword triggers first use the replacement-aware token owner and attach the
-source only to the original Germ or Rebel. Additional replacement-created
+source only to the original Germ, Rebel or 1/1 colorless Hero. Additional replacement-created
 tokens remain unattached. Multiple targets, other attachment source kinds,
 broader Equip costs or restrictions, modified keyword token definitions, and
 replacements that multiply or alter the original token remain source-spanned
 residuals.
+Decorative flavor labels on Equip preserve their original source spans. The
+complete fixed-mana Equip child is recognized by the shared typed grammar for
+compiler classification and activation catalogs; labels add no payment,
+targeting or timing permissions. Unsupported costs and restrictions retain
+their residuals.
 
 A syntactically complete but unsupported Enchant line produces one precise
 restriction residual instead of a second generic mechanic blocker. Numeric
@@ -1950,6 +2095,15 @@ A fixed attached stat modifier may share the same complete clause without
 granted ability text. Source ability loss or departure ends its rule, while
 recipient ability loss does not remove an Aura-owned rule. Other evasion,
 restrictions, requirements and costs retain their own owners.
+
+`compiler/soulbond_nodes.py` lowers Soulbond to two independently identified
+entry triggers, including repeated instances and printed keyword siblings.
+Their intervening-if checks and optional untargeted choices retain the original
+source, entering incarnation and trigger controller. `soulbond_templates.py`
+lowers complete paired keyword/P-T clauses and separately exact quoted children
+through the existing grant compiler. The paired runtime component applies each
+source's modifier to both current incarnations through an explicit paired
+relationship. Unknown paired procedures and inexact children remain residual.
 
 Fading, Graft and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Graft emits a non-targeted optional
@@ -2678,6 +2832,10 @@ damage, monstrous, block, and sacrifice pairs plus the exact current enchanted
 creature attack/block relation. Cross-zone Cycling/death pairs, commander and
 Room subjects, linked Haunt, chosen or another-object predicates, unavailable
 event producers, and more than two events remain residual.
+The unqualified source "blocks or becomes blocked" pair preserves independent
+source conditions on both subscriptions. Its fixed signed P/T body uses the
+existing source-incarnation and until-end-of-turn effect owner. The pair does
+not infer a per-blocker "by a creature" occurrence or a qualified combat subject.
 `card_programs/reviewed_overlay.py` owns the single precedence query shared by
 CardProgram compilation and live generated-program registration. It removes a
 reviewed split only when every subscription has one trusted, body-identical
@@ -2753,3 +2911,33 @@ provenance live in the [Oracle IR reference](../reference/oracle-ir.md).
 See [ADR 0005](../adr/0005-card-program-v2.md),
 [ADR 0006](../adr/0006-typed-semantic-handler-boundary.md), and
 [ADR 0022](../adr/0022-reusable-rules-piece-inventory.md).
+
+Fixed targeting prohibitions lower explicit acting-kind, controller and source
+quality predicates with source spans. Attached fixed stat changes remain
+independently capability-bound in the same node. Selected-face characteristics
+feed the shared target query for both offers and command validation; see
+[target legality](target-legality.md) for current and last-known source facts.
+Public-zone effect closure materializes iterable mechanics before sibling
+shape checks, so both registration and whole-card binding retain the same
+closed effect authority.
+
+Entry-copy value productions reuse the shared immutable copy-exception codec.
+Retained name/stat and replacement-type fields require explicit version three;
+older descriptors retain their key sets. Added mana, Crew, Dethrone and Myriad
+abilities compile through the existing inner ability/keyword owners and add
+those exact dependencies to the parent. Unknown children keep the original
+source residual. Public graveyard-copy selection is restricted to creature
+cards; it does not open hidden zones, history predicates or mana-spent queries.
+
+Conditional intrinsic entry-copy grammar admits only the closed declared-attack,
+current-turn battlefield-to-graveyard arrival, and actual-mana-spent predicates.
+Version four binds the predicate separately from source characteristics and
+copiable exceptions. Printed cost, declared X and a prior physical card
+incarnation cannot substitute for the corresponding authoritative fact.
+
+Conditional Embalm entry-copy exceptions require version five and explicit
+recipe creation origin. Copy-added Changeling compiles through the existing
+keyword/CDA owner and declares that exact dependency. Unknown conditions,
+unadmitted children and generic token-origin inference remain outside the
+production. Prospective token objects participate in intrinsic entry-copy
+preparation without becoming committed battlefield choices prematurely.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
+from dataclasses import replace
 
 from .applicability import canonical_effects, replacement_choice
 from .application import (
@@ -20,7 +21,8 @@ from .model import (
     ReplacementTreeChoice,
 )
 from .immutable import thaw_value
-from .operations import PreventUsingShield
+from .operations import PreventUsingShield,DevourEntryOperation
+from .entry_reservations import share_entry_reservations
 
 
 class ReplacementChoiceRequired(ReplacementEffectError):
@@ -97,6 +99,7 @@ def apply_tree_replacement(
     effects: Iterable[ReplacementEffect],
     pending: ReplacementTreeChoice,
     selected_effect_id: str | None,
+    *,objects: tuple[str,...] | None = None,
 ) -> ReplaceableEvent:
     all_effects = canonical_effects(effects)
     current = replacement_tree_choice(event, all_effects)
@@ -105,7 +108,7 @@ def apply_tree_replacement(
             "Replacement tree choice is stale or out of order"
         )
     changed = apply_replacement(
-        pending.choice, all_effects, selected_effect_id
+        pending.choice, all_effects, selected_effect_id,objects=objects
     )
     return _replace_event_at_path(event, pending.path, changed)
 
@@ -187,7 +190,11 @@ def next_batch_replacement_choice(
             if shared_one_shot.intersection(candidate[3].choice.options)
         )
     )
-    return _batch_choice_for_event(
+    by_id={effect.effect_id:effect for effect in all_effects}
+    devour_events=[value for value in same_chooser if any(isinstance(op,DevourEntryOperation)
+        for effect_id in value[3].choice.options for op in by_id[effect_id].operations)]
+    if len(devour_events)>1:event_order_options=tuple(sorted({value[1] for value in same_chooser}))
+    result = _batch_choice_for_event(
         batch,
         all_effects=all_effects,
         available_effects=available_effects,
@@ -196,6 +203,9 @@ def next_batch_replacement_choice(
         pending=pending,
         event_order_options=event_order_options,
     )
+    if len(devour_events)>1:
+        result=replace(result,event_choices=tuple((value[1],value[3].choice) for value in same_chooser if value[1] in event_order_options))
+    return result
 
 
 def _batch_choice_for_event(
@@ -295,9 +305,9 @@ def _batch_choice_for_event(
 
 def _selection_parts(
     selected: str | None | Mapping[str, Any],
-) -> tuple[str | None, Mapping[str, Any] | None, str | None]:
+) -> tuple[str | None, Mapping[str, Any] | None, str | None, tuple[str,...] | None]:
     if selected is None or isinstance(selected, str):
-        return selected, None, None
+        return selected, None, None, None
     if not isinstance(selected, Mapping):
         raise ReplacementEffectError(
             "Replacement selections must be strings or typed objects"
@@ -307,6 +317,8 @@ def _selection_parts(
         {"effect_id", "allocation"},
         {"effect_id", "event_id"},
         {"effect_id", "allocation", "event_id"},
+        {'effect_id','objects'},
+        {'effect_id','objects','event_id'},
     )
     if actual not in allowed_shapes:
         raise ReplacementEffectError(
@@ -315,6 +327,10 @@ def _selection_parts(
     effect_id = selected["effect_id"]
     allocation = selected.get("allocation")
     event_id = selected.get("event_id")
+    objects=selected.get('objects')
+    if 'objects' in selected and (not isinstance(objects,(list,tuple)) or any(type(v) is not str or not v for v in objects)
+            or len(set(objects))!=len(objects)):
+        raise ReplacementEffectError('Replacement object selections must be distinct nonempty references')
     if not isinstance(effect_id, str) or not effect_id:
         raise ReplacementEffectError(
             "Typed replacement selections require a stable effect ID"
@@ -329,7 +345,7 @@ def _selection_parts(
         raise ReplacementEffectError(
             "Typed replacement event identity must be a nonempty string"
         )
-    return effect_id, allocation, event_id
+    return effect_id, allocation, event_id, tuple(objects) if objects is not None else None
 
 
 def _validated_allocation(
@@ -461,7 +477,7 @@ def apply_batch_replacement(
         raise ReplacementEffectError(
             "Replacement batch choice is stale or violates APNAP order"
         )
-    selected_value, supplied_allocation, selected_event_id = _selection_parts(
+    selected_value, supplied_allocation, selected_event_id, supplied_objects = _selection_parts(
         selected_effect_id
     )
     if selected_event_id is not None:
@@ -525,6 +541,10 @@ def apply_batch_replacement(
     canonical_selection = canonical_replacement_selection(
         pending.choice, selected_value
     )
+    effect=next((e for e in all_effects if e.effect_id==canonical_selection),None)
+    object_choice=effect is not None and any(isinstance(op,DevourEntryOperation) for op in effect.operations)
+    if supplied_objects and not object_choice:raise ReplacementEffectError('This replacement does not accept selected objects')
+    journal_objects=(supplied_objects or ()) if object_choice else None
     allocation_choice = next(
         (
             value
@@ -550,10 +570,11 @@ def apply_batch_replacement(
         all_effects,
         pending.tree_choice,
         canonical_selection,
+        objects=supplied_objects,
     )
     return ReplacementEventBatch(
         batch_id=batch.batch_id,
-        events=tuple(events),
+        events=share_entry_reservations(events),
         apnap_order=batch.apnap_order,
         journal=(
             *batch.journal,
@@ -562,6 +583,7 @@ def apply_batch_replacement(
                 path=pending.path,
                 chooser=pending.choice.chooser,
                 effect_id=canonical_selection,
+                objects=journal_objects,
             ),
         ),
     )
@@ -612,12 +634,17 @@ def resolve_replacement_batch(
                 }
                 if selection.allocation is not None
                 else (
+                    {'effect_id':selection.effect_id,'objects':list(selection.objects),
+                        **({'event_id':selection.event_id} if pending.event_order_options else {})}
+                    if selection.objects is not None else
+                    (
                     {
                         "effect_id": selection.effect_id,
                         "event_id": selection.event_id,
                     }
                     if pending.event_order_options
                     else selection.effect_id
+                    )
                 )
             ),
         )
@@ -694,7 +721,8 @@ def replacement_choice_payload(
         effect.effect_id: effect for effect in canonical_effects(effects)
     }
     options: list[dict[str, object]] = []
-    for value in pending.choice.legal_selections:
+    choices=tuple(choice for _,choice in pending.event_choices) or (pending.choice,)
+    for value in dict.fromkeys(value for choice in choices for value in choice.legal_selections):
         declined = value.startswith("decline:")
         effect_id = value.removeprefix("decline:") if declined else value
         effect = by_id[effect_id]
@@ -702,7 +730,7 @@ def replacement_choice_payload(
         options.append(
             {
                 "id": value,
-                "label": f"Decline {label}" if declined else label,
+                "label": (effect.decline_label or f"Decline {label}") if declined else label,
                 "source": effect.source_id,
                 "decline": declined,
             }
@@ -755,10 +783,26 @@ def replacement_choice_payload(
             "required": False,
             "label": "Divide prevention (only when required)",
         }
+    object_choices={}
+    scope=pending.choice.event.entry_scope
+    for effect_id in dict.fromkeys(effect_id for choice in choices for effect_id in choice.options):
+        operations=[op for op in by_id[effect_id].operations if isinstance(op,DevourEntryOperation)]
+        if not operations:continue
+        if len(operations)!=1:raise ReplacementEffectError('One replacement choice requires one Devour object selector')
+        operation=operations[0]
+        eligible=set(scope.eligible_zone_choices(c.object_id for c in operation.candidates)) if scope is not None else set()
+        refs=[c.ref for c in operation.candidates if c.object_id in eligible]
+        object_choices[effect_id]={'legal_refs':refs,'minimum':0,'maximum':len(refs)}
+    if object_choices:
+        refs=list(dict.fromkeys(ref for spec in object_choices.values() for ref in spec['legal_refs']))
+        choice_schema['replacement_objects']={'type':'object_ref_array','legal_refs':refs,'minimum':0,'maximum':len(refs),
+            'distinct':True,'required':False,'label':'Permanents to sacrifice with Devour'}
     return {
         "chooser": pending.choice.chooser,
         "prompt": "Choose the next replacement or prevention effect.",
         "options": options,
+        **({'object_choices':object_choices} if object_choices else {}),
+        **({'event_effect_options':{event_id:list(choice.legal_selections) for event_id,choice in pending.event_choices}} if pending.event_choices else {}),
         **(
             {"event_order_options": list(pending.event_order_options)}
             if pending.event_order_options

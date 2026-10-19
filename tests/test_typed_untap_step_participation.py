@@ -185,7 +185,7 @@ class UntapStepCompilerTests(unittest.TestCase):
             "player's untap step.",
             "Creatures you control don't untap during your untap step.",
             "As long as this artifact is untapped, players can't untap more "
-            "than two permanents during their untap steps.",
+            "than X permanents during their untap steps.",
         )
         capabilities = load_default_capability_registry()
         for index, text in enumerate(cases, start=1):
@@ -207,7 +207,7 @@ class UntapStepCompilerTests(unittest.TestCase):
                 self.assertIn(text, {row["text"] for row in residuals})
 
         limit = static_untap_step_limit_handler(
-            cases[-1], source_name="Unsupported Untap Fixture 4"
+            cases[-1].replace('X','two'), source_name="Unsupported Untap Fixture 4"
         )
         self.assertIsNotNone(limit)
         self.assertEqual("limit", limit[1]["instruction"]["kind"])
@@ -247,7 +247,8 @@ class UntapStepCompilerTests(unittest.TestCase):
         inventory = default_untap_step_component_registry().inventory()
         self.assertEqual(
             {UNTAP_STEP_HANDLER_ID: ["untap.step.static_participation"],
-             OPTIONAL_UNTAP_HANDLER_ID: ["untap.step.optional_source"]},
+             OPTIONAL_UNTAP_HANDLER_ID: ["untap.step.optional_source"],
+             'participation.untap-step.fixed-selection-limit.v1':['untap.step.fixed_selection_limit']},
             {row["handler_id"]: row["capability_dependencies"] for row in inventory},
         )
 

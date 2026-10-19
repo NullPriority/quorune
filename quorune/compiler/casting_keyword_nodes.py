@@ -13,6 +13,10 @@ from .conspire_nodes import conspire_static_node
 
 
 def casting_keyword_node(*, record, face_id, printed_power, **values):
+    from .undaunted_nodes import undaunted_keyword_node
+    undaunted = undaunted_keyword_node(**values)
+    if undaunted is not None:
+        return undaunted
     if values['mechanics'] == ('morph',):
         from .nonmana_morph_nodes import fixed_nonmana_morph_keyword_node
         node = fixed_nonmana_morph_keyword_node(**values)

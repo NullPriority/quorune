@@ -38,10 +38,22 @@ class TokenCopyExceptionSpec:
     add_ability_fragments: tuple[Mapping[str, Any], ...] = ()
     schema_version: int = 1
     remove_mana_cost: bool = False
+    name: str | None = None
+    card_types: tuple[str, ...] | None = None
+    retain_source_stats: bool = False
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1,2} or type(self.remove_legendary) is not bool or type(self.remove_mana_cost) is not bool or self.remove_mana_cost and self.schema_version!=2:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3} or type(self.remove_legendary) is not bool or type(self.remove_mana_cost) is not bool or self.remove_mana_cost and self.schema_version not in {2,3}:
             raise TokenCopyRecipeError("Copy exception version or legendary flag is malformed")
+        if type(self.retain_source_stats) is not bool or self.name is not None and (type(self.name) is not str or not self.name):
+            raise TokenCopyRecipeError('Copy retained name/stats fields are malformed')
+        if self.card_types is not None:
+            object.__setattr__(self,'card_types',_unique_words(self.card_types,
+                allowed=frozenset({'artifact','creature'}),label='replacement copy types'))
+            if self.card_types!=('artifact',):raise TokenCopyRecipeError('Replacement copy types currently retain only artifact')
+        if self.schema_version!=3 and (self.name is not None or self.card_types is not None or self.retain_source_stats):
+            raise TokenCopyRecipeError('Extended copy values require version three')
+        if self.retain_source_stats and self.power is not None:raise TokenCopyRecipeError('Retained and fixed copy stats conflict')
         if (self.power is None) != (self.toughness is None) or any(
             value is not None and (type(value) is not int or value < 0)
             for value in (self.power, self.toughness)
@@ -49,7 +61,7 @@ class TokenCopyExceptionSpec:
             raise TokenCopyRecipeError("Copy base stats require two nonnegative fixed integers")
         for field_name, allowed in (
             ("add_card_types", frozenset({"artifact", "creature", "enchantment"})),
-            ("add_subtypes", CREATURE_SUBTYPES | {"food", "equipment"}),
+            ("add_subtypes", CREATURE_SUBTYPES | {"food", "equipment", "vehicle"}),
             ("add_keywords", FIXED_CHARACTERISTIC_KEYWORDS),
         ):
             object.__setattr__(self, field_name, _unique_words(getattr(self, field_name), allowed=allowed, label=field_name))
@@ -76,13 +88,15 @@ class TokenCopyExceptionSpec:
             "colors": list(self.colors) if self.colors is not None else None,
             "power": self.power, "toughness": self.toughness, "add_keywords": list(self.add_keywords),
             "add_ability_fragments": [thaw_value(fragment) for fragment in self.add_ability_fragments]}
-        if self.schema_version==2:value['remove_mana_cost']=self.remove_mana_cost
+        if self.schema_version in {2,3}:value['remove_mana_cost']=self.remove_mana_cost
+        if self.schema_version==3:value.update(name=self.name,card_types=list(self.card_types) if self.card_types is not None else None,retain_source_stats=self.retain_source_stats)
         return value
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "TokenCopyExceptionSpec":
         fields = {"schema_version", "remove_legendary", "add_card_types", "add_subtypes", "creature_subtypes", "colors", "power", "toughness", "add_keywords", "add_ability_fragments"}
-        if isinstance(value,Mapping) and value.get('schema_version')==2:fields=fields|{'remove_mana_cost'}
+        if isinstance(value,Mapping) and value.get('schema_version') in {2,3}:fields=fields|{'remove_mana_cost'}
+        if isinstance(value,Mapping) and value.get('schema_version')==3:fields=fields|{'name','card_types','retain_source_stats'}
         if not isinstance(value, Mapping) or set(value) != fields:
             raise TokenCopyRecipeError("Copy exceptions have a closed complete schema")
         try:
@@ -99,10 +113,13 @@ class TokenCopyRecipeSpec:
     temporary_keywords: tuple[str, ...] = ()
     keyword_duration: str = "zone_object"
     schema_version: int = 1
+    creation_origin: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
             raise TokenCopyRecipeError("Copy recipe version is unsupported")
+        if (self.creation_origin is not None and (self.schema_version!=2 or self.creation_origin!='embalm')
+                or self.schema_version==2 and self.creation_origin is None):raise TokenCopyRecipeError('Versioned copy creation origin is closed')
         if self.origin not in {"source", "target", "event_object"} or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise TokenCopyRecipeError("Copy reference origin or exception is unsupported")
         if self.cleanup not in {"none", "sacrifice_next_end_step", "exile_next_end_step"}:
@@ -115,32 +132,40 @@ class TokenCopyRecipeSpec:
     def to_dict(self) -> dict[str, Any]:
         return {"schema_version": self.schema_version, "origin": self.origin,
                 "exception": self.exception.to_dict(), "cleanup": self.cleanup,
-                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration}
+                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration,**({"creation_origin":self.creation_origin} if self.schema_version==2 else {})}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "TokenCopyRecipeSpec":
-        if not isinstance(value, Mapping) or set(value) != {"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration"}:
+        if not isinstance(value, Mapping) or set(value) != ({"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration","creation_origin"} if value.get("schema_version")==2 else {"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration"}):
             raise TokenCopyRecipeError("Copy recipes have a closed complete schema")
         return cls(schema_version=value["schema_version"], origin=value["origin"],
                    exception=TokenCopyExceptionSpec.from_dict(value["exception"]), cleanup=value["cleanup"],
-                   temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"])
+                   temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"],creation_origin=value.get("creation_origin"))
 
 
 def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCopyExceptionSpec) -> dict[str, Any]:
     """Apply CR 707.9 values before creation; never copy status or counters."""
     result = deepcopy(dict(characteristics))
+    if exception.retain_source_stats:raise TokenCopyRecipeError('Entry source stats must be resolved before applying a copy exception')
+    if exception.name is not None:result['name']=exception.name
     if exception.remove_mana_cost:
         result['mana_cost']=''
         result['mana_value']=0
     card_types, subtypes, supertypes = type_parts(str(result.get("type_line") or ""))
     if exception.remove_legendary:
         supertypes.discard("legendary")
+    if exception.card_types is not None:
+        card_types=set(exception.card_types)
+        # These replacements retain only artifact subtypes. Creature, land,
+        # enchantment and planeswalker subtypes cannot survive without their type.
+        from .copy_value_types import ARTIFACT_SUBTYPES
+        subtypes.intersection_update(ARTIFACT_SUBTYPES if 'artifact' in card_types else ())
     card_types.update(exception.add_card_types)
     if exception.creature_subtypes is not None:
         subtypes.difference_update(CREATURE_SUBTYPES)
         subtypes.update(exception.creature_subtypes)
     subtypes.update(exception.add_subtypes)
-    if exception.remove_legendary or exception.add_card_types or exception.add_subtypes or exception.creature_subtypes is not None:
+    if exception.card_types is not None or exception.remove_legendary or exception.add_card_types or exception.add_subtypes or exception.creature_subtypes is not None:
         ordered_types = [value for value in ("kindred", "artifact", "battle", "creature", "enchantment", "land", "planeswalker") if value in card_types]
         left = " ".join(value.title() for value in (*sorted(supertypes), *ordered_types))
         result["type_line"] = left + (" — " + " ".join(value.title() for value in sorted(subtypes)) if subtypes else "")
@@ -153,15 +178,15 @@ def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCop
     if not isinstance(fragments, (list, tuple)) or any(not isinstance(value, Mapping) for value in fragments):
         raise TokenCopyRecipeError("Copied ability fragments are unavailable")
     result["ability_fragments"] = [deepcopy(dict(fragment)) for fragment in fragments if not (
-        exception.power is not None and fragment.get("kind") == "query_power_toughness_definition"
+        exception.power is not None and fragment.get("kind") in {"query_power_toughness_definition","dynamic_power_toughness"}
         or exception.colors is not None and fragment.get("kind") == "colorless_characteristic_definition"
-        or exception.creature_subtypes is not None and fragment.get("kind") == "all_creature_types_characteristic_definition"
+        or (exception.creature_subtypes is not None or exception.card_types is not None) and fragment.get("kind") == "all_creature_types_characteristic_definition"
     )]
     result["ability_fragments"].extend(thaw_value(fragment) for fragment in exception.add_ability_fragments)
     keywords = list(result.get("keywords", ()))
     if exception.colors is not None:
         keywords = [value for value in keywords if str(value).casefold() != "devoid"]
-    if exception.creature_subtypes is not None:
+    if exception.creature_subtypes is not None or exception.card_types is not None:
         keywords = [value for value in keywords if str(value).casefold() != "changeling"]
     result["keywords"] = list(dict.fromkeys((*keywords, *exception.add_keywords)))
     return result

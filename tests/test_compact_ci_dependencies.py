@@ -152,6 +152,52 @@ class DependencySyntaxScopeTests(unittest.TestCase):
             self.assertIn('Missing test source', owner.discover_module_requirements('test_first', root=root)[2][0])
 
 
+class FixtureAliasPriorityTests(unittest.TestCase):
+    def index(self, root, cards):
+        from scripts.compact_ci_dependencies import index_fixture_ownership
+        fixture = root / 'cards.json'
+        fixture.write_text(json.dumps({'schema_version': 1, 'cards': cards, 'rulings': []}), encoding='utf-8')
+        return index_fixture_ownership([fixture], root=root)
+
+    def test_canonical_names_beat_preparation_insets_in_either_fixture_order(self):
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+        standalone = card('Seething Song', '00000000-0000-4000-8000-000000000001')
+        preparation = card('Blazing Firesinger // Seething Song', '00000000-0000-4000-8000-000000000002')
+        preparation.update(layout='prepare', card_faces=[{'name': 'Blazing Firesinger'}, {'name': 'Seething Song'}])
+        for ordered in ([standalone, preparation], [preparation, standalone]):
+            with self.subTest(first=ordered[0]['name']), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                indexed = self.index(root, ordered)
+                self.assertEqual([], indexed['conflicts'])
+                self.assertEqual(standalone['oracle_id'], indexed['oracle_by_normalized_name']['seething song'])
+                self.assertEqual(preparation['oracle_id'], indexed['oracle_by_normalized_name']['blazing firesinger'])
+                build_fixture_database(root / 'cards.json', root / 'cards.sqlite3')
+                with CardDatabase(root / 'cards.sqlite3') as db:
+                    self.assertEqual(db.lookup('Seething Song', fuzzy=False).oracle_id,
+                                     indexed['oracle_by_normalized_name']['seething song'])
+                    self.assertEqual(db.lookup('Blazing Firesinger', fuzzy=False).oracle_id,
+                                     indexed['oracle_by_normalized_name']['blazing firesinger'])
+                    self.assertEqual(db.lookup('Blazing Firesinger // Seething Song', fuzzy=False).oracle_id,
+                                     indexed['oracle_by_normalized_name']['blazing firesinger // seething song'])
+
+    def test_duplicate_canonical_names_still_fail_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            indexed = self.index(Path(directory), [card('Same Name', 'first'), card('Same Name', 'second')])
+            self.assertTrue(indexed['conflicts'])
+            self.assertEqual('normalized_name', indexed['conflicts'][0]['kind'])
+
+    def test_equal_priority_face_aliases_still_fail_closed(self):
+        first = card('First // Shared', 'first')
+        second = card('Second // Shared', 'second')
+        for value in (first, second):
+            value['card_faces'] = [{'name': value['name'].split(' // ')[0]}, {'name': 'Shared'}]
+        with tempfile.TemporaryDirectory() as directory:
+            indexed = self.index(Path(directory), [first, second])
+            self.assertTrue(indexed['conflicts'])
+            self.assertEqual('alias', indexed['conflicts'][0]['kind'])
+
+
 class CompactCIDependencyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

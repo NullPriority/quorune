@@ -88,6 +88,10 @@ class AbilityFragmentHostMixin:
         error_type: type[Exception] | None = None,
     ) -> dict[str, Any]:
         base = base_card_characteristics(card, record)
+        from .preparation import compiled_prepare_spell
+        from .preparation_model import PREPARE_SPELL_FIELD
+        prepare_spell=compiled_prepare_spell(self,card)
+        if prepare_spell is not None:base[PREPARE_SPELL_FIELD]=prepare_spell.to_dict()
         from .rules.prototype import prototype_characteristic_values
         base.update(prototype_characteristic_values(card))
         from .rules.current_face_keywords import current_printed_face_keywords

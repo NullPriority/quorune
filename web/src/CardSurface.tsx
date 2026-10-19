@@ -132,6 +132,7 @@ export function CardTile({
         <strong>{cardName(value)}</strong>
         {!compact && (card.t ?? definition?.t) && <span>{String(card.t ?? definition?.t)}</span>}
         {card.ctr && <span>{Object.entries(asRecord(card.ctr)).map(([key, amount]) => `${key} ${amount}`).join(" · ")}</span>}
+        {Boolean(card.prepared) && <span>PREPARED</span>}
       </div>
       {card.tap && table && <span className="tapped-state">TAPPED</span>}
       {interactive && <span className="card-action-hint">{actionHint}</span>}

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .target_source import stack_targeting_source
+
 from typing import Any, Mapping, Protocol
 
 
@@ -22,6 +24,7 @@ class TriggerTargetingHost(Protocol):
         schema: Mapping[str, Any],
         *,
         source_ref: str,
+        acting_source: Any = None,
     ) -> Mapping[str, Any] | None: ...
 
     def _stack_source_ref(self, item: Any) -> str: ...
@@ -65,7 +68,7 @@ def begin_pending_trigger_target_selection(
             public_schema = host._public_target_schema(
                 item.controller,
                 target_schema,
-                source_ref=host._stack_source_ref(item),
+                acting_source=stack_targeting_source(host,item), source_ref=host._stack_source_ref(item),
             )
             if public_schema is None:
                 host.state.stack.remove(item)

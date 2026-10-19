@@ -83,7 +83,8 @@ class CastPermissionRegistry(
 
 @lru_cache(maxsize=1)
 def default_cast_permission_registry() -> CastPermissionRegistry:
-    registry = CastPermissionRegistry((FlashCastPermissionHandler(),))
+    from .conditional_flash import ConditionalFlashPermissionHandler
+    registry = CastPermissionRegistry((FlashCastPermissionHandler(),ConditionalFlashPermissionHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

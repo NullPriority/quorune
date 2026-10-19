@@ -28,7 +28,7 @@ class OptionalUntapSubject:
 
 
 def _plan_from_dict(value: Any) -> UntapStepPlan:
-    names = {field.name for field in fields(UntapStepPlan)}
+    names = {field.name for field in fields(UntapStepPlan)} - {'selection_limits'}
     if not isinstance(value, Mapping) or set(value) != names:
         raise GameRuleError("Optional untap participation plan is malformed")
     arrays = {name for name in names if name.endswith("_ids")} | {"supporting_source_refs"}
@@ -63,7 +63,8 @@ class OptionalUntapContinuation:
                 or type(self.phase_index) is not int or self.phase_index != 0
                 or not isinstance(self.plan, UntapStepPlan)
                 or self.plan.active_player != self.active_player
-                or self.plan.unsupported_source_object_id is not None):
+                or self.plan.unsupported_source_object_id is not None
+                or self.plan.selection_limits):
             raise GameRuleError("Optional untap physical step is malformed")
         if (type(self.rows) is not tuple or any(not isinstance(row, OptionalUntapSubject) for row in self.rows)
                 or len({row.object_id for row in self.rows}) != len(self.rows)
@@ -83,6 +84,7 @@ class OptionalUntapContinuation:
 
     def to_dict(self) -> dict[str, Any]:
         plan = asdict(self.plan)
+        plan.pop('selection_limits', None)
         return {
             "schema_version": 1, "active_player": self.active_player,
             "turn_sequence": self.turn_sequence, "phase_index": self.phase_index,
@@ -127,6 +129,9 @@ def _rows(state: GameState) -> tuple[OptionalUntapSubject, ...]:
 
 
 def begin_optional_untap_choice(host: Any, plan: UntapStepPlan, waiting_triggers: list[StackItem]) -> bool:
+    if plan.selection_limits:
+        from .untap_selection import begin_limited_untap_choice
+        return begin_limited_untap_choice(host,plan,waiting_triggers)
     if not host.state.config.auto_untap:
         return False
     available = tuple(
@@ -155,6 +160,9 @@ def begin_optional_untap_choice(host: Any, plan: UntapStepPlan, waiting_triggers
 
 
 def complete_optional_untap_choice(host: Any, decision: Any) -> None:
+    if 'untap_selection' in decision.continuation:
+        from .untap_selection import complete_limited_untap_choice
+        return complete_limited_untap_choice(host,decision)
     frame = OptionalUntapContinuation.from_dict(decision.continuation.get("optional_untap"))
     actor = frame.active_player
     if (decision.kind != "untap.optional_source" or decision.actors != [actor]

@@ -9,11 +9,15 @@ from .creature_subtypes import canonical_creature_subtype
 from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .target_numeric import TargetNumericCharacteristic, TargetNumericComparison
 from .token_copy_recipes import TokenCopyExceptionSpec
+from .entry_copy_predicates import EntryCopyPredicate
+from .conditional_copy_model import ConditionalCopyException
 
 ENTRY_COPY_HANDLER = 'replacement.zone.entry-copy.v1'
 ENTRY_COPY_QUERY_HANDLER = 'replacement.zone.entry-copy.v2'
 ENTRY_COPY_CAPABILITY = 'zone.entry.fixed_copy'
 ENTRY_COPY_QUERY_CAPABILITIES = (ENTRY_COPY_CAPABILITY, 'state_query.permanent.public_state_predicate')
+ENTRY_COPY_VALUES_HANDLER = 'replacement.zone.entry-copy.v3'
+ENTRY_COPY_VALUES_CAPABILITY = 'zone.entry.copy_value_exceptions'
 COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
 COPIABLE_FACE_FIELD = '_copiable_face_id'
 
@@ -44,7 +48,9 @@ def copied_entry_preview(card: Any, prepared: Any):
 def serialize_prepared_copy_entry(prepared):
     from dataclasses import fields
     from .replacement.immutable import thaw_value
-    result = {field.name: getattr(prepared, field.name) for field in fields(prepared)}
+    result = {field.name: getattr(prepared, field.name) for field in fields(prepared)
+        if field.name!='devour_sacrifices' or prepared.devour_sacrifices}
+    if prepared.devour_sacrifices:result['devour_sacrifices']=[serialize_prepared_copy_entry(v) for v in prepared.devour_sacrifices]
     result['transition_kind'] = prepared.transition_kind.value
     result['event'] = prepared.event.to_dict()
     for field in ('effects', 'counter_events', 'keyword_grants', 'journal'):
@@ -58,9 +64,13 @@ def restore_prepared_copy_entry(value, *, revision):
     from .entry_keyword_grants import EntryKeywordGrant
     from .zone_trigger_events import ZoneTransitionKind
     from dataclasses import fields
-    if not isinstance(value, Mapping) or set(value) != {field.name for field in fields(PreparedZoneChange)}:
+    expected={field.name for field in fields(PreparedZoneChange) if field.name!='devour_sacrifices'}
+    if not isinstance(value, Mapping) or set(value) != (expected|({'devour_sacrifices'} if 'devour_sacrifices' in value else set())):
         raise ValueError('Retained copied entry has a closed identity')
     data = dict(value)
+    if 'devour_sacrifices' in data:
+        if type(data['devour_sacrifices']) is not list or not data['devour_sacrifices']:raise ValueError('Prepared Devour sacrifices require a nonempty array')
+        data['devour_sacrifices']=tuple(restore_prepared_copy_entry(v,revision=revision) for v in data['devour_sacrifices'])
     data['state_revision'] = revision  # Choices advance revision without moving this object.
     data['transition_kind'] = ZoneTransitionKind(data['transition_kind'])
     data['event'] = ReplaceableEvent.from_dict(data['event'])
@@ -96,13 +106,20 @@ class EntryCopySpec:
     selection: ObjectQuerySpec
     exception: TokenCopyExceptionSpec = TokenCopyExceptionSpec()
     schema_version: int = 1
+    predicate: EntryCopyPredicate | None = None
+    conditional_exception: ConditionalCopyException | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
             raise ValueError('Entry copy requires one current typed schema')
         if not isinstance(self.selection, ObjectQuerySpec) or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise ValueError('Entry copy requires typed selection and copy exceptions')
+        if (self.schema_version==4)!=(self.predicate is not None) or self.predicate is not None and not isinstance(self.predicate,EntryCopyPredicate):raise ValueError('Entry copy predicates require version four')
+        if (self.schema_version==5)!=(self.conditional_exception is not None) or self.conditional_exception is not None and not isinstance(self.conditional_exception,ConditionalCopyException):raise ValueError('Conditional exception requires version five')
         query = _legacy_view_of_copy_query(self.selection) if self.schema_version == 2 else self.selection
+        if self.schema_version in {3,4} and query.zones==('graveyard',):
+            if query!=ObjectQuerySpec(zones=('graveyard',),types_all=('creature',)):raise ValueError('Graveyard copy selects only public creature cards')
+            query=replace(query,zones=('battlefield',))
         permanent_types = {'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'}
         if (query.zones != ('battlefield',) or query.owner is not None
                 or query.controller not in {None, '$controller'}
@@ -124,14 +141,16 @@ class EntryCopySpec:
 
     def to_dict(self) -> dict[str, Any]:
         return {'schema_version': self.schema_version, 'selection': self.selection.to_dict(),
-            'exception': self.exception.to_dict()}
+            'exception': self.exception.to_dict(),**({'predicate':self.predicate.to_dict()} if self.predicate is not None else {}),**({'conditional_exception':self.conditional_exception.to_dict()} if self.conditional_exception is not None else {})}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> 'EntryCopySpec':
-        if not isinstance(value, Mapping) or set(value) != {'schema_version', 'selection', 'exception'}:
+        if not isinstance(value, Mapping) or set(value) != ({'schema_version','selection','exception','predicate'} if value.get('schema_version')==4 else {'schema_version','selection','exception','conditional_exception'} if value.get('schema_version')==5 else {'schema_version','selection','exception'}):
             raise ValueError('Entry copy fields are closed')
         try:
             return cls(ObjectQuerySpec.from_dict(value['selection']),
-                TokenCopyExceptionSpec.from_dict(value['exception']), value['schema_version'])
+                TokenCopyExceptionSpec.from_dict(value['exception']), value['schema_version'],
+                EntryCopyPredicate.from_dict(value['predicate']) if value['schema_version']==4 else None,
+                ConditionalCopyException.from_dict(value['conditional_exception']) if value['schema_version']==5 else None)
         except (TypeError, KeyError) as exc:
             raise ValueError('Entry copy fields are malformed') from exc

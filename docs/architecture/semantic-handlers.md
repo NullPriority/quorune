@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Fixed opponent loss followed by gain equal to the actual life lost uses
+`ActualLifeTransferHandler` in the existing semantic-choice registry. The
+existing life-loss batch commits each active opponent's replacement-aware
+loss, then its resolved total becomes a separate typed life-gain intent.
+Gain replacement choices preserve that total across load and resume without
+repeating opponent losses. Fixed printed gains remain their own life effect;
+this result never substitutes damage or a presumed multiplayer total.
+
 Intrinsic Exploit uses a public zero-or-one creature choice issued to the
 locked entry-trigger controller. The typed sacrifice intent retains both
 incarnations and delegates to the canonical replacement-aware zone owner.

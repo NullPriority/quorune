@@ -1,0 +1,646 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "fixed_untap_selection_limits",
+  "source": "Pinned Oracle and rulings for fixed untap selection limits.",
+  "cards": [
+    {
+      "oracle_id": "0004ebd0-dfd6-4276-b4a6-de0003e94237",
+      "name": "Static Orb",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "As long as this artifact is untapped, players can't untap more than two permanents during their untap steps.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1201520a-d76a-4c8a-be5c-ff37ffd2c024",
+      "name": "Imi Statue",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "Players can't untap more than one artifact during their untap steps.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2004-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1dcbd583-3388-4b34-a7cd-131648aa6abd",
+      "name": "Winter Orb",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "As long as this artifact is untapped, players can't untap more than one land during their untap steps.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6b2184ce-d6b1-411e-80ac-05a6e5993a39",
+      "name": "Damping Field",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players can't untap more than one artifact during their untap steps.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1994-03-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8aa97d25-cd51-4ceb-b7eb-af64f0914a8c",
+      "name": "Smoke",
+      "mana_cost": "{R}{R}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players can't untap more than one creature during their untap steps.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-01-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b50c865b-705f-489e-9ffc-ba8060ba262f",
+      "name": "Stoic Angel",
+      "mana_cost": "{1}{G}{W}{U}",
+      "cmc": 4.0,
+      "type_line": "Creature \u2014 Angel",
+      "oracle_text": "Flying, vigilance\nPlayers can't untap more than one creature during their untap steps.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-03-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b922f057-1c91-43eb-b74a-8a933b1be2d2",
+      "name": "Winter Moon",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "Players can't untap more than one nonbasic land during their untap steps.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fe6ff20b-5e4d-44d5-b011-c6e512169294",
+      "name": "Mungha Wurm",
+      "mana_cost": "{2}{G}{G}",
+      "cmc": 4.0,
+      "type_line": "Creature \u2014 Wurm",
+      "oracle_text": "You can't untap more than one land during your untap step.",
+      "power": "6",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2000-06-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d03935d8-c19b-58aa-b4bb-e9af3efa24cc",
+      "name": "Generic Limit Animated Land",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Land Creature \u2014 Elemental",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "77850642-222e-520b-84a9-0f66469a6dc8",
+      "name": "Generic Limit Nonbasic Land",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Land",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": null,
+      "toughness": null
+    },
+    {
+      "oracle_id": "e2e038cf-f91a-5238-90d7-b4481caa900d",
+      "name": "Generic Limit Artifact",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": null,
+      "toughness": null
+    },
+    {
+      "oracle_id": "8138dfca-969a-5bba-9d05-f81e8af1be42",
+      "name": "Generic Limit Optional Artifact",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Artifact",
+      "oracle_text": "You may choose not to untap this artifact during your untap step.",
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": null,
+      "toughness": null
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Wake Thrasher",
+      "oracle_id": "f2d1e991-e13a-43c7-85aa-d53dd14822e6",
+      "oracle_text": "Whenever a permanent you control becomes untapped, this creature gets +1/+1 until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2017-10-24",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Merfolk Soldier"
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "name": "Humility",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "All creatures lose all abilities and have base power and toughness 1/1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-05-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0004ebd0-dfd6-4276-b4a6-de0003e94237",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If there are two of these on the battlefield, they do not add together. The result is that only two permanents can be untapped."
+    },
+    {
+      "oracle_id": "1dcbd583-3388-4b34-a7cd-131648aa6abd",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "All permanents untap during a player\u2019s untap step at once. If Winter Orb is tapped as your untap step begins, your lands will all untap."
+    },
+    {
+      "oracle_id": "1dcbd583-3388-4b34-a7cd-131648aa6abd",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "You can\u2019t tap Winter Orb just because you want to. Another ability, such as that of Glare of Subdual, must instruct or allow you to do so."
+    },
+    {
+      "oracle_id": "6b2184ce-d6b1-411e-80ac-05a6e5993a39",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Artifact creatures are artifacts. They are affected so only one may untap."
+    },
+    {
+      "oracle_id": "6b2184ce-d6b1-411e-80ac-05a6e5993a39",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Damping Field does not prevent artifacts being untapped by spells or abilities at other times."
+    },
+    {
+      "oracle_id": "8aa97d25-cd51-4ceb-b7eb-af64f0914a8c",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Animated lands are affected by this spell. If on the battlefield with an effect that limits the number of land you untap, untapping an animated land will count as the one creature and the one land you can untap... thereby limiting you to one thing to be untapped."
+    },
+    {
+      "oracle_id": "b50c865b-705f-489e-9ffc-ba8060ba262f",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "Noncreature permanents will untap as normal during their controllers\u2019 untap steps."
+    },
+    {
+      "oracle_id": "b50c865b-705f-489e-9ffc-ba8060ba262f",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "If multiple Stoic Angels are on the battlefield, their effects are redundant. Each player will still be able to untap no more than one creature during their untap step."
+    },
+    {
+      "oracle_id": "b922f057-1c91-43eb-b74a-8a933b1be2d2",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If Winter Moon is on the battlefield while another effect restricts untapping lands or permanents in a different way, their effects are cumulative. For example, if you control both Winter Moon and Static Orb, each player will be able to untap no more than two permanents, up to one of which can be a nonbasic land, during their untap step."
+    },
+    {
+      "oracle_id": "b922f057-1c91-43eb-b74a-8a933b1be2d2",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If multiple Winter Moons are on the battlefield, their effects are redundant. Each player will still be able to untap no more than one nonbasic land during their untap step."
+    },
+    {
+      "comment": "If permanents you control become untapped during your untap step, Wake Thresher\u2019s ability will trigger that many times. However, since no player gets priority during the untap step, those abilities wait to be put on the stack until your upkeep starts. At that time, all your \u201cbeginning of upkeep\u201d triggers will also trigger. You can put them and Wake Thresher\u2019s abilities on the stack in any order.",
+      "oracle_id": "f2d1e991-e13a-43c7-85aa-d53dd14822e6",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2006-02-01",
+      "source": "wotc",
+      "comment": "With a Humility and two Opalescences on the battlefield, if Humility has the latest timestamp, then all creatures are 1/1 with no abilities. If the timestamp order is Opalescence, Humility, Opalescence, the second Opalescence is 1/1, and the Humility and first Opalescence are 4/4. If Humility has the earliest timestamp, then everything is 4/4."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2007-02-01",
+      "source": "wotc",
+      "comment": "Removes all creature abilities. This includes mana abilities. Animated lands will also lose the ability to tap for mana."
+    },
+    {
+      "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "This is the current interaction between Humility and Opalescence:\u00a0The type-changing effect applies at layer 4, but the rest happens in the applicable layers. The rest of it will apply even if the permanent loses its ability before it's finished applying. So if Opalescence, Humility, and Worship are on the battlefield and Opalescence entered before Humility, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments. (Opalescence). Layer 6: Humility and Worship each lose their abilities. (Humility) Layer 7b: Humility becomes 4/4 and Worship becomes 4/4. (Opalescence). Humility becomes 1/1 and Worship becomes 1/1 (Humility). But if Humility entered before Opalescence, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments (Opalescence). Layer 6: Humility and Worship each lose their abilities (Humility). Layer 7b: Humility becomes 1/1 and Worship becomes 1/1 (Humility). Humility becomes 4/4 and Worship becomes 4/4 (Opalescence)."
+    }
+  ]
+}

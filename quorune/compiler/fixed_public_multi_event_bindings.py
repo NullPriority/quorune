@@ -18,7 +18,7 @@ from .fixed_public_event_trigger_bindings import (
 
 _THIS_SOURCE_MULTI_EVENT = re.compile(
     r"^(?:When|Whenever) this (?P<kind>creature|artifact|Vehicle|permanent) "
-    r"(?P<pair>enters or attacks|enters or dies|attacks or blocks|"
+    r"(?P<pair>enters or attacks|enters or dies|attacks or blocks|blocks or becomes blocked|"
     r"enters or leaves the battlefield|"
     r"enters or is put into a graveyard from the battlefield|"
     r"enters or is turned face up|"
@@ -28,7 +28,7 @@ _THIS_SOURCE_MULTI_EVENT = re.compile(
 )
 _NAMED_SOURCE_MULTI_EVENT = re.compile(
     r"^(?:When|Whenever) (?P<subject>.+?) "
-    r"(?P<pair>enters or attacks|enters or dies|attacks or blocks), "
+    r"(?P<pair>enters or attacks|enters or dies|attacks or blocks|blocks or becomes blocked), "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -83,6 +83,14 @@ def _event_pair(
             (
                 FixedEventSubscription("creature.attacks", source),
                 FixedEventSubscription("creature.blocks", source),
+            ),
+            "trigger-event-normalized-public-action",
+            (),
+        ),
+        "blocks or becomes blocked": (
+            (
+                FixedEventSubscription("creature.blocks", source),
+                FixedEventSubscription("creature.becomes_blocked", source),
             ),
             "trigger-event-normalized-public-action",
             (),

@@ -33,6 +33,15 @@ from .zone_trigger_events import ZoneTransitionKind
 from .util import unique_preserving_order
 
 
+def synchronize_state_based_observers(host):
+    """Seal source-linked designations and timestamps before capturing CR 704 facts."""
+    from .preparation import synchronize_preparation_copies
+    synchronize_preparation_copies(host)
+    from .soulbond_state import reconcile_soulbond_pairs
+    reconcile_soulbond_pairs(host)
+    host._synchronize_world_supertype_timestamps()
+
+
 class StateBasedSnapshotHost(Protocol):
     state: Any
     active_seats: Sequence[str]

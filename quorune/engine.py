@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
 from .carddb_characteristics import copiable_card_characteristics
 from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
@@ -350,6 +352,7 @@ from .state_based_actions import (
     evaluate_state_based_actions,
 )
 from .state_based_execution import (
+    synchronize_state_based_observers,
     commit_state_based_principal_changes,
     commit_state_based_counter_removals,
     commit_state_based_zone_changes,
@@ -599,6 +602,7 @@ class CommanderEngine(
         target_object_incarnation: str | None = None,
         types: Iterable[str] = (),
         amount: int = 0,
+        origin: str | None = None,
     ) -> None:
         """Append one authoritative current-turn look-back fact.
 
@@ -615,7 +619,7 @@ class CommanderEngine(
             self.state.turn_history = history
         history.events.append(
             TurnHistoryEvent(
-                kind=kind,
+                kind=kind, origin=origin,
                 actor=actor,
                 object_incarnation=object_incarnation,
                 target=target,
@@ -1459,6 +1463,9 @@ class CommanderEngine(
             self._complete_mulligan_declaration(decision)
         elif kind == "mulligan.bottom":
             self._complete_mulligan_bottom(decision)
+        elif kind == 'opening.hand':
+            from .opening_hand import complete_opening_hand_action
+            complete_opening_hand_action(self,decision)
         elif kind == "priority":
             self._complete_priority(decision)
         elif kind == "combat.attackers":
@@ -2906,6 +2913,7 @@ class CommanderEngine(
                         restriction=mode.restriction,
                         side_effects=mode.side_effects,
                         requires_choice=mode.requires_choice,
+                        tap_source=mode.tap_source,
                     )
                 )
         return compiled_modes
@@ -3424,7 +3432,7 @@ class CommanderEngine(
             public_schema = self._public_target_schema(
                 item.controller,
                 target_schema,
-                source_ref=item.ref,
+                acting_source=stack_targeting_source(self,item), source_ref=item.ref,
             )
             if public_schema is None:
                 self._counter_stack_item(
@@ -6557,6 +6565,7 @@ class CommanderEngine(
         return permanent_sba_snapshots(self)
 
     def _object_sba_snapshots(self) -> list[ObjectSnapshot]:
+        from .preparation import preparation_copy_retained
         return [
             ObjectSnapshot(
                 object_id=card.object_id,
@@ -6564,6 +6573,7 @@ class CommanderEngine(
                 is_token=card.is_token,
                 is_spell_copy=card.is_spell_copy,
                 is_card_copy=card.is_card_copy,
+                retained_prepare_spell=preparation_copy_retained(self,card),
             )
             for card in self.state.cards.values()
             if card.zone != "outside"
@@ -6715,7 +6725,7 @@ class CommanderEngine(
                 )
                 return True
 
-            self._synchronize_world_supertype_timestamps()
+            synchronize_state_based_observers(self)
             sba_batch = evaluate_state_based_actions(
                 permanents=self._permanent_sba_snapshots(),
                 objects=self._object_sba_snapshots(),

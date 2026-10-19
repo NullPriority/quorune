@@ -130,11 +130,12 @@ class ShroudCompilerTests(unittest.TestCase):
                 )
 
     def test_player_and_nonkeyword_shroud_wording_remain_residual(self):
+        """Conditional players and unrepresented source qualifiers stay closed."""
         capabilities = load_default_capability_registry()
         for text, type_line, keywords in (
             ("You have shroud as long as you control an Island.", "Creature — Test", ("Shroud",)),
             (
-                "This creature can't be the target of spells or abilities.",
+                "This creature can't be the target of spells or abilities with odd mana value.",
                 "Creature — Test",
                 (),
             ),
@@ -151,6 +152,18 @@ class ShroudCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_unconditional_nonkeyword_prohibition_closes_separately_from_shroud(self):
+        from quorune.target_restrictions import TARGET_RESTRICTION_CAPABILITY
+        text = "This creature can't be the target of spells or abilities."
+        record = self.fixture(oracle_text=text, keywords=(), type_line='Creature — Test')
+        ir = compile_oracle_card(record, capability_registry=load_default_capability_registry(),
+            capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(TARGET_RESTRICTION_CAPABILITY, node.capability_dependencies)
+        self.assertNotIn('target.protection.shroud_permanent', node.capability_dependencies)
+        self.assertEqual(text, record.oracle_text[node.span.start:node.span.end])
 
 
 class ShroudTargetingIntegrationTests(unittest.TestCase):

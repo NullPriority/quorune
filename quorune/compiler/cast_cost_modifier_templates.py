@@ -6,6 +6,7 @@ import re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..basic_land_types import LAND_SUBTYPES
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_predicate import PermanentStatePredicateSpec
 from ..self_cast_reductions import (
@@ -58,7 +59,7 @@ _NONCREATURE_SUBTYPES = frozenset(
 )
 
 _SELF_REDUCTION = re.compile(
-    r"^This spell costs (?P<amount>\{(?:[1-9][0-9]*|[WUBRGC])\}) "
+    r"^This spell costs (?P<amount>(?:\{(?:[1-9][0-9]*|[WUBRGC])\})+) "
     r"less to cast (?P<metric>.+?)\.?$",
     re.IGNORECASE,
 )
@@ -113,11 +114,13 @@ def _count_value(value: str) -> int:
 
 
 def _reduction_pairs(token: str) -> tuple[tuple[str, int], ...] | None:
-    match = re.fullmatch(r"\{(?P<value>[1-9][0-9]*|[WUBRGC])\}", token)
-    if match is None:
+    if re.fullmatch(r"(?:\{(?:[1-9][0-9]*|[WUBRGC])\})+",token) is None:
         return None
-    value = match.group("value")
-    return (("GENERIC", int(value)),) if value.isdigit() else ((value, 1),)
+    amounts: dict[str,int] = {}
+    for value in re.findall(r'\{([^{}]+)\}',token):
+        key='GENERIC' if value.isdigit() else value
+        amounts[key]=amounts.get(key,0)+(int(value) if value.isdigit() else 1)
+    return tuple(sorted(amounts.items()))
 
 
 def _without_ability_word(text: str) -> str:
@@ -148,6 +151,7 @@ def _quality_query(value: str, *, zone: str) -> ObjectQuerySpec | None:
     normalized = re.sub(r"^(?:a|an) ", "", normalized)
     normalized = re.sub(r" cards?$", "", normalized)
     fields: dict[str, Any] = {"zones": (zone,)}
+    if zone=='graveyard':fields['token']=False
     if normalized in {"permanent", "permanents"}:
         pass
     elif normalized in {"card", "cards"}:
@@ -178,6 +182,8 @@ def _quality_query(value: str, *, zone: str) -> ObjectQuerySpec | None:
     elif normalized in {"noncreature enchantment", "noncreature enchantments"}:
         fields["types_all"] = ("enchantment",)
         fields["excluded_types"] = ("creature",)
+    elif normalized=='noncreature, nonland':
+        fields['excluded_types']=('creature','land')
     elif normalized in {"legendary creature", "legendary creatures"}:
         fields["types_all"] = ("creature",)
         fields["supertypes_all"] = ("legendary",)
@@ -213,6 +219,8 @@ def _quality_query(value: str, *, zone: str) -> ObjectQuerySpec | None:
         fields["excluded_subtypes"] = ("human",)
     else:
         subtype = _singular_quality(normalized)
+        if subtype in LAND_SUBTYPES:
+            return ObjectQuerySpec(**fields,types_all=('land',),subtypes_all=(subtype,))
         subtype = (
             subtype
             if subtype in _NONCREATURE_SUBTYPES
@@ -247,6 +255,16 @@ def _public_condition_metric(condition: str) -> CastReductionMetric | None:
     normalized = " ".join(condition.casefold().split())
     normalized = normalized.removeprefix("if ")
     patterns = (
+        (
+            r"there is (?P<quality>.+?) in your graveyard",
+            CastReductionQueryScope.CONTROLLER_ZONE,
+            1,
+        ),
+        (
+            rf"you have (?P<count>{_COUNT_PATTERN}) or more (?P<quality>.+?) in your graveyard",
+            CastReductionQueryScope.CONTROLLER_ZONE,
+            None,
+        ),
         (
             rf"you control (?P<count>{_COUNT_PATTERN}) or more (?P<quality>.+)",
             CastReductionQueryScope.CONTROLLER_ZONE,
@@ -413,8 +431,25 @@ def _turn_fact_metric(condition: str) -> CastReductionMetric | None:
     )
 
 
+def _scalar_count_metric(normalized: str) -> CastReductionMetric | None:
+    kind = {
+        'opponent': CastReductionMetricKind.OPPONENT_COUNT,
+        'opponent you have': CastReductionMetricKind.OPPONENT_COUNT,
+        'creature in your party': CastReductionMetricKind.PARTY_SIZE,
+        'color among permanents you control': CastReductionMetricKind.PERMANENT_COLOR_COUNT,
+        'land your opponents control that could produce {c}': CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
+        'lands your opponents control that could produce {c}': CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
+    }.get(normalized)
+    if kind is None:
+        return None
+    return CastReductionMetric(kind=kind, schema_version=1 if kind is CastReductionMetricKind.OPPONENT_COUNT else 2)
+
+
 def _object_count_metric(value: str) -> CastReductionMetric | None:
     normalized = " ".join(value.casefold().split())
+    scalar = _scalar_count_metric(normalized)
+    if scalar is not None:
+        return scalar
     queries: list[CastReductionObjectQuery] = []
     turn_value = {
         "card you've cycled or discarded this turn": (
@@ -443,24 +478,6 @@ def _object_count_metric(value: str) -> CastReductionMetric | None:
         return CastReductionMetric(
             kind=CastReductionMetricKind.TURN_VALUE,
             turn_fact=turn_value,
-            schema_version=2,
-        )
-    if normalized == "creature in your party":
-        return CastReductionMetric(
-            kind=CastReductionMetricKind.PARTY_SIZE,
-            schema_version=2,
-        )
-    if normalized == "color among permanents you control":
-        return CastReductionMetric(
-            kind=CastReductionMetricKind.PERMANENT_COLOR_COUNT,
-            schema_version=2,
-        )
-    if normalized in {
-        "land your opponents control that could produce {c}",
-        "lands your opponents control that could produce {c}",
-    }:
-        return CastReductionMetric(
-            kind=CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
             schema_version=2,
         )
     if normalized in {"attacking creature", "attacking creatures"}:

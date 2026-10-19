@@ -133,6 +133,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        'public_waterbend',
         QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT,
         TAP_STATE_EVENT_VARIANT,
         "source_" + TAP_STATE_EVENT_VARIANT,
@@ -199,6 +200,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_enters_or_attacks",
         "source_enters_or_dies",
         "source_attacks_or_blocks",
+        "source_blocks_or_becomes_blocked",
         "source_enters_or_leaves_the_battlefield",
         "source_enters_or_is_put_into_a_graveyard_from_the_battlefield",
         "source_enters_or_is_turned_face_up",
@@ -353,6 +355,7 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_EXPLOITS = 'creature.exploits.self'
     PLAYER_SCRIED = 'player.scried'
     PLAYER_SURVEILLED = 'player.surveilled'
+    PLAYER_WATERBENT = 'player.waterbent'
 
 
 class FixedCounterZoneController(str, Enum):

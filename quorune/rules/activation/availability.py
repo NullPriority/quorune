@@ -119,6 +119,11 @@ def activation_availability(
         host._crew_candidates(seat, card)
     ) < crew_threshold:
         return "unpayable", "insufficient_crew_power"
+    if ability.waterbend is not None:
+        from ..waterbend_payments import activation_waterbend_plan
+        requirements=reduced_requirements(ability,legendary_creatures=host._legendary_creatures_controlled(seat))
+        if activation_waterbend_plan(host,seat,card,ability,requirements,{},hint=True) is None:return 'unpayable','waterbend_unpayable'
+        return 'payable',None
     if ability.mana_cost_options:
         try:payable=payable_activation_mana_options(host, seat, card, ability)
         except ValueError:return 'unresolved','unresolved_activation_price'

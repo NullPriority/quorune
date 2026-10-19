@@ -71,6 +71,7 @@ class ObjectSnapshot:
     is_token: bool = False
     is_spell_copy: bool = False
     is_card_copy: bool = False
+    retained_prepare_spell: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -322,6 +323,7 @@ def evaluate_state_based_actions(
         if (
             value.is_card_copy
             and zone not in {"stack", "battlefield"}
+            and not (zone=='exile' and value.retained_prepare_spell is True)
         ):
             cease.add(value.object_id)
     return StateBasedActionBatch(

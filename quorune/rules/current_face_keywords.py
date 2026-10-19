@@ -26,6 +26,11 @@ def current_printed_face_keywords(host,card,record,base):
         if str(keyword).casefold() not in known or str(keyword).casefold() in current]
         if record.faces else list(base.get('keywords',())))
     present={str(value).casefold() for value in result}
+    if 'flash' in present:
+        from ..compiled_cast_timing import conditional_flash_authorship
+        conditional,printed=conditional_flash_authorship(host,card)
+        if conditional and not printed:
+            result=[value for value in result if str(value).casefold()!='flash']
     # Some pinned keyword indexes omit a printed compound Landwalk label.
     # Only the exact trusted compiled declaration supplies the missing fact.
     return result + [keyword.title() for keyword in sorted(qualified) if keyword not in present]

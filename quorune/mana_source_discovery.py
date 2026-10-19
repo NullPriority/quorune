@@ -64,8 +64,36 @@ def _unrestricted_when_payable(
                     restriction=mode.restriction,
                     side_effects=mode.side_effects,
                     requires_choice=mode.requires_choice,
+                    tap_source=mode.tap_source,
                 )
             )
+    return tuple(result)
+
+
+def mana_plan_abilities(host: Any, seat: str, card: Any, *, card_types=None) -> tuple[ActivatedAbility, ...]:
+    """Shared source eligibility for tap mana and one-use self-sacrifice mana."""
+    if card.zone!='battlefield' or card.controller!=seat or card.phased_out:
+        return ()
+    abilities=tuple(ability for ability in host._activated_abilities(card)
+        if ability.mana_ability and card.zone in ability.zones)
+    blocked_tap=card.tapped
+    if not blocked_tap and any(ability.tap_source for ability in abilities):
+        if card_types is None:
+            card_types=host._type_parts(str(host._effective_card_data(card).get('type_line') or ''))[0]
+        if 'creature' in card_types:
+            blocked_tap=summoning_sickness_prohibits_tap_or_untap_cost(host,card,
+                as_though_haste=host._may_activate_creature_as_haste(seat,card))
+    result=[]
+    for ability in abilities:
+        if ability.tap_source:
+            if blocked_tap:
+                continue
+        elif not (ability.sacrifice_source and not any((sum(ability.mana.values()),ability.choices,
+                ability.untap_source,ability.discard_source,ability.exile_source,ability.life_payment,
+                ability.energy_payment,ability.random_discard_payment,ability.loyalty_delta is not None,
+                ability.source_counter_removal_cost is not None,ability.fixed_mana_result is not None))):
+            continue
+        result.append(ability)
     return tuple(result)
 
 
@@ -80,25 +108,17 @@ def available_mana_sources(
     sources: list[ManaSource] = []
     for object_id in host.state.players[seat].zones["battlefield"]:
         card = host.state.cards[object_id]
-        if card.controller != seat or card.tapped or card.phased_out:
+        if card.controller != seat or card.phased_out:
             continue
         data = host._effective_card_data(card)
         card_types, _, supertypes = host._type_parts(
             str(data.get("type_line") or "")
         )
-        if (
-            "creature" in card_types
-            and summoning_sickness_prohibits_tap_or_untap_cost(
-                host,
-                card,
-                as_though_haste=host._may_activate_creature_as_haste(
-                    seat, card
-                ),
-            )
-        ):
-            continue
         record = host.card_record(card)
         if not record:
+            if card.tapped or ('creature' in card_types and summoning_sickness_prohibits_tap_or_untap_cost(
+                    host,card,as_though_haste=host._may_activate_creature_as_haste(seat,card))):
+                continue
             compiled_modes = host._recordless_mana_modes(seat, card)
             if compiled_modes:
                 sources.append(
@@ -111,13 +131,7 @@ def available_mana_sources(
                     )
                 )
             continue
-        mana_abilities = [
-            ability
-            for ability in host._activated_abilities(card)
-            if ability.mana_ability
-            and ability.tap_source
-            and card.zone in ability.zones
-        ]
+        mana_abilities = mana_plan_abilities(host,seat,card,card_types=card_types)
         if any(
             ability.activation_limit is not None
             for ability in mana_abilities
@@ -126,12 +140,8 @@ def available_mana_sources(
             # a specific ability. Usage-limited mana therefore remains an
             # explicit activation so the authoritative usage owner commits it.
             continue
-        if mana_abilities and not any(
-            activation_condition_status(host, seat, ability, card)[0]
-            == "payable"
-            for ability in mana_abilities
-        ):
-            continue
+        mana_abilities=tuple(ability for ability in mana_abilities
+            if activation_condition_status(host,seat,ability,card)[0]=='payable')
         modes = payable_mana_modes(
             typed_mana_modes_for_abilities(host, seat, card, mana_abilities)
         )

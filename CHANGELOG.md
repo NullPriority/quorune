@@ -15,6 +15,18 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Apply fixed opponent keyword prohibitions through layer 6, preserving
+  current control and source abilities, static and counter grant resumption,
+  denied resolving grants, unrelated spell consequences, and exact replay.
+
+- Prevent fixed self damage with one additional counter removal per simultaneous
+  occurrence, preserving unpreventable damage, protection choice, current
+  ability presence, counter ownership, nested preparation, and replay.
+
+- Choose between two fixed entry keyword counters through named, controller-owned
+  replacement choices, preserving counter quantities, copy and face-down
+  boundaries, historical replacement defaults, and exact replay.
+
 - Pay fixed nonmana Morph prices through current-resource queries and canonical
   life, selected reveal, discard, and return owners, preserving private
   face-down casts, replacement continuations, incarnation checks, and replay.

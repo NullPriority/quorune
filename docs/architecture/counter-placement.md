@@ -1,7 +1,7 @@
 ---
 title: "Counter placement and removal transactions"
 status: "current"
-authoritative_source: "quorune/counter_placement.py, quorune/counter_placement_events.py, quorune/counter_removal.py, quorune/counter_names.py, quorune/counter_state.py, quorune/counter_maximums.py, quorune/counter_placement_sets.py, quorune/counter_placement_targets.py, quorune/damage_results.py, quorune/player_result_events.py, quorune/token_creation.py, quorune/keyword_counters.py, quorune/leveler_bands.py, quorune/attachment_references.py, quorune/entry_counter_model.py, quorune/entry_counters.py, quorune/fixed_keyword_entry_counters.py, quorune/saga_progression.py, quorune/turn_counter_coordination.py, quorune/death_return.py, quorune/unleash.py, quorune/mentor.py, quorune/attack_counter_triggers.py, quorune/renown.py, quorune/modular.py, quorune/amass.py, quorune/zone_object_subtype_grants.py, quorune/relative_power_target.py, quorune/target_predicates.py, quorune/permanent_designations.py, quorune/zone_object_state.py, quorune/compiler/amass_templates.py, quorune/compiler/counter_maximum_templates.py, quorune/compiler/counter_removal_templates.py, quorune/compiler/fixed_counter_trigger_nodes.py, quorune/compiler/fixed_keyword_entry_nodes.py, quorune/compiler/fixed_self_entry_counter_templates.py, quorune/compiler/fixed_target_effect_sequences.py, quorune/compiler/fixed_source_effect_sequences.py, quorune/compiler/self_counter_keyword_actions.py, quorune/rules/optional_counter_capability_shapes.py, semantic_runtime/ability_fragments.py, semantic_runtime/counter_replacements.py, semantic_runtime/counter_removal_handlers.py, semantic_runtime/token_replacements.py, semantic_runtime/zone_replacements.py, semantic_runtime/self_entry_counters.py, semantic_runtime/block_restrictions.py, semantic_choices/amass.py, semantic_choices/death_return.py, semantic_choices/modular.py, semantic_choices/optional_counter_placement.py, ADR 0011, ADR 0034, ADR 0036, ADR 0037, ADR 0038, ADR 0039, ADR 0048, and ADR 0054"
+authoritative_source: "quorune/counter_placement.py, quorune/counter_placement_events.py, quorune/counter_removal.py, quorune/counter_names.py, quorune/counter_state.py, quorune/counter_maximums.py, quorune/counter_placement_sets.py, quorune/counter_placement_targets.py, quorune/damage_results.py, quorune/player_result_events.py, quorune/token_creation.py, quorune/keyword_counters.py, quorune/leveler_bands.py, quorune/attachment_references.py, quorune/entry_counter_model.py, quorune/entry_counters.py, quorune/fixed_keyword_entry_counters.py, quorune/saga_progression.py, quorune/turn_counter_coordination.py, quorune/death_return.py, quorune/unleash.py, quorune/mentor.py, quorune/attack_counter_triggers.py, quorune/renown.py, quorune/modular.py, quorune/amass.py, quorune/zone_object_subtype_grants.py, quorune/relative_power_target.py, quorune/target_predicates.py, quorune/permanent_designations.py, quorune/zone_object_state.py, quorune/compiler/amass_templates.py, quorune/compiler/counter_maximum_templates.py, quorune/compiler/counter_removal_templates.py, quorune/compiler/fixed_counter_trigger_nodes.py, quorune/compiler/fixed_keyword_entry_nodes.py, quorune/compiler/fixed_self_entry_counter_templates.py, quorune/compiler/fixed_target_effect_sequences.py, quorune/compiler/fixed_source_effect_sequences.py, quorune/compiler/self_counter_keyword_actions.py, quorune/rules/optional_counter_capability_shapes.py, semantic_runtime/ability_fragments.py, semantic_runtime/counter_replacements.py, semantic_runtime/counter_removal_handlers.py, semantic_runtime/token_replacements.py, semantic_runtime/zone_replacements.py, semantic_runtime/self_entry_counters.py, semantic_runtime/entry_choices.py, semantic_runtime/block_restrictions.py, semantic_choices/amass.py, semantic_choices/death_return.py, semantic_choices/modular.py, semantic_choices/optional_counter_placement.py, ADR 0011, ADR 0034, ADR 0036, ADR 0037, ADR 0038, ADR 0039, ADR 0048, and ADR 0054"
 verified: "2026-10-16"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
@@ -162,6 +162,26 @@ component. A suspended continuation validates that prospective child against
 its parent zone event and the unchanged origin incarnation; it does not require
 the card to occupy the replacement destination before the parent event commits.
 
+Devour adds a typed optional selection of controlled battlefield permanents to
+that entry tree. Fixed creature, artifact and Food multipliers, and a multiplier
+equal to the selected creature count, produce counters without moving objects
+during replacement preparation. Each selection retains physical and logical
+identity. Simultaneous entrants share reservations and their controller can
+choose which entry to process first; entering permanents cannot be selected.
+Multiple Devour instances and other entry counter contributions from the same
+placing player combine before quantity replacements inspect the placement.
+
+All replacements finish before the combined entry and sacrifices commit.
+A quantity source selected for sacrifice therefore still modifies the entry.
+Sacrifices use the canonical simultaneous zone owner, including destination
+replacement and before-event death sources. Copied tokens retain the token
+owner's prospective identities and allocation; the zone owner's commit and
+publication stages coordinate their sacrifices before any partial event is
+published. The token owner then seals actual entry characteristics and history.
+Existing ability removal participates in prospective Devour applicability.
+Unrepresented qualities, formulas and linked devoured-result clauses remain
+residual; a prevented sacrifice requires its own represented result contract.
+
 The Oracle compiler lowers the closed “an opponent's card from anywhere would
 enter a graveyard; exile it with one named counter instead” family to this same
 destination handler and nested counter operation. Different owners, origins,
@@ -186,6 +206,12 @@ an empty no-op result. These effect plans implement the represented CR
 101.3/609.3 result boundary without weakening exact payment semantics. Every
 plan pins the permanent's current logical identity and expected zone and
 validates again at commit.
+
+Fixed static counter-prevention results also use the partial-effect removal
+plan. One source instance removes one +1/+1 counter for a simultaneous damage
+occurrence, including when its damage cannot be prevented. Multiple sources
+in that occurrence do not multiply the removal, and zero available counters
+do not turn the unconditional prevention into a failed cost.
 
 Oracle IR lowers mandatory fixed named-counter removal and mandatory removal of
 all counters from one direct battlefield permanent target through spell,
@@ -582,6 +608,21 @@ replacement descriptor and routes the placement through the existing nested
 zone-change and quantity-replacement transaction. Variable, zero, larger,
 optional, conditional, additional, multikind, linked, and another-object forms
 remain material residuals; the grammar does not infer or parse them at runtime.
+
+Fixed choices between two distinct ordinary keyword counters use a separate
+closed entry component. The prospective controller chooses one counter before
+the permanent enters. Each branch delegates a single placement to the same
+nested counter transaction, including quantity replacement. The choice carries
+both counter labels through the ordinary replacement continuation; it grants
+neither the unchosen counter nor an unrelated ability. Gameplay capabilities
+for both keywords remain required separately from counter-characteristic
+projection. Current prospective
+ability removal and face-down entry suppress the component. A copied entrant
+makes its own choice without copying the source's counters, and turning a
+manifested permanent face up creates no entry choice. Unknown keywords,
+variable quantities, and unsupported choice cardinalities remain residual.
+Unrepresented fractional quantity replacements and counter prohibitions retain
+their own material residuals rather than becoming complete supported interactions.
 
 Dynamic prose self-entry counters reuse that owner with one typed amount
 descriptor. The compiler admits cast X, distinct mana colors, closed attack,

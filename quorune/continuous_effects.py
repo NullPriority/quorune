@@ -63,13 +63,14 @@ class CharacteristicState:
     loyalty: int | None = None
     defense: int | None = None
     copiable_values: dict[str, Any] = field(default_factory=dict)
+    prohibited_keywords: set[str] = field(default_factory=set)
     # Ephemeral provenance, excluded from public snapshots and constructor data.
     _intrinsic_mana_abilities: tuple[ActivatedAbility, ...] = field(
         default=(), init=False, repr=False, compare=False
     )
 
     def snapshot(self) -> dict[str, Any]:
-        return {
+        result = {
             "name": self.name,
             "controller": self.controller,
             "mana_cost": self.mana_cost,
@@ -96,6 +97,9 @@ class CharacteristicState:
             "defense": self.defense,
             "copiable_values": dict(self.copiable_values),
         }
+        if self.prohibited_keywords:
+            result['prohibited_keywords'] = sorted(self.prohibited_keywords)
+        return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -160,7 +164,7 @@ def _ability_presence_dependency_ids(
         return any(
             operation.op == "remove_all_abilities"
             or (
-                operation.op in {"add_ability", "remove_ability"}
+                operation.op in {"add_ability", "remove_ability", "prohibit_ability"}
                 and str(operation.value).casefold() in required
             )
             for operation in candidate.operations
@@ -343,10 +347,13 @@ def _apply_ability_operation(
     value = operation.value
     if op == "add_ability":
         ability = str(value)
-        if ability.casefold() not in {
+        if ability.casefold() not in state.prohibited_keywords and ability.casefold() not in {
             item.casefold() for item in state.abilities
         }:
             state.abilities.append(ability)
+    elif op == 'prohibit_ability':
+        state.prohibited_keywords.add(str(value).casefold())
+        state.abilities = [ability for ability in state.abilities if ability.casefold() != str(value).casefold()]
     elif op == "remove_ability":
         state.abilities = [
             ability
@@ -539,6 +546,7 @@ def evaluate_continuous_effects(
         if not any(ability is previous for previous in previous_intrinsic)
     ]
     base._intrinsic_mana_abilities = ()
+    base.prohibited_keywords.clear()
     context = dict(context or {})
     present: list[ContinuousEffect] = []
     inapplicable: list[str] = []
@@ -561,6 +569,7 @@ def evaluate_continuous_effects(
         if effect.relation in {
             ContinuousEffectRelation.SOURCE_OBJECT,
             ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,
+            ContinuousEffectRelation.SOURCE_PAIRED_WITH_OBJECT,
         }:
             object_id = str(context.get("object_id") or "")
             logical_object_id = str(
@@ -595,6 +604,11 @@ def evaluate_continuous_effects(
             inapplicable.append(effect.effect_id)
             continue
         for operation in effect.operations:
+            if operation.op == 'add_ability' and (
+                str(context.get('object_id') or ''), str(context.get('logical_object_id') or ''),
+                str(operation.value).casefold(),
+            ) in effect.denied_keyword_grants:
+                continue
             _apply_operation(base, operation)
         if effect.layer == Layer.COPY and effect.sublayer == "1a":
             base.copiable_values = base.snapshot()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..target_source import spell_copy_targeting_source
+
 """Typed target-choice owner for represented Storm copy creation."""
 
 import copy
@@ -93,7 +95,7 @@ class StormTargetChoiceOwnerMixin:
         public_schema = copy_target_public_schema(
             self, item.controller, target_schema, list(template.get("modes") or []),
             list(template.get("targets") or []), dict(template.get("target_groups") or {}),
-            item.ref,
+            item.ref, acting_source=spell_copy_targeting_source(self,template),
         )
         copies = [
             {
@@ -255,7 +257,7 @@ class StormTargetChoiceOwnerMixin:
                 original_targets=list(template.get("targets") or []),
                 original_groups=dict(template.get("target_groups") or {}),
                 original_snapshots=dict(template.get("target_snapshots") or {}),
-                submitted=raw_targets,
+                submitted=raw_targets, acting_source=spell_copy_targeting_source(self,template),
             )
             selected, grouped = list(assignment.targets), thaw_value(assignment.groups)
             copy_ref = self._next_ref("S")

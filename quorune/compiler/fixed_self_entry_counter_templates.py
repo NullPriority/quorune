@@ -12,7 +12,8 @@ from ..entry_counter_model import (
     DynamicEntryCounterCalculation,
     DynamicEntryCounterValueSource,
 )
-from ..keyword_counters import keyword_counter_mechanic
+from ..keyword_counters import (keyword_counter_mechanic, KeywordCounterError,
+    FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY, KeywordCounterEntryChoiceSpec)
 from ..rules.source_references import (
     SourceReferenceSpec,
     source_self_permanent_type,
@@ -124,6 +125,32 @@ def fixed_self_entry_counter_handler(
         counter_name=match.group("counter"),
         amount=amount,
     ).compiled()
+
+
+def fixed_keyword_counter_entry_choice_handler(
+    text: str, *, source_name: str,
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    """Lower one mandatory choice of a single ordinary keyword counter."""
+
+    match = re.fullmatch(
+        r"(?P<subject>.+?) enters with your choice of (?:a|an) "
+        r"(?P<first>[a-z ]+) counter or (?:a|an) (?P<second>[a-z ]+) counter on it\.?",
+        " ".join(text.strip().split()), re.IGNORECASE,
+    )
+    if match is None or (
+        source_self_permanent_type(match["subject"]) is None
+        and not SourceReferenceSpec(source_name).matches(match["subject"])
+    ):
+        return None
+    try:
+        spec = KeywordCounterEntryChoiceSpec((match["first"], match["second"]))
+    except KeywordCounterError:
+        return None
+    return (
+        "fixed-keyword-counter-entry-choice-v1", spec.descriptor(),
+        (FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY, "counter.placement.quantity_replacement",
+         "counter.characteristic.keyword"),
+    )
 
 
 def _coefficient(value: str, plural: str) -> int | None:
@@ -480,4 +507,5 @@ __all__ = [
     "FIXED_SELF_ENTRY_COUNTER_TEMPLATE",
     "FixedSelfEntryCounterTemplate",
     "fixed_self_entry_counter_handler",
+    "fixed_keyword_counter_entry_choice_handler",
 ]

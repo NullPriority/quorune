@@ -21,6 +21,13 @@ generation, and tests separately; overlapping jobs do not add to elapsed time,
 and workflow timestamps do not measure active development hours. Preserve the
 observation locally and compare the same workload after a change.
 
+Refresh the manifest's launch order when observed shard durations change. Keep
+generated validation first and prioritize functional shards by the larger
+completed Ubuntu or Windows job duration. Preserve primary assignments,
+overlays, worker counts and concurrency limits. A scheduling model with fixed
+durations estimates an opportunity; the next complete pipeline establishes the
+observed result.
+
 Prefer removing repeated deterministic computation while retaining its inputs,
 outputs, and validation contract. Implementation-component validation, for
 example, reuses parsed export names only for identical current source text; it
@@ -627,8 +634,10 @@ and `DeckLoader` paths from every module assigned by
 `platform/test-shards.json`. It then builds a fresh database from the canonical
 manifest, loads every discovered deck, resolves every dependency, and verifies
 that no `full_database_only` module is assigned to a compact shard. It also
-indexes fixture ownership and rejects conflicting canonical names, aliases, or
-Oracle IDs.
+indexes fixture ownership and rejects conflicting canonical names, equally
+ranked aliases, or Oracle IDs. Canonical card names take precedence over face
+aliases, matching database lookup when an inset shares the name of a standalone
+card.
 
 Genuinely dynamic requirements must be declared in the existing manifest by
 exact source path and symbol, with sorted card, Oracle-ID, deck, or fixture

@@ -8,12 +8,57 @@ import {
   initialChoices,
   updateModalTargetSelection,
   validateChoices,
+  selectedTargetCostLabel,
 } from "../src/choices.ts";
 import type { ChoiceForm } from "../src/generated/protocol.ts";
 
 function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
+
+test("Target-dependent casting prices display the server row once per source and reject missing combinations", () => {
+  const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target_0", min: 0, max: 2 }] },
+    target_costs: { kind: "generic_increase_once_per_source", clauses: [
+      { component_id: "esior", any_target_refs: ["COMMANDER_A", "COMMANDER_B"] },
+      { component_id: "other", any_target_refs: ["OTHER"] }], prices: [
+      { modes: [], components: [], label: "Pay {U}" },
+      { modes: [], components: ["esior"], label: "Pay {3}{U}" }] } };
+  const choices = form([field]);
+  assert.equal(selectedTargetCostLabel(field, { targets: { target_0: [] } }), "Pay {U}");
+  assert.equal(selectedTargetCostLabel(field, { targets: { target_0: ["COMMANDER_A", "COMMANDER_B"] } }), "Pay {3}{U}");
+  assert.deepEqual(validateChoices(choices, { targets: { target_0: ["COMMANDER_A", "COMMANDER_B"] } }), []);
+  assert.match(selectedTargetCostLabel(field, { targets: { target_0: ["COMMANDER_A", "OTHER"] } }) ?? "", /No payable/);
+  assert.ok(validateChoices(choices, { targets: { target_0: ["COMMANDER_A", "OTHER"] } }).length);
+  assert.deepEqual(executableChoices(choices, { targets: { target_0: ["COMMANDER_A"] }, target_costs: { generic: 0 } }),
+    { targets: { target_0: ["COMMANDER_A"] } });
+});
+
+test("Opening hand actions allow one eligible card or finishing without exposing a continuation", () => {
+  const opening = form([{ name: "refs", label: "Opening-hand card", control: "refs", distinct: true,
+    minimum: 0, maximum: 1, options: [{ value: "A01", label: "First opener" },
+      { value: "A02", label: "Second opener" }] }]);
+  assert.deepEqual(initialChoices(opening), { refs: [] });
+  assert.deepEqual(validateChoices(opening, { refs: [] }), []);
+  assert.deepEqual(validateChoices(opening, { refs: ["A02"] }), []);
+  for (const refs of [["A01", "A02"], ["A01", "A01"], ["FOREIGN"]]) {
+    assert.ok(validateChoices(opening, { refs }).length > 0);
+  }
+  assert.deepEqual(executableChoices(opening, { refs: ["A02"], opening_hand: { index: 3 } }), { refs: ["A02"] });
+});
+
+test("Overlapping untap limits preserve all maximal choices and optional exclusions", () => {
+  const limit = form([{ name: "refs", control: "refs", required: true, distinct: true,
+    options: ["ANIMATED", "LAND", "CREATURE", "OPTIONAL"].map((value) => ({ value })),
+    minimum: 0, maximum: 4, maximal_refs: ["ANIMATED", "LAND", "CREATURE"],
+    subset_maxima: [{ refs: ["ANIMATED", "LAND"], maximum: 1 },
+      { refs: ["ANIMATED", "CREATURE"], maximum: 1 }] }]);
+  assert.deepEqual(validateChoices(limit, { refs: ["ANIMATED"] }), []);
+  assert.deepEqual(validateChoices(limit, { refs: ["LAND", "CREATURE"] }), []);
+  assert.deepEqual(validateChoices(limit, { refs: ["ANIMATED", "OPTIONAL"] }), []);
+  for (const refs of [[], ["LAND"], ["ANIMATED", "LAND"], ["ANIMATED", "ANIMATED"], ["UNKNOWN"]]) {
+    assert.ok(validateChoices(limit, { refs }).length > 0);
+  }
+});
 
 test("Exert costs require declared attackers and keep linked instances independent", () => {
   const exert = form([
@@ -412,6 +457,30 @@ test("ordered library partitions honor server-issued Surveil destinations and or
   assert.deepEqual(executableChoices(surveil, choices), {
     cards: { top: ["A02"], graveyard: ["A01"] },
   });
+});
+
+test("ordered library partitions honor per-destination limits and permit an empty top", () => {
+  const selection = form([{
+    name: "cards", label: "Cards", control: "ordered_partition", required: true,
+    options: ["A01", "A02", "A03"].map((value) => ({ value, label: value })),
+    partitions: {
+      top: { label: "Top of library", order: "top_to_bottom", minimum: 0, maximum: 1 },
+      exile: { label: "Exile", order: "chosen" },
+    },
+  }]);
+  const choices = initialChoices(selection);
+  assert.deepEqual(choices.cards, { top: ["A01"], exile: ["A02", "A03"] });
+  assert.deepEqual(validateChoices(selection, choices), []);
+  choices.cards = { top: [], exile: ["A03", "A01", "A02"] };
+  assert.deepEqual(validateChoices(selection, choices), []);
+  assert.deepEqual(executableChoices(selection, choices), choices);
+  choices.cards = { top: ["A01", "A02"], exile: ["A03"] };
+  assert.match(validateChoices(selection, choices).join(" "), /at most 1/);
+  const required = structuredClone(selection);
+  const field = required.fields[0] as Record<string, any>;
+  field.partitions.exile.minimum = 1;
+  field.partitions.top.maximum = 3;
+  assert.deepEqual(initialChoices(required).cards, { top: ["A01", "A02"], exile: ["A03"] });
 });
 
 test("mana modes preserve an exact server-issued bundle", () => {

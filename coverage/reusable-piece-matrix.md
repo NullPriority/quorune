@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "023343683494cf6cc3e60b5f30caa1bb7fe9717596e063a5dc49a9e30ed30b3e"
+verified: "99c6d36c04b7f96a727caea3aef48d3c1b41af405b4cb477812f7dff35f74ca1"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,66 +17,66 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 3,435
+- Pieces: 3,495
 - Cards indexed: 31,623
-- Material abilities classified: 59,903
+- Material abilities classified: 59,955
 - Unclassified material spans: 0
-- Mapped pinned rules: 1,324 / 3,309
-- Applicable piece pairs: 127,737
-- Covered piece pairs: 1,467
+- Mapped pinned rules: 1,389 / 3,309
+- Applicable piece pairs: 129,972
+- Covered piece pairs: 1,547
 
 ## Ontology classes
 
 | Class | Pieces |
 |---|---:|
-| `actions_permissions` — Actions, permissions, and prohibitions | 178 |
+| `actions_permissions` — Actions, permissions, and prohibitions | 192 |
 | `card_forms` — Card types and specialized forms | 9 |
-| `choices_continuations` — Modes, targets, choices, and continuations | 15 |
+| `choices_continuations` — Modes, targets, choices, and continuations | 16 |
 | `combat` — Combat | 38 |
-| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,946 |
-| `continuous_effects` — Static abilities and continuous effects | 92 |
+| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,971 |
+| `continuous_effects` — Static abilities and continuous effects | 101 |
 | `costs_mana` — Costs and mana | 13 |
-| `events_mutations` — Typed events and mutations | 137 |
-| `keyword_mechanics` — Keyword actions and keyword abilities | 654 |
+| `events_mutations` — Typed events and mutations | 140 |
+| `keyword_mechanics` — Keyword actions and keyword abilities | 652 |
 | `multiplayer_commander` — Multiplayer, Commander, and profile pieces | 5 |
-| `object_identity` — Object identity and lifetime | 52 |
-| `one_shot_effects` — One-shot semantic effects | 216 |
+| `object_identity` — Object identity and lifetime | 56 |
+| `one_shot_effects` — One-shot semantic effects | 219 |
 | `players_format` — Players, relationships, and format state | 3 |
 | `proposals` — Casting and activation proposals | 42 |
 | `quantities` — Quantity and value expressions | 2 |
 | `references` — References | 1 |
-| `replacement_prevention` — Replacement and prevention | 29 |
+| `replacement_prevention` — Replacement and prevention | 32 |
 | `triggers` — Triggers | 3 |
 
 ## Universal systems
 
 | System | Status | Pieces | Blocking pieces |
 |---|---|---:|---:|
-| `action_legality_casting_activation_costs_mana` | `inventoried` | 233 | 6 |
+| `action_legality_casting_activation_costs_mana` | `inventoried` | 247 | 6 |
 | `combat` | `compositional` | 38 | 0 |
-| `derived_characteristics_static_layers` | `inventoried` | 92 | 7 |
+| `derived_characteristics_static_layers` | `inventoried` | 101 | 7 |
 | `generic_triggers_stack_placement` | `inventoried` | 3 | 3 |
 | `multiplayer_player_leaving_commander` | `compositional` | 8 | 0 |
-| `objects_identity_zones_faces_copies` | `inventoried` | 61 | 2 |
-| `replacement_prevention` | `inventoried` | 29 | 4 |
+| `objects_identity_zones_faces_copies` | `inventoried` | 65 | 2 |
+| `replacement_prevention` | `inventoried` | 32 | 4 |
 | `state_turn_loops_stabilization` | `inventoried` | 0 | 0 |
-| `targets_modes_searches_references_choices` | `inventoried` | 18 | 11 |
-| `typed_transactions_events_mutations` | `inventoried` | 353 | 90 |
+| `targets_modes_searches_references_choices` | `inventoried` | 19 | 11 |
+| `typed_transactions_events_mutations` | `inventoried` | 359 | 90 |
 
 ## Highest current blocker leverage
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 3,092 | 1,392 | 1,392 | `absent` | `untested` |
-| `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,157 | 108 | 108 | `absent` | `untested` |
-| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,671 | 58 | 58 | `absent` | `untested` |
-| `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 102 | 20 | 20 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 2,892 | 1,269 | 1,269 | `absent` | `untested` |
+| `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,157 | 110 | 110 | `absent` | `untested` |
+| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,668 | 58 | 58 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
+| `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 97 | 16 | 16 | `absent` | `untested` |
 | `residual.replacement.damage-prevention` | `replacement_prevention` | 123 | 14 | 14 | `absent` | `untested` |
 | `residual.keyword_dependency.cipher` | `keyword_mechanics` | 15 | 11 | 11 | `absent` | `untested` |
 | `residual.activated_effect.create-token` | `one_shot_effects` | 233 | 10 | 10 | `absent` | `untested` |
 | `residual.keyword_dependency.assist` | `keyword_mechanics` | 16 | 9 | 9 | `absent` | `untested` |
-| `residual.effect_clause.return` | `one_shot_effects` | 432 | 8 | 8 | `absent` | `untested` |
+| `residual.effect_clause.return` | `one_shot_effects` | 431 | 8 | 8 | `absent` | `untested` |
 | `residual.activated_effect.exile` | `one_shot_effects` | 260 | 8 | 8 | `absent` | `untested` |
 | `residual.keyword_dependency.fuse` | `keyword_mechanics` | 34 | 8 | 8 | `absent` | `untested` |
 | `residual.effect_clause.create-token` | `one_shot_effects` | 424 | 6 | 6 | `absent` | `untested` |

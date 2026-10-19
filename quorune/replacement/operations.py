@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, TypeAlias
 
 from .immutable import FrozenMap, freeze_value, thaw_value
+from ..devour import DevourSpec,DevourObject,DevourProposal
 
 
 OPERATION_SCHEMA_VERSION = 1
@@ -47,6 +48,28 @@ def _integer(value: Any, *, field: str, minimum: int | None = None) -> int:
             f"Replacement {field} must be an integer{qualifier}"
         )
     return value
+
+
+@dataclass(frozen=True,slots=True)
+class DevourEntryOperation:
+    controller: str
+    component_id: str
+    spec: DevourSpec
+    candidates: tuple[DevourObject,...]
+    schema_version: int=OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self):
+        if type(self.schema_version) is not int or self.schema_version!=1:raise ReplacementOperationError('Unsupported Devour entry operation version')
+        DevourProposal(self.controller,self.component_id,self.spec,self.candidates)
+
+    def to_dict(self):return {'op':'prepare_devour_entry','controller':self.controller,'component_id':self.component_id,
+        'spec':self.spec.to_dict(),'candidates':[c.to_dict() for c in self.candidates]}
+
+    @classmethod
+    def from_dict(cls,value):
+        _exact_fields(value,{'op','controller','component_id','spec','candidates'},operation='prepare_devour_entry')
+        if not isinstance(value['candidates'],(list,tuple)):raise ReplacementOperationError('Devour candidate identities must be an array')
+        return cls(value['controller'],value['component_id'],DevourSpec.from_dict(value['spec']),tuple(DevourObject.from_dict(v) for v in value['candidates']))
 
 
 @dataclass(frozen=True, slots=True)
@@ -605,6 +628,7 @@ class DredgeDraw:
 
 ReplacementOperation: TypeAlias = (
     SetField
+    | DevourEntryOperation
     | AddAmount
     | MultiplyAmount
     | PreventAmount
@@ -627,6 +651,7 @@ ReplacementOperation: TypeAlias = (
 
 _TYPED_OPERATION_TYPES = (
     SetField,
+    DevourEntryOperation,
     AddAmount,
     MultiplyAmount,
     PreventAmount,
@@ -875,6 +900,7 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
             "Replacement operations must be objects"
         )
     op = str(value.get("op") or "")
+    if op=='prepare_devour_entry':return DevourEntryOperation.from_dict(value)
     if op == "set":
         _exact_fields(value, {"op", "field", "value"}, operation=op)
         return SetField(_field(value["field"], operation=op), value["value"])

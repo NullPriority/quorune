@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
+from .reveal_costs import commit_reveal_additional_costs
 from ...trigger_discovery import _ordered_event_sources
 
 import copy
@@ -682,6 +685,7 @@ def _commit_additional_costs(
     changes = []
     for selected in selections:
         kind = str(selected["kind"])
+        if kind==REVEAL_ADDITIONAL_COST_KIND:continue
         if kind == "counter_placement":
             result.paid_refs.append(
                 _commit_counter_placement_additional_cost(
@@ -1396,6 +1400,16 @@ def _revalidate_cast_contracts(
             status="unpayable",
             reason="stale_convoke_payment",
         )
+    from .additional_tap_costs import validate_fixed_tap_payment
+    try:
+        fixed_taps=validate_fixed_tap_payment(host,proposal.seat,card,selected_option)
+        if not {c.ref for c in fixed_taps}<=set(proposal.tap_cost_refs):raise ValueError('Fixed tap reservation changed')
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_fixed_tap_cost') from exc
+    from .waterbend_costs import validate_cast_waterbend
+    try:
+        waterbend_cards=validate_cast_waterbend(host,proposal.seat,card,selected_option)
+        if not {c.ref for c in waterbend_cards}<=set(proposal.tap_cost_refs):raise ValueError('Waterbend reservation changed')
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_waterbend_cost') from exc
     return selected_option
 
 
@@ -1438,6 +1452,9 @@ def _commit_cast_costs_and_stack(
         )
         for ref in proposal.tap_cost_refs
     ]
+    if 'waterbend_payment' in selected_option:
+        from ..waterbend_payments import bind_waterbend_response
+        bind_waterbend_response(response,selected_option['waterbend_payment'])
     spent, activations = host._pay_for_cost(
         proposal.seat,
         requirements,
@@ -1454,6 +1471,12 @@ def _commit_cast_costs_and_stack(
         conspire_tap_cards(host, proposal.seat, card, selected_option)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason='stale_conspire_after_mana') from exc
+    from .additional_tap_costs import validate_fixed_tap_payment
+    try:validate_fixed_tap_payment(host,proposal.seat,card,selected_option)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_fixed_tap_after_mana') from exc
+    from .waterbend_costs import validate_cast_waterbend
+    try:validate_cast_waterbend(host,proposal.seat,card,selected_option)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_waterbend_after_mana') from exc
     _commit_tap_costs(host, proposal, card)
     costs = _commit_additional_costs(
         host, proposal, response, card, selected_option
@@ -1470,6 +1493,7 @@ def _commit_cast_costs_and_stack(
         costs,
     )
     item.x_value = response.get("x")
+    commit_reveal_additional_costs(host,proposal,card,item,selected_option)
     item.notes = str(response.get("note") or "")
     prior_spell_count = prior_storm_spell_count(host)
     prior_controller_spell_count = _prior_controller_spell_count(
@@ -1477,6 +1501,12 @@ def _commit_cast_costs_and_stack(
         proposal.seat,
     )
     host.state.stack.append(item)
+    from ...preparation import consume_prepared_cast
+    consume_prepared_cast(host,card)
+    if 'waterbend_payment' in selected_option:
+        from ...waterbend import WaterbendPayment
+        from ..waterbend_payments import dispatch_waterbend_occurrence
+        dispatch_waterbend_occurrence(host,proposal.seat,WaterbendPayment.from_dict(selected_option['waterbend_payment']),source_ref=card.ref,reason='Waterbend casting cost')
     if proposal.origin == "command" and card.is_commander:
         player = host.state.players[proposal.seat]
         player.commander_casts[card.oracle_id] = (

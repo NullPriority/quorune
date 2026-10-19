@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ...target_source import spell_targeting_source
+
 import copy
 from collections.abc import Mapping
 from dataclasses import replace
@@ -69,6 +71,7 @@ class CastProposalHost(CastCostHost, Protocol):
         *,
         modes: list[str],
         source_ref: str,
+        acting_source: Any = None,
         target_schema: Mapping[str, Any] | None = None,
     ) -> tuple[list[str], Any]: ...
 
@@ -80,6 +83,7 @@ class CastProposalHost(CastCostHost, Protocol):
         schema: Mapping[str, Any],
         *,
         source_ref: str,
+        acting_source: Any = None,
     ) -> Mapping[str, Any] | None: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
@@ -165,6 +169,8 @@ def _cast_face(
     card: Any,
 ) -> Mapping[str, Any] | None:
     requested_face = request.required_face or request.face
+    from ...preparation import preparation_cast_face
+    requested_face=preparation_cast_face(card,record,requested_face)
     face = host._select_cast_face(record, requested_face)
     if (
         request.required_face is None
@@ -380,6 +386,7 @@ def _combined_cast_timing_permissions(
             host,
             card,
             face_name=face_name,
+            actor=actor,
         )
     )
     return (
@@ -625,7 +632,7 @@ def _cast_targets_and_tap_costs(
         program,
         host._normalize_target_submission(request.response().get("targets")),
         modes=list(request.modes),
-        source_ref=card.ref,
+        acting_source=spell_targeting_source(host,card), source_ref=card.ref,
         target_schema=target_schema,
     )
     effective_target_schema = (
@@ -645,6 +652,9 @@ def _cast_targets_and_tap_costs(
         else []
     )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
+    from .additional_tap_costs import validate_fixed_tap_payment
+    try:validate_fixed_tap_payment(host,request.actor,card,selected_dict)
+    except ValueError as exc:raise CastProposalError(str(exc),status='unpayable',reason='stale_fixed_tap_cost') from exc
     tap_refs: list[str] = []
     for tap_ref in selected_dict.get("selected_tap_cost_cards", []):
         tap_card = host._resolve_object(
@@ -748,7 +758,7 @@ def build_cast_proposal(
     ) = _cast_targets_and_tap_costs(
         host,
         request,
-        card,
+        prospective_cast_card(host,card,str(face.get('name')) if face else None),
         program,
         selected,
         aura_target_schema,
@@ -831,7 +841,7 @@ def _cast_offer_payload(
         public_schema = None
         if target_spec is not None:
             public_schema = host._public_target_schema(
-                seat, target_spec, source_ref=card.ref
+                seat, target_spec, acting_source=spell_targeting_source(host,card), source_ref=card.ref
             )
             if public_schema is None:
                 continue
@@ -841,7 +851,12 @@ def _cast_offer_payload(
             if key in {"id", "kind", "requirements", "choice_schema", "label"}
         }
         if public_schema is not None:
+            from .targeted_costs import public_payable_target_schema
+            public_schema=public_payable_target_schema(public_schema,raw)
             projected["target_schema"] = public_schema
+            from .targeted_costs import public_target_costs
+            prices=public_target_costs(host,seat,raw)
+            if prices is not None:projected['target_costs']=prices
         public_options.append(projected)
         legal_options.append(option)
     cast_name = str(face.get("name") or "") if face else record.name
@@ -885,6 +900,9 @@ def build_cast_offer(
     )
     if method_error is not None:
         return CastProposalResult("unavailable", method_error)
+    from ...preparation import preparation_cast_face
+    try:face_name=preparation_cast_face(card,record,face_name)
+    except (ValueError,GameRuleError) as exc:return CastProposalResult('unavailable',str(exc))
     front = host._select_cast_face(record,face_name) if record.faces else None
     card=prospective_cast_card(host,card,face_name)
     if card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):

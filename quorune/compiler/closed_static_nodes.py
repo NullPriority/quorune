@@ -33,6 +33,10 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     Synthetic token abilities use the record-free dispatcher below and cannot
     acquire a printed additional-cost instance from their creating card.
     """
+    from .preparation_nodes import preparation_entry_node
+    preparation=preparation_entry_node(record=record,face_name=face_name,node_id=node_id,line=line,material_line=material_line,
+        span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if preparation is not None:return preparation
     from .replicate_nodes import replicate_static_node
     replicate = replicate_static_node(record=record, node_id=node_id, line=line,
         material_line=material_line, span=span, capability_registry=capability_registry,
@@ -85,6 +89,11 @@ def closed_static_or_replacement_node(
     residuals: list[OracleResidual],
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
+
+    from .target_restriction_nodes import target_restriction_node
+    restriction=target_restriction_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,card_types=card_types,permanent_card_types=permanent_card_types,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if restriction is not None:return restriction
 
     from .entry_reveal_templates import entry_reveal_node
     revealed_entry=entry_reveal_node(node_id=node_id,line=line,material_line=material_line,

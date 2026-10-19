@@ -51,11 +51,18 @@ function initialField(field: ChoiceField): JsonValue | undefined {
   }
   if (control === "ordered_partition") {
     const [primary, secondary] = orderedPartitionNames(field);
+    const options = list(field.options).map((option) =>
+      stringValue(record(option).value),
+    );
+    const primaryRule = record(record(field.partitions)[primary]);
+    const secondaryRule = record(record(field.partitions)[secondary]);
+    const primaryCount = Math.max(0, Math.min(
+      options.length - Number(secondaryRule.minimum ?? 0),
+      Number(primaryRule.maximum ?? options.length),
+    ));
     return {
-      [primary]: list(field.options).map((option) =>
-        stringValue(record(option).value),
-      ),
-      [secondary]: [],
+      [primary]: options.slice(0, primaryCount),
+      [secondary]: options.slice(primaryCount),
     };
   }
   if (control === "copy_targets") {
@@ -96,6 +103,29 @@ export function activeFields(form: ChoiceForm, values: ChoiceValues): ChoiceFiel
     .find((option) => stringValue(option.value) === selected);
   return [...fields, ...list(variant?.fields).map((field) => record(field))]
     .map((field) => resolveDependentField(field, values));
+}
+
+function selectedTargetPrice(field: ChoiceField, values: ChoiceValues): ChoiceField | null | undefined {
+  const costs = record(field.target_costs);
+  if (!Object.keys(costs).length) return undefined;
+  const targets = new Set(Object.values(record(values[stringValue(field.name)]))
+    .flatMap((refs) => list(refs).map(String)));
+  const components = list(costs.clauses).map(record)
+    .filter((clause) => list(clause.any_target_refs).some((ref) => targets.has(String(ref))))
+    .map((clause) => String(clause.component_id)).sort();
+  const modes = list(values.modes).map(String).sort();
+  const same = (left: string[], right: string[]) => left.length === right.length
+    && left.every((value, index) => value === right[index]);
+  const price = list(costs.prices).map(record).find((row) =>
+    same(list(row.components).map(String).sort(), components)
+    && same(list(row.modes).map(String).sort(), modes));
+  return price ?? null;
+}
+
+export function selectedTargetCostLabel(field: ChoiceField, values: ChoiceValues): string | undefined {
+  const price = selectedTargetPrice(field, values);
+  return price === undefined ? undefined : price === null
+    ? "No payable cost for these targets and modes." : String(price.label);
 }
 
 function resolveDependentField(field: ChoiceField, values: ChoiceValues): ChoiceField {
@@ -356,6 +386,17 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
     if (selected.some((ref) => !legal.has(ref))) {
       errors.push(`${label} contains a selection that is no longer available.`);
     }
+    const subsetMaxima = list(field.subset_maxima).map(record);
+    const fitsSubsets = (values: string[]) => subsetMaxima.every((group) => {
+      const refs = new Set(list(group.refs).map(String));
+      return values.filter((ref) => refs.has(ref)).length <= Number(group.maximum);
+    });
+    if (!fitsSubsets(selected)) {
+      errors.push(`${label} exceeds an applicable selection limit.`);
+    }
+    if (list(field.maximal_refs).map(String).some((ref) => !selected.includes(ref) && fitsSubsets([...selected, ref]))) {
+      errors.push(`${label} must include another eligible permanent while a selection slot remains.`);
+    }
   } else if (control === "ordered_partition") {
     const partition = record(value);
     const groups = orderedPartitionNames(field);
@@ -374,6 +415,16 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
     const legalSet = new Set(legal);
     if (selected.some((ref) => !legalSet.has(ref))) {
       errors.push(`${label} contains a card that is no longer available.`);
+    }
+    for (const group of groups) {
+      const rule = record(record(field.partitions)[group]);
+      const count = list(partition[group]).length;
+      if (rule.minimum !== undefined && count < Number(rule.minimum)) {
+        errors.push(`${String(rule.label ?? group)} requires at least ${rule.minimum} card(s).`);
+      }
+      if (rule.maximum !== undefined && count > Number(rule.maximum)) {
+        errors.push(`${String(rule.label ?? group)} allows at most ${rule.maximum} card(s).`);
+      }
     }
   } else if (control === "object_map") {
     const count = Object.keys(record(value)).length;
@@ -423,6 +474,9 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       errors.push(`Choose at most ${schema.max_modes} mode(s).`);
     }
     const targets = record(value);
+    if (selectedTargetPrice(field, values) === null) {
+      errors.push("These targets and modes do not have a currently payable casting cost.");
+    }
     for (const group of selectedTargetGroups(field, values)) {
       const groupId = stringValue(group.id || "target");
       const count = list(targets[groupId]).length;

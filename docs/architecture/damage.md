@@ -11,7 +11,11 @@ maintenance: "hand-maintained"
 
 All represented combat and noncombat damage uses one prepare-and-commit
 transaction. Producers submit immutable source, recipient, amount, and event
-identity values. `damage.py` coordinates preparation; `damage_results.py` owns
+identity values. `damage.py` coordinates preparation, delegating modifier and
+immediate prevention-result preparation to `damage_aftermath_preparation.py`.
+`counter_prevention.py` aggregates fixed static counter-removal results across
+simultaneous sources, projects counter state for nested preparation, and
+delegates all live removal to the canonical counter owner. `damage_results.py` owns
 normalized CR 120.3 result materialization, commit planning, and authoritative
 result mutation.
 

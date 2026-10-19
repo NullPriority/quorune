@@ -347,6 +347,7 @@ class ZoneChangeReplacementSnapshot:
     source_refs: tuple[str, ...]
     subjects: tuple[ZoneChangeSubjectSnapshot, ...]
     effects: tuple[ReplacementEffect, ...]
+    devour_candidates: tuple[ZoneChangeSubjectSnapshot,...] = ()
 
     def __post_init__(self) -> None:
         if type(self.revision) is not int or self.revision < 0:
@@ -391,6 +392,12 @@ class ZoneChangeReplacementSnapshot:
         object.__setattr__(self, "source_refs", source_refs)
         object.__setattr__(self, "subjects", subjects)
         object.__setattr__(self, "effects", effects)
+        candidates=tuple(self.devour_candidates)
+        if (any(not isinstance(v,ZoneChangeSubjectSnapshot) or v.origin!='battlefield' or v.destination!='graveyard'
+                or v.transition_kind is not ZoneTransitionKind.SACRIFICE for v in candidates)
+                or len({v.object_id for v in candidates})!=len(candidates)):
+            raise ZoneReplacementError('Devour candidates require distinct captured battlefield sacrifice subjects')
+        object.__setattr__(self,'devour_candidates',candidates)
 
 
 @dataclass(frozen=True, slots=True)
@@ -417,8 +424,16 @@ class PreparedZoneChange:
     counter_events: tuple[ReplaceableEvent, ...] = ()
     keyword_grants: tuple[EntryKeywordGrant, ...] = ()
     journal: tuple[ReplacementSelection, ...] = ()
+    devour_sacrifices: tuple[PreparedZoneChange,...] = ()
 
     def __post_init__(self) -> None:
+        sacrifices=tuple(self.devour_sacrifices)
+        if (any(not isinstance(v,PreparedZoneChange) or v.devour_sacrifices or v.origin!='battlefield'
+                or v.requested_destination!='graveyard' or v.transition_kind is not ZoneTransitionKind.SACRIFICE
+                or v.state_revision!=self.state_revision for v in sacrifices)
+                or len({v.object_id for v in sacrifices})!=len(sacrifices)):
+            raise ZoneReplacementError('Prepared Devour sacrifices require one captured nonrecursive simultaneous zone batch')
+        object.__setattr__(self,'devour_sacrifices',sacrifices)
         required = (
             self.object_id,
             self.logical_object_id,
@@ -485,6 +500,19 @@ class PreparedZoneChange:
             raise ZoneReplacementError(
                 "Prepared zone changes require a typed resolved event"
             )
+        from ..devour import DevourProposal
+        selected={}
+        for value in self.event.payload.get('devour_proposals',()):
+            proposal=DevourProposal.from_dict(value)
+            for obj in proposal.objects:
+                if obj.object_id in selected:raise ZoneReplacementError('Prepared Devour repeats a sacrifice incarnation')
+                selected[obj.object_id]=(obj,proposal.controller)
+        if set(selected)!={v.object_id for v in sacrifices}:raise ZoneReplacementError('Prepared Devour sacrifices differ from its selected identities')
+        for sacrifice in sacrifices:
+            obj,controller=selected[sacrifice.object_id]
+            if (sacrifice.logical_object_id!=obj.logical_object_id or sacrifice.event.payload.get('object_ref')!=obj.ref
+                    or sacrifice.event.affected_object is None or sacrifice.event.affected_object.controller!=controller):
+                raise ZoneReplacementError('Prepared Devour sacrifice lost its selected controller or incarnation')
         from ..entry_designations import EntryDesignationKind, validate_designation
         for kind, value in ((EntryDesignationKind.COLOR, self.entry_chosen_color), (EntryDesignationKind.CREATURE_TYPE, self.entry_chosen_creature_type)):
             if value is not None:

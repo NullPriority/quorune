@@ -331,6 +331,7 @@ def fixed_public_zone_move_set_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
+    mechanic_ids = tuple(mechanic_ids)
     private_hand = fixed_private_hand_entry_node_capabilities(
         effects=effects,
         target_schema=target_schema,

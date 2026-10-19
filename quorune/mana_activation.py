@@ -19,6 +19,7 @@ from .mana_undo import (
 from .mana_mode_effects import apply_mana_mode_effects
 from .util import normalize_mana_bundle
 from .tap_state import set_permanent_tapped
+from .mana_source_discovery import mana_plan_abilities
 
 
 class ManaActivationHost(Protocol):
@@ -213,20 +214,16 @@ def _mana_plan_modes(
         if not modes:
             raise GameRuleError(f"{card.ref} has no compiled mana mode")
         return modes
-    mana_abilities = [
-        ability
-        for ability in host._activated_abilities(card)
-        if ability.mana_ability
-        and ability.tap_source
-        and card.zone in ability.zones
-    ]
+    mana_abilities = mana_plan_abilities(host,seat,card)
     if any(ability.activation_limit is not None for ability in mana_abilities):
         raise GameRuleError(
             f"{card.ref} has a usage-limited mana ability; activate it explicitly"
         )
-    modes = payable_mana_modes(
-        typed_mana_modes_for_abilities(host, seat, card, mana_abilities)
-    )
+    payable=tuple(ability for ability in mana_abilities
+        if host._activation_condition_status(seat,ability,card)[0]=='payable')
+    if mana_abilities and not payable:
+        raise GameRuleError(f"{card.printed_name}'s mana ability has an unmet or unresolved activation condition")
+    modes = payable_mana_modes(typed_mana_modes_for_abilities(host,seat,card,payable))
     if not modes:
         raise GameRuleError(f"{card.ref} has no compiler-pinned mana mode")
     return modes
@@ -241,32 +238,19 @@ def _selected_plan_mode(
     *,
     allow_conditional: bool,
     spend_context: str | None,
+    tap_source: bool,
 ) -> tuple[ManaMode, str | None]:
     mode = next(
         (
             value
             for value in modes
-            if normalize_mana_bundle(value.bundle) == bundle
+            if normalize_mana_bundle(value.bundle) == bundle and value.tap_source==tap_source
         ),
         None,
     )
     if mode is None:
         raise GameRuleError(
             f"Declared output is not a recognized mana mode of {card.printed_name}"
-        )
-    mana_abilities = [
-        ability
-        for ability in host._activated_abilities(card)
-        if ability.mana_ability
-        and ability.tap_source
-        and card.zone in ability.zones
-    ]
-    if mana_abilities and not any(
-        host._activation_condition_status(seat, ability, card)[0] == "payable"
-        for ability in mana_abilities
-    ):
-        raise GameRuleError(
-            f"{card.printed_name}'s mana ability has an unmet or unresolved activation condition"
         )
     compiled = mode.restriction or None
     restriction_allows = bool(
@@ -317,14 +301,8 @@ def _commit_plan_mode(
         effect for effect in mode.side_effects
         if effect.get("op") != "sacrifice_source"
     )
-    set_permanent_tapped(
-        host,
-        card.ref,
-        actor=seat,
-        tapped=True,
-        reason="mana ability cost",
-        log=False,
-    )
+    if mode.tap_source:
+        set_permanent_tapped(host,card.ref,actor=seat,tapped=True,reason="mana ability cost",log=False)
     apply_mana_mode_effects(
         host,
         seat,
@@ -351,7 +329,7 @@ def _commit_plan_mode(
     host._log(
         seat,
         "mana.produce",
-        f"{seat} tapped {card.ref} for {public_bundle}.",
+        f"{seat} {'tapped' if mode.tap_source else 'activated'} {card.ref} for {public_bundle}.",
         {"source": card.ref, "bundle": public_bundle},
         importance=0,
         changed_objects=[card.object_id],
@@ -371,20 +349,23 @@ def complete_mana_plan_activations(
     """Validate and commit an authoritative derived mana-payment plan."""
 
     for activation in activations:
+        tap_source=activation.get('tap_source',True)
+        if type(tap_source) is not bool:
+            raise GameRuleError('A mana plan tap cost must be Boolean')
         card = host._resolve_object(
             seat,
             str(activation["source"]),
             zones={"battlefield"},
             controlled_only=True,
         )
-        if card.tapped:
+        if card.tapped and tap_source:
             raise GameRuleError(f"{card.ref} is already tapped")
         data = host._effective_card_data(card)
         card_types, _subtypes, supertypes = host._type_parts(
             str(data.get("type_line") or "")
         )
         if (
-            "creature" in card_types
+            tap_source and "creature" in card_types
             and summoning_sickness_prohibits_tap_or_untap_cost(
                 host,
                 card,
@@ -404,6 +385,7 @@ def complete_mana_plan_activations(
             bundle,
             allow_conditional=bool(activation.get("allow_conditional")),
             spend_context=spend_context,
+            tap_source=tap_source,
         )
         _commit_plan_mode(
             host,

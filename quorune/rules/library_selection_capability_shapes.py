@@ -87,7 +87,14 @@ def fixed_library_selection_node_capabilities(
     ):
         return ()
     effect = effects[0]
-    if set(effect) != _EFFECT_FIELDS:
+    version_two=effect.get('schema_version')==2 and type(effect.get('schema_version')) is int
+    expected=_EFFECT_FIELDS|{'schema_version','selected_destination'} if version_two else _EFFECT_FIELDS
+    if set(effect) != expected or version_two and (effect.get('selected_destination')!='library_top'
+            or effect.get('remainder_destination')!='exile' or effect.get('selection_policy')!='up_to_any'
+            or type(effect.get('minimum')) is not int or effect['minimum']!=0
+            or type(effect.get('maximum')) is not int or effect['maximum']!=1
+            or effect.get('remainder_order')!='chosen' or effect.get('public_reveal') is not False
+            or effect.get('selected_reveal') is not False):
         return ()
     look_count = effect.get("look_count")
     minimum = effect.get("minimum")
@@ -101,7 +108,7 @@ def fixed_library_selection_node_capabilities(
         or look_count <= 0
         or type(effect.get("public_reveal")) is not bool
         or type(effect.get("selected_reveal")) is not bool
-        or policy not in _POLICIES
+        or policy not in (_POLICIES|{'up_to_any'} if version_two else _POLICIES)
         or type(minimum) is not int
         or type(maximum) is not int
         or minimum < 0
@@ -109,7 +116,7 @@ def fixed_library_selection_node_capabilities(
         or minimum > maximum
         or maximum > look_count
         or effect.get("remainder_destination")
-        not in {"graveyard", "library_bottom"}
+        not in ({'exile'} if version_two else {"graveyard", "library_bottom"})
         or effect.get("remainder_order") not in {"chosen", "random"}
         or not isinstance(groups, (list, tuple))
     ):
@@ -122,7 +129,9 @@ def fixed_library_selection_node_capabilities(
         for group in parsed_groups
     ):
         return ()
-    if policy == "fixed_any":
+    if policy=='up_to_any':
+        valid_policy=version_two and not parsed_groups
+    elif policy == "fixed_any":
         valid_policy = not parsed_groups and minimum == maximum
     elif policy == "optional_slots":
         valid_policy = (

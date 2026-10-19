@@ -25,7 +25,7 @@ class _Permissions:
 
 class _Host:
     def __init__(self, items, schemas):
-        self.state = SimpleNamespace(stack=list(items), revision=12)
+        self.state = SimpleNamespace(stack=list(items), revision=12, cards={})
         self.semantics = _Semantics()
         self.permissions = _Permissions()
         self.schemas = dict(schemas)
@@ -35,8 +35,8 @@ class _Host:
     def _stack_target_schema(item, _program):
         return item.context.get("target_schema_override")
 
-    def _public_target_schema(self, _controller, schema, *, source_ref):
-        del source_ref
+    def _public_target_schema(self, _controller, schema, *, source_ref, acting_source=None):
+        del source_ref,acting_source
         return self.schemas.get(schema["fixture"])
 
     @staticmethod
@@ -71,6 +71,8 @@ class _Host:
 def _item(ref: str, fixture: str):
     return SimpleNamespace(
         ref=ref,
+        kind="triggered_ability",
+        source_object_id=None,
         controller="B",
         label=f"Trigger {ref}",
         semantic_key=None,

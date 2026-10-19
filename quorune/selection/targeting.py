@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..target_source import TargetingSource, stack_targeting_source
+
 import copy
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -218,6 +220,7 @@ class TargetSelectionOwnerMixin:
         *,
         modes: Sequence[str] = (),
         source_ref: str | None = None,
+        acting_source: TargetingSource | None = None,
     ) -> list[str]:
         """Return the candidate-set union for a declarative target plan.
 
@@ -246,6 +249,7 @@ class TargetSelectionOwnerMixin:
                     controller,
                     group,
                     source_ref=source_ref,
+                    acting_source=acting_source,
                 )
             )
         return unique_preserving_order(options)
@@ -364,6 +368,8 @@ class TargetSelectionOwnerMixin:
         row: Mapping[str, Any],
         *,
         source_ref: str | None,
+        acting_source: TargetingSource | None = None,
+        prohibitions=None,
         as_target: bool = True,
     ) -> bool:
         ref = str(row["ref"])
@@ -383,6 +389,7 @@ class TargetSelectionOwnerMixin:
             acting_controller=controller,
             row=row,
             source_ref=source_ref,
+            acting_source=acting_source, prohibitions=prohibitions,
         ) is not TargetProtectionVerdict.ALLOWED:
             return False
         if group.categories and str(row["category"]) not in {
@@ -510,7 +517,10 @@ class TargetSelectionOwnerMixin:
         group: TargetGroup,
         *,
         source_ref: str | None = None,
+        acting_source: TargetingSource | None = None,
     ) -> list[str]:
+        from ..target_restrictions import current_target_prohibitions
+        prohibitions=current_target_prohibitions(self)
         values = [
             str(row["ref"])
             for row in self._target_candidate_rows(controller, group)
@@ -519,6 +529,7 @@ class TargetSelectionOwnerMixin:
                 group,
                 row,
                 source_ref=source_ref,
+                acting_source=acting_source, prohibitions=prohibitions,
             )
         ]
         values = unique_preserving_order(values)
@@ -545,12 +556,14 @@ class TargetSelectionOwnerMixin:
         plan: TargetPlan,
         *,
         source_ref: str | None,
+        acting_source: TargetingSource | None = None,
     ) -> dict[str, list[str]]:
         return {
             group.group_id: self._target_candidates(
                 controller,
                 group,
                 source_ref=source_ref,
+                acting_source=acting_source,
             )
             for group in plan.groups
         }
@@ -631,6 +644,7 @@ class TargetSelectionOwnerMixin:
         schema: Mapping[str, Any],
         *,
         source_ref: str | None,
+        acting_source: TargetingSource | None = None,
     ) -> dict[str, Any] | None:
         modes = available_modes(schema)
         if modes:
@@ -645,6 +659,7 @@ class TargetSelectionOwnerMixin:
                     controller,
                     plan,
                     source_ref=source_ref,
+                    acting_source=acting_source,
                 )
                 if not self._target_plan_feasible(plan, candidates):
                     continue
@@ -692,6 +707,7 @@ class TargetSelectionOwnerMixin:
             controller,
             plan,
             source_ref=source_ref,
+            acting_source=acting_source,
         )
         if not self._target_plan_feasible(plan, candidates):
             self._increment_optimization(
@@ -795,6 +811,7 @@ class TargetSelectionOwnerMixin:
         *,
         modes: Sequence[str] = (),
         source_ref: str | None = None,
+        acting_source: TargetingSource | None = None,
         target_schema: Mapping[str, Any] | None = None,
         copy_targets: CopyTargetValidation | None = None,
     ) -> tuple[list[str], dict[str, list[str]]]:
@@ -831,6 +848,7 @@ class TargetSelectionOwnerMixin:
                 controller,
                 plan,
                 source_ref=source_ref,
+                acting_source=acting_source,
             )
             grouped = self._group_target_submission(plan, targets)
             flattened = validate_grouped_target_assignment(
@@ -926,6 +944,7 @@ class TargetSelectionOwnerMixin:
                         if continuation_payload.get("trigger_creation")
                         else item.ref
                     ),
+                    acting_source=stack_targeting_source(self,item),
                 )
                 if target_schema is not None
                 else None
@@ -946,6 +965,7 @@ class TargetSelectionOwnerMixin:
             targets,
             modes=modes,
             source_ref=self._stack_source_ref(item) if continuation_payload.get('trigger_creation') else item.ref,
+            acting_source=stack_targeting_source(self,item),
             target_schema=target_schema,
         )
         item.targets = validated
@@ -990,6 +1010,7 @@ class TargetSelectionOwnerMixin:
                 item.controller,
                 plan,
                 source_ref=self._stack_source_ref(item),
+                acting_source=stack_targeting_source(self,item),
             )
             grouped = dict(item.context.get("target_groups") or {})
             if not grouped:

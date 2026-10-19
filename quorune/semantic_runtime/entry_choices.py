@@ -12,6 +12,10 @@ from ..replacement_effects import (
 )
 from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
 from ..riot import RIOT_ENTRY_HANDLER_ID
+from ..keyword_counters import (
+    KeywordCounterError, FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY,
+    FIXED_KEYWORD_COUNTER_CHOICE_HANDLER, KeywordCounterEntryChoiceSpec,
+)
 from .component_registry import exact_fields
 from .context import SemanticNodeError
 from .zone_replacement_model import (
@@ -149,6 +153,53 @@ class RiotEntryChoiceHandler:
                 f"{subject.object_ref}: enter with {node.amount} "
                 f"{node.counter_name} counter(s); otherwise gain haste"
             ),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class KeywordCounterEntryChoiceHandler:
+    handler_id: str = FIXED_KEYWORD_COUNTER_CHOICE_HANDLER
+    schema_version: int = 1
+    family: str = "replacement.zone.keyword-counter-entry-choice"
+    event: str = "zone.change"
+    rule_references: tuple[str, ...] = (
+        "122.1b", "122.6", "400.7", "614.1c", "614.12", "614.16", "616.1",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY, "counter.placement.quantity_replacement",
+        "counter.characteristic.keyword",
+    )
+
+    def validate(self, descriptor: Mapping[str, Any]) -> KeywordCounterEntryChoiceSpec:
+        try:
+            return KeywordCounterEntryChoiceSpec.from_descriptor(descriptor)
+        except KeywordCounterError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(self, descriptor: Mapping[str, Any], context: ZoneChangeReplacementContext
+              ) -> tuple[ZoneDestinationIntent, ...]:
+        self.validate(descriptor)
+        return ()
+
+    def subject_replacement_effect(self, descriptor: Mapping[str, Any], *,
+                                  subject: ZoneChangeSubjectSnapshot,
+                                  component_id: str) -> ReplacementEffect:
+        spec = self.validate(descriptor)
+        if subject.destination_controller is None or not component_id:
+            raise SemanticNodeError("Entry counter choice requires a controller and component identity")
+        first, second = spec.counter_names
+
+        def counter(name: str) -> CreateAffectedObjectCounter:
+            return CreateAffectedObjectCounter(counter_name=name, amount=1,
+                placing_player=subject.destination_controller, source_ref=subject.object_ref, sequence=0)
+
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{subject.object_ref}:{component_id}",
+            source_id=subject.object_ref, event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={"destination": {"eq": "battlefield"}, "object_ref": {"eq": subject.object_ref}},
+            operations=(counter(first),), decline_operations=(counter(second),), optional=True,
+            label=f"Enter with a {first} counter", decline_label=f"Enter with a {second} counter",
         )
 
 
@@ -299,6 +350,7 @@ class ReadAheadEntryChoiceHandler:
 
 
 __all__ = [
+    "KeywordCounterEntryChoiceHandler",
     "ReadAheadEntryChoiceHandler",
     "ReadAheadEntryChoiceNode",
     "RiotEntryChoiceHandler",

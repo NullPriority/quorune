@@ -300,8 +300,6 @@ def _replacement_selection(
     selected = response.get("replacement")
     if not isinstance(selected, str) or not selected:
         raise error_type("A replacement effect selection is required")
-    if selected not in pending.choice.legal_selections:
-        raise error_type("Selected replacement is not currently available")
     selected_event = response.get("replacement_event")
     if pending.event_order_options:
         if (
@@ -315,7 +313,15 @@ def _replacement_selection(
         raise error_type(
             "This replacement choice does not accept an event selection"
         )
+    selected_choice=dict(pending.event_choices).get(selected_event,pending.choice)
+    if selected not in selected_choice.legal_selections:
+        raise error_type("Selected replacement is not currently available for this event")
     allocation = response.get("prevention_allocation")
+    objects=response.get('replacement_objects')
+    if objects is not None and (not isinstance(objects,list) or any(type(v) is not str or not v for v in objects)
+            or len(set(objects))!=len(objects)):
+        raise error_type('Replacement object selections must be distinct references')
+    if objects and allocation is not None:raise error_type('One replacement cannot select objects and allocate prevention')
     allocation_choice = next(
         (
             value
@@ -329,6 +335,8 @@ def _replacement_selection(
             raise error_type(
                 "This replacement does not accept a prevention allocation"
             )
+        if objects is not None:
+            return {'effect_id':selected,'objects':list(objects),**({'event_id':selected_event} if selected_event is not None else {})}
         return (
             {"effect_id": selected, "event_id": selected_event}
             if selected_event is not None
@@ -550,6 +558,12 @@ def complete_replacement_order_choice(
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )
+    from .zone_devour import validate_devour_resume
+    validate_devour_resume(host,batch,effects,selection,error_type=error_type)
+    if restored.resume_kind=='opening_hand_entry':
+        from .opening_hand import resume_opening_hand_replacement
+        resume_opening_hand_replacement(host,restored,selection)
+        return
     if restored.resume_kind == 'conditional_return':
         from .conditional_exile_return import resume_conditional_return
         resume_conditional_return(host,restored,selection)

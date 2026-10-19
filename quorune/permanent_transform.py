@@ -300,6 +300,8 @@ def commit_transform_batch(
     )
     if not results:
         return ()
+    from .soulbond_state import reconcile_soulbond_pairs
+    reconcile_soulbond_pairs(host)
     for result in results:
         host._log(
             result.controller,

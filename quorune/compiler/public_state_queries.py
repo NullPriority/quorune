@@ -823,84 +823,10 @@ def _fixed_condition_amount(value: str) -> int | None:
     return _CONDITION_NUMBER_WORDS.get(normalized)
 
 
-def _fixed_condition_object_query(
-    subject: str,
-    quality: str,
-) -> ObjectQuerySpec | None:
-    """Compile one positive public characteristic phrase through layer 5."""
-
-    fields: dict[str, Any] = {"zones": ("battlefield",)}
-    normalized_subject = subject.strip().casefold()
-    normalized_quality = quality.strip().casefold()
-    semantic_quality = re.sub(r"^(?:a|an)\s+", "", normalized_quality)
-    if normalized_subject not in {
-        "artifact",
-        "creature",
-        "enchantment",
-        "land",
-        "permanent",
-        "planeswalker",
-    }:
-        return None
-    if normalized_subject != "permanent":
-        fields["types_all"] = (normalized_subject,)
-    if normalized_quality in {"", "a", "an"}:
-        return ObjectQuerySpec(**fields)
-    if semantic_quality in _CARD_TYPE_WORDS:
-        fields["types_all"] = tuple(
-            sorted({*fields.get("types_all", ()), semantic_quality})
-        )
-        return ObjectQuerySpec(**fields)
-    if semantic_quality == "equipment":
-        fields.update(types_all=("artifact",), subtypes_all=("equipment",))
-        return ObjectQuerySpec(**fields)
-    if semantic_quality in _FIXED_NONCREATURE_CONDITION_SUBTYPES:
-        fields["subtypes_all"] = (semantic_quality,)
-        return ObjectQuerySpec(**fields)
-    if semantic_quality in _COLOR_SYMBOLS:
-        fields["colors_all"] = (_COLOR_SYMBOLS[semantic_quality],)
-        return ObjectQuerySpec(**fields)
-    if semantic_quality == "legendary":
-        fields["supertypes_all"] = ("legendary",)
-        return ObjectQuerySpec(**fields)
-    if semantic_quality.startswith("basic "):
-        subtype = semantic_quality.removeprefix("basic ")
-        if subtype not in {"plains", "island", "swamp", "mountain", "forest"}:
-            return None
-        fields.update(
-            types_all=("land",),
-            supertypes_all=("basic",),
-            subtypes_all=(subtype,),
-        )
-        return ObjectQuerySpec(**fields)
-    subtype_terms = re.fullmatch(
-        r"(?:a|an) (?P<first>[A-Za-z][A-Za-z'-]*)"
-        r"(?: or (?:a|an) (?P<second>[A-Za-z][A-Za-z'-]*))?",
-        quality.strip(),
-        re.IGNORECASE,
-    )
-    if subtype_terms is None:
-        return None
-    raw_subtypes = tuple(filter(None, subtype_terms.groups()))
-    subtypes = tuple(
-        subtype
-        for raw in raw_subtypes
-        if (
-            subtype := (
-                canonical_creature_subtype(raw)
-                or (
-                    raw.casefold()
-                    if raw.casefold()
-                    in _FIXED_NONCREATURE_CONDITION_SUBTYPES
-                    else None
-                )
-            )
-        ) is not None
-    )
-    if not subtypes or len(subtypes) != len(raw_subtypes):
-        return None
-    fields["subtypes_any"] = subtypes
-    return ObjectQuerySpec(**fields)
+def _fixed_condition_object_query(subject: str, quality: str) -> ObjectQuerySpec | None:
+    from .public_condition_surfaces import fixed_condition_object_query
+    return fixed_condition_object_query(subject, quality, card_type_words=_CARD_TYPE_WORDS,
+        color_symbols=_COLOR_SYMBOLS, noncreature_subtypes=_FIXED_NONCREATURE_CONDITION_SUBTYPES)
 
 
 def _query_count_condition(
@@ -918,6 +844,7 @@ def _query_count_condition(
             scope=scope,
             query=query,
             exclude_source=exclude_source,
+            schema_version=2 if query.zones==('graveyard',) and query.token is False else 1,
         ),
         schema_version=2,
     )
@@ -925,6 +852,10 @@ def _query_count_condition(
 
 def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | None:
     material = " ".join(subject.strip().split())
+    from .public_condition_surfaces import fixed_condition_subject_extension
+    extension = fixed_condition_subject_extension(material)
+    if extension is not None:
+        return extension
     parsed = fixed_characteristic_battlefield_query_subject(
         f"{material} you control"
     )
@@ -1084,9 +1015,9 @@ def _graveyard_query_count_condition(
         else _fixed_condition_amount(typed_count.group("count"))
     )
     assert amount is not None and amount > 0
-    quality = ((presence or typed_count).group("quality") or "").casefold()
-    fields: dict[str, Any] = {"zones": ("graveyard",)}
-    if quality == "instant and/or sorcery ":
+    quality = ((presence or typed_count).group("quality") or "").strip().casefold()
+    fields: dict[str, Any] = {"zones": ("graveyard",), "token": False}
+    if quality == "instant and/or sorcery":
         fields["types_any"] = ("instant", "sorcery")
     elif quality in _CARD_TYPE_WORDS:
         fields["types_all"] = (quality,)
@@ -1182,7 +1113,7 @@ def _fixed_public_query_count_condition(
             kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
             amount=amount,
             scope=CharacteristicQuantityScope.OPPONENT_ZONES,
-            query=ObjectQuerySpec(zones=("graveyard",)),
+            query=ObjectQuerySpec(zones=("graveyard",),token=False),
         )
     for compiler in (
         _controller_query_count_condition,
@@ -1270,10 +1201,7 @@ def _legacy_public_state_condition(
     if player_status is not None:
         return player_status
     if lower == "there are seven or more cards in your graveyard":
-        return FixedPublicStateConditionSpec(
-            FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
-            amount=7,
-        )
+        return _graveyard_query_count_condition(normalized)
     any_empty_hand = re.fullmatch(
         r"a player has (?P<count>no|[0-9]+) cards? in hand",
         lower,
@@ -1462,7 +1390,8 @@ def _fixed_public_state_condition(
     *,
     source_name: str,
 ) -> FixedPublicStateConditionSpec | None:
-    normalized = text.strip().rstrip(".")
+    from .public_condition_surfaces import normalize_public_condition_surface
+    normalized = normalize_public_condition_surface(text.strip().rstrip("."))
     if normalized.casefold() in {"it's your turn","it’s your turn"}:
         normalized='your turn'
     numeric = re.fullmatch(r'you control a creature with (?P<stat>power|toughness) (?P<amount>[0-9]+) or (?P<bound>greater|less)', normalized, re.I)

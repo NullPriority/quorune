@@ -15,6 +15,7 @@ from ..damage_modifier_state import DamageModifierError, DamagePreventionScope
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .counter_prevention import FixedCounterPreventionHandler, COUNTER_PREVENTION_HANDLER
 
 
 _QUANTITY_HANDLER_ID = "replacement.damage.quantity.v1"
@@ -92,6 +93,7 @@ class DamageReplacementSourceContext:
     source_destination: RedirectDamage | None = None
     attached_ref: str | None = None
     active_player: str | None = None
+    source_identity: tuple[str, str, int] | None = None
 
     def __post_init__(self) -> None:
         if not self.source_ref or not self.source_controller:
@@ -859,6 +861,7 @@ def default_damage_replacement_registry() -> DamageReplacementRegistry:
             FixedDamagePreventionV2Handler(),
             AllDamagePreventionHandler(),
             StaticDamageRedirectionHandler(),
+            FixedCounterPreventionHandler(),
         )
     )
     registry.require_registered_capabilities(
@@ -967,6 +970,9 @@ def collect_damage_replacement_effects(
                                 else None
                             ),
                             active_player=host.state.active_player,
+                            source_identity=(source.object_id, source.logical_object_id,
+                                source.counters.get('+1/+1', 0))
+                                if descriptor.get('handler_id') == COUNTER_PREVENTION_HANDLER else None,
                         ),
                     )
                 )

@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
+from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.action_permissions import (
     ACTION_PERMISSION_EVENT,
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID,
@@ -14,6 +15,8 @@ from ..semantic_runtime.action_permissions import (
     LIBRARY_TOP_ACTION_HANDLER_ID,
     LIBRARY_TOP_VISIBILITY_HANDLER_ID,
     LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
+    OPENING_HAND_BATTLEFIELD_HANDLER_ID,
+    OPENING_HAND_BATTLEFIELD_CAPABILITY,
     ActionPermissionKind,
     ActionPermissionScope,
     LibraryTopVisibility,
@@ -214,6 +217,20 @@ def _library_action_descriptor(
         "land_queries": list(land_queries),
         "spell_queries": list(spell_queries),
     }
+
+
+def opening_hand_battlefield_permission_handler(text: str, *, source_name: str | None = None):
+    """Lower one source-local opening action without widening controller rules."""
+    normalized=text.strip()
+    if not normalized.casefold().startswith('if '):return None
+    source_reference='this card' if not source_name else rf'(?:this card|{SourceReferenceSpec(source_name).regex_pattern})'
+    if re.fullmatch(rf'If {source_reference} is in your opening hand, you may begin the game with (?:it|him|her|them) on the battlefield\.?',
+            normalized,re.IGNORECASE) is not None:
+        return ('opening-hand-battlefield-permission-v1',{**_descriptor(
+            handler_id=OPENING_HAND_BATTLEFIELD_HANDLER_ID,
+            permission=ActionPermissionKind.OPENING_HAND_BATTLEFIELD),
+            'requires_complete_card_program':True},OPENING_HAND_BATTLEFIELD_CAPABILITY)
+    return None
 
 
 def static_action_permission_handler(

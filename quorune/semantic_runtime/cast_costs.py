@@ -50,6 +50,7 @@ from .emerge import FixedManaEmergeHandler
 from .disturb import FixedManaDisturbHandler
 from .replicate import FixedManaReplicateHandler
 from .conspire import FixedConspireHandler
+from .targeted_spell_costs import TargetedSpellCostHandler
 
 
 CONVOKE_ACTIVE_ZONE = "stack"
@@ -557,6 +558,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             DelveCostHandler(),
             EvokeCostHandler(),
             FixedSpellCostReductionHandler(),
+            TargetedSpellCostHandler(),
             ConditionalSpellCostModifierHandler(),
             ImproviseCostHandler(),
             SelfSpellCostReductionHandler(),
@@ -744,10 +746,12 @@ def active_fixed_spell_cost_reductions(
     card: Any,
     *,
     cast_type_line: str | None = None,
+    face_down_method: str | None = None,
 ) -> tuple[FixedSpellCostReductionSpec, ...]:
     """Collect applicable trusted reducers at the casting boundary."""
 
-    effective = dict(host._effective_card_data(card))
+    from ..compiled_cast_timing import prospective_conditional_flash_spell_data
+    effective = dict(prospective_conditional_flash_spell_data(host,card,seat,face_down_method=face_down_method))
     if cast_type_line is not None:
         effective["type_line"] = cast_type_line
     row = object_query_result(

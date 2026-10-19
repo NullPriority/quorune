@@ -5,6 +5,7 @@ module remains import-stable for Game Record v3 code and external clients.
 """
 
 from .replacement import (
+    DevourEntryOperation,
     AddAmount,
     AffectedObject,
     AppendValues,

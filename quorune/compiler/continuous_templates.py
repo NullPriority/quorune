@@ -815,6 +815,11 @@ def _attached_compound_modifier(body: str) -> dict[str, Any] | None:
         body,
         re.IGNORECASE,
     )
+    ability_type = re.fullmatch(
+        r"has (?P<abilities>.+?) and is (?P<type>.+?) in addition to its other types",
+        body,
+        re.IGNORECASE,
+    )
     legendary = re.fullmatch(
         r"is legendary, gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+), "
         r"and has (?P<abilities>.+)",
@@ -828,7 +833,7 @@ def _attached_compound_modifier(body: str) -> dict[str, Any] | None:
         body,
         re.IGNORECASE,
     )
-    match = pt_type or legendary or ability_removal
+    match = pt_type or ability_type or legendary or ability_removal
     if match is None:
         return None
     values = match.groupdict()
@@ -1088,6 +1093,13 @@ def _attached_quoted_ability_shell(
     quote_start = text.find('"')
     quote_end = text.rfind('"')
     quoted = text[quote_start + 1 : quote_end].strip()
+    suffix = text[quote_end + 1 :]
+    separator = ""
+    if quoted.endswith(",") and re.match(r"\s+and\b", suffix):
+        # Oracle's quoted list separator belongs to the outer sentence.
+        # The complete synthetic shell and independent child still validate.
+        quoted = quoted[:-1].rstrip()
+        separator = ","
     if (
         not quoted
         or "\n" in quoted
@@ -1103,7 +1115,8 @@ def _attached_quoted_ability_shell(
         synthetic = (
             text[:quote_start]
             + sentinel
-            + text[quote_end + 1 :]
+            + separator
+            + suffix
         )
         if synthetic.casefold().startswith("enchanted land "):
             synthetic = "Fortified land " + synthetic[len("Enchanted land "):]

@@ -289,6 +289,7 @@ def _library_selection_intent_identity(
                     intent.arrangement.remainder_destination
                 ),
                 "remainder_order": intent.arrangement.remainder_order,
+                **({'selected_destination':intent.arrangement.selected_destination} if intent.arrangement.selected_destination!='hand' else {}),
             },
             _REASON_FIELD: intent.reason,
             "source_stack_ref": intent.source_stack_ref,
@@ -709,7 +710,8 @@ def _validate_library_selection_intent_identity(
     raw = value["arrangement"]
     if (
         not isinstance(raw, Mapping)
-        or set(raw) != _LIBRARY_SELECTION_ARRANGEMENT_FIELDS
+        or set(raw) != (_LIBRARY_SELECTION_ARRANGEMENT_FIELDS|{'selected_destination'} if 'selected_destination' in raw else _LIBRARY_SELECTION_ARRANGEMENT_FIELDS)
+        or 'selected_destination' in raw and raw['selected_destination']!='library_top'
         or not isinstance(raw["looked"], (list, tuple))
     ):
         raise SemanticChoiceError(
@@ -725,6 +727,7 @@ def _validate_library_selection_intent_identity(
             remainder_refs=tuple(raw["remainder_refs"]),
             remainder_destination=raw["remainder_destination"],
             remainder_order=raw["remainder_order"],
+            selected_destination=raw.get('selected_destination','hand'),
         )
         intent = LibrarySelectionIntent(
             actor=value["actor"],

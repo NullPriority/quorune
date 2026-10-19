@@ -24,6 +24,9 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
     modified = apply_copy_exception(snapshot["characteristics"], recipe.exception)
     snapshot["characteristics"] = modified
     snapshot["annotations"]["copy_overrides"] = deepcopy(modified)
+    if recipe.creation_origin=='embalm':
+        from .conditional_copy_model import EMBALMED_DESIGNATION
+        snapshot['annotations'][EMBALMED_DESIGNATION]=True
     if recipe.cleanup != "none" or recipe.temporary_keywords:
         snapshot["annotations"][COPY_AFTERCARE] = {"cleanup": recipe.cleanup, "controller": actor,
             "binding": f"{item.stack_id}:token-copy", "keywords": list(recipe.temporary_keywords),

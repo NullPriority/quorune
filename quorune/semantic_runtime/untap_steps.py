@@ -11,6 +11,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_query_result
 from ..rules.capabilities import load_default_capability_registry
 from ..untap_step import (
+    FixedUntapSelectionLimit,
     plan_untap_step,
     UntapInstruction,
     UntapStepParticipation,
@@ -328,10 +329,30 @@ class UntapStepComponentRegistry(
     pass
 
 
+@dataclass(frozen=True, slots=True)
+class FixedUntapSelectionLimitHandler(StaticUntapStepParticipationHandler):
+    handler_id: str = 'participation.untap-step.fixed-selection-limit.v1'
+    family: str = 'participation.untap_step.fixed_selection_limit'
+    capability_dependencies: tuple[str, ...] = ('untap.step.fixed_selection_limit',)
+
+    def _validate_instruction(self, node: UntapStepNode) -> None:
+        super(FixedUntapSelectionLimitHandler, self)._validate_instruction(node)
+        if (node.instruction is not UntapInstruction.LIMIT
+                or node.turn_relation is not UntapTurnRelation.SUBJECT_CONTROLLER
+                or node.maximum > 10):
+            raise SemanticNodeError('Fixed untap limits require a closed own-step selection bound')
+
+    def lower(self, descriptor, context):
+        from dataclasses import fields
+        return tuple(FixedUntapSelectionLimit(**{field.name:getattr(row,field.name)
+            for field in fields(UntapStepParticipation)})
+            for row in super(FixedUntapSelectionLimitHandler, self).lower(descriptor, context))
+
+
 @lru_cache(maxsize=1)
 def default_untap_step_component_registry() -> UntapStepComponentRegistry:
     registry = UntapStepComponentRegistry(
-        (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler())
+        (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler(), FixedUntapSelectionLimitHandler())
     )
     registry.require_registered_capabilities(
         load_default_capability_registry()
@@ -358,6 +379,10 @@ def collect_untap_step_participations(
         )
         for program in programs:
             if not host.semantic_program_is_current_trusted(program):
+                continue
+            from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+            if (CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
+                    and program.key not in host._effective_static_component_keys(source)):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
                 participations.extend(

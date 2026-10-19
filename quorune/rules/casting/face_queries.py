@@ -8,6 +8,8 @@ from dataclasses import replace
 def prospective_cast_card(host,card,face_name=None):
     record=host.card_record(card)
     if record is None or not record.faces:return card
+    from ...preparation import preparation_cast_face
+    face_name=preparation_cast_face(card,record,face_name)
     face=host._select_cast_face(record,face_name)
     return replace(card,active_face=str(face['name']),annotations={**card.annotations,'prospective_cast_face':True})
 
@@ -41,6 +43,10 @@ def selected_cast_program(host,request,record,face,method_spec):
 def offered_cast_methods(host,card):
     from ...morph import FACE_DOWN_CAST_METHODS
     record=host.card_record(card)
+    from ...preparation_model import PREPARE_COPY_FIELD
+    if PREPARE_COPY_FIELD in card.annotations:
+        from ...preparation import preparation_cast_face
+        return ((None,preparation_cast_face(card,record)),)
     faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in {'split','modal_dfc'} else (None,)
     from .disturb_costs import compiled_disturb_spec
     disturb=compiled_disturb_spec(host,card) if card.zone=='graveyard' else None

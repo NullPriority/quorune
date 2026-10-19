@@ -32,6 +32,11 @@ class ManaMode:
     restriction: str = ""
     side_effects: tuple[dict[str, Any], ...] = ()
     requires_choice: bool = False
+    tap_source: bool = True
+
+    def __post_init__(self) -> None:
+        if type(self.tap_source) is not bool:
+            raise ValueError('Mana mode tap cost must be Boolean')
 
     @property
     def total(self) -> int:
@@ -45,6 +50,8 @@ class ManaMode:
             payload["fx"] = list(self.side_effects)
         if self.requires_choice:
             payload["choice"] = True
+        if not self.tap_source:
+            payload['tap'] = False
         return payload
 
 
@@ -565,6 +572,8 @@ def auto_plan_payment(
                 "restriction": mode.restriction,
             }
         )
+        if not mode.tap_source:
+            activations[-1]['tap_source'] = False
 
     snow_payment = _snow_payment_option(
         pool,

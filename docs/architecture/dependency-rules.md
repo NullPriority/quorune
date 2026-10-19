@@ -88,6 +88,10 @@ replacement discovery cannot become a competing state owner.
 Every production Python module has one generated exact classification covering
 layer, owner, allowed dependency layers, GameState access, specificity,
 visibility, and replay participation. A new unclassified module fails CI.
+The generator's layer/owner declarations and the architecture policy's state-
+access declarations own these values. Update those sources and run
+`scripts/update_module_classifications.py --write` when adding a module; the
+registered freshness check verifies that the table rebuilds from those inputs.
 Direct writes are ratcheted by stable file/symbol/mutation/state-path identity,
 not line number or aggregate count. Architecture exceptions bind to one exact
 ADR and allowance fingerprint.

@@ -646,7 +646,8 @@ def _component_public_state_snapshot(
             return True, None
         return False, setting_state_resolver.snapshot(source,
             FixedPublicStateConditionSpec.from_dict(descriptor['source_condition']))
-    is_setting = handler_id == 'continuous.characteristics.fixed-public-setting.v2'
+    is_setting = handler_id in ('continuous.characteristics.fixed-public-setting.v2',
+        'continuous.ability.public-state-color-grant.v1')
     if is_setting:
         raw_condition = descriptor.get('source_condition')
         return (False, None if raw_condition is None else setting_state_resolver.snapshot(
@@ -659,6 +660,7 @@ def _component_public_state_snapshot(
         'continuous.characteristics.graveyard-public-state.v1',
         'continuous.characteristics.public-state-keywords.v1',
         'continuous.characteristics.conditional-chosen-designation.v1',
+        'continuous.ability.conditional-flash.v1',
     )
     if is_conditional and maximum_layer is not None and maximum_layer < Layer.ABILITY:
         # These components emit only layers 6/7; their query conditions must
@@ -762,6 +764,11 @@ def collect_card_program_continuous_effects(
                                 raw_quantity
                             ),
                         )
+                    from ..soulbond_model import SOULBOND_GRANT_HANDLER
+                    paired_object = None
+                    if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:
+                        from ..soulbond_state import paired_object_identity
+                        paired_object = paired_object_identity(state, source)
                     context = ContinuousEffectSourceContext(
                         source_object_id=source.object_id,
                         source_ref=source.ref,
@@ -783,6 +790,7 @@ def collect_card_program_continuous_effects(
                         }),
                         public_state=public_state,
                         resolved_quantity=resolved_quantity,
+                        paired_object=paired_object,
                         attached_object=(
                             attached_object_identity(state.cards, source)
                             if getattr(source, "attached_to", None)

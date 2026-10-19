@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..target_source import stack_targeting_source
+
 from dataclasses import replace
 from typing import Any, Mapping, Sequence
 
@@ -196,6 +198,10 @@ class SemanticChoiceCoordinationMixin:
         effect: Mapping[str, Any],
         source_ref: str | None,
     ) -> tuple[str, ...]:
+        if effect.get("op") == "offer_soulbond_pair":
+            from ..soulbond_model import SoulbondOpportunity
+            from ..soulbond_state import opportunity_candidates
+            return opportunity_candidates(self, SoulbondOpportunity.from_effect(effect))
         if str(effect.get("op") or "") != "choose_objects":
             return ()
         selector = dict(effect.get("selector") or {})
@@ -257,7 +263,7 @@ class SemanticChoiceCoordinationMixin:
             public_schema = copy_target_public_schema(
                 self, validation_actor, raw_schema, target_item.modes,
                 list(target_item.targets), dict(target_item.context.get("target_groups") or {}),
-                self._stack_source_ref(target_item),
+                self._stack_source_ref(target_item), acting_source=stack_targeting_source(self,target_item),
             )
         elif available_modes(raw_schema):
             plan = target_plan(
@@ -266,7 +272,7 @@ class SemanticChoiceCoordinationMixin:
             candidates = self._target_candidate_map(
                 target_item.controller,
                 plan,
-                source_ref=self._stack_source_ref(target_item),
+                acting_source=stack_targeting_source(self,target_item), source_ref=self._stack_source_ref(target_item),
             )
             if self._target_plan_feasible(plan, candidates):
                 public_schema = {
@@ -284,7 +290,7 @@ class SemanticChoiceCoordinationMixin:
             public_schema = self._public_target_schema(
                 validation_actor,
                 raw_schema,
-                source_ref=self._stack_source_ref(target_item),
+                acting_source=stack_targeting_source(self,target_item), source_ref=self._stack_source_ref(target_item),
             )
         if public_schema is None:
             return target_schemas, validated_targets
@@ -301,7 +307,7 @@ class SemanticChoiceCoordinationMixin:
                 original_targets=list(target_item.targets),
                 original_groups=dict(target_item.context.get("target_groups") or {}),
                 original_snapshots=dict(target_item.context.get("target_snapshots") or {}),
-                submitted=submitted,
+                submitted=submitted, acting_source=stack_targeting_source(self,target_item),
             )
             validated_targets[key] = {
                 "targets": list(assignment.targets), "groups": thaw_value(assignment.groups),
@@ -313,7 +319,7 @@ class SemanticChoiceCoordinationMixin:
                 self.semantics.get(target_item.semantic_key),
                 self._normalize_target_submission(submitted),
                 modes=list(target_item.modes),
-                source_ref=self._stack_source_ref(target_item),
+                acting_source=stack_targeting_source(self,target_item), source_ref=self._stack_source_ref(target_item),
                 target_schema=dict(raw_schema),
             )
             validated_targets[key] = {
@@ -334,7 +340,8 @@ class SemanticChoiceCoordinationMixin:
         }
         for value in submitted:
             try:
-                canonical[value.casefold()] = self.card_db.lookup(value).name
+                from ..preparation import canonical_preparation_name
+                if (name:=canonical_preparation_name(self.card_db.lookup(value),value)) is not None:canonical[value.casefold()]=name
             except KeyError:
                 continue
         return canonical

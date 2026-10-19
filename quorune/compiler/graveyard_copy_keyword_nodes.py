@@ -26,7 +26,7 @@ def graveyard_copy_keyword_node(*,node_id,line,material_line,span,mechanics,capa
         mana=mana,exile_source=True,sorcery_speed=True)
     exception=TokenCopyExceptionSpec(add_subtypes=('zombie',),colors=('B',) if eternal else ('W',),
         power=4 if eternal else None,toughness=4 if eternal else None,remove_mana_cost=True,schema_version=2)
-    recipe=TokenCopyRecipeSpec(origin='source',exception=exception)
+    recipe=TokenCopyRecipeSpec(origin='source',exception=exception,**({'schema_version':2,'creation_origin':'embalm'} if not eternal else {}))
     caps=(GRAVEYARD_COPY_KEYWORD_CAPABILITY,'token.creation.fixed_copy',*activated_ability_cost_capabilities(ability))
     gate=explicit_capabilities_gate(caps,capability_registry=capability_registry,capability_profile=capability_profile)
     ids=(append_residual(residuals,kind='dependency_contract',text=line,span=span,reason='Graveyard copy activation requires complete canonical cost and token-copy capabilities.',blockers=gate.blockers),) if gate.blockers else ()

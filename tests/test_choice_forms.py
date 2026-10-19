@@ -10,6 +10,16 @@ from quorune.choice_forms import (
 
 
 class ChoiceFormTests(unittest.TestCase):
+    def test_target_dependent_cost_prices_are_display_metadata_without_command_authority(self):
+        prices={'kind':'generic_increase_once_per_source','clauses':[{'component_id':'source','any_target_refs':['TAXED']}],
+            'prices':[{'modes':[],'components':['source'],'requirements':{'GENERIC':2,'U':1},'label':'Pay {2}{U}'}]}
+        action={'id':'cast:SPELL','action':'cast','cost_options':[{'id':'normal','label':'Cast','target_costs':prices,
+            'target_schema':{'groups':[{'id':'target_0','min':1,'max':1,'legal_refs':['TAXED']}]}}]}
+        form=build_action_form(action,decision_kind='priority',context={})
+        field=form['variants']['options'][0]['fields'][0]
+        self.assertEqual(prices,field['target_costs'])
+        self.assertEqual({'cost_option','targets','modes'},delegated_choice_fields(action,decision_kind='priority',context={}))
+
     def test_exert_attack_form_retains_independent_linked_costs_and_attacker_requirement(self):
         rows=[{'value':'ATTACKER','label':'Attacker','maximum':2,'options':[
             {'value':'printed:trigger:front:n1','label':'Draw result'},
@@ -64,10 +74,17 @@ class ChoiceFormTests(unittest.TestCase):
         self.assertEqual([0,2],field['allowed_cardinalities'])
         self.assertTrue(field['distinct'])
         self.assertEqual({'cards'},delegated_choice_fields(action,decision_kind='semantic.choice',context={}))
-        legacy={**action,'choice_schema':{key:value for key,value in action['choice_schema'].items()if key!='allowed_cardinalities'}}
-        legacy_field=build_action_form(legacy,decision_kind='semantic.choice',context={})['fields'][0]
-        self.assertNotIn('allowed_cardinalities',legacy_field)
-        self.assertNotIn('distinct',legacy_field)
+        continuous_range={**action,'choice_schema':{key:value for key,value in action['choice_schema'].items()if key!='allowed_cardinalities'}}
+        continuous_field=build_action_form(continuous_range,decision_kind='semantic.choice',context={})['fields'][0]
+        self.assertNotIn('allowed_cardinalities',continuous_field)
+        self.assertEqual((0,2),(continuous_field['minimum'],continuous_field['maximum']))
+        self.assertIs(continuous_field['distinct'],True)
+        plain={**action,'choice_schema':{key:value for key,value in continuous_range['choice_schema'].items()if key!='distinct'}}
+        plain_field=build_action_form(plain,decision_kind='semantic.choice',context={})['fields'][0]
+        self.assertNotIn('distinct',plain_field)
+        explicit_false={**continuous_range,'choice_schema':{**continuous_range['choice_schema'],'distinct':False}}
+        false_field=build_action_form(explicit_false,decision_kind='semantic.choice',context={})['fields'][0]
+        self.assertIs(false_field['distinct'],False)
 
     def test_ordered_partition_preserves_private_scry_groups(self):
         action = {

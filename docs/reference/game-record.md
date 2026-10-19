@@ -1,7 +1,7 @@
 ---
 title: "Game Record v3"
 status: "current"
-authoritative_source: "quorune/record.py, persistence implementation, and Game Record schemas"
+authoritative_source: "quorune/record.py, quorune/replacement/model.py, quorune/replacement/ordering.py, persistence implementation, and Game Record schemas"
 verified: "2026-08-06"
 audience: "engine, persistence, replay, and analyst contributors"
 maintenance: "hand-maintained"
@@ -67,12 +67,111 @@ no such resolution retain their existing command and decision records without
 constructing an unused binding registry. A later semantic resolution validates
 fresh registry and evidence inputs; no action-level snapshot is retained.
 
+An `opening.hand` decision records a versioned private continuation containing
+turn order, remaining final-hand source incarnations and the current chooser.
+Only that chooser's eligible references enter the projected payload. Nested
+entry replacement choices use `opening_hand_entry` in the ordinary replacement
+continuation; nonspell Aura choices retain the same opening frame. Resumption
+revalidates the pre-turn window and original hand objects before entry. Older
+records keep their recorded decision shapes and do not insert opening actions
+after an already recorded game start.
+
+Battlefield-only opening frames retain version one and its original bytes.
+Version two names battlefield and reveal actions separately, pins their
+semantic program identities, and records revealed hand incarnations with any
+earlier disclosure. The final opening action ends that reveal duration before
+starting the first turn. Pending records retain already created delayed
+triggers; loading does not reveal again or recreate the scheduled result.
+
+A spell with a paid hand-reveal cost records a version-one
+`casting_hand_reveals` context containing selected physical/logical identities,
+its stack reference and earlier disclosure. Pending load retains the reveal
+until that original spell leaves the stack. Another spell revealing the same
+card keeps its own duration; copied stack contexts cannot extend or clear the
+original disclosure. Ordinary stack records omit this context and keep their
+existing bytes.
+
+Targeted ability frames may contain a version-one
+`targeting_source_characteristics` context. Its closed fields identify the
+physical object, public reference, logical incarnation, expected zone,
+controller, type line and colors. Canonical departure capture updates that
+binding before the source changes zones. Resolution uses current information
+for the same incarnation or its captured departure information. Stack copies
+of abilities retain the source binding while keeping their own controller.
+The binding is internal; it does not add projected choice authority. Older
+frames without it remain structurally readable under the existing execution
+provenance contract.
+
+Fixed additional tap prices record `fixed_additional_tap_payment` in the
+selected casting option. Its closed version-one frame contains the compiled
+price and each selected physical object, logical incarnation and reference.
+The ordinary tap-cost reference list also contains any Convoke or Improvise
+payment; the fixed reservation distinguishes those resources when validating
+Delve and mana remainders. Save/load revalidates the original reservation rather
+than replacing it with a new selection. Existing casting options omit this
+frame and retain their serialized form.
+
+Fixed Waterbend activation descriptors omit `waterbend` unless present. A
+`waterbend_payment` records its closed cost and selected physical objects,
+public references and logical incarnations in the proposal or casting option.
+The server's internal `_waterbend_payment` response field carries that exact
+reservation through a rolled-back mana replacement continuation. Pilots cannot
+submit the field. Resume rejects a changed selected incarnation, and ordinary
+actions preserve their previous descriptor and continuation keys.
+
+Preparation records use optional `prepared_designation` and `prepared_spell_copy`
+annotations with the same closed version-one binding. It contains the source's
+physical reference, logical incarnation, inset spell characteristics and linked
+copy identity. The copiable `_prepare_spell` value stores alternative spell
+characteristics separately from the noncopiable designation. Copies cast from
+exile retain their link through stack creation so the accepted cast consumes
+the original designation once. Ordinary records omit these annotations.
+
+Object-selecting replacement journals may carry an optional `objects` array of
+distinct selected references. The selected typed operation validates that set
+against its captured candidates and shared entry reservations. Object choices
+and prevention allocations are separate inputs; historical selections omit
+`objects` and retain their encoded form. Prepared entry serialization may also
+retain linked sacrifice zone plans in a nonempty `devour_sacrifices` array.
+Each plan must match a selected physical/logical incarnation and controller.
+Resume validates selected incarnations and current control before rebuilding
+the move. Shared Devour resources use the existing simultaneous-event selector;
+the payload associates each offered effect with its event and eligible objects.
+Empty arrays are omitted so ordinary prepared entries keep their prior keys.
+
+Derived mana activations omit `tap_source` for the historical tap-cost form,
+which defaults to true. A nontapping self-sacrifice mode explicitly records
+`tap_source: false`; its compact mode similarly includes `tap: false`.
+Acceptance revalidates the flag against the trusted current ability, so a
+supplied flag cannot bypass a tap cost. Ordinary tap modes preserve their
+existing serialized shape.
+
 Intrinsic entry-copy records preserve physical card identity separately from
 copied program provenance. A copied triggered or activated ability records its
 registered program identity; the resolving spell's generic fallback records
 the originally announced physical spell. A pending copied-Aura attachment
 choice retains the chosen replacement result and resumes without refreshing
 the copy from its source.
+Acquired entry-copy effects may serialize an optional `occurrence_id`, restricted
+to entering-copy zone replacements. Alternative candidate effect IDs share this
+identity; the applied-effect journal consumes the occurrence on acceptance or
+decline. Historical effects omit the field and retain their serialized shape.
+The internal `entry_copy_form` event value selects the immutable captured form
+and gates its acquired copy abilities and other entry producers. Pending records
+retain these values through save/load without exposing them in pilot packets.
+
+Replacement effects with a mandatory alternative result may serialize an
+optional `decline_label` for that second branch. It requires the existing
+optional-replacement and alternative-operation fields, changes only the
+projected label, and survives pending save/load. Historical effects omit this
+field and retain their serialized values and default decline wording.
+
+Resolution-created continuous effects may serialize `denied_keyword_grants`
+as closed physical-object, logical-incarnation, and keyword triples. Each
+triple must name a locked target and an ability-add operation in that effect.
+These exclusions preserve a prohibited grant's absence across source departure
+and save/load. Historical effects omit the field and retain their exact form;
+current static prohibitions are recomputed from represented layer-6 sources.
 
 The manifest pins engine, card-data, rules, compiler, CardProgram, capability,
 semantic-handler, runtime-component, profile, and record-format identity as
@@ -111,6 +210,16 @@ snapshot and resolution-start timestamp. `source_continuity` is omitted from
 card payloads until needed. Version one and absent-marker states retain their
 earlier control path; the new fixed-control capability requires version two.
 
+The optional `soulbond_pairs` array retains version-one pair identities,
+both exact object incarnations, their original controller, and control/phase
+continuity snapshots. It is absent until a pair is first committed, preserving
+historical hashes. A used relationship book can become an empty array; loading
+it preserves that distinction from absence. The decoder rejects duplicate
+pair identities, overlapping members, unknown fields and malformed versions.
+Principal projections expose only the current public counterpart reference as
+`paired_with` on battlefield objects; internal pair and incarnation identities
+remain authoritative record data.
+
 Resolution-created declaration rules retain their legacy locked-object payload
 when they apply to explicit target or source incarnations. Live creature-group
 rules use an additive `schema_version: 2` payload with `live_query` and an empty
@@ -127,6 +236,14 @@ snapshots. Reload reissues the controller's capability. An empty selection
 declines every optional untap; a stale or malformed continuation fails before
 the step commits. Completing the choice preserves held triggers and commits
 the selected physical untap set once before advancing to upkeep.
+
+Fixed selection limits use an `untap_selection` version-one continuation in the
+same decision kind. It retains the scoped plan, effective public battlefield
+snapshot, physical step, and held triggers. Strict canonical comparison rejects
+stale identities, control, counters, types, ability presence, or source state
+before committing any untap attempt. Reference-array forms expose cumulative
+`subset_maxima`, mandatory `maximal_refs`, and distinctness. Historical optional
+continuations retain their original shape without an empty limit field.
 
 Control-instruction execution is also bound to the existing runtime-trust
 identity. Correcting a same-controller instruction does not rename its readable
@@ -215,3 +332,30 @@ Migration and inspection commands are discoverable through `simctl.py --help`.
 Never hand-edit a record to make verification pass. See
 [replay architecture](../architecture/replay.md),
 [protocol](protocol.md), and [privacy testing](../testing/privacy.md).
+
+Version-three copy exceptions add closed `name`, `card_types` and
+`retain_source_stats` fields alongside the existing exception vocabulary.
+Preparation resolves retained stats to actual printed/prototype values before
+committing copied values. Version-one and version-two payloads omit these
+fields and retain their original key sets. The closed grant codec is owned by `granted_activation_model.py`, with its
+public import retained through `ability_fragments.py`. Version-three granted
+activated fragments add an explicit fixed `crew_threshold`; older grant payloads keep
+their prior shape. Copied grants retain their semantic program identity through
+pending replacement choices and subsequent copies.
+
+`arrival_history_version: 1` enables current-turn public graveyard-arrival
+facts in new games. A `card_arrived_graveyard` event stores the exact arrived
+logical incarnation and a closed `origin`; older event kinds omit `origin`.
+The history mode persists across reset/rollover and is bound to the initial
+checkpoint by manifest state provenance. Older histories omit the mode and
+cannot synthesize positive arrival facts. Version-four copy selectors retain
+one closed `predicate` beside the existing selection and exception payloads;
+older selectors keep their original key sets.
+
+Version-two token-copy recipes add closed `creation_origin: "embalm"` when
+produced by that keyword owner. Created tokens retain the internal noncopiable
+`embalmed_creation_v1` designation through pending entry choices. Ordinary copy
+snapshots omit that designation while retaining resulting copiable values.
+Version-five entry-copy selectors add a closed `conditional_exception`; prior
+selector and recipe versions retain their original keys. Physical and token
+entry results share copied-value validation and commit before observers.

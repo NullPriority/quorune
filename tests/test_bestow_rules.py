@@ -326,7 +326,8 @@ class FixedManaBestowRuntimeTests(unittest.TestCase):
         self.prepare_main(engine)
         engine.state.players["B"].mana_pool.update({"C": 3, "G": 1})
 
-        def reduction(_host, _seat, _card, *, cast_type_line=None):
+        def reduction(_host, _seat, _card, *, cast_type_line=None, face_down_method=None):
+            self.assertIsNone(face_down_method, 'Ordinary and Bestow casts remain face up')
             return 1 if cast_type_line == "Enchantment — Aura" else 0
 
         with patch(

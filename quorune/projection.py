@@ -396,6 +396,14 @@ class StateProjector:
             obj["monstrous"] = card.monstrous_value
         if card.renowned:
             obj["renowned"] = True
+        if card.zone == 'battlefield' and not card.phased_out and getattr(self.state, 'soulbond_pairs', None):
+            from .soulbond_state import paired_object_identity
+            partner = paired_object_identity(self.state, card)
+            if partner is not None:
+                obj['paired_with'] = self.state.cards[partner.object_id].ref
+        if card.zone=='battlefield' and 'prepared_designation' in card.annotations:
+            from .preparation import prepared_designation
+            obj['prepared']=prepared_designation(card) is not None
         if card.class_level is not None:
             obj["class_level"] = card.class_level
         if card.unearthed:
