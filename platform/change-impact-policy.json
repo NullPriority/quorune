@@ -5941,6 +5941,7 @@
     }
   ],
   "forced_labels": {
+    "ci-complete": "high_risk_source",
     "browser-full": "browser_full",
     "browser-combat": "browser_focus:combat",
     "browser-mana-action": "browser_focus:mana-action",
