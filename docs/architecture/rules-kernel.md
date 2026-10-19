@@ -112,6 +112,11 @@ source may be tapped or newly controlled; tap-symbol abilities retain their
 ordinary restrictions. The source can contribute once and its sacrifice uses
 the canonical zone-cost owner. Additional costs and choices outside this
 bounded form require explicit activation.
+Mana abilities with a separate mana payment also require explicit activation.
+The source/output-only automatic plan cannot pay that price. Discovery and
+plan commitment exclude the same paid mode while retaining any free mode on
+the same permanent. Explicit activation still pays the complete price through
+the normal proposal and payment owners before producing mana.
 
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that

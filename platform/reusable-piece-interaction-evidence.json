@@ -16680,6 +16680,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual admitted Ground Seal removes and atomically rejects graveyard-targeting Raise Dead actions with sufficient mana, while admitted Lantern Bearer can still be cast via Disturb targeting a battlefield creature. Native Unsummon removes that target and the back Aura spell exiles instead of entering its graveyard. Four-seat private draw/projection, foreign rollback, pending load and full replay agree. The named corpus carrier Dennick remains whole-card residual for its independent back-face trigger; no trust is forced."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.mana.activated.fixed_output"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "mana.activated.fixed_output"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Prism explicitly pays its generic filtering cost, produces green immediately, and funds an actual normally admitted Growth cast with its full untap/stat/trample consequences. Wrong-principal rollback, private projection, pending load and pre-action replay agree; its free colorless mode is separately retained."
     }
   ]
 }

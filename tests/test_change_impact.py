@@ -806,6 +806,20 @@ class CommanderEngine:
         self.assertTrue(plan.browser_full)
         self.assertTrue(plan.windows_full)
 
+    def test_explicit_complete_label_selects_the_full_primary_inventory(self):
+        from scripts.ci_plan import selected_test_plan
+        from scripts.test_shards import load_manifest
+
+        paths = ["quorune/mana_source_discovery.py"]
+        self.assertEqual("ordinary_source", classify_changes(paths).risk_class)
+        plan = classify_changes(paths, labels=("ci-complete",))
+        self.assertEqual("high_risk_source", plan.risk_class)
+        self.assertTrue(plan.browser_full)
+        self.assertTrue(plan.windows_full)
+        self.assertTrue(plan.package_full)
+        expected = {module for modules in load_manifest()["primary_shards"].values() for module in modules}
+        self.assertEqual(expected, set(selected_test_plan(plan)["selected_test_modules"]))
+
     def test_labels_can_select_focused_browser_journeys(self):
         plan = classify_changes(
             ["README.md"],

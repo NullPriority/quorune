@@ -70,6 +70,11 @@ def _unrestricted_when_payable(
     return tuple(result)
 
 
+def _mana_plan_cost_is_supported(ability: ActivatedAbility) -> bool:
+    """A source/output-only auto plan cannot pay a separate mana price."""
+    return not any(ability.mana.values()) and not ability.mana_cost_options
+
+
 def mana_plan_abilities(host: Any, seat: str, card: Any, *, card_types=None) -> tuple[ActivatedAbility, ...]:
     """Shared source eligibility for tap mana and one-use self-sacrifice mana."""
     if card.zone!='battlefield' or card.controller!=seat or card.phased_out:
@@ -85,6 +90,8 @@ def mana_plan_abilities(host: Any, seat: str, card: Any, *, card_types=None) -> 
                 as_though_haste=host._may_activate_creature_as_haste(seat,card))
     result=[]
     for ability in abilities:
+        if not _mana_plan_cost_is_supported(ability):
+            continue
         if ability.tap_source:
             if blocked_tap:
                 continue
