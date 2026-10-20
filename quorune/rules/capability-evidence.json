@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b54e17310ad46e78390067ecaec59eb643ddb1665a9509239f30778db73cdd97",
-  "declaration_source_fingerprint": "f6e2338d9ebdb9b4bee83641d7c0be0de5c73efe902dd7542336b78221c9d926",
+  "registry_fingerprint": "70987fbccfb524a250db99c15f21a12512a26b7b7e43531d2878c6886803c82e",
+  "declaration_source_fingerprint": "30a519317dbf64c3b6b34109adeb56d08bb6d024c7cf08fd0d558a0e45a47028",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -53120,6 +53120,702 @@
         "traditional"
       ],
       "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Alien Symbiosis pays one discard, rejects a hand-card target before costs, applies the full Aura/P-T/menace/subtype result, returns through Naturalize and pays again after a new graveyard incarnation with private replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Rona cast uses the paid graveyard route, pays1UBB plus two selected discards, hides cost candidates from other principals, rejects a foreign actor and retains its later instant-cast life-loss trigger with pending save/load and exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_countered_paid_cast_returns_to_graveyard_then_pays_a_fresh_cost",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Counterspell returns the paid original to its graveyard, with no Flashback/Jump-start exile rider; a second cast pays a fresh exact discard and mana cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_current_face_whole_admission_component_and_owner_are_required",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current face, whole-source admission and ability-component guards reject stale native submissions. Wrong owner, zone, face-down, token and copy views supply no paid source permission."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_normal_hand_and_independent_permission_keep_ordinary_unpaid_route",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting and an independent ordinary graveyard permission retain normal printed cost with no discard selector or payment; the intrinsic paid route is separate."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_resolved_cost_contract_cannot_lose_payment_or_change_method",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The resolved server-side option retains its sealed typed count, origin, fingerprint and normalized discard descriptor; mutation or omission of any part rejects before payment."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Alien Symbiosis pays one discard, rejects a hand-card target before costs, applies the full Aura/P-T/menace/subtype result, returns through Naturalize and pays again after a new graveyard incarnation with private replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Rona cast uses the paid graveyard route, pays1UBB plus two selected discards, hides cost candidates from other principals, rejects a foreign actor and retains its later instant-cast life-loss trigger with pending save/load and exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_duplicate_foreign_missing_and_unpaid_method_choices_roll_back",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Duplicate, foreign, missing, undersized and unauthorized-method selections, plus invalid mana payment, preserve source, cards and authoritative state before a valid paid cast."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_fresh_original_kills_omitted_actual_discard_cost",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A fresh native Rona case kills omission of the actual canonical discard-cost commit while retaining the typed paid permission producer."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_fresh_original_kills_omitted_paid_permission_production",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A fresh whole-original admission case kills omission of the paid graveyard compiler production."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_current_face_whole_admission_component_and_owner_are_required",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current face, whole-source admission and ability-component guards reject stale native submissions. Wrong owner, zone, face-down, token and copy views supply no paid source permission."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_duplicate_foreign_missing_and_unpaid_method_choices_roll_back",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Duplicate, foreign, missing, undersized and unauthorized-method selections, plus invalid mana payment, preserve source, cards and authoritative state before a valid paid cast."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_insufficient_hand_withholds_paid_route_and_preserves_source",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One available hand card cannot satisfy a two-card payment; the paid action is withheld and a duplicate submission rejects atomically with replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_paid_permission_dependencies_cannot_be_stripped_or_withdrawn",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Each paid-zone, ordinary-zone and hand-discard dependency is independently removed with rebuilt closure or blocked in the registry; neither original gains unowned permission."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_paid_zone_value_and_handler_reject_malformed_payment_or_scope",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Strict value/handler codecs reject wrong cardinalities, origins, events, admission flags and unsupported payment grammar."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_resolved_cost_contract_cannot_lose_payment_or_change_method",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The resolved server-side option retains its sealed typed count, origin, fingerprint and normalized discard descriptor; mutation or omission of any part rejects before payment."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Alien Symbiosis pays one discard, rejects a hand-card target before costs, applies the full Aura/P-T/menace/subtype result, returns through Naturalize and pays again after a new graveyard incarnation with private replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Rona cast uses the paid graveyard route, pays1UBB plus two selected discards, hides cost candidates from other principals, rejects a foreign actor and retains its later instant-cast life-loss trigger with pending save/load and exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_countered_paid_cast_returns_to_graveyard_then_pays_a_fresh_cost",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Counterspell returns the paid original to its graveyard, with no Flashback/Jump-start exile rider; a second cast pays a fresh exact discard and mana cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_normal_hand_and_independent_permission_keep_ordinary_unpaid_route",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting and an independent ordinary graveyard permission retain normal printed cost with no discard selector or payment; the intrinsic paid route is separate."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_two_originals_have_complete_nonempty_paid_zone_programs",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Both pinned originals have complete, nonempty, capability-bound paid self-zone programs with the exact printed discard cardinality."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Alien Symbiosis pays one discard, rejects a hand-card target before costs, applies the full Aura/P-T/menace/subtype result, returns through Naturalize and pays again after a new graveyard incarnation with private replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Rona cast uses the paid graveyard route, pays1UBB plus two selected discards, hides cost candidates from other principals, rejects a foreign actor and retains its later instant-cast life-loss trigger with pending save/load and exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Alien Symbiosis pays one discard, rejects a hand-card target before costs, applies the full Aura/P-T/menace/subtype result, returns through Naturalize and pays again after a new graveyard incarnation with private replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Rona cast uses the paid graveyard route, pays1UBB plus two selected discards, hides cost candidates from other principals, rejects a foreign actor and retains its later instant-cast life-loss trigger with pending save/load and exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_countered_paid_cast_returns_to_graveyard_then_pays_a_fresh_cost",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Counterspell returns the paid original to its graveyard, with no Flashback/Jump-start exile rider; a second cast pays a fresh exact discard and mana cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_insufficient_hand_withholds_paid_route_and_preserves_source",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "One available hand card cannot satisfy a two-card payment; the paid action is withheld and a duplicate submission rejects atomically with replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_zone_discard_casts.SelfZoneDiscardCastTests.test_normal_hand_and_independent_permission_keep_ordinary_unpaid_route",
+      "official_rule_ids": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting and an independent ordinary graveyard permission retain normal printed cost with no discard selector or payment; the intrinsic paid route is separate."
     },
     {
       "capability_id": "casting.zone.self_public_repeatable",
@@ -276788,5 +277484,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "13279039af43302907a19eeb4eac2a58b01a1265786ab4bba0e6d48dae5df57e"
+  "fingerprint": "929bf5e549d9f0d753865f029aa8d71fe5c3e681782ae0101b09a659648534a9"
 }

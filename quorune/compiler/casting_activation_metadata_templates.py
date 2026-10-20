@@ -42,6 +42,10 @@ def static_self_zone_cast_permission_handler(
 ) -> CastingActivationMetadataTemplate | None:
     """Lower explicit self-graveyard permission behind a closed public condition."""
 
+    from .self_graveyard_discard_templates import self_graveyard_discard_template
+    paid = self_graveyard_discard_template(text)
+    if paid is not None:
+        return paid
     simple = re.fullmatch(r'You may cast this card from (?P<first>your graveyard|exile)(?: or from (?P<second>your graveyard|exile))?\.?', text.strip(), re.I)
     if simple is not None:
         from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD

@@ -7,6 +7,7 @@ from typing import Any
 from ..compiled_cast_lifecycles import compiled_fixed_zone_cast_permission
 from ..compiled_cast_lifecycles import compiled_mayhem_permission, compiled_fixed_cast_lifecycle_spec
 from ..cast_lifecycles import FixedCastLifecycleKind
+from .self_graveyard_discard import compiled_self_graveyard_discard_specs
 from ..compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
@@ -44,6 +45,8 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any) -> bool:
 
 
 def compiled_zone_cast_permission(host: Any, seat: str, card: Any) -> bool:
+    if compiled_self_graveyard_discard_specs(host,seat,card):
+        return True
     if compiled_ordinary_zone_cast_permission(host, seat, card):
         return True
     if card.zone == "library" and controller_has_library_top_spell_permission(

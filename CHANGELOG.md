@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Add printed self-graveyard casting methods with fixed hand-discard payments,
+  preserving ordinary permission provenance, complete mana costs, atomic
+  selected-card payment and repeatable ordinary resolution destinations.
+
 - Lower fixed subtype unions in current public conditions through one shared
   query, preserving individual permanent counts, tapped status, control and
   noncreature Kindred membership at the self-graveyard casting boundary.

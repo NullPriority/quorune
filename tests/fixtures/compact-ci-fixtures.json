@@ -232,6 +232,7 @@
     "tests/fixtures/self-cast-restriction-cards.json",
     "tests/fixtures/self-public-zone-cards.json",
     "tests/fixtures/self-target-reduction-cards.json",
+    "tests/fixtures/self-zone-discard-cast-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
     "tests/fixtures/soulbond-cards.json",
     "tests/fixtures/source-block-pair-cards.json",
