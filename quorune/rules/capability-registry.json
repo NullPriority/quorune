@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 386,
+  "registry_version": 387,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -23749,7 +23749,8 @@
           "fixed source-spanned count range",
           "one closed direct creature target predicate",
           "identical fixed modifiers and keywords",
-          "surviving original target references"
+          "surviving original target references",
+          "a supported evaluated amount may be zero at resolution"
         ],
         "outputs": [
           "exact target cardinality",
@@ -23768,27 +23769,45 @@
       "implementation_components": [
         "quorune.compiler.target_characteristic_sets.target_characteristic_set_template",
         "quorune.rules.target_characteristic_sets.target_characteristic_set_capabilities",
-        "quorune.continuous_effect_state.apply_target_characteristics"
+        "quorune.continuous_effect_state.apply_target_characteristics",
+        "quorune.rules.target_characteristic_sets.decode_target_characteristics"
       ],
       "positive_tests": [
-        "test_fixed_target_sets_keep_count_range_modifier_and_source_span"
+        "test_fixed_target_sets_keep_count_range_modifier_and_source_span",
+        "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
+        "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
       ],
       "negative_tests": [
         "test_descriptor_unknown_quantities_and_dynamic_variants_fail_closed",
-        "test_omitted_target_set_effect_mutant_is_killed_by_actual_nahiri"
+        "test_omitted_target_set_effect_mutant_is_killed_by_actual_nahiri",
+        "test_zero_resolution_optin_keeps_compiled_and_malformed_instruction_contracts"
       ],
       "interaction_tests": [
         "test_actual_sick_and_tired_applies_to_surviving_original_target",
         "test_up_to_one_entry_trigger_choice_saves_replays_and_applies_fixed_modifier",
         "test_exact_scalar_amount_composes_with_optional_single_target_set",
-        "test_actual_wind_sail_grants_only_selected_original_creatures_and_expires"
+        "test_actual_wind_sail_grants_only_selected_original_creatures_and_expires",
+        "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
+        "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
       ],
       "multiplayer_tests": [
-        "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays"
+        "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays",
+        "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
+        "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
       ],
-      "privacy_tests": [],
+      "privacy_tests": [
+        "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
+        "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
+      ],
       "replay_tests": [
-        "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays"
+        "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays",
+        "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
+        "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
       ],
       "required_evidence": [
         "positive",

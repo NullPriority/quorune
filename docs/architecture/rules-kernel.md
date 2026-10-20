@@ -378,6 +378,13 @@ restrictions from current effective static abilities through one read-only
 query, so ability removal affects static restrictions without erasing an
 independent rule that already resolved.
 
+Target-set characteristic instructions retain strict compiled validation.
+After an independently owned quantity is evaluated, the resolved P/T delta may
+be zero. The resolution owner still validates the complete instruction and
+selected incarnations, then records a typed layer-7c zero modifier when no
+keyword component exists. Zero values preserve ordinary target legality,
+duration, privacy and replay; they do not invalidate an otherwise legal spell.
+
 Fixed opponent-creature keyword prohibitions use the same layer-6 owner but
 remain distinct from ordinary keyword removal. A prohibition suppresses that
 keyword regardless of grant timestamp, including keyword counters, while
