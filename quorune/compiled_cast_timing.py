@@ -77,6 +77,34 @@ def compiled_cast_timing_permissions(
     return canonical_cast_timing_permissions(result)
 
 
+def compiled_self_cast_restriction_reason(host, actor, card, *, face_name=None):
+    """Check one proposed face against the actual caster before payment."""
+    from .semantic_runtime.self_cast_restrictions import (
+        SELF_CAST_RESTRICTION_EVENT, SELF_CAST_RESTRICTION_HANDLER,
+    )
+    from .semantic_runtime.context import SemanticNodeError
+
+    record = host.card_record(card)
+    if record is None:
+        return None
+    expected_face = _face_id(record, face_name)
+    for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,
+            active_zone=CAST_PERMISSION_ACTIVE_ZONE, event=SELF_CAST_RESTRICTION_EVENT):
+        if (not host.semantic_program_is_current_trusted(program)
+                or str(program.provenance.get('face_id') or '') != expected_face):
+            continue
+        for descriptor in program.handlers:
+            if descriptor.get('handler_id') != SELF_CAST_RESTRICTION_HANDLER:
+                continue
+            if actor not in host.state.players:
+                raise SemanticNodeError('Intrinsic cast restriction requires the authenticated caster')
+            condition, = default_cast_permission_registry().lower(descriptor, None)
+            if not host._fixed_public_state_condition_holds(
+                    replace(card, controller=actor), condition, require_available=True):
+                return 'self_cast_condition'
+    return None
+
+
 def conditional_flash_authorship(host,card, *, face_name=None):
     """Return conditional and unconditional declarations without reading prose."""
     from .card_program_faces import program_matches_face

@@ -5317,6 +5317,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/self_cast_restriction_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/self_counter_keyword_actions.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -15357,6 +15372,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/self_cast_restrictions.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/self_entry_counters.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -16973,5 +17003,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "edc57b4c5a675dab010751a1ca97db88e84a73e0566c10ed2a4fe3c418430dba"
+  "fingerprint": "a04eb77bb467c1806dc4f492749d532a97350778360fcb395b6ae7cc85deefc1"
 }

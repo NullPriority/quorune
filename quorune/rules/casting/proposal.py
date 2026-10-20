@@ -17,7 +17,7 @@ from ...cast_lifecycles import (
     fixed_zone_cast_timing_is_legal,
 )
 from ...cast_timing import cast_timing_is_legal, type_line_has_card_type
-from ...compiled_cast_timing import compiled_cast_timing_permissions
+from ...compiled_cast_timing import compiled_cast_timing_permissions, compiled_self_cast_restriction_reason
 from ...compiled_cast_lifecycles import compiled_sneak_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
@@ -411,7 +411,10 @@ def _static_cast_rule_state(
 ) -> tuple[str | None, tuple[Any, ...]]:
     rule_face = _static_rule_face(face, face_down=face_down)
     return (
-        aftermath_cast_prohibition_reason(host,card) or static_cast_prohibition_reason(host, actor, card, face=rule_face),
+        aftermath_cast_prohibition_reason(host,card)
+        or (None if face_down else compiled_self_cast_restriction_reason(
+            host, actor, card, face_name=face_name))
+        or static_cast_prohibition_reason(host, actor, card, face=rule_face),
         _combined_cast_timing_permissions(
             host,
             actor,

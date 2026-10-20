@@ -40,6 +40,17 @@ permission contributes no keyword. Cost modifiers inspect a detached proposed
 spell under its caster, while completed cast events use its current after-cost
 characteristics. Face-down methods suppress intrinsic timing and keywords.
 
+Printed self-cast restrictions use the same selected-face proposal as advertised
+actions and accepted commands. A prior spell belongs to the actual caster and
+need not resolve; an opponent's spell does not satisfy that condition. A current
+Snow-land condition uses control and current characteristics rather than
+ownership. These conditions are checked before payment. Losing a qualifying
+permanent while paying mana does not revoke the legal cast, and resolution does
+not recheck a casting restriction. Face-down alternative characteristics suppress
+the printed restriction. This boundary retains the existing mana-plan grammar:
+choice-bearing costs outside the represented automatic forms require explicit
+activation and do not gain a new payment route from a casting condition.
+
 Self-cost reductions use the selected spell face and current caster's public
 facts or committed cast history. The total cost locks before mana activation,
 so sacrificing a qualifying permanent while paying does not revoke its

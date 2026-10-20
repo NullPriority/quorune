@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 415,
+  "registry_version": 416,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37275,6 +37275,102 @@
       "dependency_fail_closed_rationale": "Complete color/source/quality closure and its minimum owners are required for admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh real Cartel activation and Bolt witness rejects an omitted protection-layer grant.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.restriction.self_fixed_public_condition",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Printed prior-spell and current Snow-land self-cast conditions evaluated for the actual caster before costs, through the shared offer/proposal legality owner.",
+        "inputs": [
+          "trusted selected-face restriction",
+          "actual caster public turn facts and current controlled Snow lands"
+        ],
+        "outputs": [
+          "shared cast offer and accepted-command eligibility before payment"
+        ],
+        "exclusions": [
+          "colored prior-spell predicates",
+          "other unrepresented intrinsic conditions",
+          "source attributes and target-dependent conditions",
+          "choice-bearing or separately priced mana activations outside the existing automatic payment-plan grammar"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "implementation_components": [
+        "quorune.compiled_cast_timing.compiled_self_cast_restriction_reason",
+        "quorune.compiler.self_cast_restriction_nodes.self_cast_restriction_nodes",
+        "quorune.rules.casting.proposal._static_cast_rule_state",
+        "quorune.semantic_runtime.self_cast_restrictions.SelfCastRestrictionHandler"
+      ],
+      "positive_tests": [
+        "test_countered_prior_spell_still_qualifies_original_retainers",
+        "test_four_originals_have_complete_admission_with_nonempty_condition_programs",
+        "test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+        "test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+        "test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell",
+        "test_selected_face_and_face_down_spell_use_their_proposed_characteristics"
+      ],
+      "negative_tests": [
+        "test_closed_descriptors_and_nearest_unrepresented_conditions",
+        "test_minimum_capabilities_and_compiler_producer_cannot_be_omitted",
+        "test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+        "test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+        "test_selected_face_and_face_down_spell_use_their_proposed_characteristics"
+      ],
+      "interaction_tests": [
+        "test_countered_prior_spell_still_qualifies_original_retainers",
+        "test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+        "test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+        "test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+        "test_selected_face_and_face_down_spell_use_their_proposed_characteristics"
+      ],
+      "multiplayer_tests": [
+        "test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+        "test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+        "test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell",
+        "test_registered_adapter_uses_actual_caster_without_changing_card_ownership"
+      ],
+      "privacy_tests": [
+        "test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+        "test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+        "test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell"
+      ],
+      "replay_tests": [
+        "test_countered_prior_spell_still_qualifies_original_retainers",
+        "test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+        "test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+        "test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+        "test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell",
+        "test_selected_face_and_face_down_spell_use_their_proposed_characteristics"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Registered runtime bindings reject omitted intrinsic-condition and public-state dependencies independently of rebuilt closure metadata; blocked capabilities and omitted compiler producers keep complete sources residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh atomic original-card witnesses kill omitted compiler contribution and omitted shared eligibility guard. No child subtest can swallow the required assertion.",
       "blockers": [],
       "status": "trusted"
     }

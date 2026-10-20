@@ -6580,6 +6580,21 @@
         "test_temporary_target_interactions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "intrinsic-self-cast-public-conditions",
+      "patterns": [
+        "quorune/compiler/self_cast_restriction_nodes.py",
+        "quorune/semantic_runtime/self_cast_restrictions.py",
+        "tests/fixtures/self-cast-restriction-cards.json",
+        "tests/test_self_cast_restrictions.py"
+      ],
+      "test_modules": [
+        "test_self_cast_restrictions",
+        "test_conditional_flash",
+        "test_casting_activation_proposal_equivalence",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
