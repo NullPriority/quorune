@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 422,
+  "registry_version": 423,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -240,6 +240,12 @@
       "mechanic_id": "fixed-previous-turn-spell-transform",
       "capabilities": [
         "trigger.upkeep.previous_turn_transform"
+      ]
+    },
+    {
+      "mechanic_id": "reconfigure",
+      "capabilities": [
+        "attachment.reconfigure.fixed_mana"
       ]
     }
   ],
@@ -37914,6 +37920,117 @@
         "test_insufficient_hand_withholds_paid_route_and_preserves_source",
         "test_normal_hand_and_independent_permission_keep_ordinary_unpaid_route"
       ]
+    },
+    {
+      "id": "attachment.reconfigure.fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Two separate fixed ordinary-mana Reconfigure activations with another controlled creature target, sorcery timing, and an attachment-created type effect ending at unattachment from the original receiver.",
+        "inputs": [
+          "current complete-card source program",
+          "fixed numeric and colored mana",
+          "current controller and creature targets",
+          "original source and receiver incarnations",
+          "attachment timestamp"
+        ],
+        "outputs": [
+          "independent paid attach and unattach actions",
+          "current legality shared by offers and commands",
+          "canonical reciprocal attachment",
+          "locked noncreature lifetime surviving ability loss"
+        ],
+        "exclusions": [
+          "variable, hybrid, Phyrexian, snow, and nonmana costs",
+          "granted Reconfigure without a typed activation descriptor",
+          "uncompiled attachment instructions"
+        ]
+      },
+      "dependencies": [
+        "attachment.action.fixed_source",
+        "target.revalidate_resolution",
+        "activation.condition.phase_window"
+      ],
+      "implementation_components": [
+        "quorune.compiler.reconfigure_nodes.reconfigure_nodes",
+        "quorune.rules.reconfigure.commit_reconfigure_attachment_effect",
+        "quorune.attachment_duration.AttachmentDuration",
+        "quorune.effect_runtime.zones_and_attachments._apply_unattach"
+      ],
+      "positive_tests": [
+        "test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+        "test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+        "test_generic_attachment_uses_reconfigure_but_rejects_self_and_ordinary_creature_equipment",
+        "test_seven_originals_register_two_complete_actions_and_apply_all_characteristics"
+      ],
+      "negative_tests": [
+        "test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+        "test_attachment_duration_codec_is_closed_and_cannot_revive_old_relation",
+        "test_capability_withdrawals_and_adjacent_cost_grammar_stay_residual",
+        "test_native_ability_loss_in_response_prevents_a_creature_equipment_attachment",
+        "test_native_animated_ordinary_equipment_can_activate_but_cannot_attach",
+        "test_reconfigure_catalog_requires_complete_admission_and_closed_activation_facts",
+        "test_sorcery_timing_and_a_target_incarnation_are_revalidated",
+        "test_typed_keyword_removal_withdraws_both_actions_without_ending_an_existing_type_effect"
+      ],
+      "interaction_tests": [
+        "test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+        "test_control_phasing_and_new_incarnations_preserve_only_the_current_relation",
+        "test_generic_attachment_uses_reconfigure_but_rejects_self_and_ordinary_creature_equipment",
+        "test_later_native_animation_detaches_even_while_reconfigure_is_present",
+        "test_loss_of_abilities_keeps_type_effect_until_native_receiver_departure",
+        "test_native_ability_loss_in_response_prevents_a_creature_equipment_attachment",
+        "test_native_animated_ordinary_equipment_can_activate_but_cannot_attach",
+        "test_native_reconfigure_detaches_equipment_previously_equipping_its_source",
+        "test_sorcery_timing_and_a_target_incarnation_are_revalidated",
+        "test_typed_keyword_removal_withdraws_both_actions_without_ending_an_existing_type_effect"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+        "test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+        "test_control_phasing_and_new_incarnations_preserve_only_the_current_relation"
+      ],
+      "privacy_tests": [
+        "test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+        "test_loss_of_abilities_keeps_type_effect_until_native_receiver_departure"
+      ],
+      "replay_tests": [
+        "test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+        "test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+        "test_generic_attachment_uses_reconfigure_but_rejects_self_and_ordinary_creature_equipment",
+        "test_later_native_animation_detaches_even_while_reconfigure_is_present",
+        "test_loss_of_abilities_keeps_type_effect_until_native_receiver_departure",
+        "test_native_ability_loss_in_response_prevents_a_creature_equipment_attachment",
+        "test_native_animated_ordinary_equipment_can_activate_but_cannot_attach",
+        "test_native_reconfigure_detaches_equipment_previously_equipping_its_source",
+        "test_sorcery_timing_and_a_target_incarnation_are_revalidated"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete-card catalog admission and source-pinned capability closure withdraw both actions when a producer or required capability is unavailable.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Rabbit Battery witnesses kill omission of the compiler producer, the attachment-created type consequence and the lifetime predicate at actual unattachment.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

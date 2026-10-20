@@ -14935,6 +14935,709 @@
       "applicability_note": "Replay restricted target selection, mana payment, priority, and attachment to the identical state hash."
     },
     {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_control_phasing_and_new_incarnations_preserve_only_the_current_relation",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_generic_attachment_uses_reconfigure_but_rejects_self_and_ordinary_creature_equipment",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_later_native_animation_detaches_even_while_reconfigure_is_present",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_loss_of_abilities_keeps_type_effect_until_native_receiver_departure",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_ability_loss_in_response_prevents_a_creature_equipment_attachment",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_animated_ordinary_equipment_can_activate_but_cannot_attach",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_reconfigure_detaches_equipment_previously_equipping_its_source",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_sorcery_timing_and_a_target_incarnation_are_revalidated",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_typed_keyword_removal_withdraws_both_actions_without_ending_an_existing_type_effect",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_control_phasing_and_new_incarnations_preserve_only_the_current_relation",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_fresh_reconfigure_producer_and_type_consequence_mutants_are_killed",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_attachment_duration_codec_is_closed_and_cannot_revive_old_relation",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_capability_withdrawals_and_adjacent_cost_grammar_stay_residual",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_ability_loss_in_response_prevents_a_creature_equipment_attachment",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_animated_ordinary_equipment_can_activate_but_cannot_attach",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_reconfigure_catalog_requires_complete_admission_and_closed_activation_facts",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_sorcery_timing_and_a_target_incarnation_are_revalidated",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_typed_keyword_removal_withdraws_both_actions_without_ending_an_existing_type_effect",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_generic_attachment_uses_reconfigure_but_rejects_self_and_ordinary_creature_equipment",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_seven_originals_register_two_complete_actions_and_apply_all_characteristics",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_loss_of_abilities_keeps_type_effect_until_native_receiver_departure",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_generic_attachment_uses_reconfigure_but_rejects_self_and_ordinary_creature_equipment",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_later_native_animation_detaches_even_while_reconfigure_is_present",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_loss_of_abilities_keeps_type_effect_until_native_receiver_departure",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_ability_loss_in_response_prevents_a_creature_equipment_attachment",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_animated_ordinary_equipment_can_activate_but_cannot_attach",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_native_reconfigure_detaches_equipment_previously_equipping_its_source",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
+      "capability_id": "attachment.reconfigure.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_reconfigure.ReconfigureTests.test_sorcery_timing_and_a_target_incarnation_are_revalidated",
+      "official_rule_ids": [
+        "301.5c",
+        "602.2",
+        "701.3",
+        "702.151a",
+        "702.151b",
+        "704.5p"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed fixed-mana Reconfigure uses complete source registration and separate paid native actions. Native witnesses cover characteristics, current source/receiver legality, source ability loss, animation, ordinary Equipment, recipient departure, rollback, pending load and replay; typed-owner controls cover control, phasing and incarnation continuity. Fresh witnesses kill actual producer/type/lifetime omissions."
+    },
+    {
       "capability_id": "attachment.reference.current_or_lki",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_counter_placement.AttachedCounterRuntimeTests.test_attachment_counter_replacement_is_seat_scoped_and_replays",

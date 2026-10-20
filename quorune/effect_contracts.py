@@ -41,6 +41,7 @@ EFFECT_FAMILY_CONTRACTS = (
         operations=frozenset(
             {
                 "attach",
+                "unattach",
                 "create_attached_token",
                 "bestow_prepare",
                 "bounce",

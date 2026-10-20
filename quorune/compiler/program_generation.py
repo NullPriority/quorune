@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .reconfigure_nodes import is_closed_reconfigure_program
 from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
@@ -9,7 +10,7 @@ from ..rules.source_keyword_choice_shapes import is_closed_source_keyword_choice
 from ..rules.source_protection_choice_shapes import is_closed_source_protection_program
 
 from collections import Counter
-from dataclasses import asdict, replace
+from dataclasses import asdict
 import hashlib
 from typing import Any, Iterable, Mapping, TYPE_CHECKING
 
@@ -49,9 +50,6 @@ from ..rules.creature_power_damage_capability_shapes import (
 )
 from ..rules.delayed_draw_capability_shapes import (
     fixed_next_turn_draw_node_capabilities,
-)
-from ..rules.graveyard_card_targets import (
-    targeted_own_graveyard_return_node_capabilities,
 )
 from ..rules.public_zone_move_capability_shapes import (
     fixed_public_zone_move_set_node_capabilities,
@@ -1309,7 +1307,7 @@ def _closed_effect_recognizers():
         _is_closed_composed_effect_program,
         _is_closed_fixed_controller_effect_sequence_program,
         _is_closed_fixed_counter_controller_effect_sequence_program,
-        _is_closed_single_explore_program,
+        _is_closed_single_explore_program, is_closed_reconfigure_program,
         _is_closed_single_proliferate_program,
         _is_closed_fixed_counter_placement_program,
         _is_closed_fixed_counter_removal_program,

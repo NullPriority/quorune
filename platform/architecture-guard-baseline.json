@@ -1569,9 +1569,9 @@
     "physical_lines": 7416
   },
   "exception_binding": {
-    "adr": "docs/adr/0114-player-speed-and-max-speed-applicability.md",
-    "allowance_fingerprint": "6600203bb39b80b67b47533c5222bb11e3dbb6748815b62f733aa7a765b660fe",
-    "exception_id": "ARCH-EXC-0058"
+    "adr": "docs/adr/0120-attachment-bound-reconfigure-effects.md",
+    "allowance_fingerprint": "e5a5701b979187e846456a42f201b560453e6ae23d8809eed8a5060774137d9a",
+    "exception_id": "ARCH-EXC-0059"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1955,6 +1955,7 @@
     "tap_targets",
     "transform",
     "transmute_artifact",
+    "unattach",
     "unearth",
     "untap",
     "untap_all_creatures",

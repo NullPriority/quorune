@@ -22,10 +22,15 @@ from ..rules.source_fixed_protection_shapes import source_fixed_protection_runti
 from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
 from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
 from ..rules.self_cost_numeric_counts import self_cost_numeric_count_dependencies
+from ..rules.reconfigure import reconfigure_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(reconfigure_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_reconfigure:invalid:{exc}')
     try:
         required.update(self_cost_numeric_count_dependencies(program.handlers))
     except (TypeError,ValueError) as exc:
