@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "238f21e5cb7eb97ecb5852e0bd63eb1d472fe843140e88f7b682d44630a6d6d7",
-  "declaration_source_fingerprint": "02be3fd8d372a146221787450b77c8ab822a302c8e9d3cf64c4f43fda2b65ea9",
+  "registry_fingerprint": "d183ddd875626b34a884c5dd978e5d17b53cb90dfa71138908d19c63fa8f5dc8",
+  "declaration_source_fingerprint": "ec5ec92c3f4f4efe6639bf8db68784006efa1d4af39f843f7debce78cbaf4447",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -65554,6 +65554,746 @@
         "commander_review"
       ],
       "applicability_note": "A locked ability controller chooses one ordinary keyword at resolution for the exact source incarnation. Existing mana/sacrifice/tap/counter costs precede it; source control, departure, Sunburst entry, fixed P/T prefix, state-based timing, expiry and real combat/damage consequences preserve private loaded replay."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_defending_player_target_rechecks_current_control_before_resolution",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_fresh_actual_requirement_commit_and_untap_omissions_are_killed",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_fresh_provoke_trigger_producer_omission_is_killed",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_declining_does_not_untap_or_require_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_defending_player_target_rechecks_current_control_before_resolution",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_verified_withdrawals_and_stripped_runtime_minima_reject",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_declining_does_not_untap_or_require_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_defending_player_target_rechecks_current_control_before_resolution",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "combat.block.requirement_this_combat",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
     },
     {
       "capability_id": "combat.block.self_counter_prohibition",
@@ -250688,6 +251428,746 @@
       "applicability_note": "Replay mobilize triggers, choices, delayed work, and authoritative results exactly."
     },
     {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_defending_player_target_rechecks_current_control_before_resolution",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_fresh_actual_requirement_commit_and_untap_omissions_are_killed",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_fresh_provoke_trigger_producer_omission_is_killed",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_declining_does_not_untap_or_require_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_defending_player_target_rechecks_current_control_before_resolution",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_verified_withdrawals_and_stripped_runtime_minima_reject",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_declining_does_not_untap_or_require_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_defending_player_target_rechecks_current_control_before_resolution",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
+      "capability_id": "trigger.keyword.provoke.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+      "official_rule_ids": [
+        "506.4",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "608.2b",
+        "702.39a",
+        "702.39b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source registration, actual targeted attacks and optional resolution preserve defending-player scope, legal maximum requirement solving, untap replacement, restrictions, printed combat bodies, original incarnations, expiry, private pending load and pre-action replay. Closed codecs, verified withdrawals and fresh actual producer/commit/untap omissions protect authority."
+    },
+    {
       "capability_id": "trigger.keyword.prowess",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
@@ -280096,5 +281576,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ada9ca8343e3f7f378d92d5fa707a4f033e8bbef2b06fe185808f776cc97c2ad"
+  "fingerprint": "2abb70f0262c1574641c2c909186acbbb85121fd70f3b66b3986e78997dfe2f6"
 }

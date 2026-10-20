@@ -1408,6 +1408,32 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0060",
+      "adr": "docs/adr/0123-combat-bound-blocking-requirements.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "c37156888781cf644b39642ff69f10f80e58a73e2aafc8ae72436b502b258ada",
+      "exact_allowance": "The previous exact structural baseline plus only require_blocking_this_combat. Every engine, direct-write, runtime-text, identity and size allowance retains its previous value.",
+      "rationale": "CR 702.39a and 509.1c require an optional block-specific-attacker relation for the current combat, followed by canonical untap. The existing combat relationship owner commits the typed relation and the existing declaration solver maximizes compatible requirements.",
+      "owner": "rules/compiler/replay maintainers through protected certification",
+      "maximum_scope": "One closed combat-bound requirement effect and optional typed CombatState relation. No new solver, engine method, direct or unowned write allowance, size-growth allowance, identity dispatch, runtime Oracle parsing, callback or duplicate registry.",
+      "removal_condition": "Remove this binding when the operation is retired or a later exact reviewed baseline supersedes it; preserve optional resolution, restriction priority, original incarnation, expiry, privacy and replay contracts.",
+      "target_milestone": "typed combat-bound blocking requirement and canonical untap resolution",
+      "replay_implications": "Empty combat requirements retain prior bytes. Current relations persist exact source and target incarnations through pending save/load and are discarded with the current CombatState.",
+      "privacy_implications": "Only public combat relation data are added. Target choices and command capabilities remain principal-scoped; no private reference is disclosed.",
+      "security_implications": "Normal principal-bound attack, target, optional and block commands retain shared legality and atomic rollback. Missing capability minima, malformed payloads and unsupported grammar fail closed.",
+      "tests": [
+        "tests.test_provoke_rules.ProvokeTests.test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "tests.test_provoke_rules.ProvokeTests.test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+        "tests.test_provoke_rules.ProvokeTests.test_two_native_provokes_share_the_maximum_requirement_solver",
+        "tests.test_provoke_rules.ProvokeTests.test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "tests.test_provoke_rules.ProvokeTests.test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+        "tests.test_provoke_rules.ProvokeTests.test_verified_withdrawals_and_stripped_runtime_minima_reject",
+        "tests.test_provoke_rules.ProvokeTests.test_fresh_actual_requirement_commit_and_untap_omissions_are_killed",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

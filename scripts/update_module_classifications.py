@@ -80,6 +80,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/damage_modifier_state.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
+        "quorune/blocking_requirement_model.py",
         "quorune/power_up_model.py",
         "quorune/as_unblocked.py",
         "quorune/public_characteristic_aggregate_model.py",
@@ -541,6 +542,8 @@ def _owner(relative: str, layer: str) -> str:
         return "casting_flashback"
     if relative in {"quorune/defender_permission.py", "quorune/rules/defender_permission_effect.py", "quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/rules/as_unblocked_effect.py", "quorune/toughness_assignment.py", "quorune/toughness_assignment_model.py", "quorune/toughness_assignment_rule.py", "quorune/rules/toughness_assignment_effect.py"}:
         return "combat_declaration"
+    if relative in {'quorune/blocking_requirement_model.py','quorune/rules/blocking_requirements.py','quorune/rules/provoke_shapes.py'}:
+        return 'combat_declaration'
     if relative in {"quorune/power_up.py", "quorune/power_up_model.py"}:
         return "activated_abilities"
     if relative == 'quorune/rules/reconfigure.py':

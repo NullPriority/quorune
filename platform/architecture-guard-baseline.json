@@ -1569,9 +1569,9 @@
     "physical_lines": 7416
   },
   "exception_binding": {
-    "adr": "docs/adr/0120-attachment-bound-reconfigure-effects.md",
-    "allowance_fingerprint": "e5a5701b979187e846456a42f201b560453e6ae23d8809eed8a5060774137d9a",
-    "exception_id": "ARCH-EXC-0059"
+    "adr": "docs/adr/0123-combat-bound-blocking-requirements.md",
+    "allowance_fingerprint": "c37156888781cf644b39642ff69f10f80e58a73e2aafc8ae72436b502b258ada",
+    "exception_id": "ARCH-EXC-0060"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1932,6 +1932,7 @@
     "remove_all_counters",
     "remove_counters",
     "reorder_top",
+    "require_blocking_this_combat",
     "retarget_stack_item",
     "return_graveyard_card_to_owner_hand",
     "return_graveyard_targets_to_owner_hand",

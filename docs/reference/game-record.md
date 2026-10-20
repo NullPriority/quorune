@@ -42,6 +42,13 @@ pending decision.
 
 ## Canonicalization and hashes
 
+`CombatState.blocking_requirements` is an optional version-one array of resolved
+block-specific-attacker requirements. Each entry retains a unique requirement
+identity and both physical/logical combatant incarnations. Pending load keeps
+the current combat relation; ordinary combat reset expires it. Empty books are
+omitted so historical combat payloads retain their original bytes. Malformed or
+duplicate requirement identities reject during decoding.
+
 Authoritative JSON uses deterministic serialization and strict schema
 validation. State hashes cover canonical authoritative state, including
 versioned rules-relevant fields and continuations. They exclude presentation

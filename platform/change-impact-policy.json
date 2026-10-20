@@ -6734,6 +6734,26 @@
         "test_resolution_public_conditions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "combat-bound-targeted-block-requirement",
+      "patterns": [
+        "quorune/blocking_requirement_model.py",
+        "quorune/rules/blocking_requirements.py",
+        "quorune/rules/provoke_shapes.py",
+        "quorune/compiler/keyword_event_effect_nodes.py",
+        "quorune/compiler/prevention_templates.py",
+        "quorune/declaration_requirement_runtime.py",
+        "tests/test_provoke_rules.py",
+        "tests/fixtures/provoke-cards.json"
+      ],
+      "test_modules": [
+        "test_provoke_rules",
+        "test_fixed_keyword_event_effects",
+        "test_combat_declaration_constraints",
+        "test_damage_prevention_creation",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

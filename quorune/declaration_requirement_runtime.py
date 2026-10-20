@@ -64,6 +64,16 @@ def typed_blocker_requirements(
     error_type: type[Exception],
 ) -> list[DeclarationRequirement]:
     result: list[DeclarationRequirement] = []
+    for requirement in host.state.combat.blocking_requirements:
+        attacker=host.state.cards.get(requirement.attacker.object_id)
+        blocker=host.state.cards.get(requirement.blocker.object_id)
+        if (attacker is None or blocker is None or attacker.zone!='battlefield' or blocker.zone!='battlefield'
+                or attacker.logical_object_id!=requirement.attacker.logical_object_id
+                or blocker.logical_object_id!=requirement.blocker.logical_object_id
+                or attacker.object_id not in host.state.combat.attackers or attacker.phased_out or blocker.phased_out
+                or blocker.ref not in blockers_by_ref):continue
+        result.append(DeclarationRequirement(requirement_id=requirement.requirement_id,kind='choose_option',
+            variable=blocker.ref,option=attacker.ref,label='This creature blocks the required attacker this combat if able.'))
     for blocker_ref, blocker in blockers_by_ref.items():
         fragments = host._effective_ability_fragments(
             blocker,
