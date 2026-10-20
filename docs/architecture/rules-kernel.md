@@ -548,6 +548,17 @@ mana and sorcery timing keep their own authority. The version-1 wire remains
 unchanged; variable amounts, all counters and other payment objects are outside
 this source-only grammar.
 
+Fixed source keyword choices compose the existing scalar option choice with
+the source-incarnation characteristic owner. The ability controller chooses
+one printed ordinary keyword during resolution, even if control of its source
+has changed. Existing sacrifice, other-creature tap, counter and mana costs
+remain paid. Departure or blink cannot transfer the effect to another
+incarnation. An optional fixed P/T prefix runs once before the choice;
+state-based actions wait until resolution completes. Both components expire
+through the existing duration owner. Grammar admission, normal registration
+and minimum runtime dependencies validate the same complete branch set.
+Mixed protection choices, variable quantities and other choosers remain residual.
+
 Ordinary two-arm activation prices use that same immutable option model when
 both printed arms have the same source-tap resource. The compiler retains each
 complete mana vector and the original cost text. Offer and commit apply current

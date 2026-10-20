@@ -5,6 +5,7 @@ from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program
 from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
+from ..rules.source_keyword_choice_shapes import is_closed_source_keyword_choice_program
 
 from collections import Counter
 from dataclasses import asdict, replace
@@ -1320,6 +1321,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_target_characteristics_program,
         is_closed_resolution_characteristic_program,
         _is_closed_temporary_target_interaction_program,
+        is_closed_source_keyword_choice_program,
         _is_closed_fixed_source_characteristics_program,
         _is_closed_temporary_declaration_restriction_program,
         _is_closed_fixed_target_effect_sequence_program,

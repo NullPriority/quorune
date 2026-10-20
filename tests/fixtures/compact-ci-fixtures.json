@@ -235,6 +235,7 @@
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-counter-anthem-cards.json",
     "tests/fixtures/source-damage-death-cards.json",
+    "tests/fixtures/source-keyword-choice-cards.json",
     "tests/fixtures/source-maintenance-cards.json",
     "tests/fixtures/source-pronoun-results.json",
     "tests/fixtures/source-reference-closure-cards.json",

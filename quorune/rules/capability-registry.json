@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 413,
+  "registry_version": 414,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4714,7 +4714,8 @@
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
         "test_unqualified_graveyard_exile_uses_owner",
         "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
-        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
       ],
       "negative_tests": [
         "test_activation_zone_change_costs_exclude_mana_abilities",
@@ -4734,18 +4735,21 @@
         "test_selected_zone_cost_replacement_is_private_and_replays",
         "test_selected_zone_cost_uses_current_effective_characteristics",
         "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
-        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
       ],
       "multiplayer_tests": [
         "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
-        "test_selected_zone_cost_replacement_is_private_and_replays"
+        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
       ],
       "privacy_tests": [
         "test_counted_discard_activation_is_private_complete_and_replays",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
-        "test_selected_zone_cost_replacement_is_private_and_replays"
+        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
       ],
       "replay_tests": [
         "test_counted_discard_activation_is_private_complete_and_replays",
@@ -4755,7 +4759,8 @@
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
         "test_selected_zone_cost_replacement_is_private_and_replays",
         "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
-        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay"
+        "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
       ],
       "required_evidence": [
         "positive",
@@ -4827,7 +4832,9 @@
         "test_fixed_type_and_subtype_tap_costs_compile_source_spanned",
         "test_offer_commit_and_replay_share_current_untapped_wizard_query",
         "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
-        "test_source_and_selected_tap_cost_excludes_same_source"
+        "test_source_and_selected_tap_cost_excludes_same_source",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage"
       ],
       "negative_tests": [
         "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
@@ -4841,20 +4848,28 @@
         "test_cost_tap_events_observe_complete_source_and_selected_group",
         "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
         "test_offer_commit_and_replay_share_current_untapped_wizard_query",
-        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage"
       ],
       "multiplayer_tests": [
         "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
         "test_offer_commit_and_replay_share_current_untapped_wizard_query",
-        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage"
       ],
       "privacy_tests": [
-        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage"
       ],
       "replay_tests": [
         "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
         "test_offer_commit_and_replay_share_current_untapped_wizard_query",
-        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage"
       ],
       "required_evidence": [
         "positive",
@@ -9519,7 +9534,9 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
-        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "negative_tests": [
         "test_unsupported_fixed_counter_removal_variants_remain_residual",
@@ -9542,7 +9559,9 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
-        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "multiplayer_tests": [
         "test_fixed_counter_removal_replay_is_exact_in_four_player_game",
@@ -9560,7 +9579,9 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
-        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "privacy_tests": [
         "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
@@ -9577,7 +9598,9 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
-        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "replay_tests": [
         "test_fixed_counter_removal_replay_is_exact_in_four_player_game",
@@ -9595,7 +9618,9 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
-        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "required_evidence": [
         "positive",
@@ -13980,7 +14005,15 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -14019,7 +14052,15 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -14038,7 +14079,15 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -14056,7 +14105,15 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -14074,7 +14131,15 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "required_evidence": [
         "positive",
@@ -14273,7 +14338,15 @@
         "test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
         "test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
-        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays"
+        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "negative_tests": [
         "test_source_characteristic_grammar_keeps_open_forms_residual",
@@ -14293,18 +14366,42 @@
         "test_trusted_unspecified_set_locks_membership_control_and_incarnations",
         "test_trusted_unspecified_animation_rejects_stale_reentered_target",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
-        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays"
+        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "multiplayer_tests": [
         "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
         "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
-        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays"
+        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "privacy_tests": [
         "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
         "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
-        "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation"
+        "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "replay_tests": [
         "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
@@ -14313,7 +14410,15 @@
         "test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
         "test_trusted_unspecified_set_locks_membership_control_and_incarnations",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
-        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays"
+        "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
       ],
       "required_evidence": [
         "positive",
@@ -14476,23 +14581,75 @@
     {
       "id": "combat.block.reach",
       "version": 1,
-      "official_rules": ["509.1b", "702.17", "702.17a", "702.17b", "702.17c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "509.1b",
+        "702.17",
+        "702.17a",
+        "702.17b",
+        "702.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Recognize reach in a proposed blocker's current represented effective keyword state as the CR 702.17b exception to the Flying restriction.",
-        "inputs": ["fully validated proposed blocker-attacker pair", "blocker current represented effective keywords", "attacker current represented effective keywords"],
-        "outputs": ["reach blocker permitted past the Flying restriction", "case-insensitive redundant reach result"],
-        "exclusions": ["blocker eligibility unrelated to Flying", "other evasion and blocking restrictions or requirements", "block declaration costs", "unsupported continuous-effect, copy, face-down, and ability-changing producers"]
+        "inputs": [
+          "fully validated proposed blocker-attacker pair",
+          "blocker current represented effective keywords",
+          "attacker current represented effective keywords"
+        ],
+        "outputs": [
+          "reach blocker permitted past the Flying restriction",
+          "case-insensitive redundant reach result"
+        ],
+        "exclusions": [
+          "blocker eligibility unrelated to Flying",
+          "other evasion and blocking restrictions or requirements",
+          "block declaration costs",
+          "unsupported continuous-effect, copy, face-down, and ability-changing producers"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.keyword_abilities.normalized_characteristic_keywords", "quorune.aerial_blocking.aerial_block_verdict", "CommanderEngine._can_block"],
-      "positive_tests": ["test_flying_attacker_requires_flying_or_reach_blocker", "test_current_flying_and_reach_share_offer_and_command_legality"],
-      "negative_tests": ["test_malformed_keyword_snapshot_fails_closed"],
-      "interaction_tests": ["test_current_keywords_are_case_insensitive_and_redundant", "test_current_flying_and_reach_share_offer_and_command_legality"],
-      "multiplayer_tests": ["test_current_flying_and_reach_share_offer_and_command_legality"],
-      "privacy_tests": ["test_current_flying_and_reach_share_offer_and_command_legality"],
-      "replay_tests": ["test_current_flying_and_reach_share_offer_and_command_legality"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.keyword_abilities.normalized_characteristic_keywords",
+        "quorune.aerial_blocking.aerial_block_verdict",
+        "CommanderEngine._can_block"
+      ],
+      "positive_tests": [
+        "test_flying_attacker_requires_flying_or_reach_blocker",
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "negative_tests": [
+        "test_malformed_keyword_snapshot_fails_closed"
+      ],
+      "interaction_tests": [
+        "test_current_keywords_are_case_insensitive_and_redundant",
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "multiplayer_tests": [
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "privacy_tests": [
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "replay_tests": [
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The bounded reach exception consumes canonical current keyword snapshots and has no capability dependency.",
       "implementation_mutation_status": "killed",
@@ -14545,7 +14702,9 @@
       "positive_tests": [
         "test_flying_attacker_requires_flying_or_reach_blocker",
         "test_current_flying_and_reach_share_offer_and_command_legality",
-        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
       ],
       "negative_tests": [
         "test_ground_attacker_is_outside_aerial_restriction",
@@ -14554,19 +14713,27 @@
       "interaction_tests": [
         "test_current_keywords_are_case_insensitive_and_redundant",
         "test_current_flying_and_reach_share_offer_and_command_legality",
-        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
       ],
       "multiplayer_tests": [
         "test_current_flying_and_reach_share_offer_and_command_legality",
-        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
       ],
       "privacy_tests": [
         "test_current_flying_and_reach_share_offer_and_command_legality",
-        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
       ],
       "replay_tests": [
         "test_current_flying_and_reach_share_offer_and_command_legality",
-        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
       ],
       "required_evidence": [
         "positive",
@@ -14586,23 +14753,87 @@
     {
       "id": "combat.damage.participation.strike_steps",
       "version": 1,
-      "official_rules": ["510.4", "702.4", "702.4a", "702.4b", "702.4c", "702.4d", "702.7", "702.7a", "702.7b", "702.7c", "702.7d"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "510.4",
+        "702.4",
+        "702.4a",
+        "702.4b",
+        "702.4c",
+        "702.4d",
+        "702.7",
+        "702.7a",
+        "702.7b",
+        "702.7c",
+        "702.7d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Determine whether combat has one or two damage steps and which current attacking or blocking creatures assign in each step for ordinary First Strike and Double Strike.",
-        "inputs": ["current represented First Strike and Double Strike abilities", "the first-step ordinary-combatant snapshot", "current combat participation", "current damage-step index"],
-        "outputs": ["first-damage-step creation", "typed per-step assignment eligibility", "current Double Strike participation in both steps", "ordinary-combatant participation in the second step"],
-        "exclusions": ["effects that add combat damage steps outside First Strike and Double Strike", "banding and assignment-controller substitution", "unsupported continuous-effect, copy, face-down, and ability-changing producers"]
+        "inputs": [
+          "current represented First Strike and Double Strike abilities",
+          "the first-step ordinary-combatant snapshot",
+          "current combat participation",
+          "current damage-step index"
+        ],
+        "outputs": [
+          "first-damage-step creation",
+          "typed per-step assignment eligibility",
+          "current Double Strike participation in both steps",
+          "ordinary-combatant participation in the second step"
+        ],
+        "exclusions": [
+          "effects that add combat damage steps outside First Strike and Double Strike",
+          "banding and assignment-controller substitution",
+          "unsupported continuous-effect, copy, face-down, and ability-changing producers"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.combat.first_strike_step_required", "quorune.combat.ordinary_second_step_combatants", "quorune.combat.assigns_in_damage_step"],
-      "positive_tests": ["test_first_strike_creates_the_initial_combat_damage_step"],
-      "negative_tests": ["test_second_step_uses_the_first_step_snapshot_and_current_double_strike"],
-      "interaction_tests": ["test_double_strike_trample_recomputes_after_blocker_leaves"],
-      "multiplayer_tests": [],
-      "privacy_tests": [],
-      "replay_tests": ["test_double_strike_creates_two_real_damage_steps_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "replay"],
+      "implementation_components": [
+        "quorune.combat.first_strike_step_required",
+        "quorune.combat.ordinary_second_step_combatants",
+        "quorune.combat.assigns_in_damage_step"
+      ],
+      "positive_tests": [
+        "test_first_strike_creates_the_initial_combat_damage_step",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "negative_tests": [
+        "test_second_step_uses_the_first_step_snapshot_and_current_double_strike"
+      ],
+      "interaction_tests": [
+        "test_double_strike_trample_recomputes_after_blocker_leaves",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "multiplayer_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "privacy_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "replay_tests": [
+        "test_double_strike_creates_two_real_damage_steps_and_replays",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded participation owner consumes current public combat characteristics and has no optional capability dependency.",
       "implementation_mutation_status": "killed",
@@ -14640,23 +14871,79 @@
     {
       "id": "combat.damage.assignment.deathtouch",
       "version": 1,
-      "official_rules": ["510.1c", "702.2", "702.2a", "702.2c", "702.2f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "510.1c",
+        "702.2",
+        "702.2a",
+        "702.2c",
+        "702.2f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Treat any positive combat-damage assignment from a current represented deathtouch source as lethal while canonical assignments are validated.",
-        "inputs": ["immutable combat-damage snapshot", "positive assignment amount", "current represented source keywords", "other simultaneous attacker assignments"],
-        "outputs": ["one-damage lethal assignment contribution", "ordinary zero assignment result", "duplicate source-membership result"],
-        "exclusions": ["banding and effects that change who assigns damage", "unsupported continuous-effect, copy, face-down, and ability-changing producers", "damage assignment modifiers other than represented deathtouch and Trample"]
+        "inputs": [
+          "immutable combat-damage snapshot",
+          "positive assignment amount",
+          "current represented source keywords",
+          "other simultaneous attacker assignments"
+        ],
+        "outputs": [
+          "one-damage lethal assignment contribution",
+          "ordinary zero assignment result",
+          "duplicate source-membership result"
+        ],
+        "exclusions": [
+          "banding and effects that change who assigns damage",
+          "unsupported continuous-effect, copy, face-down, and ability-changing producers",
+          "damage assignment modifiers other than represented deathtouch and Trample"
+        ]
       },
-      "dependencies": ["combat.damage.assignment.canonical"],
-      "implementation_components": ["quorune.deathtouch.deathtouch_assignment_is_lethal", "quorune.combat_damage_assignment.build_combat_damage_assignment_proposal", "quorune.combat_damage_trample.trample_assignment_error"],
-      "positive_tests": ["test_deathtouch_and_marked_damage_each_reduce_trample_lethal"],
-      "negative_tests": ["test_zero_deathtouch_assignment_is_not_lethal", "test_malformed_amounts_and_keyword_values_fail_closed"],
-      "interaction_tests": ["test_deathtouch_damage_from_another_attacker_is_lethal", "test_indestructible_consumes_deathtouch_at_the_first_sba_check", "test_deathtouch_counter_feeds_assignment_and_final_damage_result"],
-      "multiplayer_tests": ["test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "privacy_tests": ["test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "replay_tests": ["test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "combat.damage.assignment.canonical"
+      ],
+      "implementation_components": [
+        "quorune.deathtouch.deathtouch_assignment_is_lethal",
+        "quorune.combat_damage_assignment.build_combat_damage_assignment_proposal",
+        "quorune.combat_damage_trample.trample_assignment_error"
+      ],
+      "positive_tests": [
+        "test_deathtouch_and_marked_damage_each_reduce_trample_lethal",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "negative_tests": [
+        "test_zero_deathtouch_assignment_is_not_lethal",
+        "test_malformed_amounts_and_keyword_values_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_deathtouch_damage_from_another_attacker_is_lethal",
+        "test_indestructible_consumes_deathtouch_at_the_first_sba_check",
+        "test_deathtouch_counter_feeds_assignment_and_final_damage_result",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "privacy_tests": [
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "replay_tests": [
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The deathtouch assignment contribution is available only through the immutable canonical combat snapshot and proposal validator.",
       "implementation_mutation_status": "killed",
@@ -15808,23 +16095,77 @@
     {
       "id": "combat.attack.haste",
       "version": 1,
-      "official_rules": ["302.6", "508.1a", "702.10", "702.10a", "702.10b", "702.10d"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "302.6",
+        "508.1a",
+        "702.10",
+        "702.10a",
+        "702.10b",
+        "702.10d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Evaluate the continuous-control attack restriction for a current creature from its controller turn timestamp and current represented effective keywords, with one or more haste instances supplying the CR 702.10b exception.",
-        "inputs": ["current effective creature type", "current effective keyword state", "current controller", "controller turns-begun count", "control-acquisition turn count"],
-        "outputs": ["ordinary newly controlled creature prohibited from attacking", "hasty newly controlled creature eligible for the remaining declaration checks", "case-insensitive redundant haste result"],
-        "exclusions": ["other attack restrictions, requirements, and declaration costs", "effects that put a creature onto the battlefield attacking", "unrepresented continuous-effect, copy, face-down, or control-history semantics", "attack permissions that say as though a creature had haste"]
+        "inputs": [
+          "current effective creature type",
+          "current effective keyword state",
+          "current controller",
+          "controller turns-begun count",
+          "control-acquisition turn count"
+        ],
+        "outputs": [
+          "ordinary newly controlled creature prohibited from attacking",
+          "hasty newly controlled creature eligible for the remaining declaration checks",
+          "case-insensitive redundant haste result"
+        ],
+        "exclusions": [
+          "other attack restrictions, requirements, and declaration costs",
+          "effects that put a creature onto the battlefield attacking",
+          "unrepresented continuous-effect, copy, face-down, or control-history semantics",
+          "attack permissions that say as though a creature had haste"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.haste.is_summoning_sick", "quorune.haste.summoning_sickness_prohibits_attack", "CommanderEngine._attack_declaration_error"],
-      "positive_tests": ["test_haste_attack_permission_uses_current_effective_keywords"],
-      "negative_tests": ["test_only_currently_eligible_creatures_are_offered", "test_malformed_effective_keywords_fail_closed"],
-      "interaction_tests": ["test_control_timestamp_restricts_only_current_creatures", "test_haste_attack_permission_uses_current_effective_keywords"],
-      "multiplayer_tests": ["test_vigilance_is_defender_independent_in_four_player_combat"],
-      "privacy_tests": [],
-      "replay_tests": ["test_attackers_tap_except_vigilance_then_active_player_gets_priority"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "implementation_components": [
+        "quorune.haste.is_summoning_sick",
+        "quorune.haste.summoning_sickness_prohibits_attack",
+        "CommanderEngine._attack_declaration_error"
+      ],
+      "positive_tests": [
+        "test_haste_attack_permission_uses_current_effective_keywords",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "negative_tests": [
+        "test_only_currently_eligible_creatures_are_offered",
+        "test_malformed_effective_keywords_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_control_timestamp_restricts_only_current_creatures",
+        "test_haste_attack_permission_uses_current_effective_keywords",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "multiplayer_tests": [
+        "test_vigilance_is_defender_independent_in_four_player_combat",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "replay_tests": [
+        "test_attackers_tap_except_vigilance_then_active_player_gets_priority",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded attack eligibility query consumes the authoritative current characteristic and control snapshots and has no optional capability dependency.",
       "implementation_mutation_status": "killed",
@@ -16614,23 +16955,76 @@
     {
       "id": "combat.attack.vigilance",
       "version": 1,
-      "official_rules": ["508.1f", "702.20", "702.20a", "702.20b", "702.20c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "508.1f",
+        "702.20",
+        "702.20a",
+        "702.20b",
+        "702.20c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Apply the declare-attackers tap result to a fully validated attacker set using each object's current represented effective keyword state, leaving attackers with one or more vigilance instances untapped.",
-        "inputs": ["complete validated declared-attacker set", "stable battlefield object identity", "current represented effective keywords"],
-        "outputs": ["ordinary attackers tapped", "vigilance attackers unchanged", "atomic preflight before tap mutation"],
-        "exclusions": ["attack declaration eligibility, restrictions, requirements, and costs", "unrepresented continuous-effect or copy semantics", "effects that put creatures onto the battlefield attacking", "replacement effects that modify tapping"]
+        "inputs": [
+          "complete validated declared-attacker set",
+          "stable battlefield object identity",
+          "current represented effective keywords"
+        ],
+        "outputs": [
+          "ordinary attackers tapped",
+          "vigilance attackers unchanged",
+          "atomic preflight before tap mutation"
+        ],
+        "exclusions": [
+          "attack declaration eligibility, restrictions, requirements, and costs",
+          "unrepresented continuous-effect or copy semantics",
+          "effects that put creatures onto the battlefield attacking",
+          "replacement effects that modify tapping"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.tap_state.tap_declared_attackers"],
-      "positive_tests": ["test_attackers_tap_except_vigilance_then_active_player_gets_priority", "test_vigilance_tap_owner_uses_current_effective_keywords"],
-      "negative_tests": ["test_vigilance_tap_owner_fails_closed_before_batch_mutation"],
-      "interaction_tests": ["test_vigilance_tap_owner_uses_current_effective_keywords"],
-      "multiplayer_tests": ["test_vigilance_is_defender_independent_in_four_player_combat"],
-      "privacy_tests": [],
-      "replay_tests": ["test_attackers_tap_except_vigilance_then_active_player_gets_priority"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "implementation_components": [
+        "quorune.tap_state.tap_declared_attackers"
+      ],
+      "positive_tests": [
+        "test_attackers_tap_except_vigilance_then_active_player_gets_priority",
+        "test_vigilance_tap_owner_uses_current_effective_keywords",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
+      ],
+      "negative_tests": [
+        "test_vigilance_tap_owner_fails_closed_before_batch_mutation"
+      ],
+      "interaction_tests": [
+        "test_vigilance_tap_owner_uses_current_effective_keywords",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
+      ],
+      "multiplayer_tests": [
+        "test_vigilance_is_defender_independent_in_four_player_combat",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
+      ],
+      "privacy_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
+      ],
+      "replay_tests": [
+        "test_attackers_tap_except_vigilance_then_active_player_gets_priority",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The bounded result consumes the authoritative effective-keyword snapshot after declaration legality and has no optional capability dependency.",
       "implementation_mutation_status": "killed",
@@ -21882,23 +22276,91 @@
     {
       "id": "damage.result.deathtouch",
       "version": 2,
-      "official_rules": ["120.3e", "120.4", "702.2", "702.2a", "702.2b", "702.2d", "702.2e", "702.2f", "704.5h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "120.3e",
+        "120.4",
+        "702.2",
+        "702.2a",
+        "702.2b",
+        "702.2d",
+        "702.2e",
+        "702.2f",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Derive deathtouch from the pinned damage-source snapshot, record positive damage to a creature, and consume that result after exactly one state-based-action check.",
-        "inputs": ["final positive dealt damage", "pinned source keywords and logical identity", "current creature recipient", "current toughness and indestructible state"],
-        "outputs": ["typed deathtouch damage-result leaf", "state-based destruction of a positive-toughness destructible creature", "one-check marker consumption", "source-zone and last-known-information behavior"],
-        "exclusions": ["regeneration", "unsupported source-characteristic producers", "unsupported continuous-effect, copy, face-down, and ability-changing producers"]
+        "inputs": [
+          "final positive dealt damage",
+          "pinned source keywords and logical identity",
+          "current creature recipient",
+          "current toughness and indestructible state"
+        ],
+        "outputs": [
+          "typed deathtouch damage-result leaf",
+          "state-based destruction of a positive-toughness destructible creature",
+          "one-check marker consumption",
+          "source-zone and last-known-information behavior"
+        ],
+        "exclusions": [
+          "regeneration",
+          "unsupported source-characteristic producers",
+          "unsupported continuous-effect, copy, face-down, and ability-changing producers"
+        ]
       },
-      "dependencies": ["damage.amount.positive"],
-      "implementation_components": ["quorune.deathtouch.deathtouch_damage_result_applies", "quorune.damage_source.DamageSourceSnapshot", "quorune.damage_results.materialize_damage_results", "quorune.damage_results.consume_deathtouch_damage_checks", "quorune.state_based_actions.evaluate_permanent_state_based_actions"],
-      "positive_tests": ["test_noncombat_deathtouch_uses_pinned_source_lki", "test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "negative_tests": ["test_result_requires_positive_damage_to_a_creature", "test_malformed_amounts_and_keyword_values_fail_closed", "test_legacy_event_flag_cannot_grant_deathtouch", "test_stale_check_batch_rolls_back_without_consuming_any_marker"],
-      "interaction_tests": ["test_wither_damage_still_records_deathtouch_result", "test_indestructible_consumes_deathtouch_at_the_first_sba_check", "test_old_deathtouch_marker_cannot_apply_after_type_or_phase_returns", "test_deathtouch_counter_feeds_assignment_and_final_damage_result", "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals"],
-      "multiplayer_tests": ["test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "privacy_tests": ["test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "replay_tests": ["test_four_player_deathtouch_result_is_source_derived_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "damage.amount.positive"
+      ],
+      "implementation_components": [
+        "quorune.deathtouch.deathtouch_damage_result_applies",
+        "quorune.damage_source.DamageSourceSnapshot",
+        "quorune.damage_results.materialize_damage_results",
+        "quorune.damage_results.consume_deathtouch_damage_checks",
+        "quorune.state_based_actions.evaluate_permanent_state_based_actions"
+      ],
+      "positive_tests": [
+        "test_noncombat_deathtouch_uses_pinned_source_lki",
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "negative_tests": [
+        "test_result_requires_positive_damage_to_a_creature",
+        "test_malformed_amounts_and_keyword_values_fail_closed",
+        "test_legacy_event_flag_cannot_grant_deathtouch",
+        "test_stale_check_batch_rolls_back_without_consuming_any_marker"
+      ],
+      "interaction_tests": [
+        "test_wither_damage_still_records_deathtouch_result",
+        "test_indestructible_consumes_deathtouch_at_the_first_sba_check",
+        "test_old_deathtouch_marker_cannot_apply_after_type_or_phase_returns",
+        "test_deathtouch_counter_feeds_assignment_and_final_damage_result",
+        "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "privacy_tests": [
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "replay_tests": [
+        "test_four_player_deathtouch_result_is_source_derived_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The result path requires canonical positive damage; unsupported source characteristic producers remain residual before runtime trust.",
       "implementation_mutation_status": "killed",
@@ -22520,23 +22982,70 @@
     {
       "id": "damage.result.lifelink",
       "version": 1,
-      "official_rules": ["120.3f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "120.3f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Gain life for a lifelink source's final dealt damage across every recipient kind.",
-        "inputs": ["lifelink source", "final dealt damage"],
-        "outputs": ["source controller life gain"],
+        "inputs": [
+          "lifelink source",
+          "final dealt damage"
+        ],
+        "outputs": [
+          "source controller life gain"
+        ],
         "exclusions": []
       },
-      "dependencies": ["damage.amount.positive"],
-      "implementation_components": ["quorune.damage_results.materialize_damage_results", "quorune.life_state.plan_life_changes", "quorune.life_state.apply_life_changes"],
-      "positive_tests": ["test_lifelink_counts_only_damage_not_prevented_by_protection", "test_lifelink_gains_final_damage_across_multiple_recipients", "test_source_pinned_keyword_witnesses_follow_damage_results"],
-      "negative_tests": ["test_prevented_infect_and_toxic_create_no_counter_results"],
-      "interaction_tests": ["test_boon_reflection_doubles_lifelink_result", "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals"],
-      "multiplayer_tests": ["test_four_player_keyword_results_keep_source_attribution"],
-      "privacy_tests": [],
-      "replay_tests": ["test_keyword_damage_results_replay_from_combat_assignment", "test_damage_result_replacement_choice_is_private_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "replay"],
+      "dependencies": [
+        "damage.amount.positive"
+      ],
+      "implementation_components": [
+        "quorune.damage_results.materialize_damage_results",
+        "quorune.life_state.plan_life_changes",
+        "quorune.life_state.apply_life_changes"
+      ],
+      "positive_tests": [
+        "test_lifelink_counts_only_damage_not_prevented_by_protection",
+        "test_lifelink_gains_final_damage_across_multiple_recipients",
+        "test_source_pinned_keyword_witnesses_follow_damage_results",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient"
+      ],
+      "negative_tests": [
+        "test_prevented_infect_and_toxic_create_no_counter_results"
+      ],
+      "interaction_tests": [
+        "test_boon_reflection_doubles_lifelink_result",
+        "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_keyword_results_keep_source_attribution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient"
+      ],
+      "privacy_tests": [
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient"
+      ],
+      "replay_tests": [
+        "test_keyword_damage_results_replay_from_combat_assignment",
+        "test_damage_result_replacement_choice_is_private_and_replays",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "",
       "implementation_mutation_status": "killed",
@@ -36390,6 +36899,128 @@
       "dependency_fail_closed_rationale": "Malformed or stale distributions, missing amount/kind resources, absent cost authority and unknown readers must reject before mutation.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual Loch payment must distinguish removal and its current P/T consequence from a free activation before acceptance.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.resolution.source_keyword_choice",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "201.5",
+        "400.7",
+        "602.2a",
+        "608.2c",
+        "608.2d",
+        "611.2a",
+        "611.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Choose exactly one fixed ordinary keyword during resolution and grant it to the exact source creature incarnation until end of turn, with an optional fixed P/T prefix applied once.",
+        "inputs": [
+          "compiler-pinned ordinary keyword branches",
+          "locked ability controller",
+          "exact source incarnation",
+          "optional fixed P/T prefix"
+        ],
+        "outputs": [
+          "one ordinary resolution choice",
+          "one selected temporary keyword",
+          "atomic continuation and exact replay"
+        ],
+        "exclusions": [
+          "mixed protection/triggered keyword options",
+          "variable P/T or duration",
+          "other chooser or recipient",
+          "granted or copied abilities outside represented catalog"
+        ]
+      },
+      "dependencies": [
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "implementation_components": [
+        "quorune.compiler.source_keyword_choices.SourceKeywordChoiceTemplate",
+        "quorune.compiler.source_keyword_choices.source_keyword_choice_template",
+        "quorune.rules.source_keyword_choice_shapes.source_keyword_choice_capabilities",
+        "quorune.rules.source_keyword_choice_shapes.source_keyword_choice_runtime_dependencies",
+        "quorune.semantic_choices.scalar.ChooseOptionHandler",
+        "quorune.continuous_effect_state.apply_fixed_resolution_characteristics",
+        "quorune.rules.source_keyword_choice_shapes.is_closed_source_keyword_choice_program",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_source_characteristics_until_end_of_turn"
+      ],
+      "positive_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_six_originals_have_nonempty_admitted_choice_programs_and_complete_preflight",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "negative_tests": [
+        "test_choice_shape_rejects_mismatched_branches_other_objects_and_unknown_grammar",
+        "test_runtime_cannot_omit_choice_source_or_keyword_authority",
+        "test_withdrawn_choice_capability_keeps_original_sources_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "multiplayer_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "privacy_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "replay_tests": [
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing choice, source-characteristic or keyword authority rejects normal admission and runtime binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh normal original admission and real activated result witnesses reject compiler and characteristic-commit omission.",
       "blockers": [],
       "status": "trusted"
     }

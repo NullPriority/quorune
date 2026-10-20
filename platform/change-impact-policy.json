@@ -6549,6 +6549,21 @@
         "test_any_source_counter_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-keyword-resolution-choice",
+      "patterns": [
+        "quorune/compiler/source_keyword_choices.py",
+        "quorune/rules/source_keyword_choice_shapes.py",
+        "tests/fixtures/source-keyword-choice-cards.json",
+        "tests/test_source_keyword_choices.py"
+      ],
+      "test_modules": [
+        "test_source_keyword_choices",
+        "test_fixed_source_characteristic_effects",
+        "test_temporary_target_interactions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

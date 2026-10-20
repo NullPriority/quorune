@@ -12,6 +12,7 @@ from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
+from .source_keyword_choice_shapes import source_keyword_choice_capabilities
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
 )
@@ -1125,7 +1126,7 @@ def _targeted_effect_capabilities(
         fixed_player_counter_placement_node_capabilities,
         optional_fixed_counter_event_trigger_node_capabilities,
         fixed_target_characteristics_node_capabilities, temporary_target_interaction_node_capabilities,
-        fixed_source_characteristics_node_capabilities,
+        fixed_source_characteristics_node_capabilities, source_keyword_choice_capabilities,
         temporary_declaration_restriction_node_capabilities,
         fixed_target_effect_sequence_node_capabilities,
         fixed_source_effect_sequence_node_capabilities,
@@ -1361,6 +1362,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
+        "continuous.resolution.source_keyword_choice": "temporary-source-keyword-choice",
         "resolution.effect_program.bound_references": "bound-effect-program",
     }
     return {

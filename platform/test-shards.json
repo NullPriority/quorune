@@ -111,6 +111,7 @@
       "test_shroud_targeting",
       "test_single_object_zone_transition",
       "test_source_block_pair",
+      "test_source_keyword_choices",
       "test_targeted_exile_effect_clauses",
       "test_temporary_keyword_removal",
       "test_trigger_targeting",
