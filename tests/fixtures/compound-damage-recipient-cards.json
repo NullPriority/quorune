@@ -464,37 +464,44 @@
     {
       "oracle_id": "06118cec-ae63-4720-988d-df9cc15ccfab",
       "published_at": "2021-03-19",
-      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "source": "wotc"
     },
     {
       "oracle_id": "06118cec-ae63-4720-988d-df9cc15ccfab",
       "published_at": "2021-03-19",
-      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "source": "wotc"
     },
     {
       "oracle_id": "06118cec-ae63-4720-988d-df9cc15ccfab",
       "published_at": "2021-03-19",
-      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "source": "wotc"
     },
     {
       "oracle_id": "06118cec-ae63-4720-988d-df9cc15ccfab",
       "published_at": "2021-03-19",
-      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "source": "wotc"
     },
     {
       "oracle_id": "06118cec-ae63-4720-988d-df9cc15ccfab",
       "published_at": "2021-03-19",
-      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "source": "wotc"
     },
     {
       "oracle_id": "06118cec-ae63-4720-988d-df9cc15ccfab",
       "published_at": "2021-03-19",
-      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ab0e2aa0-1ddd-4a4c-b7cd-4063caaa8bcd",
       "published_at": "2013-04-15",
-      "comment": "If you cast this card for its evoke cost, you may put the sacrifice trigger and the regular enters-the-battlefield trigger on the stack in either order. The one put on the stack last will resolve first."
+      "comment": "If you cast this card for its evoke cost, you may put the sacrifice trigger and the regular enters-the-battlefield trigger on the stack in either order. The one put on the stack last will resolve first.",
+      "source": "wotc"
     }
   ],
   "schema_version": 1,

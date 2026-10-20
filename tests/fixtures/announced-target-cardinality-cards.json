@@ -654,57 +654,68 @@
     {
       "oracle_id": "7ce950fb-e065-45d3-aeff-f8c475460754",
       "published_at": "2018-01-19",
-      "comment": "There are many important moments in the story, but the most crucial\u2014called \u201cstory spotlights\u201d\u2014are shown on cards. These cards have the Planeswalker symbol in their text box; this symbol has no effect on gameplay. You can read more about these events in the official Magic fiction at http://www.mtgstory.com."
+      "comment": "There are many important moments in the story, but the most crucial—called “story spotlights”—are shown on cards. These cards have the Planeswalker symbol in their text box; this symbol has no effect on gameplay. You can read more about these events in the official Magic fiction at http://www.mtgstory.com.",
+      "source": "wotc"
     },
     {
       "oracle_id": "0a25a72e-5603-4b50-ac20-36b286cc1a2b",
       "published_at": "2016-09-20",
-      "comment": "If each target card is an illegal target as Wildest Dreams resolves, Wildest Dreams doesn't resolve and is put into its owner's graveyard. It's not exiled."
+      "comment": "If each target card is an illegal target as Wildest Dreams resolves, Wildest Dreams doesn't resolve and is put into its owner's graveyard. It's not exiled.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally.",
+      "source": "wotc"
     },
     {
       "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
       "published_at": "2021-06-18",
-      "comment": "You exile the cards face up. All players will be able to see them."
+      "comment": "You exile the cards face up. All players will be able to see them.",
+      "source": "wotc"
     },
     {
       "comment": "If any artifacts or enchantments were chosen as targets, and all of them are illegal targets as Pest Infestation tries to resolve, it won't resolve and none of its effects will happen. No Pests will be created.",
