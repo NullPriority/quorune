@@ -846,6 +846,14 @@ preserving historical events with no count-result reader. Malformed or different
 payment instances fail closed. Numeric evaluation preserves ordinary result,
 target, private-choice, rollback and replay boundaries.
 
+Spell result amounts that count spent mana colors use the canonical committed
+WUBRG set. Payment validation still rejects overpayment, and cost increases,
+reductions and alternate costs retain their normal order. Actual spell copies
+use zero, independently of copied optional-cost decisions. Numeric projection
+refines only existing typed result owners; fixed discard, draw and keyword
+consequences continue after a zero variable result. Missing or malformed
+payment provenance and readers outside spell resolution fail closed.
+
 Source-face target-dependent reductions use the same announced-target
 witnesses for offers and accepted commands. One matching target applies one
 printed reduction once, including when several targets qualify. The cost owner

@@ -345,6 +345,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/linked_exile_return.py",
         "quorune/scalar_effect_amounts.py",
         "quorune/multikicker_result_amounts.py",
+        "quorune/mana_spent_amounts.py",
         "quorune/linked_exile_return_model.py",
         "quorune/public_tap_state_sets.py",
         "quorune/public_alternative_costs.py",

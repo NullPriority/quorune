@@ -6439,6 +6439,26 @@
         "test_zone_trigger_events",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "spell-spent-mana-color-result-amounts",
+      "patterns": [
+        "quorune/compiler/mana_color_result_nodes.py",
+        "quorune/mana_spent_amounts.py",
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "tests/fixtures/mana-color-result-cards.json",
+        "tests/test_mana_spent_amounts.py"
+      ],
+      "test_modules": [
+        "test_mana_spent_amounts",
+        "test_multikicker_result_amounts",
+        "test_scalar_effect_amounts",
+        "test_flashback_rules",
+        "test_fixed_controller_effect_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

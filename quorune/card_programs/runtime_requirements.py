@@ -11,10 +11,15 @@ from ..rules.temporary_keyword_removal import temporary_keyword_removal_runtime_
 from ..rules.increment_condition import increment_runtime_dependencies
 from ..targeted_spell_costs import self_target_reduction_runtime_dependencies
 from ..multikicker_result_amounts import multikicker_amount_runtime_dependencies
+from ..mana_spent_amounts import mana_color_amount_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(mana_color_amount_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_spent_mana_color_amount:invalid:{exc}')
     try:
         required.update(multikicker_amount_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:

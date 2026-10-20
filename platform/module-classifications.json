@@ -4222,6 +4222,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/mana_color_result_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/manifest_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8339,6 +8354,20 @@
       "file": "quorune/mana_source_discovery.py",
       "layer": "rules",
       "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/mana_spent_amounts.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -16843,5 +16872,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "021235f4b0762fb5c8848e8e1f478a0ba4f1deec21b0dc916a997ff76be09cb8"
+  "fingerprint": "7986fb618eaa96d8c5b04e26a3b1c6fa3159f05410998bfae1f7cb4170645fc0"
 }

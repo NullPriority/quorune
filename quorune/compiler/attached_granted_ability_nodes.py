@@ -479,6 +479,13 @@ def _source_bound_cost_nodes(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
     if counted is not None:
         return (counted,)
+    from .mana_color_result_nodes import mana_color_result_node
+    spent = mana_color_result_node(record=record, node_id=node_id, line=line,
+        material_line=material_line, span=span, effect_template=effect_template,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if spent is not None:
+        return (spent,)
     from .conditional_flash_nodes import conditional_self_flash_nodes
     return conditional_self_flash_nodes(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=source_name, capability_registry=capability_registry,

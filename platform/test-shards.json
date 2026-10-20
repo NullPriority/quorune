@@ -35,6 +35,7 @@
       "test_indestructible_rules",
       "test_job_select",
       "test_loyalty_abilities",
+      "test_mana_spent_amounts",
       "test_multikicker_entry_counters",
       "test_multikicker_result_amounts",
       "test_nonmana_morph",

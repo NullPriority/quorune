@@ -20,6 +20,7 @@ TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
 
 
 class ScalarAmountOrigin(StrEnum):
+    CAST_MANA_COLOR_COUNT = 'cast_mana_color_count'
     MULTIKICKER_COUNT = 'multikicker_count'
     TARGET_HAND_COUNT='target_player_hand_count'
     PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
@@ -51,8 +52,10 @@ class ScalarEffectAmountSpec:
     multikicker: FixedManaMultikickerSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version == 6) != (self.origin is ScalarAmountOrigin.CAST_MANA_COLOR_COUNT):
+            raise PublicQueryAmountError('Spent mana colors require their explicit scalar version')
         if (self.schema_version == 5) != (self.origin is ScalarAmountOrigin.MULTIKICKER_COUNT):
             raise PublicQueryAmountError('Multikicker count requires its explicit scalar version')
         if self.schema_version == 5:

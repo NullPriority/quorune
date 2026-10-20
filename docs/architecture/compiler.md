@@ -2831,6 +2831,16 @@ linked result slot. This extension does not admit other scalar sequences.
 Variable target cardinality, private count-discard choices, multiple cost
 instances and unsupported sibling clauses remain residual.
 
+`compiler/mana_color_result_nodes.py` lowers complete ordinary spell clauses
+whose declared result is the number of colors actually spent to cast that
+spell. Version 6 uses the existing public `StackItem.mana_colors_spent`
+provenance and existing result owners. Additional and alternative costs count;
+colorless mana, unspent pools and other spells do not. A spell copy has no
+casting payment and evaluates zero. Fixed suffix instructions keep their order
+and consequences even when the variable amount is zero. The typed reader is
+restricted to spell resolution; source-entry and variable-target consumers
+remain residual. Earlier scalar encodings are unchanged.
+
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed owner, prior controller, type,

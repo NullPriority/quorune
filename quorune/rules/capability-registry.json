@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 407,
+  "registry_version": 408,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2143,7 +2143,9 @@
         "test_prepared_damage_event_keeps_its_sealed_source_facts",
         "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
         "test_source_damage_capability_is_required_before_program_admission",
-        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant"
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "negative_tests": [
         "test_fixed_damage_branches_require_each_existing_damage_and_predicate_owner",
@@ -2169,7 +2171,9 @@
         "test_other_creatures_include_a_new_incarnation_of_the_original_damage_source",
         "test_prepared_damage_event_keeps_its_sealed_source_facts",
         "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
-        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant"
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "multiplayer_tests": [
         "test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
@@ -2181,7 +2185,9 @@
         "test_original_myr_death_trigger_uses_predeparture_source_facts_and_controller",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
-        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler"
+        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "privacy_tests": [
         "test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
@@ -2190,7 +2196,9 @@
         "test_original_breath_and_canopy_select_current_flying_group_and_all_players",
         "test_original_cinderclasm_selects_one_or_two_damage_to_all_creatures",
         "test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink",
-        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler"
+        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "replay_tests": [
         "test_copied_kicked_cinderclasm_keeps_fact_and_independent_spell_source",
@@ -2203,7 +2211,9 @@
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_roastmaster_keeps_ability_opponents_separate_from_damage_source_controller",
         "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
-        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant"
+        "test_source_facts_are_read_after_a_paid_prefix_removes_the_lifelink_grant",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "required_evidence": [
         "positive",
@@ -6862,7 +6872,9 @@
         "test_spell_and_activated_player_life_nodes_are_exact_and_spanned",
         "test_target_player_gain_uses_live_replacement_owner",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
       ],
       "negative_tests": [
         "test_invalid_batch_member_rolls_back_every_life_change",
@@ -6873,26 +6885,34 @@
         "test_semantic_life_intent_replacement_suspends_and_replays_exactly",
         "test_target_opponent_drain_replacement_and_replay_are_exact",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
       ],
       "multiplayer_tests": [
         "test_table_wide_loss_and_drain_are_simultaneous_typed_batches",
         "test_each_opponent_drain_is_one_four_player_life_batch",
         "test_target_opponent_drain_replacement_and_replay_are_exact",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
       ],
       "privacy_tests": [
         "test_semantic_life_intent_replacement_suspends_and_replays_exactly",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
       ],
       "replay_tests": [
         "test_fixed_life_self_enter_trigger_replays_exactly",
         "test_semantic_life_intent_replacement_suspends_and_replays_exactly",
         "test_target_opponent_drain_replacement_and_replay_are_exact",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
       ],
       "required_evidence": [
         "positive",
@@ -7162,7 +7182,11 @@
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
         "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
-        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "negative_tests": [
         "test_changed_library_or_source_fails_before_draw_mutation",
@@ -7194,7 +7218,11 @@
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
         "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
-        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "multiplayer_tests": [
         "test_draw_each_player_uses_apnap_order_and_exact_engine_path",
@@ -7205,7 +7233,11 @@
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
         "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
-        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "privacy_tests": [
         "test_draw_replacement_choice_is_visible_only_to_affected_seat",
@@ -7215,7 +7247,11 @@
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
-        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "replay_tests": [
         "test_first_turn_profile_modifier_and_exact_replay",
@@ -7230,7 +7266,11 @@
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
         "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
-        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "required_evidence": [
         "positive",
@@ -8763,23 +8803,108 @@
     {
       "id": "counter.placement.quantity_replacement",
       "version": 6,
-      "official_rules": ["122.1", "122.6", "614.1", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "122.1",
+        "122.6",
+        "614.1",
+        "614.16",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Resolve represented fixed integral counter-quantity replacements for effect-generated placements, positive loyalty-symbol costs, and canonical damage-result placements on permanents or players through affected-player/object ordering and a typed precommit plan before mutation.",
-        "inputs": ["placing player", "affected player, card, or permanent", "resolved positive integral counter amount", "effect, cost, or damage-result provenance", "closed target-kind and effective-type predicates", "fixed multiply/add runtime components"],
-        "outputs": ["resolved counter amount", "exact replacement journal", "principal-scoped competing choice", "validated typed counter commit plan", "authoritative counter mutation"],
-        "exclusions": ["fractional, halving, dynamic, or optional quantity replacements", "counter movement", "counter removal including negative loyalty-symbol costs", "effects that prohibit counter placement", "combined or modified loyalty-symbol costs", "Class-level-gated static replacements", "rule-generated placements outside the represented damage, Saga, and state-action families"]
+        "inputs": [
+          "placing player",
+          "affected player, card, or permanent",
+          "resolved positive integral counter amount",
+          "effect, cost, or damage-result provenance",
+          "closed target-kind and effective-type predicates",
+          "fixed multiply/add runtime components"
+        ],
+        "outputs": [
+          "resolved counter amount",
+          "exact replacement journal",
+          "principal-scoped competing choice",
+          "validated typed counter commit plan",
+          "authoritative counter mutation"
+        ],
+        "exclusions": [
+          "fractional, halving, dynamic, or optional quantity replacements",
+          "counter movement",
+          "counter removal including negative loyalty-symbol costs",
+          "effects that prohibit counter placement",
+          "combined or modified loyalty-symbol costs",
+          "Class-level-gated static replacements",
+          "rule-generated placements outside the represented damage, Saga, and state-action families"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.semantic_runtime.counter_replacements.CounterQuantityReplacementHandler", "quorune.semantic_runtime.counter_replacements.CounterQuantityReplacementV2Handler", "quorune.compiler.counter_replacement_templates.static_counter_quantity_replacement_handler", "quorune.counter_placement.prepare_counter_placements", "quorune.counter_placement.plan_prepared_counter_placement_commit", "quorune.counter_placement.plan_resolved_counter_placement_commit", "quorune.counter_placement.commit_counter_placement_plan", "quorune.damage_prevention_aftermath.prepare_prevention_aftermath", "quorune.damage_results.plan_damage_result_commit"],
-      "positive_tests": ["test_counter_quantity_component_changes_effect_generated_placement", "test_counter_aftermath_reuses_counter_replacement_pipeline", "test_closed_descriptor_distinguishes_effects_costs_players_and_types", "test_generic_compiler_emits_exact_source_spanned_card_program_node", "test_damage_counter_results_use_canonical_typed_owners"],
-      "negative_tests": ["test_counter_quantity_component_rejects_malformed_and_nonmatching_events", "test_stale_counter_aftermath_fails_before_life_or_damage_mutation", "test_generic_compiler_accepts_closed_family_and_rejects_near_misses", "test_resolved_counter_owner_rejects_nonplacement_event", "test_stale_damage_counter_subject_rolls_back_every_result"],
-      "interaction_tests": ["test_counter_replacements_apply_in_affected_players_chosen_order", "test_zone_replacement_counter_is_a_nested_precommit_event", "test_counter_aftermath_reuses_counter_replacement_pipeline", "test_gonti_energy_trigger_uses_typed_player_counter_program", "test_competing_cost_replacements_suspend_before_mutation_and_replay", "test_damage_counter_replacement_is_not_rediscovered_at_commit", "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals"],
-      "multiplayer_tests": ["test_simultaneous_counter_choices_follow_apnap", "test_player_counter_choices_follow_four_player_apnap"],
-      "privacy_tests": ["test_counter_replacement_choice_is_seat_scoped", "test_competing_cost_replacements_suspend_before_mutation_and_replay"],
-      "replay_tests": ["test_counter_replacement_choice_replays_exactly", "test_competing_cost_replacements_suspend_before_mutation_and_replay", "test_death_return_replacement_continuation_survives_process_restart", "test_saga_entry_replacement_continuation_survives_process_restart"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.semantic_runtime.counter_replacements.CounterQuantityReplacementHandler",
+        "quorune.semantic_runtime.counter_replacements.CounterQuantityReplacementV2Handler",
+        "quorune.compiler.counter_replacement_templates.static_counter_quantity_replacement_handler",
+        "quorune.counter_placement.prepare_counter_placements",
+        "quorune.counter_placement.plan_prepared_counter_placement_commit",
+        "quorune.counter_placement.plan_resolved_counter_placement_commit",
+        "quorune.counter_placement.commit_counter_placement_plan",
+        "quorune.damage_prevention_aftermath.prepare_prevention_aftermath",
+        "quorune.damage_results.plan_damage_result_commit"
+      ],
+      "positive_tests": [
+        "test_counter_quantity_component_changes_effect_generated_placement",
+        "test_counter_aftermath_reuses_counter_replacement_pipeline",
+        "test_closed_descriptor_distinguishes_effects_costs_players_and_types",
+        "test_generic_compiler_emits_exact_source_spanned_card_program_node",
+        "test_damage_counter_results_use_canonical_typed_owners",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "negative_tests": [
+        "test_counter_quantity_component_rejects_malformed_and_nonmatching_events",
+        "test_stale_counter_aftermath_fails_before_life_or_damage_mutation",
+        "test_generic_compiler_accepts_closed_family_and_rejects_near_misses",
+        "test_resolved_counter_owner_rejects_nonplacement_event",
+        "test_stale_damage_counter_subject_rolls_back_every_result"
+      ],
+      "interaction_tests": [
+        "test_counter_replacements_apply_in_affected_players_chosen_order",
+        "test_zone_replacement_counter_is_a_nested_precommit_event",
+        "test_counter_aftermath_reuses_counter_replacement_pipeline",
+        "test_gonti_energy_trigger_uses_typed_player_counter_program",
+        "test_competing_cost_replacements_suspend_before_mutation_and_replay",
+        "test_damage_counter_replacement_is_not_rediscovered_at_commit",
+        "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "multiplayer_tests": [
+        "test_simultaneous_counter_choices_follow_apnap",
+        "test_player_counter_choices_follow_four_player_apnap",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "privacy_tests": [
+        "test_counter_replacement_choice_is_seat_scoped",
+        "test_competing_cost_replacements_suspend_before_mutation_and_replay",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "replay_tests": [
+        "test_counter_replacement_choice_replays_exactly",
+        "test_competing_cost_replacements_suspend_before_mutation_and_replay",
+        "test_death_return_replacement_continuation_survives_process_restart",
+        "test_saga_entry_replacement_continuation_survives_process_restart",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded counter producer has no capability dependencies beyond the shared replacement event substrate.",
       "implementation_mutation_status": "killed",
@@ -9195,7 +9320,8 @@
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
         "test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
         "test_spell_trigger_and_activated_contexts_share_fixed_counter_lowering",
-        "test_typed_fixed_counter_handler_places_counters_without_domain_dispatch"
+        "test_typed_fixed_counter_handler_places_counters_without_domain_dispatch",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "negative_tests": [
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
@@ -9209,20 +9335,24 @@
       "interaction_tests": [
         "test_fixed_counter_effect_suspends_for_quantity_replacement",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
-        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "multiplayer_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
-        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "privacy_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
-        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "replay_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
-        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "required_evidence": [
         "positive",
@@ -11965,7 +12095,14 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "negative_tests": [
         "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
@@ -11995,7 +12132,14 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "multiplayer_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12007,7 +12151,14 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "privacy_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12019,7 +12170,14 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "replay_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12037,7 +12195,14 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "required_evidence": [
         "positive",
@@ -13244,7 +13409,9 @@
         "test_bare_subtype_resolution_sets_preserve_kindred_and_creature_boundaries",
         "test_nested_subtype_body_casing_preserves_the_complete_public_query",
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
-        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires"
+        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -13274,7 +13441,9 @@
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
         "test_trusted_qualified_activation_uses_real_action_path_and_replays",
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
-        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires"
+        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -13284,7 +13453,9 @@
         "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
         "test_trusted_qualified_activation_uses_real_action_path_and_replays",
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
-        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires"
+        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -13293,7 +13464,9 @@
         "test_target_player_characteristic_set_resolves_and_replays",
         "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
         "test_trusted_qualified_activation_uses_real_action_path_and_replays",
-        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires"
+        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -13302,7 +13475,9 @@
         "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
         "test_trusted_qualified_activation_uses_real_action_path_and_replays",
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
-        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires"
+        "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "required_evidence": [
         "positive",
@@ -13834,23 +14009,96 @@
     {
       "id": "combat.damage.assignment.trample",
       "version": 1,
-      "official_rules": ["510.1", "510.1a", "510.1c", "510.1d", "702.19", "702.19a", "702.19b", "702.19c", "702.19d", "702.19e", "702.19f", "702.19g"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "510.1",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "702.19",
+        "702.19a",
+        "702.19b",
+        "702.19c",
+        "702.19d",
+        "702.19e",
+        "702.19f",
+        "702.19g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Offer and validate ordinary trample combat-damage division from current represented characteristics, requiring lethal assignment to every current blocker before damage may be assigned to the attacked player, planeswalker, or battle.",
-        "inputs": ["current attacking and blocking combatants", "current represented power, toughness, marked damage, and keywords", "other attacking creatures' simultaneous assignments", "current attacked player or permanent"],
-        "outputs": ["seat-scoped canonical assignment options", "exact full-power assignment validation", "lethal-before-spill validation", "atomic rejection without mutation", "deterministic assignment journal"],
-        "exclusions": ["the separate Trample over planeswalkers keyword", "banding and effects that change who assigns combat damage", "damage assignment modifiers other than ordinary deathtouch and marked damage", "unsupported continuous-effect, copy, face-down, and ability-changing producers"]
+        "inputs": [
+          "current attacking and blocking combatants",
+          "current represented power, toughness, marked damage, and keywords",
+          "other attacking creatures' simultaneous assignments",
+          "current attacked player or permanent"
+        ],
+        "outputs": [
+          "seat-scoped canonical assignment options",
+          "exact full-power assignment validation",
+          "lethal-before-spill validation",
+          "atomic rejection without mutation",
+          "deterministic assignment journal"
+        ],
+        "exclusions": [
+          "the separate Trample over planeswalkers keyword",
+          "banding and effects that change who assigns combat damage",
+          "damage assignment modifiers other than ordinary deathtouch and marked damage",
+          "unsupported continuous-effect, copy, face-down, and ability-changing producers"
+        ]
       },
-      "dependencies": ["combat.damage.assignment.canonical", "combat.damage.assignment.deathtouch"],
-      "implementation_components": ["quorune.combat_damage_assignment.CombatDamageAssignmentProposal", "quorune.combat_damage_assignment.build_combat_damage_assignment_proposal", "quorune.combat_damage_assignment.trample_assignment_error", "quorune.combat_damage_snapshot.CombatDamageSnapshot", "quorune.combat_damage_projection.project_combat_damage_assignment"],
-      "positive_tests": ["test_trample_accepts_lethal_then_spill", "test_trample_to_attacked_permanent_never_spills_to_controller"],
-      "negative_tests": ["test_trample_rejects_spill_before_lethal_atomically", "test_malformed_and_noncanonical_assignments_fail_closed"],
-      "interaction_tests": ["test_deathtouch_and_marked_damage_each_reduce_trample_lethal", "test_trample_assigns_lethal_over_indestructible_blocker", "test_lifelink_counts_only_damage_not_prevented_by_protection", "test_double_strike_trample_recomputes_after_blocker_leaves", "test_trample_counter_feeds_offer_and_command_spill_legality"],
-      "multiplayer_tests": ["test_four_player_trample_task_is_seat_scoped_and_replays"],
-      "privacy_tests": ["test_four_player_trample_task_is_seat_scoped_and_replays"],
-      "replay_tests": ["test_four_player_trample_task_is_seat_scoped_and_replays", "test_trample_to_attacked_permanent_never_spills_to_controller"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "combat.damage.assignment.canonical",
+        "combat.damage.assignment.deathtouch"
+      ],
+      "implementation_components": [
+        "quorune.combat_damage_assignment.CombatDamageAssignmentProposal",
+        "quorune.combat_damage_assignment.build_combat_damage_assignment_proposal",
+        "quorune.combat_damage_assignment.trample_assignment_error",
+        "quorune.combat_damage_snapshot.CombatDamageSnapshot",
+        "quorune.combat_damage_projection.project_combat_damage_assignment"
+      ],
+      "positive_tests": [
+        "test_trample_accepts_lethal_then_spill",
+        "test_trample_to_attacked_permanent_never_spills_to_controller",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "negative_tests": [
+        "test_trample_rejects_spill_before_lethal_atomically",
+        "test_malformed_and_noncanonical_assignments_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_deathtouch_and_marked_damage_each_reduce_trample_lethal",
+        "test_trample_assigns_lethal_over_indestructible_blocker",
+        "test_lifelink_counts_only_damage_not_prevented_by_protection",
+        "test_double_strike_trample_recomputes_after_blocker_leaves",
+        "test_trample_counter_feeds_offer_and_command_spill_legality",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_trample_task_is_seat_scoped_and_replays",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "privacy_tests": [
+        "test_four_player_trample_task_is_seat_scoped_and_replays",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "replay_tests": [
+        "test_four_player_trample_task_is_seat_scoped_and_replays",
+        "test_trample_to_attacked_permanent_never_spills_to_controller",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Capability closure reaches the canonical combat snapshot, recipient, APNAP announcement, and damage-batch owner and fails closed if that dependency is unavailable.",
       "implementation_mutation_status": "killed",
@@ -17367,23 +17615,120 @@
     {
       "id": "resolution.effect_sequence.fixed_controller",
       "version": 2,
-      "official_rules": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "101.4",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "121.1",
+        "121.2",
+        "401.4",
+        "402",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9",
+        "701.9a",
+        "701.9c",
+        "701.22",
+        "701.22a",
+        "701.22b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and resolve exactly two mandatory fixed controller instructions in printed order, with exactly one ordinary card draw and one represented fixed controller life change, Scry, or private self-discard instruction.",
-        "inputs": ["one complete source-spanned effect body", "exactly two mandatory fixed instructions", "one positive fixed controller draw", "one positive fixed controller life gain, life loss, or Scry instruction, or one private controller discard of one through four cards", "the canonical semantic continuation"],
-        "outputs": ["one capability-closed CardProgram node", "printed-order execution", "replacement-aware iterative card draws", "replacement-aware fixed life change, private Scry choice, or private controller discard choice", "one simultaneous replacement-aware discard commit", "replay-stable suspension and resume"],
-        "exclusions": ["targets, affected-player groups, optional, modal, conditional, repeated, variable, random, linked-result, or more-than-two-instruction sequences", "multiple draw instructions", "table-wide or opponent life effects in a sequence", "life payments, life-total setting or exchange", "dynamic draw, life, Scry, or discard values", "all-hand, qualified, revealed-card, or another-player-chosen discards", "Surveil and non-Scry library ordering"]
+        "inputs": [
+          "one complete source-spanned effect body",
+          "exactly two mandatory fixed instructions",
+          "one positive fixed controller draw",
+          "one positive fixed controller life gain, life loss, or Scry instruction, or one private controller discard of one through four cards",
+          "the canonical semantic continuation"
+        ],
+        "outputs": [
+          "one capability-closed CardProgram node",
+          "printed-order execution",
+          "replacement-aware iterative card draws",
+          "replacement-aware fixed life change, private Scry choice, or private controller discard choice",
+          "one simultaneous replacement-aware discard commit",
+          "replay-stable suspension and resume"
+        ],
+        "exclusions": [
+          "targets, affected-player groups, optional, modal, conditional, repeated, variable, random, linked-result, or more-than-two-instruction sequences",
+          "multiple draw instructions",
+          "table-wide or opponent life effects in a sequence",
+          "life payments, life-total setting or exchange",
+          "dynamic draw, life, Scry, or discard values",
+          "all-hand, qualified, revealed-card, or another-player-chosen discards",
+          "Surveil and non-Scry library ordering"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.fixed_controller_effect_sequences.FixedControllerEffectSequenceTemplate", "quorune.compiler.affected_player_discard_templates.fixed_controller_discard_effect_template", "quorune.rules.fixed_controller_effect_shapes.fixed_controller_effect_sequence_node_capabilities", "CommanderEngine._continue_resolution", "quorune.drawing.coordinator.begin_draw_sequence", "quorune.selection.apnap.ApnapChoiceOwnerMixin", "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler", "quorune.semantic_choices.scry.ScryChoiceHandler", "quorune.effect_runtime.life_effects._commit", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-      "positive_tests": ["test_spell_trigger_and_activated_contexts_share_sequence_lowering", "test_controller_discard_leaf_and_sequence_shape_are_closed", "test_draw_then_life_commits_in_printed_order", "test_draw_then_controller_discard_is_private_and_replays_exactly", "test_controller_discard_then_draw_commits_in_printed_order"],
-      "negative_tests": ["test_sequence_shape_rejects_open_and_malformed_variants", "test_controller_discard_leaf_and_sequence_shape_are_closed", "test_unsupported_sequence_wording_remains_a_precise_residual", "test_stale_controller_discard_choice_rolls_back_without_resuming"],
-      "interaction_tests": ["test_scry_then_draw_resumes_privately_and_replays_exactly", "test_invalid_remaining_effect_rolls_back_the_choice_command", "test_draw_then_controller_discard_is_private_and_replays_exactly", "test_controller_discard_then_draw_commits_in_printed_order"],
-      "multiplayer_tests": ["test_scry_then_draw_resumes_privately_and_replays_exactly", "test_draw_then_controller_discard_is_private_and_replays_exactly"],
-      "privacy_tests": ["test_scry_then_draw_resumes_privately_and_replays_exactly", "test_draw_then_controller_discard_is_private_and_replays_exactly"],
-      "replay_tests": ["test_scry_then_draw_resumes_privately_and_replays_exactly", "test_draw_then_controller_discard_is_private_and_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.fixed_controller_effect_sequences.FixedControllerEffectSequenceTemplate",
+        "quorune.compiler.affected_player_discard_templates.fixed_controller_discard_effect_template",
+        "quorune.rules.fixed_controller_effect_shapes.fixed_controller_effect_sequence_node_capabilities",
+        "CommanderEngine._continue_resolution",
+        "quorune.drawing.coordinator.begin_draw_sequence",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.semantic_choices.scry.ScryChoiceHandler",
+        "quorune.effect_runtime.life_effects._commit",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "positive_tests": [
+        "test_spell_trigger_and_activated_contexts_share_sequence_lowering",
+        "test_controller_discard_leaf_and_sequence_shape_are_closed",
+        "test_draw_then_life_commits_in_printed_order",
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_controller_discard_then_draw_commits_in_printed_order",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "negative_tests": [
+        "test_sequence_shape_rejects_open_and_malformed_variants",
+        "test_controller_discard_leaf_and_sequence_shape_are_closed",
+        "test_unsupported_sequence_wording_remains_a_precise_residual",
+        "test_stale_controller_discard_choice_rolls_back_without_resuming"
+      ],
+      "interaction_tests": [
+        "test_scry_then_draw_resumes_privately_and_replays_exactly",
+        "test_invalid_remaining_effect_rolls_back_the_choice_command",
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_controller_discard_then_draw_commits_in_printed_order",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "multiplayer_tests": [
+        "test_scry_then_draw_resumes_privately_and_replays_exactly",
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "privacy_tests": [
+        "test_scry_then_draw_resumes_privately_and_replays_exactly",
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "replay_tests": [
+        "test_scry_then_draw_resumes_privately_and_replays_exactly",
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Every sequence node separately declares the exact draw and life, Scry, or private controller-discard capability used by its strict payload; malformed, group-relative, targeted, or blocked component shapes therefore prevent the composite node from closing.",
       "implementation_mutation_status": "killed",
@@ -20099,7 +20444,8 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "negative_tests": [
         "test_all_targets_illegal_counters_by_rules",
@@ -20120,7 +20466,8 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "multiplayer_tests": [
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
@@ -20128,7 +20475,8 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "privacy_tests": [
         "test_hidden_zones_are_rejected_by_target_schema",
@@ -20137,7 +20485,8 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "replay_tests": [
         "test_deflecting_swat_free_cost_and_exact_retarget",
@@ -20147,7 +20496,8 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
       ],
       "required_evidence": [
         "positive",
@@ -20232,7 +20582,9 @@
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
         "test_source_action_pronoun_damage_reuses_closed_target_leaf",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "negative_tests": [
         "test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape",
@@ -20249,17 +20601,23 @@
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "multiplayer_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "privacy_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "replay_tests": [
         "test_battle_damage_and_state_action_replay_exactly",
@@ -20267,7 +20625,9 @@
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "required_evidence": [
         "positive",
@@ -20476,7 +20836,8 @@
         "test_qualified_creature_group_and_public_second_group_form_one_damage_set",
         "test_real_zero_cast_amounts_are_paid_no_ops_across_result_owners",
         "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
-        "test_source_exclusion_is_typed_backward_compatible_and_applied"
+        "test_source_exclusion_is_typed_backward_compatible_and_applied",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "negative_tests": [
         "test_ambiguous_targeted_extra_or_repeated_groups_and_riders_stay_residual",
@@ -20503,7 +20864,8 @@
         "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
         "test_original_thunder_counts_current_beast_permanents_including_kindred",
         "test_public_predicate_set_excludes_source_and_negative_keyword",
-        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler"
+        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "multiplayer_tests": [
         "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
@@ -20520,7 +20882,8 @@
         "test_original_magmaquake_unions_overlapping_creature_walkers_once",
         "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
         "test_original_thunder_counts_current_beast_permanents_including_kindred",
-        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler"
+        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "privacy_tests": [
         "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
@@ -20537,7 +20900,8 @@
         "test_original_magmaquake_unions_overlapping_creature_walkers_once",
         "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
         "test_original_thunder_counts_current_beast_permanents_including_kindred",
-        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler"
+        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "replay_tests": [
         "test_actual_flying_grant_before_resolution_changes_original_earthquake_recipients",
@@ -20554,7 +20918,8 @@
         "test_original_magmaquake_unions_overlapping_creature_walkers_once",
         "test_original_rockcaster_keeps_both_groups_after_actual_source_destruction",
         "test_original_thunder_counts_current_beast_permanents_including_kindred",
-        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler"
+        "test_self_replacement_amount_precedes_admitted_generic_damage_doubler",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
       ],
       "required_evidence": [
         "positive",
@@ -20616,7 +20981,8 @@
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
       ],
       "negative_tests": [
         "test_only_damage_not_life_loss_or_prevented_damage_unlocks_attack",
@@ -20627,23 +20993,27 @@
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
       ],
       "multiplayer_tests": [
         "test_reckless_fireweaver_damages_each_opponent",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
       ],
       "privacy_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
       ],
       "replay_tests": [
         "test_battle_damage_and_state_action_replay_exactly",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
       ],
       "required_evidence": [
         "positive",
@@ -21738,7 +22108,8 @@
         "test_draw_then_controller_discard_is_private_and_replays_exactly",
         "test_fixed_affected_player_discard_generated_registration_promotes_closed_owner",
         "test_fixed_affected_player_discards_compile_across_contexts_and_modes",
-        "test_fixed_count_discard_uses_available_cards_and_skips_empty_hand"
+        "test_fixed_count_discard_uses_available_cards_and_skips_empty_hand",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "negative_tests": [
         "test_controller_discard_leaf_and_sequence_shape_are_closed",
@@ -21751,19 +22122,23 @@
         "test_discard_choice_resumes_following_typed_effect",
         "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
         "test_draw_then_controller_discard_is_private_and_replays_exactly",
-        "test_controller_discard_then_draw_commits_in_printed_order"
+        "test_controller_discard_then_draw_commits_in_printed_order",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "multiplayer_tests": [
         "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
-        "test_draw_then_controller_discard_is_private_and_replays_exactly"
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "privacy_tests": [
         "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
-        "test_draw_then_controller_discard_is_private_and_replays_exactly"
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "replay_tests": [
         "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
-        "test_draw_then_controller_discard_is_private_and_replays_exactly"
+        "test_draw_then_controller_discard_is_private_and_replays_exactly",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
       ],
       "required_evidence": [
         "positive",
@@ -22478,23 +22853,103 @@
     {
       "id": "casting.flashback.fixed_mana",
       "version": 1,
-      "official_rules": ["601.2b", "601.2f", "601.2h", "702.34", "702.34a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.34",
+        "702.34a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile one ordinary fixed-mana or fixed-mana-plus-life Flashback ability into an owner-scoped graveyard cast alternative whose current stack incarnation is exiled instead of moving anywhere else.",
-        "inputs": ["one physical instant or sorcery card", "one source-spanned ordinary fixed Flashback line", "fixed ordinary mana and optional positive fixed life", "complete current CardProgram admission", "the owner's graveyard incarnation", "one selected server-authored Flashback cost option", "ordinary timing, target, additional-cost, and mana-payment authority"],
-        "outputs": ["one owner-private graveyard cast offer", "one fixed alternate mana-cost option", "ordinary spell targets and additional costs", "one noncopiable flashed-back stack designation", "one mandatory stack-leave self-replacement", "replacement-aware public exile and exact replay"],
-        "exclusions": ["variable, hybrid, Phyrexian, snow, and wider nonmana Flashback costs", "Flashback-specific cost increases, reductions, and alternative nonmana payments beyond fixed life", "copied, granted, modified, text-changed, or multiple Flashback instances", "cards whose complete CardProgram remains residual", "spell copies, tokens, inactive faces, and non-instant or non-sorcery cards", "unrepresented graveyard casting prohibitions and permissions outside current typed owners"]
+        "inputs": [
+          "one physical instant or sorcery card",
+          "one source-spanned ordinary fixed Flashback line",
+          "fixed ordinary mana and optional positive fixed life",
+          "complete current CardProgram admission",
+          "the owner's graveyard incarnation",
+          "one selected server-authored Flashback cost option",
+          "ordinary timing, target, additional-cost, and mana-payment authority"
+        ],
+        "outputs": [
+          "one owner-private graveyard cast offer",
+          "one fixed alternate mana-cost option",
+          "ordinary spell targets and additional costs",
+          "one noncopiable flashed-back stack designation",
+          "one mandatory stack-leave self-replacement",
+          "replacement-aware public exile and exact replay"
+        ],
+        "exclusions": [
+          "variable, hybrid, Phyrexian, snow, and wider nonmana Flashback costs",
+          "Flashback-specific cost increases, reductions, and alternative nonmana payments beyond fixed life",
+          "copied, granted, modified, text-changed, or multiple Flashback instances",
+          "cards whose complete CardProgram remains residual",
+          "spell copies, tokens, inactive faces, and non-instant or non-sorcery cards",
+          "unrepresented graveyard casting prohibitions and permissions outside current typed owners"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.flashback.FixedManaFlashbackSpec", "quorune.compiler.flashback_nodes.ordinary_fixed_mana_flashback_keyword_node", "quorune.semantic_runtime.flashback.FixedManaFlashbackHandler", "quorune.card_programs.admission.CompleteCardProgramAdmission", "quorune.compiled_flashback.compiled_fixed_mana_flashback_spec", "quorune.compiled_flashback.compiled_ordinary_zone_cast_permission", "CommanderEngine._compiled_zone_cast_permission", "quorune.rules.casting.costs.build_cast_cost_options", "quorune.rules.casting_additional_cost_groups.FixedLifePaymentAdditionalCost", "quorune.rules.casting.commit.commit_cast", "quorune.zone_object_state.mark_card_flashed_back", "quorune.flashback.flashed_back_leave_replacement", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot"],
-      "positive_tests": ["test_fixed_mana_flashback_compiles_source_spanned_typed_program", "test_fixed_life_flashback_adds_the_existing_payment_capability", "test_flashback_cast_resolves_to_exile_and_replays", "test_fixed_life_flashback_pays_life_and_exiles"],
-      "negative_tests": ["test_nonordinary_flashback_costs_remain_residual", "test_partial_card_withholds_flashback_permission", "test_stale_flashback_contract_rolls_back"],
-      "interaction_tests": ["test_countered_flashback_uses_self_replacement_before_competing_destination", "test_flashback_and_independent_graveyard_permission_offer_distinct_costs", "test_fixed_life_flashback_pays_life_and_exiles"],
-      "multiplayer_tests": ["test_flashback_cast_resolves_to_exile_and_replays"],
-      "privacy_tests": ["test_flashback_cast_resolves_to_exile_and_replays"],
-      "replay_tests": ["test_flashback_cast_resolves_to_exile_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.flashback.FixedManaFlashbackSpec",
+        "quorune.compiler.flashback_nodes.ordinary_fixed_mana_flashback_keyword_node",
+        "quorune.semantic_runtime.flashback.FixedManaFlashbackHandler",
+        "quorune.card_programs.admission.CompleteCardProgramAdmission",
+        "quorune.compiled_flashback.compiled_fixed_mana_flashback_spec",
+        "quorune.compiled_flashback.compiled_ordinary_zone_cast_permission",
+        "CommanderEngine._compiled_zone_cast_permission",
+        "quorune.rules.casting.costs.build_cast_cost_options",
+        "quorune.rules.casting_additional_cost_groups.FixedLifePaymentAdditionalCost",
+        "quorune.rules.casting.commit.commit_cast",
+        "quorune.zone_object_state.mark_card_flashed_back",
+        "quorune.flashback.flashed_back_leave_replacement",
+        "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot"
+      ],
+      "positive_tests": [
+        "test_fixed_mana_flashback_compiles_source_spanned_typed_program",
+        "test_fixed_life_flashback_adds_the_existing_payment_capability",
+        "test_flashback_cast_resolves_to_exile_and_replays",
+        "test_fixed_life_flashback_pays_life_and_exiles",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+      ],
+      "negative_tests": [
+        "test_nonordinary_flashback_costs_remain_residual",
+        "test_partial_card_withholds_flashback_permission",
+        "test_stale_flashback_contract_rolls_back"
+      ],
+      "interaction_tests": [
+        "test_countered_flashback_uses_self_replacement_before_competing_destination",
+        "test_flashback_and_independent_graveyard_permission_offer_distinct_costs",
+        "test_fixed_life_flashback_pays_life_and_exiles",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+      ],
+      "multiplayer_tests": [
+        "test_flashback_cast_resolves_to_exile_and_replays",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+      ],
+      "privacy_tests": [
+        "test_flashback_cast_resolves_to_exile_and_replays",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+      ],
+      "replay_tests": [
+        "test_flashback_cast_resolves_to_exile_and_replays",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking normalized zone-change events or destination replacement prevents the Flashback node from receiving trusted closure; complete-card admission, source identity, cost fingerprints, and the owner-scoped permission independently fail closed.",
       "implementation_mutation_status": "killed",
@@ -29916,7 +30371,11 @@
         "test_original_countered_before_copy_producer_resolves_creates_no_copy",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
         "test_whole_source_certificate_is_enforced_without_forcing_trust",
-        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "negative_tests": [
         "test_fixed_stack_copy_source_span_and_exact_shape_reject_unknown_variants",
@@ -29949,7 +30408,11 @@
         "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
         "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
-        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "multiplayer_tests": [
         "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
@@ -29965,11 +30428,19 @@
         "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
         "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
-        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "privacy_tests": [
         "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
-        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "replay_tests": [
         "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
@@ -29985,7 +30456,11 @@
         "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
         "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
-        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
       ],
       "required_evidence": [
         "positive",
@@ -34592,6 +35067,113 @@
       "dependency_fail_closed_rationale": "The printed cost, linked scalar and registered result authorities must remain present; native withdrawal witnesses are required before family acceptance.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh paid Lightkeeper witness must kill omission of the linked count before family acceptance."
+    },
+    {
+      "id": "quantity_expression.spent_mana_color_count",
+      "version": 1,
+      "official_rules": [
+        "105.1",
+        "105.4",
+        "207.2c",
+        "601.2h",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve spell result amounts from its own committed distinct WUBRG spending, including applicable additional/alternative costs.",
+        "inputs": [
+          "canonical StackItem colored-mana payment provenance",
+          "version6 spell scalar in a complete existing result slot"
+        ],
+        "outputs": [
+          "zero through five result amount",
+          "ordinary typed targets, consequences and private choices"
+        ],
+        "exclusions": [
+          "source-entry or past-permanent payment facts",
+          "arbitrary target cardinality and unrepresented result predicates",
+          "copied payment spending, colorless as a color and client-authored payment history"
+        ]
+      },
+      "dependencies": [
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "implementation_components": [
+        "quorune.model.StackItem",
+        "quorune.compiler.mana_color_result_nodes.mana_color_result_node",
+        "quorune.mana_spent_amounts.mana_color_amount_dependencies",
+        "quorune.mana_spent_amounts.mana_color_amount_runtime_dependencies",
+        "quorune.mana_spent_amounts.resolve_spent_mana_color_amount"
+      ],
+      "positive_tests": [
+        "test_original_spell_consumers_keep_nonempty_programs_and_whole_source_admission",
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "negative_tests": [
+        "test_versioned_color_count_rejects_noncolors_duplicates_and_unbound_readers",
+        "test_source_grammar_keeps_unsupported_entry_antecedents_targets_and_siblings_residual",
+        "test_runtime_cannot_omit_spent_color_or_scalar_authority_or_change_to_a_trigger"
+      ],
+      "interaction_tests": [
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "multiplayer_tests": [
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "privacy_tests": [
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "replay_tests": [
+        "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+      ],
+      "status": "trusted",
+      "blockers": [],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The spent-color reader and scalar result authority must remain present; malformed provenance and non-resolving readers reject before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh actual paid Painful Truths must distinguish committed colors from zero before family acceptance."
     }
   ]
 }

@@ -156,6 +156,7 @@
     "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/live-battlefield-quantity-cards.json",
     "tests/fixtures/main-phase-trigger-cards.json",
+    "tests/fixtures/mana-color-result-cards.json",
     "tests/fixtures/manifest-cards.json",
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/modal-token-program-cards.json",
