@@ -111,6 +111,7 @@
       "test_shroud_targeting",
       "test_single_object_zone_transition",
       "test_source_block_pair",
+      "test_source_fixed_protection",
       "test_source_keyword_choices",
       "test_source_protection_choices",
       "test_targeted_exile_effect_clauses",
@@ -687,6 +688,7 @@
       "test_haste_rules",
       "test_landwalk",
       "test_menace_rules",
+      "test_source_fixed_protection",
       "test_temporary_declaration_restriction_effects"
     ],
     "compiler-cardprogram": [
@@ -742,6 +744,7 @@
       "test_rule_capabilities",
       "test_self_cast_restrictions",
       "test_self_counter_keyword_actions",
+      "test_source_fixed_protection",
       "test_source_references",
       "test_static_action_rules",
       "test_storm_rules",
@@ -812,6 +815,7 @@
       "test_public_state_quantity_actions",
       "test_query_power_toughness_definitions",
       "test_saga_counter_progression",
+      "test_source_fixed_protection",
       "test_station_rules",
       "test_sunburst_rules",
       "test_support_counter_placement",

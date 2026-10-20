@@ -67,3 +67,10 @@ def is_closed_source_protection_choice_program(program):
     required = set(source_protection_choice_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage))
     return bool(required) and required <= set(program.capability_dependencies)
+
+
+def is_closed_source_protection_program(program):
+    if is_closed_source_protection_choice_program(program):
+        return True
+    from .source_fixed_protection_shapes import is_closed_source_fixed_protection_program
+    return is_closed_source_fixed_protection_program(program)

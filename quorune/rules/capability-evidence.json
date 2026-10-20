@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "647556d8027b4ca10b33f596dce6afa6e594708a7e6676cf10dd46b95a8afdff",
-  "declaration_source_fingerprint": "667a7bab6ee10fa20c312003178d543a543117e8a8bb5120b7baf4fd73c29b5a",
+  "registry_fingerprint": "6d8fece8d3abc6a09d8f38e4780b28b8848507fb303ce028c4db9254881d5246",
+  "declaration_source_fingerprint": "5c82fad62f3b1eab0f3e36373cd54899690c846c1ec0ca6af7b1db1c1cd2fb6e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -109588,6 +109588,656 @@
         "commander_review"
       ],
       "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_source_grant_tracks_control_change_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_source_reference_does_not_follow_a_blinked_incarnation",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_white_protection_does_not_prevent_a_real_red_bolt",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_source_grant_tracks_control_change_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_white_protection_does_not_prevent_a_real_red_bolt",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fresh_keeper_witness_kills_omitted_compiler_result",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fresh_keeper_witness_kills_omitted_protection_grant",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_direct_bundle_shape_is_closed_for_every_fixed_color",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_white_protection_does_not_prevent_a_real_red_bolt",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_minimum_source_protection_and_duration_authority_cannot_be_omitted",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_unknown_qualities_and_independent_echo_permission_remain_residual",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_two_originals_have_complete_nonempty_fixed_source_programs",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_source_grant_tracks_control_change_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_source_reference_does_not_follow_a_blinked_incarnation",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
+    },
+    {
+      "capability_id": "continuous.resolution.source_fixed_protection",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_fixed_protection.SourceFixedProtectionTests.test_fixed_white_protection_does_not_prevent_a_real_red_bolt",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source protection resolves after whole mana or server-random discard costs using the existing typed temporary bundle. Original native Bolt/Aura/white-target/nonmatching-color consequences retain printed abilities, correct incarnation/control, cleanup, exact pending loaded replay, principal rollback and unchosen private hand projections."
     },
     {
       "capability_id": "continuous.resolution.source_keyword_choice",
@@ -273028,5 +273678,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "7751db4da89b8daec2e8a93e3eb1b0db91c98c54c9977ef17b550e6ba0401dd6"
+  "fingerprint": "9a93c508922fad336729c6f36be57cc115a06b6201f1ef388a5e38b0179b5713"
 }

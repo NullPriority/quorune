@@ -6595,6 +6595,22 @@
         "test_casting_activation_proposal_equivalence",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-source-color-protection",
+      "patterns": [
+        "quorune/compiler/source_fixed_protection.py",
+        "quorune/rules/source_fixed_protection_shapes.py",
+        "quorune/compiler/source_protection_choices.py",
+        "tests/test_source_fixed_protection.py",
+        "tests/fixtures/source-fixed-protection-cards.json"
+      ],
+      "test_modules": [
+        "test_source_fixed_protection",
+        "test_source_protection_choices",
+        "test_source_keyword_choices",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
