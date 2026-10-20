@@ -15,6 +15,23 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Extend typed activation prices with announced X, fixed mana alternatives,
+  current generic modifiers, selected creature counters and complete source
+  counter distributions, preserving shared offer and payment authority.
+
+- Bind Multikicker result counts, actual spell mana colors and target-player
+  hand counts to their existing immutable quantity and resolution owners.
+
+- Compose qualified damage sets, announced target counts, kicked results and
+  source-specific target reductions while retaining complete target legality.
+
+- Support represented negative characteristic queries, attached and temporary
+  keyword removal, quantified keyword grants and source keyword choices through
+  the existing layer, combat, duration and resolution-choice owners.
+
+- Commit Increment counters from sealed spell-payment facts and current source
+  characteristics, preserving intervening conditions and replacement ordering.
+
 - Resolve legal zero-target homogeneous effects without creating empty mutation
   batches, preserving independent later results and ordinary target revalidation.
 
