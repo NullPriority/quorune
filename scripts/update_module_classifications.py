@@ -53,6 +53,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/activated_ability_descriptor.py",
         "quorune/attachment_duration.py",
         "quorune/spell_mana_counts.py",
+        "quorune/spell_mana_conditions.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
         "quorune/ability_line_normalization.py",
@@ -209,6 +210,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         )
     ) or relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/target_controller_information.py",
         "quorune/activation_x.py",
         "quorune/whole_hand_discard.py",
         "quorune/random_discard.py",
@@ -547,6 +549,10 @@ def _owner(relative: str, layer: str) -> str:
         return 'continuous_effects'
     if relative == 'quorune/spell_mana_counts.py':
         return 'mana_rules'
+    if relative == 'quorune/spell_mana_conditions.py':
+        return 'semantic_choices'
+    if relative in {'quorune/rules/paid_mana_resolution.py','quorune/target_controller_information.py'}:
+        return 'targets_and_choices'
     if relative == 'quorune/rules/paid_color_entry.py':
         return 'counter_placement'
     if relative.startswith("quorune/rules/"):

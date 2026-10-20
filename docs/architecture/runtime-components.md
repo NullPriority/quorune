@@ -503,6 +503,22 @@ amount enters the existing self-entry and counter-replacement pipeline.
 Ability-word labels add no behavior. [ADR 0121](../adr/0121-spell-payment-counts-and-entry-conditions.md)
 records the payment, copy and historical-execution boundaries.
 
+Resolution-condition schema six adds results selected by actual units of one
+concrete mana type paid for the original spell. Schema seven selects a fixed
+same-target replacement before either damage result is applied. Both use the
+existing condition and child-effect registries and require independent payment,
+condition, prefix and branch capabilities. Older condition schemas retain
+their shapes. Copies have no paid mana; missing original facts fail closed.
+
+Mandatory prefixes execute first. A represented single controller-life query
+reads the resulting current battlefield, and a private selection starts only
+after earlier draws finish. An information-derived target controller uses the
+existing announced incarnation, current effective control or controller facts
+captured at the canonical departure boundary. It adds no player target and
+never follows a returned incarnation. Initial target invalidity still prevents
+the whole spell from resolving. [ADR 0122](../adr/0122-paid-mana-resolution-and-target-information.md)
+records the ordered program and information-reference boundaries.
+
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
 source-controller, source-opponent, or global battlefield queries into

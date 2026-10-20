@@ -211,6 +211,15 @@ original spell is still on the stack. Records without runtime-trust metadata
 retain their earlier fallback-lookup behavior. This does not admit an
 unsupported copy-producing card or alter copied casting decisions.
 
+Paid-mana result instructions retain a closed threshold and an original-spell
+mana-unit reference. The bound count and selected branch use the existing
+resolution continuation; private Scry still uses its ordinary principal-scoped
+selection frame. An optional `target_controller_information_lki` context book
+stores version-one physical identity, zone-change counter and departure
+controller only for a represented target-information reference. Loading keeps
+that original incarnation; re-entry does not replace it. Earlier records omit
+the book, and earlier resolution-condition schemas keep their payloads.
+
 Upkeep-relative control history is one such additive boundary. New records pin
 its version in both the initial checkpoint and manifest; records without the
 marker remain in the historical no-history mode so later replay does not add

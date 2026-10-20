@@ -15,6 +15,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Lower complete paid-mana spell results through the existing condition owner,
+  preserving added versus replacement damage, after-prefix quantities, private
+  selections and whole-spell target revalidation.
+- Retain current or departure controller information for a bound target
+  incarnation without adding another target or following a returned object.
+
 - Record versioned actual mana-unit payments for current casts and lower fixed
   paid-color self-entry counters through the existing replacement owner,
   including acquired copy abilities and historical no-count execution.

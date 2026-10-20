@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "7a5adf888b043684787e4c68ef554561f8bd7962a38979f06e40cb5473e25fd7",
-  "declaration_source_fingerprint": "2f057e8478695e597c12957137836b926d50dbfaa3a33a617aa6dec90b98ce65",
+  "registry_fingerprint": "238f21e5cb7eb97ecb5852e0bd63eb1d472fe843140e88f7b682d44630a6d6d7",
+  "declaration_source_fingerprint": "02be3fd8d372a146221787450b77c8ab822a302c8e9d3cf64c4f43fda2b65ea9",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -201019,6 +201019,726 @@
       "applicability_note": "Unpublished same-target Kicker self-replacement. New schema5 requires one identical complete public target and explicit same-object anaphor; all native, runtime dependency, malformed and fresh mutation evidence must pass before gain acceptance."
     },
     {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_rally_counts_created_humans_after_its_prefix",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_ritual_counters_before_vigilance_and_expires_normally",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_vision_draws_before_private_scry_and_resumes_exactly",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_spell_copy_keeps_default_damage_and_has_no_original_paid_mana",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_fresh_paid_result_compiler_and_actual_count_reader_mutants_are_killed",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_condition_reference_result_and_information_codecs_reject_wrong_shapes",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_spell_copy_keeps_default_damage_and_has_no_original_paid_mana",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_two_black_units_keep_draw_and_life_but_do_not_create_food",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_verified_authority_withdrawals_and_stripped_runtime_dependencies_reject",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_whole_spell_fizzles_after_target_departure_without_food_or_draw",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_rally_counts_created_humans_after_its_prefix",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_ritual_counters_before_vigilance_and_expires_normally",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_vision_draws_before_private_scry_and_resumes_exactly",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_seven_originals_have_complete_nonempty_whole_spell_programs",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_vision_draws_before_private_scry_and_resumes_exactly",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_rally_counts_created_humans_after_its_prefix",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_vision_draws_before_private_scry_and_resumes_exactly",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_spell_copy_keeps_default_damage_and_has_no_original_paid_mana",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.effect.paid_mana_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_whole_spell_fizzles_after_target_departure_without_food_or_draw",
+      "official_rule_ids": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "interaction",
       "test_id": "tests.test_graveyard_resolution_conditions.GraveyardResolutionConditionTests.test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
@@ -207412,6 +208132,295 @@
         "traditional"
       ],
       "applicability_note": "An actual control spell moves the observer to a third seat while its damage trigger is pending; the old trigger still draws for its original controller, with private projection, pending reload and complete pre-action replay."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_controller_information_uses_current_then_lki_and_not_a_returned_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_fresh_target_controller_information_reader_omission_is_killed",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_fresh_target_departure_information_omission_is_killed",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_condition_reference_result_and_information_codecs_reject_wrong_shapes",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_verified_authority_withdrawals_and_stripped_runtime_dependencies_reject",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_whole_spell_fizzles_after_target_departure_without_food_or_draw",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_controller_information_uses_current_then_lki_and_not_a_returned_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_whole_spell_fizzles_after_target_departure_without_food_or_draw",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
     },
     {
       "capability_id": "stack.copy.fixed_instant_or_sorcery",
@@ -279087,5 +280096,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "97c3c985be38e4e1b4c3049a714636364a6295b00aaa555cf0137110ef7e8e1e"
+  "fingerprint": "ada9ca8343e3f7f378d92d5fa707a4f033e8bbef2b06fe185808f776cc97c2ad"
 }

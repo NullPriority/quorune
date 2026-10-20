@@ -1357,6 +1357,8 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',
         'trigger.event.normalized_counter_placement': 'trigger-event-normalized-counter-placement',
         'resolution.effect.fixed_cast_fact': 'fixed-cast-fact-condition',
+        'resolution.effect.paid_mana_condition': 'fixed-paid-mana-resolution-condition',
+        'resolution.target_controller_information': 'fixed-target-controller-information',
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,

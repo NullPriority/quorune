@@ -4639,6 +4639,36 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/paid_mana_resolution_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/paid_mana_spell_faces.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/paired_spell_faces.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -11875,6 +11905,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/paid_mana_resolution.py",
+      "layer": "rules",
+      "owning_subsystem": "targets_and_choices",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/permanent_predicate_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -16100,6 +16144,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/spell_mana_conditions.py",
+      "layer": "domain",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/spell_mana_counts.py",
       "layer": "domain",
       "owning_subsystem": "mana_rules",
@@ -16331,6 +16387,20 @@
       "file": "quorune/target_characteristics.py",
       "layer": "rules",
       "owning_subsystem": "targeting",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/target_controller_information.py",
+      "layer": "rules",
+      "owning_subsystem": "targets_and_choices",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -17200,5 +17270,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4a642799828dfb264e9e4239da7792d0de288d3d805b8d5f56c769422dc77087"
+  "fingerprint": "4a0c7f7dd91401ff62816626ab393d5c182119baff056597ecc0a5b7ac711b73"
 }

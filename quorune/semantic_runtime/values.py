@@ -121,6 +121,14 @@ def resolve_semantic_value(
 
     if isinstance(value, list):
         return [resolve_semantic_value(host, child, item) for child in value]
+    if isinstance(value, Mapping) and value.get('kind')=='cast_mana_spent_units':
+        from ..rules.paid_mana_resolution import resolve_cast_mana_units
+        try:return resolve_cast_mana_units(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind')=='target_controller_information':
+        from ..target_controller_information import resolve_target_controller_information
+        try:return resolve_target_controller_information(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get('kind') == 'reflexive_trigger_program':
         from ..reflexive_trigger_model import ReflexiveTriggerProgram
         try:

@@ -218,6 +218,15 @@ def fixed_damage_node_capabilities(
     if "cr-120-damage" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if (target_schema is None and isinstance(effect.get('target'),Mapping)
+            and effect['target'].get('kind')=='target_controller_information'):
+        from ..target_controller_information import controller_reference_index,TARGET_CONTROLLER_INFORMATION_CAPABILITY,TARGET_CONTROLLER_INFORMATION_MECHANIC
+        try:index=controller_reference_index(effect['target'])
+        except (TypeError,ValueError):return ()
+        if (TARGET_CONTROLLER_INFORMATION_MECHANIC not in mechanics or index!=0
+                or set(effect)!={'op','source','target','amount'} or effect['op']!='damage'
+                or effect['source']!='$source' or not _positive_int(effect['amount'])):return ()
+        return (TARGET_CONTROLLER_INFORMATION_CAPABILITY,'damage.amount.positive','damage.result.player_life','damage.source.stack_current_or_lki')
     fixed_set = _fixed_set_damage_capabilities(
         effect, target_schema, mechanics
     )

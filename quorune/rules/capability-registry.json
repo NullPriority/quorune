@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 424,
+  "registry_version": 425,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -38211,6 +38211,194 @@
       "dependency_fail_closed_rationale": "Typed original-cast facts and complete-card entry descriptors are mandatory; omitted capability or unavailable provenance cannot supply the new amount.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual Ardenvale casts kill omission of the entry compiler, payment capture, or actual colored-unit contribution.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.effect.paid_mana_condition",
+      "version": 1,
+      "official_rules": [
+        "207.2c",
+        "601.2h",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.4b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "An immutable original-spell actual mana-type unit threshold selects a complete ordered result or a same-target fixed self-replacement through the existing resolution condition owner.",
+        "inputs": [
+          "source-pinned complete spell instructions",
+          "original-incarnation concrete mana counts",
+          "one fixed positive mana-type threshold",
+          "independently closed prefix and result children"
+        ],
+        "outputs": [
+          "ordered conditional instructions",
+          "unchanged target contract",
+          "canonical token, draw, life, damage and selection effects"
+        ],
+        "exclusions": [
+          "unknown or untracked original payment",
+          "mana-source qualities such as snow or Treasure",
+          "unowned branch bodies, ambiguous anaphora, independent conditional targets and nested condition programs"
+        ]
+      },
+      "dependencies": [
+        "casting.payment.mana_unit_counts",
+        "resolution.effect.public_condition"
+      ],
+      "implementation_components": [
+        "quorune.spell_mana_conditions.ManaSpentCondition",
+        "quorune.rules.paid_mana_resolution.resolve_cast_mana_units",
+        "quorune.compiler.paid_mana_resolution_templates.paid_mana_resolution_template"
+      ],
+      "positive_tests": [
+        "test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+        "test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+        "test_actual_rally_counts_created_humans_after_its_prefix",
+        "test_actual_ritual_counters_before_vigilance_and_expires_normally",
+        "test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+        "test_actual_vision_draws_before_private_scry_and_resumes_exactly",
+        "test_seven_originals_have_complete_nonempty_whole_spell_programs"
+      ],
+      "negative_tests": [
+        "test_condition_reference_result_and_information_codecs_reject_wrong_shapes",
+        "test_spell_copy_keeps_default_damage_and_has_no_original_paid_mana",
+        "test_two_black_units_keep_draw_and_life_but_do_not_create_food",
+        "test_verified_authority_withdrawals_and_stripped_runtime_dependencies_reject",
+        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+        "test_actual_rally_counts_created_humans_after_its_prefix",
+        "test_actual_ritual_counters_before_vigilance_and_expires_normally",
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+        "test_actual_vision_draws_before_private_scry_and_resumes_exactly",
+        "test_spell_copy_keeps_default_damage_and_has_no_original_paid_mana"
+      ],
+      "multiplayer_tests": [
+        "test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot"
+      ],
+      "privacy_tests": [
+        "test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+        "test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_actual_vision_draws_before_private_scry_and_resumes_exactly"
+      ],
+      "replay_tests": [
+        "test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+        "test_actual_pumpkin_returns_target_draws_then_creates_caster_food",
+        "test_actual_rally_counts_created_humans_after_its_prefix",
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+        "test_actual_vision_draws_before_private_scry_and_resumes_exactly",
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+        "test_spell_copy_keeps_default_damage_and_has_no_original_paid_mana",
+        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Original typed payment facts and complete prefix/branch capability closure are required independently at binding and runtime.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original Foreboding Fruit actions detect omission of paid-result compilation or the actual mana-unit reader contribution.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.target_controller_information",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Read the current or captured departure controller of an already announced target incarnation for one fixed untargeted player result.",
+        "inputs": [
+          "one original target identity and zone-change counter",
+          "current effective controller or same-incarnation departure information",
+          "source-pinned typed reference"
+        ],
+        "outputs": [
+          "one information-derived player recipient without another target announcement",
+          "canonical damage source and player-life result"
+        ],
+        "exclusions": [
+          "unbound or ambiguous antecedents",
+          "new incarnations replacing the referenced object",
+          "unavailable last-known information",
+          "unsupported player-result grammar"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.target_controller_information.resolve_target_controller_information",
+        "quorune.target_controller_information.pin_target_controller_departures"
+      ],
+      "positive_tests": [
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_controller_information_uses_current_then_lki_and_not_a_returned_incarnation",
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot"
+      ],
+      "negative_tests": [
+        "test_condition_reference_result_and_information_codecs_reject_wrong_shapes",
+        "test_verified_authority_withdrawals_and_stripped_runtime_dependencies_reject",
+        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_controller_information_uses_current_then_lki_and_not_a_returned_incarnation",
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot"
+      ],
+      "multiplayer_tests": [
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot"
+      ],
+      "privacy_tests": [
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster"
+      ],
+      "replay_tests": [
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The original legal target, matching incarnation and current/LKI controller information are mandatory; unavailable information cannot fall back to the caster or owner.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh native Searing Barrage witness distinguishes observer A, owner B and current controller C; a reader omission mapping the recipient to A fails.",
       "blockers": [],
       "status": "trusted"
     }
