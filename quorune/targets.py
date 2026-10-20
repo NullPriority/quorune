@@ -701,78 +701,79 @@ def target_plan(
     )
 
 
+def _rebase_mode_effect(value: Any, offset: int, count: int, group_reference: str | None = None) -> Any:
+    """Project one mode-local reference tree into the chosen target sequence."""
+    if isinstance(value, Mapping):
+        return {
+            key: _rebase_mode_effect(child, offset, count, group_reference)
+            for key, child in value.items()
+        }
+    if isinstance(value, list):
+        return [_rebase_mode_effect(child, offset, count, group_reference) for child in value]
+    if isinstance(value, tuple):
+        return tuple(_rebase_mode_effect(child, offset, count, group_reference) for child in value)
+    if value == "$targets":
+        if group_reference is not None:
+            return group_reference
+        return [f"$target.{offset + index}" for index in range(count)]
+    if not isinstance(value, str):
+        return value
+    match = re.fullmatch(
+        r"\$target(?P<attribute>\.(?:controller|owner|mana_value|colors|type_line))?"
+        r"(?P<separator>[.\[])(?P<index>\d+)(?P<close>\]?)",
+        value,
+    )
+    if match is None:
+        return value
+    local_index = int(match.group("index"))
+    if local_index >= count:
+        return value
+    return (
+        "$target"
+        f"{match.group('attribute') or ''}"
+        f"{match.group('separator')}"
+        f"{offset + local_index}"
+        f"{match.group('close')}"
+    )
+
+
+def _mode_target_frames(
+    schema: Mapping[str, Any], modes: Sequence[str],
+    target_groups: Mapping[str, Sequence[Any]] | None,
+) -> tuple[tuple[Mapping[str, Any], int, str | None], ...]:
+    """Use the same normalized groups and IDs as target selection."""
+    plan = target_plan(schema, modes, require_modes=False)
+    cursor = 0
+    frames = []
+    for mode in modes:
+        definition = schema['modes'][str(mode)]
+        raw = definition.get('groups')
+        group_count = 1 if raw is None else len(raw)
+        groups = plan.groups[cursor:cursor + group_count]
+        count = (
+            sum(len(target_groups.get(group.group_id, ())) for group in groups)
+            if target_groups is not None else sum(group.max_targets for group in groups)
+        )
+        reference = f'$target_group.{groups[0].group_id}' if raw is None and len(groups)==1 else None
+        frames.append((definition, count, reference))
+        cursor += group_count
+    return tuple(frames)
+
+
 def mode_effects(
     schema: Mapping[str, Any],
     modes: Sequence[str],
     *,
     target_groups: Mapping[str, Sequence[Any]] | None = None,
 ) -> list[dict[str, Any]]:
-    definitions = schema.get("modes")
-    if not isinstance(definitions, Mapping):
+    if not isinstance(schema.get('modes'), Mapping):
         return []
-
-    def rebase(value: Any, offset: int, count: int) -> Any:
-        if isinstance(value, Mapping):
-            return {
-                key: rebase(child, offset, count)
-                for key, child in value.items()
-            }
-        if isinstance(value, list):
-            return [rebase(child, offset, count) for child in value]
-        if isinstance(value, tuple):
-            return tuple(rebase(child, offset, count) for child in value)
-        if value == "$targets":
-            return [f"$target.{offset + index}" for index in range(count)]
-        if not isinstance(value, str):
-            return value
-        match = re.fullmatch(
-            r"\$target(?P<attribute>\.(?:controller|owner|mana_value|colors|type_line))?"
-            r"(?P<separator>[.\[])(?P<index>\d+)(?P<close>\]?)",
-            value,
-        )
-        if match is None:
-            return value
-        local_index = int(match.group("index"))
-        if local_index >= count:
-            return value
-        return (
-            "$target"
-            f"{match.group('attribute') or ''}"
-            f"{match.group('separator')}"
-            f"{offset + local_index}"
-            f"{match.group('close')}"
-        )
-
-    effects: list[dict[str, Any]] = []
+    effects = []
     target_offset = 0
-    for mode in modes:
-        definition = definitions.get(str(mode))
-        if isinstance(definition, Mapping):
-            groups = definition.get("groups")
-            group_ids = (
-                [str(group.get("id")) for group in groups]
-                if isinstance(groups, (list, tuple))
-                and all(isinstance(group, Mapping) for group in groups)
-                else []
-            )
-            if target_groups is not None:
-                target_count = sum(
-                    len(target_groups.get(group_id, ()))
-                    for group_id in group_ids
-                )
-            else:
-                try:
-                    target_count = sum(
-                        group.max_targets
-                        for group in target_plan(
-                            {"groups": list(groups or [])}
-                        ).groups
-                    )
-                except (TypeError, ValueError):
-                    target_count = 0
-            effects.extend(
-                rebase(dict(effect), target_offset, target_count)
-                for effect in definition.get("effects", [])
-            )
-            target_offset += target_count
+    for definition, count, group_reference in _mode_target_frames(schema, modes, target_groups):
+        effects.extend(
+            _rebase_mode_effect(dict(effect), target_offset, count, group_reference)
+            for effect in definition.get('effects', ())
+        )
+        target_offset += count
     return effects

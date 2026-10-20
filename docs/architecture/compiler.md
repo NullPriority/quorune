@@ -2609,6 +2609,14 @@ component, so removal, control changes and source departure affect subsequent
 prices. Variable, target-qualified, history-qualified and unrepresented source
 zone forms remain residual. Recognizing a modifier does not remove unrelated
 Companion, return, Adapt or other whole-card residuals.
+Quantified target characteristic clauses reuse the existing schema-6
+target-set owner. The compiler converts the plural result to its singular
+template without dropping a conjunctive keyword grant, and the shape owner
+uses canonical keyword mechanic IDs. Unrepresented result clauses remain
+residual. Payload-derived runtime requirements retain the set and keyword
+authorities through ordinary, activated, triggered and modal instruction
+wrappers, while existing quantity owners validate composed scalar amounts.
+
 `compiler/targeted_spell_costs.py` lowers complete source-face conditional
 generic reductions to a sealed public target predicate in the existing cost
 component registry. Battlefield permanent predicates, public graveyard

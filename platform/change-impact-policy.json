@@ -6459,6 +6459,24 @@
         "test_fixed_controller_effect_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "quantified-target-keywords-and-modal-scopes",
+      "patterns": [
+        "quorune/compiler/target_characteristic_sets.py",
+        "quorune/rules/target_characteristic_sets.py",
+        "quorune/targets.py",
+        "quorune/semantic_runtime/values.py",
+        "tests/fixtures/quantified-target-keyword-cards.json",
+        "tests/test_quantified_target_keywords.py"
+      ],
+      "test_modules": [
+        "test_quantified_target_keywords",
+        "test_target_characteristic_sets",
+        "test_cast_creature_targets",
+        "test_madness_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -396,8 +396,8 @@ def _stack_mode_effects(
         target_schema,
         item.modes,
         target_groups=(
-            item.context.get("target_groups_current")
-            or item.context.get("target_groups")
+            item.context.get("target_groups")
+            or item.context.get("target_groups_current")
             or {}
         ),
     )

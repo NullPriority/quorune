@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "450171b19662fd31fcfa97267b7919f60d266f10668a47133faea10b5f22b0ec",
-  "declaration_source_fingerprint": "d83654254666e0569450f495f0c21a9e763b1f3f9d66a64e24ed8c7361c0bad0",
+  "registry_fingerprint": "35a5aa095f7f27183567d86624ba5a9801ad65606238d991e334ae734120a7a3",
+  "declaration_source_fingerprint": "692588b72537db2357dd100019105ba01910786c214f0ceea95a91c059fcda1c",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -48712,6 +48712,40 @@
     },
     {
       "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalRuntimeTests.test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
       "official_rule_ids": [
@@ -48729,6 +48763,23 @@
     },
     {
       "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalCompilerTests.test_modal_compiler_mutation_is_killed",
       "official_rule_ids": [
@@ -48743,6 +48794,23 @@
         "commander_review"
       ],
       "applicability_note": "Remove fixed modal compiler production and prove a formerly exact real spell returns to material residuals."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_fresh_original_rampage_kills_restored_implicit_mode_target_omission",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
     },
     {
       "capability_id": "choice.modal.fixed_one",
@@ -48780,6 +48848,23 @@
     },
     {
       "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "negative",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordCompilerTests.test_scoped_modal_reference_uses_only_the_server_captured_current_group",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalCompilerTests.test_actual_fixed_choose_one_corpus_is_capability_closed",
       "official_rule_ids": [
@@ -48794,6 +48879,40 @@
         "commander_review"
       ],
       "applicability_note": "Compile real two- and three-mode instant and sorcery faces, including named modes and mixed targeted, target-free, and fixed-sequence branches, only when every branch is independently capability closed."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordCompilerTests.test_modal_target_sets_use_the_same_implicit_group_ids_and_counts_as_selection",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
     },
     {
       "capability_id": "choice.modal.fixed_one",
@@ -48814,6 +48933,23 @@
     },
     {
       "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalRuntimeTests.test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
       "official_rule_ids": [
@@ -48828,6 +48964,23 @@
         "commander_review"
       ],
       "applicability_note": "Save and exactly replay the selected fixed mode, mode-specific target, payment, and typed destruction result."
+    },
+    {
+      "capability_id": "choice.modal.fixed_one",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
     },
     {
       "capability_id": "choice.modal.fixed_one",
@@ -97825,6 +97978,279 @@
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
       "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
       "test_id": "tests.test_resolved_target_set_zero.ResolvedTargetCharacteristicZeroRuntimeTests.test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
       "official_rule_ids": [
         "115.1a",
@@ -97972,6 +98398,279 @@
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_resolved_target_set_zero.ResolvedTargetCharacteristicZeroRuntimeTests.test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
       "official_rule_ids": [
         "115.1a",
@@ -98056,6 +98755,48 @@
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
       "evidence_class": "mutation",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_fresh_original_coordinated_assault_kills_canonical_first_strike_adoption_omission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_fresh_original_coordinated_assault_kills_omitted_target_set_application",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "mutation",
       "test_id": "tests.test_resolved_target_set_zero.ResolvedTargetCharacteristicZeroRuntimeTests.test_fresh_query_witness_kills_omitted_nonzero_target_characteristic_application",
       "official_rule_ids": [
         "115.1a",
@@ -98119,6 +98860,48 @@
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
       "evidence_class": "negative",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordCompilerTests.test_unknown_results_malformed_keywords_and_withdrawn_keyword_authority_remain_closed",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_all_ten_originals_are_fully_playable_and_cannot_omit_keyword_or_set_authority",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolved_target_set_zero.ResolvedTargetCharacteristicZeroCompilerTests.test_zero_resolution_optin_keeps_compiled_and_malformed_instruction_contracts",
       "official_rule_ids": [
         "115.1a",
@@ -98157,6 +98940,300 @@
         "commander_review"
       ],
       "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordCompilerTests.test_plural_result_lowers_once_with_canonical_first_strike_authority",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
     },
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
@@ -98245,6 +99322,279 @@
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
       "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "privacy",
       "test_id": "tests.test_resolved_target_set_zero.ResolvedTargetCharacteristicZeroRuntimeTests.test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
       "official_rule_ids": [
         "115.1a",
@@ -98304,6 +99654,279 @@
         "commander_review"
       ],
       "applicability_note": "Normally admitted query-derived target-set modifiers resolve at zero with complete typed validation; signed/nonzero/keyword-only controls, locked quantities, target invalidation, privacy, rollback, loaded replay and fresh native omissions preserve existing semantics."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quantified_target_keywords.QuantifiedTargetKeywordRuntimeTests.test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed quantified target results preserve plural and canonical keyword meaning, each selected incarnation, modal group scopes/original offsets, normal alternate costs, privacy, rollback, loaded replay and fresh native omissions."
     },
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
@@ -252567,5 +254190,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "330754b9ba9a85e4b27b582e863963fccefbe3d211cf83ffd2138996f406a546"
+  "fingerprint": "9108d96b56775700cc95260b626957f0ec493f787eac6a1e2d10aee1556c08d3"
 }

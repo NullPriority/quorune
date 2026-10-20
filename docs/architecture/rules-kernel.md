@@ -861,6 +861,14 @@ refines only existing typed result owners; fixed discard, draw and keyword
 consequences continue after a zero variable result. Missing or malformed
 payment provenance and readers outside spell resolution fail closed.
 
+Modal effect projection uses the canonical target plan for group identities
+and cardinalities, including flat mode definitions. Original selected counts
+retain later-mode reference offsets after target departure. A flat mode's
+target-set reference resolves through its server-captured current group, so
+an illegal target is filtered without moving another mode's target role.
+Missing or malformed captured groups fail closed. Existing explicitly grouped
+reference projections retain their legacy representation.
+
 Source-face target-dependent reductions use the same announced-target
 witnesses for offers and accepted commands. One matching target applies one
 printed reduction once, including when several targets qualify. The cost owner

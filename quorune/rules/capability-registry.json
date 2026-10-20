@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 408,
+  "registry_version": 409,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -22180,23 +22180,88 @@
     {
       "id": "choice.modal.fixed_one",
       "version": 1,
-      "official_rules": ["601.2b", "601.2c", "700.2", "700.2a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "601.2b",
+        "601.2c",
+        "700.2",
+        "700.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and announce exactly one mode from an ordinary two- or three-mode Choose one instant or sorcery, then resolve only that mode through its existing typed effect owners.",
-        "inputs": ["one complete instant or sorcery face", "an exact Choose one header", "two or three ordered bullet modes", "one selected stable mode ID", "independently capability-closed effects and targets for every mode"],
-        "outputs": ["one authoritative modal spell program", "mode-specific legal target projection", "announcement-time mode and target commitment", "resolution of only the selected mode", "exact child capability closure"],
-        "exclusions": ["choose two, choose one or more, choose one or both, repeatable modes, entwine, spree, escalate, conditional mode counts, nonspell abilities, nonbullet text, nested modes, unsupported or empty modes", "a mode with more than one independent target schema", "any mode lacking an existing trusted compiler and runtime owner"]
+        "inputs": [
+          "one complete instant or sorcery face",
+          "an exact Choose one header",
+          "two or three ordered bullet modes",
+          "one selected stable mode ID",
+          "independently capability-closed effects and targets for every mode"
+        ],
+        "outputs": [
+          "one authoritative modal spell program",
+          "mode-specific legal target projection",
+          "announcement-time mode and target commitment",
+          "resolution of only the selected mode",
+          "exact child capability closure"
+        ],
+        "exclusions": [
+          "choose two, choose one or more, choose one or both, repeatable modes, entwine, spree, escalate, conditional mode counts, nonspell abilities, nonbullet text, nested modes, unsupported or empty modes",
+          "a mode with more than one independent target schema",
+          "any mode lacking an existing trusted compiler and runtime owner"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.modal_templates.FixedChooseOneModalSpellTemplate", "quorune.compiler.modal_templates.fixed_choose_one_modal_spell_template", "quorune.rules.modal_capability_shapes.fixed_choose_one_modal_branches", "quorune.rules.capabilities.capability_dependencies_for_node", "quorune.targets.available_modes", "quorune.targets.target_plan", "quorune.targets.mode_effects", "CommanderEngine._cast", "CommanderEngine._continue_resolution"],
-      "positive_tests": ["test_actual_fixed_choose_one_corpus_is_capability_closed"],
-      "negative_tests": ["test_modal_parser_and_capability_shape_fail_closed", "test_unsupported_modal_grammars_remain_material_residuals"],
-      "interaction_tests": ["test_compiled_modal_choice_resolves_only_selected_mode_and_replays"],
-      "multiplayer_tests": ["test_compiled_modal_choice_resolves_only_selected_mode_and_replays"],
-      "privacy_tests": ["test_compiled_modal_choice_resolves_only_selected_mode_and_replays"],
-      "replay_tests": ["test_compiled_modal_choice_resolves_only_selected_mode_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.modal_templates.FixedChooseOneModalSpellTemplate",
+        "quorune.compiler.modal_templates.fixed_choose_one_modal_spell_template",
+        "quorune.rules.modal_capability_shapes.fixed_choose_one_modal_branches",
+        "quorune.rules.capabilities.capability_dependencies_for_node",
+        "quorune.targets.available_modes",
+        "quorune.targets.target_plan",
+        "quorune.targets.mode_effects",
+        "CommanderEngine._cast",
+        "CommanderEngine._continue_resolution",
+        "quorune.targets._mode_target_frames",
+        "quorune.targets._rebase_mode_effect"
+      ],
+      "positive_tests": [
+        "test_actual_fixed_choose_one_corpus_is_capability_closed",
+        "test_modal_target_sets_use_the_same_implicit_group_ids_and_counts_as_selection",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
+      ],
+      "negative_tests": [
+        "test_modal_parser_and_capability_shape_fail_closed",
+        "test_unsupported_modal_grammars_remain_material_residuals",
+        "test_scoped_modal_reference_uses_only_the_server_captured_current_group"
+      ],
+      "interaction_tests": [
+        "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group"
+      ],
+      "multiplayer_tests": [
+        "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response"
+      ],
+      "privacy_tests": [
+        "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
+      ],
+      "replay_tests": [
+        "test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The modal shape reconstructs every branch with its own exact mechanics, effects, and target schema; any malformed branch, missing child capability owner, or uncovered child mechanic rejects the entire modal node.",
       "implementation_mutation_status": "killed",
@@ -25187,18 +25252,35 @@
         "quorune.compiler.target_characteristic_sets.target_characteristic_set_template",
         "quorune.rules.target_characteristic_sets.target_characteristic_set_capabilities",
         "quorune.continuous_effect_state.apply_target_characteristics",
-        "quorune.rules.target_characteristic_sets.decode_target_characteristics"
+        "quorune.rules.target_characteristic_sets.decode_target_characteristics",
+        "quorune.rules.target_characteristic_sets.target_characteristic_set_runtime_dependencies"
       ],
       "positive_tests": [
         "test_fixed_target_sets_keep_count_range_modifier_and_source_span",
         "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
         "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
-        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal",
+        "test_plural_result_lowers_once_with_canonical_first_strike_authority",
+        "test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+        "test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+        "test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+        "test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+        "test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+        "test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+        "test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+        "test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+        "test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+        "test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group"
       ],
       "negative_tests": [
         "test_descriptor_unknown_quantities_and_dynamic_variants_fail_closed",
         "test_omitted_target_set_effect_mutant_is_killed_by_actual_nahiri",
-        "test_zero_resolution_optin_keeps_compiled_and_malformed_instruction_contracts"
+        "test_zero_resolution_optin_keeps_compiled_and_malformed_instruction_contracts",
+        "test_unknown_results_malformed_keywords_and_withdrawn_keyword_authority_remain_closed",
+        "test_all_ten_originals_are_fully_playable_and_cannot_omit_keyword_or_set_authority"
       ],
       "interaction_tests": [
         "test_actual_sick_and_tired_applies_to_surviving_original_target",
@@ -25207,24 +25289,76 @@
         "test_actual_wind_sail_grants_only_selected_original_creatures_and_expires",
         "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
         "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
-        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal",
+        "test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+        "test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+        "test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+        "test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+        "test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+        "test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+        "test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+        "test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+        "test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+        "test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group"
       ],
       "multiplayer_tests": [
         "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays",
         "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
         "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
-        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal",
+        "test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+        "test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+        "test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+        "test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+        "test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+        "test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+        "test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+        "test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+        "test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+        "test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group"
       ],
       "privacy_tests": [
         "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
         "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
-        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal",
+        "test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+        "test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+        "test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+        "test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+        "test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+        "test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+        "test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+        "test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+        "test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+        "test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group"
       ],
       "replay_tests": [
         "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays",
         "test_zero_and_nonzero_query_results_resolve_and_remain_locked_after_actual_land_play",
         "test_zero_weakening_and_keyword_only_results_preserve_their_complete_consequences",
-        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal"
+        "test_zero_result_valid_without_targets_differs_from_all_chosen_targets_becoming_illegal",
+        "test_original_coordinated_assault_accepts_zero_one_or_two_distinct_targets_and_applies_both_results",
+        "test_existing_public_quantity_target_set_keeps_zero_and_nonzero_runtime_admission",
+        "test_original_coordinated_first_strike_kills_a_real_blocker_before_normal_damage_and_expires",
+        "test_original_windborne_charge_keeps_exact_controlled_count_and_only_surviving_incarnation",
+        "test_original_invoker_activation_applies_fixed_keywords_to_both_selected_targets",
+        "test_original_kennel_master_pending_targets_and_departed_source_keep_indestructible",
+        "test_original_invigorated_rampage_modes_keep_one_large_or_two_small_modifiers",
+        "test_original_burning_sun_convoke_pays_with_own_target_and_grants_haste_to_each",
+        "test_original_cutthroat_grants_real_lifelink_to_each_creatures_own_controller",
+        "test_original_rampage_modal_set_keeps_only_legal_original_targets_after_response",
+        "test_original_quickbeam_self_and_other_treefolk_entries_keep_each_selected_set",
+        "test_original_abandon_reason_discards_through_actual_casting_cost_then_casts_for_madness",
+        "test_actual_rampage_copy_preserves_mode_and_retargets_only_its_two_creature_group"
       ],
       "required_evidence": [
         "positive",
