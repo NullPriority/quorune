@@ -548,6 +548,17 @@ mana and sorcery timing keep their own authority. The version-1 wire remains
 unchanged; variable amounts, all counters and other payment objects are outside
 this source-only grammar.
 
+Source color-protection choices reuse the same resolution choice and the
+existing version-7 temporary ability bundle. Each of the five color branches
+contains one typed ProtectionSpec fragment for the exact source incarnation.
+The locked ability controller chooses after costs; control changes preserve
+that actor, and blink cannot transfer the grant. Ordinary targeting, damage,
+blocking, Aura/Equipment state-based checks and cleanup consume the existing
+protection and layer-six owners. The source ordinary-keyword reader continues
+to own its unversioned leaves; versioned protection bundles have their own
+complete minimum-dependency validation. Mixed qualities and unsupported
+sibling costs remain residual.
+
 Fixed source keyword choices compose the existing scalar option choice with
 the source-incarnation characteristic owner. The ability controller chooses
 one printed ordinary keyword during resolution, even if control of its source

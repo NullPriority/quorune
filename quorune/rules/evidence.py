@@ -9,6 +9,7 @@ import re
 from typing import Any, Mapping
 
 from ..util import stable_json
+from .evidence_storage import read_evidence_document
 
 
 CAPABILITY_EVIDENCE_SCHEMA_VERSION = 1
@@ -251,7 +252,7 @@ def load_capability_evidence_index(
     *,
     registry: Any,
 ) -> tuple[dict[str, Any], str]:
-    value = json.loads(Path(path).read_text(encoding="utf-8"))
+    value = read_evidence_document(Path(path))
     fingerprint = validate_capability_evidence_index(
         value, registry=registry
     )
