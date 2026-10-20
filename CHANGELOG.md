@@ -15,6 +15,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Record versioned actual mana-unit payments for current casts and lower fixed
+  paid-color self-entry counters through the existing replacement owner,
+  including acquired copy abilities and historical no-count execution.
+- Preserve exact core permanent-spell-copy provenance during current replay
+  while retaining the older no-runtime-trust lookup contract.
+
 - Add two separately paid fixed-mana Reconfigure abilities and attachment-bound
   type changes that survive ability loss, preserve object continuity and end
   through canonical unattachment and state-based stabilization.

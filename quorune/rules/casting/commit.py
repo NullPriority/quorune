@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...spell_mana_counts import capture_spell_mana_counts
 
 from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
 from .reveal_costs import commit_reveal_additional_costs
@@ -965,6 +966,7 @@ def _create_spell_item(
             for color in "WUBRG"
             if type(spent.get(color, 0)) is int and spent.get(color, 0) > 0
         ),
+        mana_spent_counts=capture_spell_mana_counts(host.state.spell_mana_counts_version,card,spent),
         context={
             **_cast_provenance_context(proposal, spent),
             **paid_entry_copy_cast_context(selected_option),

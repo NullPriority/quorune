@@ -6699,6 +6699,22 @@
         "test_attached_static_characteristics",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-paid-color-entry-counters",
+      "patterns": [
+        "quorune/spell_mana_counts.py",
+        "quorune/compiler/paid_color_entry_templates.py",
+        "quorune/rules/paid_color_entry.py",
+        "tests/test_paid_color_entry.py",
+        "tests/fixtures/paid-color-entry-cards.json"
+      ],
+      "test_modules": [
+        "test_paid_color_entry",
+        "test_sunburst_rules",
+        "test_copied_self_entry_counters",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
