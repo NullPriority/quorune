@@ -443,8 +443,8 @@ class SimpleEnchantModelTests(unittest.TestCase):
                 self.assertFalse(qualified.faces[0].residuals)
 
         for restriction in (
-            "creature without flying",
-            "creature with power 3 or less",
+            "creature without flying or vigilance",
+            "creature with power X or less",
             "creature with another Aura attached to it",
         ):
             with self.subTest(unsupported=restriction):

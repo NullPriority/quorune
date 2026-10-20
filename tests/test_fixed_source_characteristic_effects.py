@@ -487,7 +487,7 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 "Creature — Test",
             ),
             (
-                "{1}: This creature gains your choice of flying or haste until end of turn.",
+                "{1}: This creature gains your choice of flying or protection from a color of your choice until end of turn.",
                 "Creature — Test",
             ),
             (

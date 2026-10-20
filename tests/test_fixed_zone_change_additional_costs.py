@@ -221,7 +221,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         )
 
         unsupported_result = (
-            "As an additional cost to cast this spell, pay X life.\n"
+            "As an additional cost to cast this spell, pay X life and discard a card.\n"
             "This spell deals X damage divided as you choose among any number "
             "of target creatures."
         )
@@ -239,7 +239,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         )
         self.assertEqual(
             [
-                "As an additional cost to cast this spell, pay X life.",
+                "As an additional cost to cast this spell, pay X life and discard a card.",
                 (
                     "This spell deals X damage divided as you choose among "
                     "any number of target creatures."
