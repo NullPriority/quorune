@@ -156,6 +156,7 @@ class ReplacementContinuation:
     turn_action_frame: FrozenMap | None = None
     held_triggers: tuple[PendingTriggerItem, ...] = ()
     opening_hand_entry: FrozenMap | None = None
+    state_based_destruction_selections: tuple[str | FrozenMap, ...] = ()
 
     @classmethod
     def from_dict(
@@ -203,7 +204,7 @@ class ReplacementContinuation:
             return _decode_turn_counter_action_continuation(
                 cls, value, batch, effects
             )
-        if resume_kind == "state_based_destruction":
+        if resume_kind in {"state_based_destruction", "state_based_zone_change"}:
             from ..state_based_replacement_coordination import decode_state_based_replacement
             return decode_state_based_replacement(cls, value, batch, effects)
         if resume_kind == 'conditional_return':
@@ -315,6 +316,7 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             "turn-counter action continuation",
         ),
         "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
+        "state_based_zone_change": (_STATE_BASED_DESTRUCTION_FIELDS | {'state_based_destruction_selections'}, "state-based zone continuation"),
         'conditional_return': (_CONDITIONAL_RETURN_FIELDS,'conditional return continuation'),
     }
     shape = shapes.get(resume_kind)

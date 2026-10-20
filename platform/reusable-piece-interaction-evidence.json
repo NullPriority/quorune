@@ -17382,6 +17382,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Kyler sums charge, lore and +1/+1 counters on its current source. A real Human entry adds a +1/+1 counter and increases the bonus; actual charge removal reduces it. Opponent Humans stay unmodified and private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+      "piece_ids": [
+        "capability.permanent.destroy.umbra_armor",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "permanent.destroy.umbra_armor",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Flame Slash reaches the affected controller choice between current Aura-owned Umbra protections. The chosen Aura destination then suspends separately for existing reviewed Dauthi effects before damage clearing or movement. Pending load retains the first choice; the body survives with cleared damage, only the selected Aura moves to exile with one void counter, and replay preserves the whole command sequence."
     }
   ]
 }

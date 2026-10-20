@@ -245,6 +245,15 @@ before committing any untap attempt. Reference-array forms expose cumulative
 `subset_maxima`, mandatory `maximal_refs`, and distinctness. Historical optional
 continuations retain their original shape without an empty limit field.
 
+The closed `state_based_zone_change` replacement continuation retains the
+public state-based frame and zone selections, with a separate
+`state_based_destruction_selections` array for preceding destruction choices.
+Reload resumes both domains before any state-based batch mutation. Wrong
+principals, stale frames, missing fields and a batch from the wrong event
+domain fail closed. The older `state_based_destruction` payload keeps its
+original keys and omits the new array. Runtime trust identity distinguishes
+the corrected execution from earlier records.
+
 Control-instruction execution is also bound to the existing runtime-trust
 identity. Correcting a same-controller instruction does not rename its readable
 descriptor or reset the control-history marker. Records pinned to the prior

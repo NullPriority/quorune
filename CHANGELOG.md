@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Suspend competing graveyard-destination replacements for state-based damage
+  and zero-toughness moves before mutation, retaining prior Umbra choices,
+  simultaneous source departures, principal privacy and pending replay.
+
 - Extend typed activation prices with announced X, fixed mana alternatives,
   current generic modifiers, selected creature counters and complete source
   counter distributions, preserving shared offer and payment authority.
