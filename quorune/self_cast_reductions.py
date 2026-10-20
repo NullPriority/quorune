@@ -12,6 +12,7 @@ from .drawing import drawn_this_turn
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .object_query import object_matches_query, object_query_result
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
+from .rules.self_cost_turn_counts import COUNTED_TURN_FACTS, self_cost_turn_count
 
 
 class SelfCastReductionError(ValueError):
@@ -50,6 +51,9 @@ class CastReductionMetricKind(str, Enum):
 
 
 class CastReductionTurnFact(str, Enum):
+    CREATURE_DEATH_COUNT = 'creature_death_count'
+    OPPONENT_SPELL_CAST_COUNT = 'opponent_spell_cast_count'
+    CONTROLLER_CARD_DRAW_COUNT = 'controller_card_draw_count'
     CREATURE_DIED = "creature_died"
     CONTROLLER_CAST_ANOTHER_SPELL = "controller_cast_another_spell"
     OPPONENT_CAST_TWO_SPELLS = "opponent_cast_two_spells"
@@ -165,6 +169,9 @@ class CastReductionMetric:
     aggregate: PublicCharacteristicAggregateSpec | None = None
 
     def _validate_extended_shape(self) -> bool:
+        if (isinstance(self.turn_fact, CastReductionTurnFact) and self.turn_fact.value in COUNTED_TURN_FACTS
+                and (self.schema_version != 2 or self.kind is not CastReductionMetricKind.TURN_VALUE)):
+            raise SelfCastReductionError('Counted turn facts require the explicit version2 counted form')
         if self.kind is CastReductionMetricKind.OPPONENT_COUNT:
             if (type(self.schema_version) is not int or self.schema_version not in {1, 2}
                     or not isinstance(self.queries, tuple) or self.queries
@@ -652,6 +659,8 @@ def _turn_value(
     seat: str,
     fact: CastReductionTurnFact,
 ) -> int:
+    if fact.value in COUNTED_TURN_FACTS:
+        return self_cost_turn_count(host, seat, fact)
     if fact is CastReductionTurnFact.CONTROLLER_DISCARDED_COUNT:
         return sum(
             event.actor == seat for event in host._current_turn_history("card_discarded")

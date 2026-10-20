@@ -283,6 +283,7 @@
       "test_targeted_spell_costs",
       "test_trample_assignment_integration",
       "test_trigger_processing_owner",
+      "test_turn_count_self_costs",
       "test_typed_ability_fragments",
       "test_undaunted",
       "test_untap_selection_limits",
@@ -662,6 +663,7 @@
       "test_static_action_permissions",
       "test_static_action_rules",
       "test_suspend_rules",
+      "test_turn_count_self_costs",
       "test_typecycling",
       "test_typed_activated_ability_catalog",
       "test_unearth_rules"
@@ -755,6 +757,7 @@
       "test_targeted_graveyard_return_effect_clauses",
       "test_targeted_return_to_hand_effect_clauses",
       "test_targeted_tap_state_effect_clauses",
+      "test_turn_count_self_costs",
       "test_unleash_rules"
     ],
     "core-domain": [

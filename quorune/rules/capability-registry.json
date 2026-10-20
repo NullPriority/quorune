@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 417,
+  "registry_version": 418,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37473,6 +37473,109 @@
       "dependency_fail_closed_rationale": "Complete direct-source color bundle and each source/protection/duration minimum are independently required even after rebuilding closure metadata. Unknown fields, targets, qualities and Echo-price siblings remain unadmitted.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh atomic native Keeper cases kill omitted compiler-result production and actual version7 continuous-grant creation. The runtime witness reaches real Bolt invalidation; random discard, Aura removal, ordinary printed keywords and unchosen hand privacy are independently asserted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.cost.self_public_turn_count",
+      "version": 7,
+      "official_rules": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Counted creature deaths, opponent spell casts and caster card draws price one source-pinned spell before costs lock.",
+        "inputs": [
+          "immutable current-turn death and cast facts",
+          "actual caster draw-count tracker",
+          "complete printed generic self reduction"
+        ],
+        "outputs": [
+          "shared offered/accepted complete spell price with zero generic floor",
+          "unchanged printed result amounts and colored costs"
+        ],
+        "exclusions": [
+          "other history counts",
+          "colored/qualified cast predicates",
+          "unavailable historical data outside the current represented journal",
+          "historical records whose authoritative turn journal is disabled retain that established disabled-history contract"
+        ]
+      },
+      "dependencies": [
+        "casting.cost.self_public_reduction"
+      ],
+      "implementation_components": [
+        "quorune.rules.self_cost_turn_counts.self_cost_turn_count",
+        "quorune.rules.self_cost_turn_counts.self_cost_turn_count_dependencies",
+        "quorune.compiler.cast_cost_modifier_templates._object_count_metric",
+        "quorune.self_cast_reductions.CastReductionMetric"
+      ],
+      "positive_tests": [
+        "test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+        "test_actual_inspired_fire_counts_draws_without_changing_four_damage",
+        "test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature",
+        "test_three_originals_have_complete_admitted_cost_programs"
+      ],
+      "negative_tests": [
+        "test_counted_authority_and_base_cost_owner_cannot_be_withdrawn",
+        "test_counted_metrics_require_v2_count_form_and_preserve_legacy_truth_payloads",
+        "test_generic_floor_after_four_real_deaths_keeps_both_colored_requirements",
+        "test_legacy_disabled_journal_does_not_substitute_the_presentation_log",
+        "test_malformed_counted_metric_is_rejected_by_the_runtime_requirement_reader",
+        "test_real_bounce_does_not_count_as_a_creature_death"
+      ],
+      "interaction_tests": [
+        "test_actual_draw_count_preserves_old_threshold_truth_and_turn_reset",
+        "test_actual_multiple_deaths_are_counts_and_do_not_reduce_colored_mana",
+        "test_countered_opponent_spell_counts_but_current_discovery_does_not",
+        "test_death_during_real_mana_payment_cannot_retroactively_reduce_locked_cost",
+        "test_flashback_receives_death_count_and_exiles_after_real_return",
+        "test_generic_floor_after_four_real_deaths_keeps_both_colored_requirements",
+        "test_real_bounce_does_not_count_as_a_creature_death"
+      ],
+      "multiplayer_tests": [
+        "test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+        "test_actual_multiple_deaths_are_counts_and_do_not_reduce_colored_mana",
+        "test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature",
+        "test_countered_opponent_spell_counts_but_current_discovery_does_not"
+      ],
+      "privacy_tests": [
+        "test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+        "test_actual_inspired_fire_counts_draws_without_changing_four_damage",
+        "test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature"
+      ],
+      "replay_tests": [
+        "test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+        "test_actual_draw_count_preserves_old_threshold_truth_and_turn_reset",
+        "test_actual_inspired_fire_counts_draws_without_changing_four_damage",
+        "test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature",
+        "test_death_during_real_mana_payment_cannot_retroactively_reduce_locked_cost",
+        "test_flashback_receives_death_count_and_exiles_after_real_return",
+        "test_generic_floor_after_four_real_deaths_keeps_both_colored_requirements",
+        "test_legacy_disabled_journal_does_not_substitute_the_presentation_log"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Counted metrics require explicit version2 TURN_VALUE form and new fine-grained authority independently of rebuilt base closure. Malformed descriptor readers return an invalid-shape blocker; base/count withdrawal keeps complete originals residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh atomic original Rebirth cases kill both zeroed actual public count and omitted counted-price production. Complete colored payments, zero generic floor, source Flashback, nondeath contrast, countered opponent cast and locked cost are independently observed.",
       "blockers": [],
       "status": "trusted"
     }

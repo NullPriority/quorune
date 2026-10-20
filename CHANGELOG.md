@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Price source spell reductions from complete public current-turn death,
+  opponent-cast and actual draw counts, preserving generic floors, colored
+  payments, Flashback and the locked cost before mana activation.
+
 - Resolve fixed-color source protection through the existing typed ability
   bundle after complete activation costs, retaining printed abilities, exact
   source identity, ordinary protection consequences and cleanup.
