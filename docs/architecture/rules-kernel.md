@@ -58,6 +58,16 @@ discount. Generic and colored components reduce only their corresponding cost
 requirements, with a zero floor. A face-down casting method suppresses printed
 self-reduction abilities while retaining independently applicable external
 modifiers through the existing cost owner.
+
+Counted self-price turn facts use an explicit versioned counted form for
+creature deaths, opponents' spell casts and the caster's actual draws. Death
+and cast counts consume the authoritative current-turn journal; draws consume
+the existing draw transaction's counter. Reveals, Scry, bounce and the current
+cast are not substitute events. A countered spell remains cast, and source
+Flashback uses the same reduction before its complete cost locks. Generic
+reductions floor at zero and preserve colored costs and result amounts.
+Legacy truth-valued turn facts and draw thresholds keep their encoded meaning;
+historical records with disabled journals retain that compatibility mode.
 Undaunted uses the same total-cost stage with the casting player's current
 in-game opponents. Eliminated players do not contribute, repeated instances
 accumulate, and a later elimination does not change an already locked cost.

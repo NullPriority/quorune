@@ -6611,6 +6611,21 @@
         "test_source_keyword_choices",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "counted-public-turn-self-costs",
+      "patterns": [
+        "quorune/rules/self_cost_turn_counts.py",
+        "quorune/self_cast_reductions.py",
+        "tests/test_turn_count_self_costs.py",
+        "tests/fixtures/turn-count-self-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_turn_count_self_costs",
+        "test_fixed_self_cost_surfaces",
+        "test_fixed_spell_cost_reductions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

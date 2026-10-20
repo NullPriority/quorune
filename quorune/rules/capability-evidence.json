@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "6d8fece8d3abc6a09d8f38e4780b28b8848507fb303ce028c4db9254881d5246",
-  "declaration_source_fingerprint": "5c82fad62f3b1eab0f3e36373cd54899690c846c1ec0ca6af7b1db1c1cd2fb6e",
+  "registry_fingerprint": "ef9fbce1fd9369ea3f1050890e8a44815344edab3991bc03258c19512e0e8bb7",
+  "declaration_source_fingerprint": "0ab5fe5cafb3beee023954f4f606b7a37f5b6c5d11479ecaffa0fd48050da363",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -38183,6 +38183,686 @@
         "commander_review"
       ],
       "applicability_note": "The rejected principal, resource or face-down attempt leaves complete authoritative state unchanged."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_draw_count_preserves_old_threshold_truth_and_turn_reset",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_multiple_deaths_are_counts_and_do_not_reduce_colored_mana",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_countered_opponent_spell_counts_but_current_discovery_does_not",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_death_during_real_mana_payment_cannot_retroactively_reduce_locked_cost",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_flashback_receives_death_count_and_exiles_after_real_return",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_generic_floor_after_four_real_deaths_keeps_both_colored_requirements",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_real_bounce_does_not_count_as_a_creature_death",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_multiple_deaths_are_counts_and_do_not_reduce_colored_mana",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_countered_opponent_spell_counts_but_current_discovery_does_not",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_fresh_rebirth_kills_omitted_counted_price",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_fresh_rebirth_kills_omitted_counted_price_producer",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_counted_authority_and_base_cost_owner_cannot_be_withdrawn",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_counted_metrics_require_v2_count_form_and_preserve_legacy_truth_payloads",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_generic_floor_after_four_real_deaths_keeps_both_colored_requirements",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_legacy_disabled_journal_does_not_substitute_the_presentation_log",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_malformed_counted_metric_is_rejected_by_the_runtime_requirement_reader",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_real_bounce_does_not_count_as_a_creature_death",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_inspired_fire_counts_draws_without_changing_four_damage",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_three_originals_have_complete_admitted_cost_programs",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_inspired_fire_counts_draws_without_changing_four_damage",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_discovery_counts_only_opponent_casts_and_completes_private_scry_draw",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_draw_count_preserves_old_threshold_truth_and_turn_reset",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_inspired_fire_counts_draws_without_changing_four_damage",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_actual_rebirth_counts_a_real_death_and_returns_the_selected_creature",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_death_during_real_mana_payment_cannot_retroactively_reduce_locked_cost",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_flashback_receives_death_count_and_exiles_after_real_return",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_generic_floor_after_four_real_deaths_keeps_both_colored_requirements",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
+    },
+    {
+      "capability_id": "casting.cost.self_public_turn_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_turn_count_self_costs.TurnCountSelfCostTests.test_legacy_disabled_journal_does_not_substitute_the_presentation_log",
+      "official_rule_ids": [
+        "109.5",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original native casts consume actual public death/opponent-cast/draw counts. All generic costs floor at zero while colored costs and result amounts stay unchanged. Countered prior spells, Flashback/exile, locked price before mana, nondeath bounce, current-turn reset, malformed reader closure, principal rollback and private loaded pre-action replay have independent controls."
     },
     {
       "capability_id": "casting.cost.self_target_generic_reduction",
@@ -273678,5 +274358,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "9a93c508922fad336729c6f36be57cc115a06b6201f1ef388a5e38b0179b5713"
+  "fingerprint": "c7d65a512e7f5841ff6a1bd14c778a0f071f5369b0f11ac87f993aade2b0e84b"
 }

@@ -18,6 +18,7 @@ from ..self_cast_reductions import (
     SelfSpellCostReductionSpec,
     SelfSpellCostReductionTerm,
 )
+from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
 from ..semantic_runtime.cast_costs import (
     FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,
     FIXED_SPELL_COST_REDUCTION_EVENT,
@@ -452,6 +453,9 @@ def _object_count_metric(value: str) -> CastReductionMetric | None:
         return scalar
     queries: list[CastReductionObjectQuery] = []
     turn_value = {
+        "creature that died this turn": CastReductionTurnFact.CREATURE_DEATH_COUNT,
+        "spell your opponents have cast this turn": CastReductionTurnFact.OPPONENT_SPELL_CAST_COUNT,
+        "card you've drawn this turn": CastReductionTurnFact.CONTROLLER_CARD_DRAW_COUNT,
         "card you've cycled or discarded this turn": (
             CastReductionTurnFact.CONTROLLER_DISCARDED_COUNT
         ),
@@ -708,6 +712,7 @@ def self_spell_cost_reduction_handler(
             if metric is None:
                 return None
             specification = SelfSpellCostReductionSpec((_term(reduction, metric),))
+    counted_dependencies = self_cost_turn_count_dependencies(specification.to_dict())
     return (
         "self-spell-cost-public-reduction-v1",
         {
@@ -716,7 +721,8 @@ def self_spell_cost_reduction_handler(
             "event": FIXED_SPELL_COST_REDUCTION_EVENT,
             "reduction": specification.to_dict(),
         },
-        SELF_SPELL_COST_REDUCTION_CAPABILITY_ID,
+        ((SELF_SPELL_COST_REDUCTION_CAPABILITY_ID, *counted_dependencies)
+         if counted_dependencies else SELF_SPELL_COST_REDUCTION_CAPABILITY_ID),
     )
 
 
