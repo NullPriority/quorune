@@ -548,6 +548,14 @@ mana and sorcery timing keep their own authority. The version-1 wire remains
 unchanged; variable amounts, all counters and other payment objects are outside
 this source-only grammar.
 
+Ordinary two-arm activation prices use that same immutable option model when
+both printed arms have the same source-tap resource. The compiler retains each
+complete mana vector and the original cost text. Offer and commit apply current
+generic increases to each arm and pay only the selected arm, with one source
+tap. The runtime dependency reader validates option descriptors and requires
+their existing mana-cost authority. Distinct nonmana resources, variable prices
+and independently unsupported results remain residual.
+
 Fixed complex activation mana costs remain inside that same catalog and action
 path. One typed option records the selected colored-hybrid or two-brid vector,
 the selected Phyrexian life alternative, and any required snow-mana count.

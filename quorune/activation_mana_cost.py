@@ -14,6 +14,20 @@ _COLORS = frozenset("WUBRG")
 _MAX_OPTIONS = 128
 
 
+def activation_mana_option_runtime_dependencies(program: Any) -> tuple[str, ...]:
+    """Keep typed activation price alternatives bound to their existing owner."""
+    schema = getattr(program, "cost_schema", None)
+    if not isinstance(schema, Mapping) or not schema.get("mana_cost_options"):
+        return ()
+    rows = schema["mana_cost_options"]
+    if not isinstance(rows, (list, tuple)) or getattr(program, "event", None) != "activate":
+        raise ValueError("Activation mana options require their complete activation cost schema")
+    options = tuple(ActivationManaCostOption.from_dict(row) for row in rows)
+    if len({option.option_id for option in options}) != len(options):
+        raise ValueError("Activation mana option identities must be unique")
+    return ("activation.mana_cost.fixed_complex",)
+
+
 def _requirements(value: Mapping[str, int]) -> dict[str, int]:
     unknown = set(value).difference(_MANA_KEYS)
     if unknown:

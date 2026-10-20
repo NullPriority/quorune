@@ -15,10 +15,15 @@ from ..multikicker_result_amounts import multikicker_amount_runtime_dependencies
 from ..mana_spent_amounts import mana_color_amount_runtime_dependencies
 from ..rules.selected_counter_costs import selected_counter_runtime_dependencies
 from ..rules.activation.source_counter_choices import any_source_counter_runtime_dependencies
+from ..activation_mana_cost import activation_mana_option_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(activation_mana_option_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_activation_mana_options:invalid:{exc}')
     try:
         required.update(any_source_counter_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:

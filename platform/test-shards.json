@@ -52,6 +52,7 @@
       "test_action_proposals",
       "test_activation_restrictions",
       "test_additional_token_compiler",
+      "test_alternative_activation_mana",
       "test_ante_rules",
       "test_any_source_counter_costs",
       "test_basic_land_type_mana",

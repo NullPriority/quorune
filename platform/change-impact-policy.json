@@ -6534,6 +6534,21 @@
         "test_quest_counter_sacrifice_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ordinary-alternative-activation-mana",
+      "patterns": [
+        "quorune/activation_mana_cost.py",
+        "quorune/compiler/activation_mana_costs.py",
+        "tests/fixtures/alternative-activation-cost-cards.json",
+        "tests/test_alternative_activation_mana.py"
+      ],
+      "test_modules": [
+        "test_alternative_activation_mana",
+        "test_complex_activation_mana_costs",
+        "test_any_source_counter_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

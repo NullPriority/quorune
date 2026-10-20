@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9eecdc3fa76f633d914500b2d079a8b5ed8fafafd6058715adbaa0da81266c0e",
-  "declaration_source_fingerprint": "90aaf5cc66252f6779bdf128e4bf5ab6173a94184bdbf5ca6e6fd266aa618756",
+  "registry_fingerprint": "30974e9186e64021e714552dbbbcdf9fdb2a6472f03f0d7875309f4e05f14e25",
+  "declaration_source_fingerprint": "92910965a7805e4a7eebdd657faf7803791a9efe6364d25e61e396c71897e302",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -4107,6 +4107,111 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
       "official_rule_ids": [
         "106.3",
@@ -4296,6 +4401,111 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
       "official_rule_ids": [
         "106.3",
@@ -4359,6 +4569,27 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "mutation",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_fresh_actual_granite_witness_kills_omitted_alternative_cost_production",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "mutation",
       "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_compiler_and_snow_provenance_mutants_are_killed",
       "official_rule_ids": [
         "106.3",
@@ -4376,6 +4607,69 @@
         "commander_review"
       ],
       "applicability_note": "Remove compiler option lowering or erase current snow provenance and require exact compilation or action availability to reject the survivor."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_mana_option_dependency_reader_rejects_incomplete_or_duplicate_descriptors",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_runtime_cannot_omit_the_mana_option_owner",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_unsupported_resource_branches_variable_symbols_and_independent_result_stay_residual",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "activation.mana_cost.fixed_complex",
@@ -4485,6 +4779,132 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_four_originals_preserve_raw_cost_and_expose_two_complete_owned_mana_vectors",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
       "official_rule_ids": [
         "106.3",
@@ -4590,6 +5010,111 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
       "official_rule_ids": [
         "106.3",
@@ -4649,6 +5174,111 @@
         "commander_review"
       ],
       "applicability_note": "Keep the provenance lot journal out of another principal's projection while exposing only ordinary public mana aggregates and legal actions."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_source_departure_keeps_the_paid_ability_and_its_damage",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "activation.mana_cost.fixed_complex",
@@ -5067,6 +5697,28 @@
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
       "official_rule_ids": [
@@ -5416,6 +6068,28 @@
         "commander_review"
       ],
       "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
@@ -5903,6 +6577,28 @@
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
       "evidence_class": "privacy",
       "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
       "official_rule_ids": [
@@ -6255,6 +6951,28 @@
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
       "evidence_class": "replay",
       "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
       "official_rule_ids": [
@@ -6604,6 +7322,28 @@
         "commander_review"
       ],
       "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "activation.permission.controlled_creature_as_haste",
@@ -61540,6 +62280,31 @@
     {
       "capability_id": "combat.damage.assignment.trample",
       "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "510.1",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "702.19",
+        "702.19a",
+        "702.19b",
+        "702.19c",
+        "702.19d",
+        "702.19e",
+        "702.19f",
+        "702.19g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.trample",
+      "evidence_class": "interaction",
       "test_id": "tests.test_combat_keyword_rules.CombatKeywordRuleTests.test_deathtouch_and_marked_damage_each_reduce_trample_lethal",
       "official_rule_ids": [
         "510.1",
@@ -61690,6 +62455,31 @@
     {
       "capability_id": "combat.damage.assignment.trample",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "510.1",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "702.19",
+        "702.19a",
+        "702.19b",
+        "702.19c",
+        "702.19d",
+        "702.19e",
+        "702.19f",
+        "702.19g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.trample",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "510.1",
@@ -61815,6 +62605,31 @@
     {
       "capability_id": "combat.damage.assignment.trample",
       "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "510.1",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "702.19",
+        "702.19a",
+        "702.19b",
+        "702.19c",
+        "702.19d",
+        "702.19e",
+        "702.19f",
+        "702.19g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.trample",
+      "evidence_class": "positive",
       "test_id": "tests.test_combat_keyword_rules.CombatKeywordRuleTests.test_trample_accepts_lethal_then_spill",
       "official_rule_ids": [
         "510.1",
@@ -61890,6 +62705,31 @@
     {
       "capability_id": "combat.damage.assignment.trample",
       "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "510.1",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "702.19",
+        "702.19a",
+        "702.19b",
+        "702.19c",
+        "702.19d",
+        "702.19e",
+        "702.19f",
+        "702.19g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.trample",
+      "evidence_class": "privacy",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "510.1",
@@ -61936,6 +62776,31 @@
         "commander_review"
       ],
       "applicability_note": "Project the trample division task only to its assigning seat while later APNAP assignments remain unavailable."
+    },
+    {
+      "capability_id": "combat.damage.assignment.trample",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "510.1",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "702.19",
+        "702.19a",
+        "702.19b",
+        "702.19c",
+        "702.19d",
+        "702.19e",
+        "702.19f",
+        "702.19g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "combat.damage.assignment.trample",
@@ -97333,6 +98198,44 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
       "official_rule_ids": [
         "611.2a",
@@ -97709,6 +98612,44 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -98264,6 +99205,44 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
       "official_rule_ids": [
         "611.2a",
@@ -98644,6 +99623,44 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
       "official_rule_ids": [
         "611.2a",
@@ -98887,6 +99904,44 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -135831,6 +136886,37 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
       "official_rule_ids": [
         "609.7",
@@ -136606,6 +137692,37 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_damage_prevention_shields.DamagePreventionShieldTests.test_simultaneous_sources_require_and_replay_exact_allocation",
       "official_rule_ids": [
         "609.7",
@@ -137195,6 +138312,37 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_creature_prevention_pronouns_preserve_closed_scope_shape",
       "official_rule_ids": [
         "609.7",
@@ -137660,6 +138808,37 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_copy_objects.CopyObjectLifecycleTests.test_chosen_permanent_spell_copy_uses_public_stack_identity",
       "official_rule_ids": [
         "609.7",
@@ -137842,6 +139021,37 @@
         "commander_review"
       ],
       "applicability_note": "Expose explicitly referred public objects while excluding hidden and unrelated former-zone objects."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "damage.prevention.persistent_amount",
@@ -140196,6 +141406,34 @@
     {
       "capability_id": "damage.result.player_life",
       "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "interaction",
       "test_id": "tests.test_combat_keyword_rules.CombatKeywordRuleTests.test_lifelink_counts_only_damage_not_prevented_by_protection",
       "official_rule_ids": [
         "120.3a"
@@ -140290,6 +141528,34 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "damage.result.player_life",
@@ -140420,6 +141686,34 @@
     {
       "capability_id": "damage.result.player_life",
       "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "positive",
       "test_id": "tests.test_browser_gameplay_regressions.BrowserGameplayRegressionTests.test_sunscorched_desert_prompts_for_target_and_deals_damage",
       "official_rule_ids": [
         "120.3a"
@@ -140532,6 +141826,34 @@
     {
       "capability_id": "damage.result.player_life",
       "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
       "official_rule_ids": [
         "120.3a"
@@ -140584,6 +141906,34 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_granite_pays_either_arm_once_and_rolls_back_forgery_wrong_color_and_overpayment",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_suppression_field_increase_applies_separately_to_both_arms",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "damage.result.player_life",
@@ -208844,6 +210194,24 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
       "official_rule_ids": [
         "115.1",
@@ -209258,6 +210626,24 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
       "official_rule_ids": [
         "115.1",
@@ -209636,6 +211022,24 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
       "official_rule_ids": [
         "115.1",
@@ -209978,6 +211382,24 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
       "official_rule_ids": [
         "115.1",
@@ -210316,6 +211738,24 @@
         "traditional"
       ],
       "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "target.revalidate_resolution",
@@ -263169,6 +264609,29 @@
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "interaction",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_source_attachment_and_choice_lifecycle",
       "official_rule_ids": [
         "108.3",
@@ -263257,6 +264720,29 @@
         "commander_review"
       ],
       "applicability_note": "Original King Crab selects a green creature owned by B but controlled by A, rejects unauthorized activation and moves it to B's library top with A's library unchanged; the full pre-action record replays exactly."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
@@ -263445,6 +264931,29 @@
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "positive",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_moves_compile_across_contexts",
       "official_rule_ids": [
         "108.3",
@@ -263537,6 +265046,29 @@
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "privacy",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_zone_move_commander_replacement_and_projection",
       "official_rule_ids": [
         "108.3",
@@ -263579,6 +265111,29 @@
         "commander_review"
       ],
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "replay",
+      "test_id": "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
     },
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
@@ -263719,5 +265274,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1dde99acb2b0dbecc43bad29dfb880717e27e6f204949935ec0573630b904420"
+  "fingerprint": "b3f73635ac4bf054e01a2b6a42653307fe2c3ba76ef44f8f0ce14a63a38f8db5"
 }
