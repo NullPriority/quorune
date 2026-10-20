@@ -116,6 +116,11 @@ def reviewed_effect_template_composition(
     targeted_set=target_characteristic_set_template(text)
     if targeted_set is not None:return targeted_set
     if allow_conditions:
+        from .paid_mana_resolution_templates import paid_mana_resolution_template
+        paid=paid_mana_resolution_template(text,source_name=source_name,compile_component=lambda body:reviewed_effect_template_composition(
+            body,source_name=source_name,compile_atomic=compile_atomic,compile_fixed=compile_fixed,
+            cast_x_available=cast_x_available,forbid_public_x=forbid_public_x,allow_conditions=False))
+        if paid is not None:return paid
         from .kicked_spell_conditions import kicked_spell_condition_template
         kicked = kicked_spell_condition_template(text, compile_component=lambda body: reviewed_effect_template_composition(
             body, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed,

@@ -17457,6 +17457,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Clone pays3W2U under Sphere of Resistance before choosing a copy source. It acquires the entry ability and gets one counter from its own payment, independently of the original seven counters, with unauthorized-choice rollback, private projection and pending/pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+      "piece_ids": [
+        "capability.casting.payment.mana_unit_counts",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "capability_ids": [
+        "casting.payment.mana_unit_counts",
+        "resolution.effect.paid_mana_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Foreboding Fruit pays three black units, draws and loses life for target B, then creates Food only for caster A. Foreign-principal rollback, private projection, pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rally_counts_created_humans_after_its_prefix",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "resolution.effect.paid_mana_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Rally creates two Humans before evaluating the single conditional life query; one existing creature plus both new Humans gives three life, with pending load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+      "piece_ids": [
+        "capability.resolution.effect.fixed_same_target_self_replacement",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "capability_ids": [
+        "resolution.effect.fixed_same_target_self_replacement",
+        "resolution.effect.paid_mana_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Slaying Fire pays two versus three red units and selects one same-target three/four damage result. It never applies both results; pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "piece_ids": [
+        "capability.resolution.effect.paid_mana_condition",
+        "capability.resolution.target_controller_information"
+      ],
+      "capability_ids": [
+        "resolution.effect.paid_mana_condition",
+        "resolution.target_controller_information"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Searing Barrage damages the creature and adds three only to current controller C, distinct from owner B and caster A, with private pending/pre-action replay."
     }
   ]
 }

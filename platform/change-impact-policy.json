@@ -6715,6 +6715,25 @@
         "test_copied_self_entry_counters",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-paid-mana-resolution-conditions",
+      "patterns": [
+        "quorune/spell_mana_conditions.py",
+        "quorune/rules/paid_mana_resolution.py",
+        "quorune/target_controller_information.py",
+        "quorune/compiler/paid_mana_resolution_templates.py",
+        "quorune/compiler/paid_mana_spell_faces.py",
+        "tests/test_paid_mana_resolution.py",
+        "tests/fixtures/paid-mana-resolution-cards.json"
+      ],
+      "test_modules": [
+        "test_paid_mana_resolution",
+        "test_kicked_self_replacements",
+        "test_public_self_replacement_results",
+        "test_resolution_public_conditions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

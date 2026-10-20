@@ -40,8 +40,8 @@ class SpellManaSpentCounts:
         return cls(card.object_id,card.logical_object_id,tuple(spent.get(color,0) for color in MANA_TYPES))
 
     def count_for(self, card: Any, color: str) -> int:
-        if color not in 'WUBRG' or len(color)!=1:
-            raise ValueError('Paid-color entry requires one ordinary color')
+        if color not in MANA_TYPES or len(color)!=1:
+            raise ValueError('Mana-unit lookup requires one concrete mana type')
         if (card.object_id,card.logical_object_id)!=(self.object_id,self.logical_object_id):
             raise ValueError('Mana payment facts belong to another spell incarnation')
         return self.amounts[MANA_TYPES.index(color)]

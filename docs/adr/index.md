@@ -136,3 +136,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0119 — fixed-mana Squad repetitions](0119-fixed-mana-squad-repetitions.md)
 - [ADR 0120 — attachment-bound Reconfigure effects](0120-attachment-bound-reconfigure-effects.md)
 - [ADR 0121 — spell payment counts and entry conditions](0121-spell-payment-counts-and-entry-conditions.md)
+- [ADR 0122 — paid-mana resolution and target information](0122-paid-mana-resolution-and-target-information.md)

@@ -44,8 +44,13 @@ def resolution_condition_node_capabilities(
     if wrapper["player"] != "$controller":
         return ()
     prefix = effects[:-1]
+    controller_result=any(isinstance(child.get('target'),Mapping) and child['target'].get('kind')=='target_controller_information' for child in conditional)
+    if controller_result and (wrapper.get('schema_version')!=6 or len(prefix)!=1
+            or prefix[0].get('op')!='damage' or target_schema is None
+            or target_schema.get('types_any')!=['creature'] or type(target_schema.get('count')) is not int or target_schema.get('count')!=1):return ()
     otherwise=wrapper.get('otherwise_effects',())
-    same_target=wrapper.get('schema_version')==5
+    same_target=wrapper.get('schema_version') in {5,7}
+    paid_mana=wrapper.get('schema_version') in {6,7}
     if same_target:
         if (prefix or target_schema is None or type(target_schema.get('count')) is not int
                 or target_schema['count']!=1 or not _same_target_result_closed(conditional)
@@ -70,9 +75,14 @@ def resolution_condition_node_capabilities(
         dependencies.add(SAME_TARGET_SELF_REPLACEMENT_CAPABILITY)
     from ..characteristic_fragments import characteristic_quantity_capabilities
     dependencies.update(characteristic_quantity_capabilities(_condition.to_dict()))
-    if wrapper.get('schema_version') in {3,4,5}:
+    if wrapper.get('schema_version') in {3,4,5,7}:
         from ..resolution_conditions import PUBLIC_SELF_REPLACEMENT_CAPABILITY
         dependencies.add(PUBLIC_SELF_REPLACEMENT_CAPABILITY)
+    if paid_mana:
+        from ..spell_mana_conditions import PAID_MANA_CONDITION_CAPABILITY,PAID_MANA_CONDITION_MECHANIC
+        from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
+        if PAID_MANA_CONDITION_MECHANIC not in mechanics or wrapper['cast_fact']!=_condition.reference():return ()
+        dependencies.update((PAID_MANA_CONDITION_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY))
     if _condition.kind == FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
         dependencies.add('condition.creature.fixed_numeric_exists')
     if wrapper.get('schema_version') in {2,4,5}:
@@ -83,6 +93,7 @@ def resolution_condition_node_capabilities(
     ambient_mechanics = mechanics - {
         RESOLUTION_CONDITION_MECHANIC,
         'fixed-cast-fact-condition',
+        'fixed-paid-mana-resolution-condition',
         *wrapper["prefix_mechanic_ids"],
         *wrapper["mechanic_ids"],
         *wrapper.get('otherwise_mechanic_ids',()),
