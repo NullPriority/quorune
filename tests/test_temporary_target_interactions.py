@@ -378,7 +378,7 @@ class TemporaryTargetInteractionRuntimeTests(unittest.TestCase):
         engine.state.pending_decision = None
         engine.state.priority_player = None
         engine.state.priority_passes = []
-        records = tuple(self.db.by_oracle_id(row["oracle_id"]) for row in json.loads(FIXTURE_PATH.read_text())["cards"] if row["oracle_text"])
+        records = tuple(self.db.by_oracle_id(row["oracle_id"]) for row in json.loads(FIXTURE_PATH.read_text(encoding='utf-8'))["cards"] if row["oracle_text"])
         register_generated_programs(
             self.db, engine.semantics, records, trust_level="trusted", capability_registry=self.registry,
             capability_profile="commander_review", promote_exact_runtime_handlers=True,

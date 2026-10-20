@@ -50,7 +50,7 @@ class KickedDamageReplacementCompilerTests(unittest.TestCase):
         required=('damage.batch.fixed_set','damage.result.player_life','damage.source.stack_current_or_lki',
             'target.permanent.characteristic_predicate','resolution.effect.fixed_public_self_replacement')
         for cap in required:self.assertIn(cap,node.capability_dependencies)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for cap in required:
             changed=deepcopy(raw)
             next(row for row in changed['capabilities'] if row['id']==cap).update(status='blocked',blockers=['withdrawn'])

@@ -136,7 +136,7 @@ class StaticKeywordRemovalRuntimeTests(unittest.TestCase):
         from quorune.preflight import card_semantic_status
         from quorune.rules.capabilities import CapabilityRegistry
         session=self.session(730104)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for name in ('Gravity Sphere','Mystic Decree'):
             source=self.add(session.engine,name,zone='hand')
             self.assertTrue(self.binding(session,source)['strict_capability_ready'])

@@ -81,7 +81,7 @@ class KickedSelfReplacementCompilerTests(unittest.TestCase):
     def test_each_required_authority_withdrawal_keeps_both_branch_programs_residual(self):
         text='Kicker {1}\nDraw two cards. If this spell was kicked, create two 1/1 green Saproling creature tokens instead.'
         self.assertEqual('exact',self.compile(text).status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for cap in ('resolution.effect.public_condition','resolution.effect.fixed_cast_fact',
                 'resolution.effect.fixed_public_self_replacement','zone.draw.library_to_hand',
                 'token.creation.fixed_definition','casting.kicker.fixed_mana'):
@@ -342,7 +342,7 @@ class KickedSelfReplacementRuntimeTests(unittest.TestCase):
         cap='resolution.effect.public_condition'
         program=next(p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if cap in p.capability_dependencies)
         self.assertTrue(bind_semantic_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict'])
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['withdrawn'])
         bound=bind_semantic_program_runtime(program,capability_registry=CapabilityRegistry(raw),profile='commander_review')
         self.assertFalse(bound['strict'])

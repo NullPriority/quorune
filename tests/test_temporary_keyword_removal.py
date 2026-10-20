@@ -49,7 +49,7 @@ class TemporaryKeywordRemovalCompilerTests(unittest.TestCase):
         text='Target creature loses flying until end of turn.'
         registry=load_default_capability_registry()
         self.assertEqual('exact',compile_oracle_card(record(text),capability_registry=registry,capability_profile='commander_review').status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for cap in (CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn','target.revalidate_resolution','combat.block.flying'):
             changed=deepcopy(raw);next(row for row in changed['capabilities'] if row['id']==cap).update(status='blocked',blockers=['withdrawn'])
             self.assertNotEqual('exact',compile_oracle_card(record(text),capability_registry=CapabilityRegistry(changed),capability_profile='commander_review').status,cap)

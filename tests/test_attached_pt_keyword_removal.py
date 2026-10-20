@@ -42,7 +42,7 @@ class AttachedPtRemovalCompilerTests(unittest.TestCase):
             self.assertIsNone(attached_fixed_characteristics_handler(bad),bad)
 
     def test_withdrawn_attached_owner_keeps_combined_original_source_residual(self):
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(row for row in raw['capabilities'] if row['id']=='continuous.attached.fixed_characteristics').update(status='blocked',blockers=['withdrawn'])
         source=attached_grant_record('Enchant creature\nEnchanted creature gets -6/-0 and loses flying.')
         self.assertNotEqual('exact',compile_oracle_card(source,capability_registry=CapabilityRegistry(raw),capability_profile='commander_review').status)

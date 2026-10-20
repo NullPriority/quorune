@@ -70,7 +70,7 @@ class SelfTargetReductionCompilerTests(unittest.TestCase):
         node=next(node for node in ir.faces[0].nodes if SELF_TARGET_REDUCTION_CAPABILITY in node.capability_dependencies)
         self.assertEqual('all',node.active_zone)
         self.assertEqual(-3,node.handlers[0]['modifier']['generic'])
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(row for row in raw['capabilities'] if row['id']==SELF_TARGET_REDUCTION_CAPABILITY).update(status='blocked',blockers=['withdrawn'])
         self.assertNotEqual('exact',compile_oracle_card(record(text,'Instant'),capability_registry=CapabilityRegistry(raw),capability_profile='commander_review').status)
         for clause in ('This spell costs {1}{U} less to cast if it targets a tapped creature.',

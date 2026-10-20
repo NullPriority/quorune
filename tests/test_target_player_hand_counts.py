@@ -58,7 +58,7 @@ class TargetHandCountModelTests(unittest.TestCase):
                 text.replace('target player','two target players'),
                 text.replace("that player's hand.","that player's hand minus 4.")):
             self.assertNotEqual('exact',compile_oracle_card(record(bad),capability_registry=registry,capability_profile='commander_review').status,bad)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for cap in (CAP,'quantity_expression.scalar_effect_amount','damage.source.stack_current_or_lki'):
             changed=deepcopy(raw)
             next(r for r in changed['capabilities'] if r['id']==cap).update(status='blocked',blockers=['withdrawn'])

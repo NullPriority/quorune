@@ -24,7 +24,7 @@ from scripts.build_test_database import build_fixture_database
 class CompoundDamageCompilerTests(unittest.TestCase):
     def test_existing_damage_and_predicate_authority_withdrawal_keeps_composition_residual(self):
         for cap in ('damage.batch.fixed_set','damage.result.player_life','target.permanent.characteristic_predicate'):
-            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
             next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['withdrawn compound recipient authority'])
             text='Generic Bound Compiler Fixture deals 2 damage to each creature without flying and each player.'
             ir=compile_oracle_card(record(text,'Sorcery'),capability_registry=CapabilityRegistry(raw),

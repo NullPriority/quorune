@@ -19,7 +19,7 @@ import test_compound_damage_recipients as controls
 
 class PublicNegativeKeywordQueryCompilerTests(unittest.TestCase):
     def test_withdrawn_power_toughness_owner_keeps_negative_keyword_clause_residual(self):
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(row for row in raw['capabilities'] if row['id']=='continuous.power_toughness.fixed_anthem').update(
             status='blocked',blockers=['withdrawn P/T query authority'])
         ir=compile_oracle_card(record('Creatures without flying get -2/-0.','Enchantment'),

@@ -54,7 +54,7 @@ class SameTargetKickedCompilerTests(unittest.TestCase):
 
     def test_each_required_authority_withdrawal_prevents_same_target_admission(self):
         body='Target creature gets +3/+3 until end of turn. If this spell was kicked, that creature gets +5/+5 until end of turn instead.'
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for cap in (CAP,'resolution.effect.fixed_cast_fact','resolution.effect.fixed_public_self_replacement','target.revalidate_resolution'):
             changed=deepcopy(raw)
             next(r for r in changed['capabilities'] if r['id']==cap).update(status='blocked',blockers=['withdrawn'])

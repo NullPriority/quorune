@@ -69,7 +69,7 @@ class IncrementCompilerTests(unittest.TestCase):
             self.assertEqual('spell.cast',node.event);self.assertIn(CAPABILITY,node.capability_dependencies)
             self.assertIn('intervening_condition',node.runtime_coverage)
             self.assertIn('current_ability_fragment_required',node.runtime_coverage)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(row for row in raw['capabilities'] if row['id']==CAPABILITY).update(status='blocked',blockers=['withdrawn'])
         self.assertNotEqual('exact',compile_oracle_card(source,capability_registry=CapabilityRegistry(raw),capability_profile='commander_review').status)
 

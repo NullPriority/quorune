@@ -80,7 +80,7 @@ class QuantifiedTargetKeywordCompilerTests(unittest.TestCase):
             'maximum_targets':2,'power':1,'toughness':0,'keywords':[{}]}
         with self.assertRaises(ValueError):decode_target_characteristics(effect)
         from quorune.keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         keyword_cap=FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES['First Strike'][0]
         next(row for row in raw['capabilities'] if row['id']==keyword_cap).update(status='blocked',blockers=['withdrawn'])
         text='Up to two target creatures each get +1/+0 and gain first strike until end of turn.'
