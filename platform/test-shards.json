@@ -41,6 +41,7 @@
       "test_nonmana_morph",
       "test_power_up",
       "test_public_activation_conditions",
+      "test_quest_counter_sacrifice_costs",
       "test_replacement_event_ordering",
       "test_seed_20260730_regression",
       "test_static_keyword_removal",

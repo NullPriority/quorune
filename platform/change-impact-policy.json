@@ -6477,6 +6477,21 @@
         "test_madness_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "joined-source-counter-sacrifice-costs",
+      "patterns": [
+        "quorune/abilities.py",
+        "tests/fixtures/quest-counter-sacrifice-cards.json",
+        "tests/test_quest_counter_sacrifice_costs.py"
+      ],
+      "test_modules": [
+        "test_quest_counter_sacrifice_costs",
+        "test_fixed_source_counter_activation_costs",
+        "test_fixed_source_counter_payments",
+        "test_fixed_library_searches",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

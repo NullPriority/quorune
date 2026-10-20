@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 409,
+  "registry_version": 410,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4340,32 +4340,59 @@
         "test_generic_cycling_discards_before_stack_draw_and_replays_exactly",
         "test_each_fixed_counter_keyword_pays_cost_and_places_counters",
         "test_fixed_source_sacrifice_cost_compiles_source_spanned",
-        "test_fixed_source_sacrifice_cost_compiles_and_resolves"
+        "test_fixed_source_sacrifice_cost_compiles_and_resolves",
+        "test_five_originals_preserve_raw_cost_text_and_bind_both_existing_owners",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "negative_tests": [
         "test_activation_zone_change_costs_exclude_mana_abilities",
         "test_activation_source_cost_replacement_journal_fails_closed",
         "test_rejected_source_cost_activation_rolls_back_mana_and_zone",
-        "test_source_zone_cost_rejects_inconsistent_descriptor"
+        "test_source_zone_cost_rejects_inconsistent_descriptor",
+        "test_unbound_antecedents_variable_counts_and_extra_cost_tails_remain_residual"
       ],
       "interaction_tests": [
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
         "test_reinforce_source_cost_replacement_suspends_before_mutation",
         "test_selected_self_sacrifice_cost_keeps_the_source_incarnation_and_controller",
         "test_source_sacrifice_replacement_is_private_and_replays",
-        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once"
+        "test_targeted_announcement_rolls_back_while_mana_payment_is_pending_and_resumes_once",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "multiplayer_tests": [
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
-        "test_source_sacrifice_replacement_is_private_and_replays"
+        "test_source_sacrifice_replacement_is_private_and_replays",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "privacy_tests": [
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
-        "test_source_sacrifice_replacement_is_private_and_replays"
+        "test_source_sacrifice_replacement_is_private_and_replays",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "replay_tests": [
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
-        "test_source_sacrifice_replacement_is_private_and_replays"
+        "test_source_sacrifice_replacement_is_private_and_replays",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "required_evidence": [
         "positive",
@@ -4710,23 +4737,109 @@
     {
       "id": "activation.source_counter_removal.fixed",
       "version": 1,
-      "official_rules": ["118.3", "122.1", "602.2", "602.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and pay exactly one fixed positive named-counter removal cost from the activated ability's current battlefield source through the canonical exact counter-removal transaction.",
-        "inputs": ["one source-spanned activated ability", "one fixed positive counter amount and canonical counter name", "same physical battlefield source and logical incarnation", "current public source counter state", "authoritative activation transaction"],
-        "outputs": ["payable offer only when every required counter exists", "exact counter removal before stack placement or immediate mana production", "current source and ability revalidation", "transactional rollback", "public deterministic replay"],
-        "exclusions": ["zero, variable, all, any-number, among, optional, repeated, or chosen-kind counter removal", "counter movement or removal from another object or player", "nonbattlefield source counters", "multiple source counter-removal clauses", "granted counter-removal costs outside the current granted-ability schema", "cost modification, replacement, or prevention not already represented by the activation transaction"]
+        "inputs": [
+          "one source-spanned activated ability",
+          "one fixed positive counter amount and canonical counter name",
+          "same physical battlefield source and logical incarnation",
+          "current public source counter state",
+          "authoritative activation transaction"
+        ],
+        "outputs": [
+          "payable offer only when every required counter exists",
+          "exact counter removal before stack placement or immediate mana production",
+          "current source and ability revalidation",
+          "transactional rollback",
+          "public deterministic replay"
+        ],
+        "exclusions": [
+          "zero, variable, all, any-number, among, optional, repeated, or chosen-kind counter removal",
+          "counter movement or removal from another object or player",
+          "nonbattlefield source counters",
+          "multiple source counter-removal clauses",
+          "granted counter-removal costs outside the current granted-ability schema",
+          "cost modification, replacement, or prevention not already represented by the activation transaction"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.rules.activation_counter_cost.SourceCounterRemovalCost", "quorune.abilities._source_counter_removal_cost", "quorune.rules.activation.availability.activation_availability", "quorune.rules.activation.counter_costs.commit_source_counter_removal_cost", "quorune.counter_removal.plan_counter_removals", "quorune.counter_removal.commit_counter_removals"],
-      "positive_tests": ["test_fixed_source_counter_cost_compiler_runtime_contract", "test_source_counter_cost_activation_pays_before_resolution", "test_source_counter_cost_mana_ability_is_nonreversible"],
-      "negative_tests": ["test_open_and_non_source_counter_costs_remain_residual", "test_insufficient_and_stale_counter_costs_roll_back", "test_current_ability_removal_rejects_counter_cost_activation"],
-      "interaction_tests": ["test_source_counter_cost_activation_pays_before_resolution", "test_source_counter_cost_mana_ability_is_nonreversible"],
-      "multiplayer_tests": ["test_counter_cost_projection_is_public_and_seat_scoped"],
-      "privacy_tests": ["test_counter_cost_projection_is_public_and_seat_scoped"],
-      "replay_tests": ["test_source_counter_cost_activation_pays_before_resolution"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.rules.activation_counter_cost.SourceCounterRemovalCost",
+        "quorune.abilities._source_counter_removal_cost",
+        "quorune.rules.activation.availability.activation_availability",
+        "quorune.rules.activation.counter_costs.commit_source_counter_removal_cost",
+        "quorune.counter_removal.plan_counter_removals",
+        "quorune.counter_removal.commit_counter_removals"
+      ],
+      "positive_tests": [
+        "test_fixed_source_counter_cost_compiler_runtime_contract",
+        "test_source_counter_cost_activation_pays_before_resolution",
+        "test_source_counter_cost_mana_ability_is_nonreversible",
+        "test_five_originals_preserve_raw_cost_text_and_bind_both_existing_owners",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+      ],
+      "negative_tests": [
+        "test_open_and_non_source_counter_costs_remain_residual",
+        "test_insufficient_and_stale_counter_costs_roll_back",
+        "test_current_ability_removal_rejects_counter_cost_activation",
+        "test_unbound_antecedents_variable_counts_and_extra_cost_tails_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_source_counter_cost_activation_pays_before_resolution",
+        "test_source_counter_cost_mana_ability_is_nonreversible",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+      ],
+      "multiplayer_tests": [
+        "test_counter_cost_projection_is_public_and_seat_scoped",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+      ],
+      "privacy_tests": [
+        "test_counter_cost_projection_is_public_and_seat_scoped",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+      ],
+      "replay_tests": [
+        "test_source_counter_cost_activation_pays_before_resolution",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "test_source_counter_cost_capability_fails_closed blocks the fine-grained cost capability and proves the affected source-spanned activation remains material.",
       "implementation_mutation_status": "killed",
@@ -6874,7 +6987,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
-        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "negative_tests": [
         "test_invalid_batch_member_rolls_back_every_life_change",
@@ -6887,7 +7001,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
-        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "multiplayer_tests": [
         "test_table_wide_loss_and_drain_are_simultaneous_typed_batches",
@@ -6896,14 +7011,16 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
-        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "privacy_tests": [
         "test_semantic_life_intent_replacement_suspends_and_replays_exactly",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
-        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "replay_tests": [
         "test_fixed_life_self_enter_trigger_replays_exactly",
@@ -6912,7 +7029,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
-        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three"
+        "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "required_evidence": [
         "positive",
@@ -7186,7 +7304,10 @@
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "negative_tests": [
         "test_changed_library_or_source_fails_before_draw_mutation",
@@ -7222,7 +7343,10 @@
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "multiplayer_tests": [
         "test_draw_each_player_uses_apnap_order_and_exact_engine_path",
@@ -7237,7 +7361,10 @@
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "privacy_tests": [
         "test_draw_replacement_choice_is_visible_only_to_affected_seat",
@@ -7251,7 +7378,10 @@
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "replay_tests": [
         "test_first_turn_profile_modifier_and_exact_replay",
@@ -7270,7 +7400,10 @@
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
       ],
       "required_evidence": [
         "positive",
@@ -7437,23 +7570,99 @@
     {
       "id": "library.search.fixed_to_battlefield",
       "version": 1,
-      "official_rules": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and resolve one restrictive self-library search to the battlefield through an actor-private fail-to-find choice, the shared effective-characteristic query boundary, canonical battlefield entry, and an exact post-search shuffle.",
-        "inputs": ["one capability-shaped fixed self-library search", "one supported effective type, subtype, supertype, or color quality", "one requested permanent or one uniform tapped-land group", "current hidden library identities", "current destination replacements and normalized zone-trigger sources"],
-        "outputs": ["one actor-private legal candidate set", "rules-permitted failure to find for a stated hidden-zone quality", "one validated selected identity set", "one replacement-aware battlefield entry or simultaneous tapped-land entry batch", "one privacy-safe public result journal", "one deterministic library shuffle", "exact replay"],
-        "exclusions": ["named-card, different-name, linked-result, attachment, reveal, and compound-tail searches", "searches of another player or zones other than the searching player's library", "dynamic, variable, chosen, numeric-characteristic, and cross-field alternative qualities", "multiple untapped or nonland entrants that can require independent entry choices", "search-limiting or search-replacement effects under CR 701.23f", "search and shuffle triggered effects", "untrusted face-down, copy, text-changing, Aura-entry, Battle-protector, or type-changing interactions outside their own capability closure"]
+        "inputs": [
+          "one capability-shaped fixed self-library search",
+          "one supported effective type, subtype, supertype, or color quality",
+          "one requested permanent or one uniform tapped-land group",
+          "current hidden library identities",
+          "current destination replacements and normalized zone-trigger sources"
+        ],
+        "outputs": [
+          "one actor-private legal candidate set",
+          "rules-permitted failure to find for a stated hidden-zone quality",
+          "one validated selected identity set",
+          "one replacement-aware battlefield entry or simultaneous tapped-land entry batch",
+          "one privacy-safe public result journal",
+          "one deterministic library shuffle",
+          "exact replay"
+        ],
+        "exclusions": [
+          "named-card, different-name, linked-result, attachment, reveal, and compound-tail searches",
+          "searches of another player or zones other than the searching player's library",
+          "dynamic, variable, chosen, numeric-characteristic, and cross-field alternative qualities",
+          "multiple untapped or nonland entrants that can require independent entry choices",
+          "search-limiting or search-replacement effects under CR 701.23f",
+          "search and shuffle triggered effects",
+          "untrusted face-down, copy, text-changing, Aura-entry, Battle-protector, or type-changing interactions outside their own capability closure"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement", "zone.entry.tapped_state"],
-      "implementation_components": ["quorune.compiler.library_search_templates.fixed_library_search_effect_template", "quorune.rules.library_search_capability_shapes.fixed_library_search_node_capabilities", "quorune.selection.searching.HiddenSearchOwnerMixin", "quorune.object_query.object_matches_query", "quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously", "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library"],
-      "positive_tests": ["test_fixed_search_compiles_across_spell_trigger_activation_and_modal_contexts", "test_multi_tapped_land_search_compiles_as_one_closed_batch"],
-      "negative_tests": ["test_named_linked_attachment_compound_and_open_searches_remain_residual", "test_fixed_search_shape_and_dependencies_fail_closed"],
-      "interaction_tests": ["test_multi_land_search_commits_one_tapped_simultaneous_batch", "test_generated_search_uses_effective_hidden_characteristics_and_replays"],
-      "multiplayer_tests": ["test_generated_search_uses_effective_hidden_characteristics_and_replays"],
-      "privacy_tests": ["test_generated_search_uses_effective_hidden_characteristics_and_replays"],
-      "replay_tests": ["test_generated_search_uses_effective_hidden_characteristics_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement",
+        "zone.entry.tapped_state"
+      ],
+      "implementation_components": [
+        "quorune.compiler.library_search_templates.fixed_library_search_effect_template",
+        "quorune.rules.library_search_capability_shapes.fixed_library_search_node_capabilities",
+        "quorune.selection.searching.HiddenSearchOwnerMixin",
+        "quorune.object_query.object_matches_query",
+        "quorune.characteristic_evaluation.evaluate_card_characteristics",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library"
+      ],
+      "positive_tests": [
+        "test_fixed_search_compiles_across_spell_trigger_activation_and_modal_contexts",
+        "test_multi_tapped_land_search_compiles_as_one_closed_batch",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+      ],
+      "negative_tests": [
+        "test_named_linked_attachment_compound_and_open_searches_remain_residual",
+        "test_fixed_search_shape_and_dependencies_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_multi_land_search_commits_one_tapped_simultaneous_batch",
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+      ],
+      "multiplayer_tests": [
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+      ],
+      "privacy_tests": [
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+      ],
+      "replay_tests": [
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement, tapped entry, normalized zone events, or APNAP trigger placement prevents the fixed search node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
@@ -7922,7 +8131,8 @@
         "test_compiled_fixed_token_batch_is_one_simultaneous_transaction",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
         "test_zero_single_reversed_groups_have_complete_nonduplicate_history",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "negative_tests": [
         "test_fixed_token_creation_rejects_dynamic_copy_attached_and_custom_ability_variants",
@@ -7935,23 +8145,27 @@
         "test_compiled_fixed_token_effect_replays_exactly",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "multiplayer_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "privacy_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "replay_tests": [
         "test_compiled_fixed_token_effect_replays_exactly",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
       ],
       "required_evidence": [
         "positive",
@@ -9583,7 +9797,8 @@
         "test_public_event_fixed_target_counter_preserves_complete_target_schema",
         "test_sacrifice_another_and_discard_counter_bodies_share_typed_events",
         "test_single_subtype_entry_counter_triggers_compile_exactly",
-        "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly"
+        "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
@@ -9615,25 +9830,29 @@
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
         "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
-        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "multiplayer_tests": [
         "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
         "test_opponent_death_counter_trigger_uses_previous_controller",
         "test_death_counter_replacement_is_private_and_replays_exactly",
-        "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts"
+        "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "privacy_tests": [
         "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
         "test_death_counter_replacement_is_private_and_replays_exactly",
-        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "replay_tests": [
         "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
         "test_death_counter_replacement_is_private_and_replays_exactly",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
         "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
-        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "required_evidence": [
         "positive",
@@ -16691,7 +16910,8 @@
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
         "test_numeric_owned_graveyard_return_preserves_kind_and_bound",
         "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
-        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return"
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target"
       ],
       "negative_tests": [
         "test_unsupported_graveyard_return_variants_remain_material_residuals",
@@ -16708,25 +16928,29 @@
         "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
         "test_original_salvagers_target_exiled_in_response_is_not_returned",
         "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
-        "test_return_target_binding_rejects_a_new_incarnation_without_reading_it"
+        "test_return_target_binding_rejects_a_new_incarnation_without_reading_it",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target"
       ],
       "multiplayer_tests": [
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
         "test_characteristic_target_offer_commit_and_replay",
         "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
-        "test_original_salvagers_target_exiled_in_response_is_not_returned"
+        "test_original_salvagers_target_exiled_in_response_is_not_returned",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target"
       ],
       "privacy_tests": [
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
         "test_characteristic_target_offer_commit_and_replay",
-        "test_original_numeric_graveyard_returns_share_target_legality_and_replay"
+        "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target"
       ],
       "replay_tests": [
         "test_compiled_regrowth_is_owner_scoped_private_and_replays",
         "test_characteristic_target_offer_commit_and_replay",
         "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
         "test_original_salvagers_target_exiled_in_response_is_not_returned",
-        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return"
+        "test_actual_skald_selects_before_cost_and_exiled_target_does_not_return",
+        "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target"
       ],
       "required_evidence": [
         "positive",
@@ -18832,7 +19056,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
@@ -18876,7 +19101,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "multiplayer_tests": [
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
@@ -18890,7 +19116,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "privacy_tests": [
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
@@ -18903,7 +19130,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "replay_tests": [
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
@@ -18922,7 +19150,8 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
       ],
       "required_evidence": [
         "positive",

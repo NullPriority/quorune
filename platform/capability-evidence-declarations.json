@@ -7602,11 +7602,181 @@
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_counter_cost_projection_is_public_and_seat_scoped",
       "official_rule_ids": ["118.3", "122.1", "602.2", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose the public counter total to all four seats while advertising the controlled-source activation only to its controller."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
@@ -7623,6 +7793,40 @@
       "official_rule_ids": ["118.3", "122.1", "602.2", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Bypass the canonical exact counter-removal commit and require the paid-cost assertion to reject the survivor."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_fresh_actual_source_cost_witness_kills_omitted_sacrifice_clause",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_fresh_original_admission_kills_omitted_joined_cost_production",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
@@ -7650,6 +7854,23 @@
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_unbound_antecedents_variable_counts_and_extra_cost_tails_remain_residual",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostCompilerTests.test_fixed_source_counter_cost_compiler_runtime_contract",
       "official_rule_ids": ["118.3", "122.1", "602.2", "602.2b"],
@@ -7674,6 +7895,108 @@
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_five_originals_preserve_raw_cost_text_and_bind_both_existing_owners",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_counter_cost_projection_is_public_and_seat_scoped",
       "official_rule_ids": ["118.3", "122.1", "602.2", "602.2b"],
@@ -7682,11 +8005,181 @@
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_source_counter_cost_activation_pays_before_resolution",
       "official_rule_ids": ["118.3", "122.1", "602.2", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay counter payment, tap, mana payment, stack placement, and the typed draw result to the exact authoritative hash."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
@@ -7711,6 +8204,116 @@
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose a discard-self activation cost with two canonical destination replacements and resume the exact rolled-back priority action."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -7774,11 +8377,165 @@
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_keyword_activations.FixedCounterKeywordRuntimeTests.test_activation_zone_cost_resume_mutant_is_killed",
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill the former behavior that rejected a zone-change replacement suspension merely because the priority action was an activation."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_fresh_actual_source_cost_witness_kills_omitted_sacrifice_clause",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_fresh_original_admission_kills_omitted_joined_cost_production",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -7814,6 +8571,28 @@
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_unbound_antecedents_variable_counts_and_extra_cost_tails_remain_residual",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_fixed_source_sacrifice_cost_compiles_source_spanned",
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
@@ -7838,6 +8617,138 @@
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_five_originals_preserve_raw_cost_text_and_bind_both_existing_owners",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_source_sacrifice_replacement_is_private_and_replays",
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
@@ -7854,6 +8765,116 @@
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_source_sacrifice_replacement_is_private_and_replays",
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
@@ -7867,6 +8888,116 @@
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reload and finish the pending source-zone cost once, then replay the exact resumed activation state."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -11599,6 +12730,29 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
       "official_rule_ids": [
         "108.3",
@@ -11657,6 +12811,29 @@
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Advertise and resolve only the acting seat's graveyard cards in a four-player game while rejecting another seat's public graveyard card."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -11870,6 +13047,29 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_targeted_graveyard_return_effect_clauses.OwnGraveyardCardTargetTests.test_characteristic_target_spec_is_canonical_and_round_trips",
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -11948,6 +13148,29 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
       "official_rule_ids": [
         "108.3",
@@ -12006,6 +13229,29 @@
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the owner-scoped target, paid spell, public graveyard departure, hidden hand result, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -91537,6 +92783,32 @@
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
@@ -91670,6 +92942,32 @@
         "commander_review"
       ],
       "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {"capability_id": "counter.producer.fixed_event_trigger", "evidence_class": "mutation", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_self_counter_reference_alias_mutant_is_killed_by_actual_blink", "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
@@ -92144,6 +93442,32 @@
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
@@ -92269,6 +93593,32 @@
         "commander_review"
       ],
       "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {"capability_id": "counter.producer.fixed_event_trigger", "evidence_class": "replay", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation", "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
@@ -92398,6 +93748,32 @@
         "commander_review"
       ],
       "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -118584,11 +119960,55 @@
     },
     {
       "capability_id": "library.search.fixed_to_battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "library.search.fixed_to_battlefield",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchRuntimeTests.test_generated_search_uses_effective_hidden_characteristics_and_replays",
       "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Issue the searching player one private four-seat decision while every opponent retains only the public stack representation."
+    },
+    {
+      "capability_id": "library.search.fixed_to_battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "library.search.fixed_to_battlefield",
@@ -118632,6 +120052,28 @@
     },
     {
       "capability_id": "library.search.fixed_to_battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "library.search.fixed_to_battlefield",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchRuntimeTests.test_generated_search_uses_effective_hidden_characteristics_and_replays",
       "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b"],
@@ -118640,11 +120082,55 @@
     },
     {
       "capability_id": "library.search.fixed_to_battlefield",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "library.search.fixed_to_battlefield",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchRuntimeTests.test_generated_search_uses_effective_hidden_characteristics_and_replays",
       "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the private generated choice, public battlefield result, deterministic shuffle, semantic continuation, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "library.search.fixed_to_battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "library.search.fixed_to_battlefield",
@@ -120212,6 +121698,30 @@
     {
       "capability_id": "life.change.effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_semantic_life_intent_replacement_suspends_and_replays_exactly",
       "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -120340,6 +121850,30 @@
         "commander_review"
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "life.change.effect",
@@ -120512,6 +122046,30 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
     {"capability_id":"life.change.effect","evidence_class":"privacy","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_smallpox_keeps_zero_life_players_in_resolution_choices","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual original Smallpox cast performs simultaneous life loss, private APNAP discard, public creature sacrifice and public land sacrifice in printed order. Zero-life B and C still participate in all choices, and only leave after complete resolution. Pending and final save/load and pre-cast replay agree."},
     {"capability_id":"life.change.effect","evidence_class":"privacy","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_supplicant_pays_private_discard_before_all_player_loss","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Supplicant pays its black mana, tap and private hand discard before any life loss. Unauthorized activation rolls back and nonactors receive no decision or private hand contents; one all-player result and complete replay agree."},
     {
@@ -120609,6 +122167,30 @@
         "commander_review"
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "life.change.effect",
@@ -120734,6 +122316,30 @@
       "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "life.change.effect",
@@ -173027,6 +174633,29 @@
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
     {"capability_id":"token.creation.fixed_definition","evidence_class":"multiplayer","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_suspends_for_replacement_order","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resolve competing token replacements in four-player state while keeping the affected controller as the sole replacement chooser."},
     {
       "capability_id": "token.creation.fixed_definition",
@@ -173050,6 +174679,29 @@
         "commander_review"
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {"capability_id":"token.creation.fixed_definition","evidence_class":"mutation","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_fixed_token_compiler_mutation_is_killed","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Remove the fixed token template owner and prove the formerly exact program becomes an unresolved material spell effect."},
     {"capability_id":"token.creation.fixed_definition","evidence_class":"mutation","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated shared token-owner contract kills incomplete simultaneous history before discovery."},
@@ -173080,6 +174732,29 @@
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
     {"capability_id":"token.creation.fixed_definition","evidence_class":"positive","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_zero_single_reversed_groups_have_complete_nonduplicate_history","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated shared token-owner ordering covers zero, singleton and reversed groups without claiming zero-quantity grammar or gameplay certification."},
     {"capability_id":"token.creation.fixed_definition","evidence_class":"privacy","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_suspends_for_replacement_order","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Project a pending replacement choice only to the affected controller and omit internal batch and effect descriptors from every seat projection."},
     {
@@ -173105,6 +174780,29 @@
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
     {"capability_id":"token.creation.fixed_definition","evidence_class":"replay","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_replays_exactly","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Save and exactly replay a compiled fixed Treasure instruction composed with an additional Map-token replacement."},
     {
       "capability_id": "token.creation.fixed_definition",
@@ -173128,6 +174826,29 @@
         "commander_review"
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {"capability_id":"token.creation.fixed_definition","evidence_class":"rollback","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_suspends_for_replacement_order","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reject a replacement identifier outside the issued schema without changing the authoritative state hash or committing any token."},
     {
@@ -181459,6 +183180,29 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_countered_spell_replaced_to_exile_has_no_graveyard_event",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -181671,6 +183415,29 @@
         "commander_review"
       ],
       "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -182045,6 +183812,29 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_countered_physical_spell_derives_exact_normalized_events",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -182253,6 +184043,29 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_private_library_to_hand_move_produces_no_public_trigger_event",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -182457,6 +184270,29 @@
         "commander_review"
       ],
       "applicability_note": "Original trusted Skola Grovedancer, Profane Memento and Compost actions cover mill, native discard, land destruction and simultaneous deaths with complete life or optional-draw consequences. Current destination facts and surviving observers differ from departure LKI; principal rejection, hidden projection, pending save/load and full replay retain ordinary owners."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -196272,6 +198108,87 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
       "official_rule_ids": [
         "121.1",
@@ -196538,6 +198455,87 @@
         "commander_review"
       ],
       "applicability_note": "Evaluate optional-draw feasibility against the prospective drawer even when another active player owns the choice."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -197217,6 +199215,87 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
       "official_rule_ids": [
         "121.1",
@@ -197595,6 +199674,87 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
       "official_rule_ids": [
         "121.1",
@@ -197861,6 +200021,87 @@
         "commander_review"
       ],
       "applicability_note": "Replay a generically compiled battlefield draw restriction and the exact permitted and prohibited individual results."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_quest_counter_sacrifice_costs.QuestCounterSacrificeTests.test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete joined source-counter and sacrifice costs preserve exact resources, original source identity, counter production, result order, target survival, private search/draw, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",

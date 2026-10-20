@@ -996,6 +996,14 @@ def _fixed_random_discard_payment(clause: str) -> int | None:
     return count if match['noun'].casefold()==('card' if count==1 else 'cards') else None
 
 
+def _activation_cost_clauses(actual_cost: str, card_name: str) -> list[str]:
+    """Recognize one complete joined cost using the existing source-cost owner."""
+    joined = re.fullmatch(r'(?P<removal>Remove .+?) and sacrifice it', actual_cost.strip(), re.I)
+    if joined is not None and _source_counter_removal_cost(joined['removal'], card_name=card_name) is not None:
+        return [joined['removal'], 'Sacrifice this permanent']
+    return _split_cost_clauses(actual_cost)
+
+
 def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     requirements, raw_complex = mana_cost_to_vector(actual_cost)
     complex_symbols = [value for value in raw_complex if value not in {"T", "Q"}]
@@ -1028,7 +1036,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
             "exile this planeswalker", "exile this token",
         },
     }
-    for clause in _split_cost_clauses(actual_cost):
+    for clause in _activation_cost_clauses(actual_cost, card_name):
         bend=re.fullmatch(r'Waterbend \{(?P<amount>\d+)\}',clause.strip(),re.I)
         if bend is not None:
             if waterbend is not None:uncompiled.append(clause.strip())

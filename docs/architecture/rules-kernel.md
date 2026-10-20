@@ -521,6 +521,13 @@ exact counter-removal transaction before stack placement or immediate mana
 production. Variable, all, chosen-kind, repeated, another-object,
 nonbattlefield, and granted forms remain fail closed.
 
+Activated-cost parsing can split one complete fixed source-counter removal
+followed by an unambiguous “and sacrifice it” conjunction after validating the
+counter clause through the existing owner. The original cost text is retained.
+Both typed costs keep ordinary availability, exact payment and same-source
+identity; source departure precedes resolution and never refunds a countered
+ability. Other antecedents, variable counts and unparsed tails remain residual.
+
 Fixed complex activation mana costs remain inside that same catalog and action
 path. One typed option records the selected colored-hybrid or two-brid vector,
 the selected Phyrexian life alternative, and any required snow-mana count.
