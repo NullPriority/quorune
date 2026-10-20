@@ -314,8 +314,11 @@ class ActivatedAbility:
     power_up: PowerUpSpec | None = None
     fixed_mana_result: FixedManaResultSpec | None = None
     announced_x_symbols: int | None = None
+    reconfigure: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.reconfigure) is not bool:
+            raise ValueError('Reconfigure marker must be boolean')
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
         if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
@@ -391,6 +394,7 @@ class ActivatedAbility:
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
+        if self.reconfigure:result['reconfigure']=True
         return result
 
     @classmethod
@@ -399,6 +403,7 @@ class ActivatedAbility:
         return cls(
             ability_id=value["ability_id"],
             announced_x_symbols=value.get('announced_x_symbols'),
+            reconfigure=value.get('reconfigure', False),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],

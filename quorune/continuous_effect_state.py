@@ -466,6 +466,8 @@ def active_resolution_effects(
         for effect in journal
         if isinstance(effect, ContinuousEffect)
         and identity in effect.locked_objects
+        and (effect.attachment_duration is None
+            or effect.attachment_duration.is_current(state.cards))
     )
 
 

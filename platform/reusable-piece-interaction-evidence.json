@@ -17382,6 +17382,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Kyler sums charge, lore and +1/+1 counters on its current source. A real Human entry adds a +1/+1 counter and increases the bonus; actual charge removal reduces it. Opponent Humans stay unmodified and private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+      "piece_ids": [
+        "capability.attachment.reconfigure.fixed_mana",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "attachment.reconfigure.fixed_mana",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Rabbit Battery separately pays to attach and unattach, loses creature type while attached, gives the receiver +1/+1 and Haste only while attached, preserves tapped state, and retains four-seat privacy through pending load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_seven_originals_register_two_complete_actions_and_apply_all_characteristics",
+      "piece_ids": [
+        "capability.attachment.reconfigure.fixed_mana",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.reconfigure.fixed_mana",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Blade of the Oni Reconfigure pays2BB, makes the original source noncreature, and gives the receiver base5/5, black, Demon and Menace. Separate paid unattachment restores the source and receiver characteristics. All seven complete pinned bodies execute both actions through normal registration."
     }
   ]
 }

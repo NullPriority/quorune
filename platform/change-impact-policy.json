@@ -6683,6 +6683,22 @@
         "test_casting_activation_metadata",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-mana-reconfigure-attachment-lifetime",
+      "patterns": [
+        "quorune/compiler/reconfigure_nodes.py",
+        "quorune/rules/reconfigure.py",
+        "quorune/attachment_duration.py",
+        "tests/test_reconfigure.py",
+        "tests/fixtures/reconfigure-cards.json"
+      ],
+      "test_modules": [
+        "test_reconfigure",
+        "test_fixed_attachment_actions",
+        "test_attached_static_characteristics",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

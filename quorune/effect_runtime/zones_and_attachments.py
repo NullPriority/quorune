@@ -3,7 +3,8 @@ from __future__ import annotations
 import random
 from typing import Any, Mapping, Sequence
 
-from ..attachments import attach_objects
+from ..attachments import attach_objects, detach_object
+from ..rules.reconfigure import source_has_reconfigure, commit_reconfigure_attachment_effect
 from ..aura import legal_aura_target_refs
 from ..zone_object_cleanup import resolve_zone_object_cleanup_group
 from ..continuous_effects import ContinuousOperation, Layer
@@ -30,6 +31,8 @@ from ..milling import mill_cards, MillRequest
 from ..linked_exile_return import resolve_linked_exile_return, return_linked_exiled_objects
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
+from ..target_protection_engine_adapter import protection_verdict_for_ref
+from ..protection import ProtectionVerdict
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
 
@@ -435,6 +438,10 @@ def _attachment_target_is_legal(
         return bool(
             "artifact" in attachment_types
             and "equipment" in attachment_subtypes
+            and attachment.object_id != creature.object_id
+            and ('creature' not in attachment_types or source_has_reconfigure(host, attachment))
+            and protection_verdict_for_ref(host, host._effective_card_data(creature), attachment.ref)
+                is ProtectionVerdict.ALLOWED
         )
     enchant_spec = host._compiled_enchant_spec(attachment)
     return bool(
@@ -533,7 +540,7 @@ def _apply_attach(
         creature,
         attachment_kind=attachment_kind,
     ):
-        if legacy_equipment_shape:
+        if legacy_equipment_shape and not isinstance(effect.get('_runtime_source'), Mapping):
             raise GameRuleError(
                 "Attach requires an Equipment and a creature"
             )
@@ -550,7 +557,8 @@ def _apply_attach(
             importance=2,
         )
         return None
-    attach_objects(
+    has_reconfigure = attachment_kind == 'equipment' and source_has_reconfigure(host, attachment)
+    transition = attach_objects(
         host.state.cards,
         attachment,
         creature,
@@ -561,6 +569,10 @@ def _apply_attach(
         ),
         players=host.state.players,
     )
+    if not transition.changed:
+        return creature.ref
+    if has_reconfigure:
+        commit_reconfigure_attachment_effect(host, attachment, creature)
     host._log(
         actor,
         "attachment.attach",
@@ -586,6 +598,23 @@ def _apply_attach(
         ],
     )
     return creature.ref
+
+
+def _apply_unattach(host: Any, effect: Mapping[str, Any], *, actor: str,
+        operation: str, reason: str) -> Any:
+    value = effect.get('source')
+    if value is None and isinstance(effect.get('_runtime_source'), Mapping):
+        return None
+    if value is None:
+        raise GameRuleError('Unattach requires a source')
+    source = _attachment_object(host, actor, str(value))
+    if source.zone != 'battlefield':
+        return None
+    transition = detach_object(host.state.cards, source, players=host.state.players)
+    if transition.changed:
+        host._log(actor, 'attachment.unattach', f'{source.ref} became unattached.',
+            {'attachment':source.ref, 'reason':reason}, importance=2)
+    return source
 
 
 def _apply_create_attached_token(
@@ -1406,6 +1435,7 @@ HANDLERS = {
     'prepare_graveyard_creature_aura': _apply_prepare_graveyard_creature_aura,
     'reanimate_attached_creature_aura': _apply_reanimate_attached_creature_aura,
     'attach': _apply_attach,
+    'unattach': _apply_unattach,
     'create_attached_token': _apply_create_attached_token,
     'bestow_prepare': _apply_bestow_prepare,
     'bounce': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,

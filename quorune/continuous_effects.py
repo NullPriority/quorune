@@ -397,6 +397,8 @@ def _apply_ability_operation(
         state.activated_abilities = []
     else:
         return False
+    if op in {'remove_ability', 'prohibit_ability'} and str(value).casefold() == 'reconfigure':
+        state.activated_abilities = [ability for ability in state.activated_abilities if not ability.reconfigure]
     return True
 
 

@@ -1384,6 +1384,30 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0059",
+      "adr": "docs/adr/0120-attachment-bound-reconfigure-effects.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "e5a5701b979187e846456a42f201b560453e6ae23d8809eed8a5060774137d9a",
+      "exact_allowance": "The previous exact structural baseline plus only the reviewed unattach operation; every engine, direct-write, runtime-text, identity and size allowance retains its previous value.",
+      "rationale": "CR 701.3d unattachment is a distinct generic effect delegated to the existing reciprocal attachment owner. Reconfigure produces independent paid activations and a canonical attachment-bound continuous type effect.",
+      "owner": "rules/compiler/replay maintainers through protected certification",
+      "maximum_scope": "One closed unattach source operation and optional typed attachment duration facts. No added engine method, direct or unowned write allowance, size-growth allowance, identity dispatch, runtime Oracle parsing, callback, or duplicate registry.",
+      "removal_condition": "Remove this binding when unattach is retired or a later exact reviewed baseline supersedes it; preserve activation, lifetime, layer, privacy and replay contracts.",
+      "target_milestone": "typed attachment continuity and independently paid Reconfigure activations",
+      "replay_implications": "Old activation and continuous-effect payloads remain byte-identical when new optional facts are absent. New pending actions and source/receiver incarnations persist through current records.",
+      "privacy_implications": "Only existing public Equipment relations and principal-scoped activation offers are represented; no hidden identities or capability values enter the new operation.",
+      "security_implications": "Ordinary principal-bound commands retain typed cost and target legality. Unattach delegates source-identity resolution and reciprocal mutation; malformed duration facts and unsupported costs fail closed.",
+      "tests": [
+        "tests.test_reconfigure.ReconfigureTests.test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+        "tests.test_reconfigure.ReconfigureTests.test_actual_retarget_same_target_payment_and_stale_payment_or_timing_are_atomic",
+        "tests.test_reconfigure.ReconfigureTests.test_loss_of_abilities_keeps_type_effect_until_native_receiver_departure",
+        "tests.test_reconfigure.ReconfigureTests.test_later_native_animation_detaches_even_while_reconfigure_is_present",
+        "tests.test_reconfigure.ReconfigureTests.test_fresh_reconfigure_producer_and_type_consequence_mutants_are_killed",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

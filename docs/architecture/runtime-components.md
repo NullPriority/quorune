@@ -466,6 +466,27 @@ text. The ordinary payment and usage owners commit together after validation.
 Historical descriptors without this field retain their original shape;
 historical record execution still requires compatible runtime trust provenance.
 
+Fixed ordinary-mana Reconfigure uses two independent source-spanned activation
+programs in the same catalog. Both require complete-card admission and sorcery
+timing; attaching targets another controlled creature, while unattachment
+requires a current creature attachment. Each action pays its own cost.
+Current typed activation markers identify Reconfigure at the shared attachment
+boundary, independently of Equip pricing and timing.
+Runtime binding independently requires the Reconfigure capability when that
+typed activation marker is present.
+
+Attaching commits a layer-4 creature-type removal with an explicit
+`until_unattached` duration. Its optional `attachment_duration` facts lock the
+source and receiver incarnations and attachment timestamp. Losing abilities
+does not end it. Control changes and phasing retain the relation; departure,
+unattachment or a later attachment expires its applicability. Later animation
+still uses ordinary state-based detachment. The zone/attachment family's
+`unattach` operation delegates reciprocal mutation to the existing owner.
+Older duration and activation payloads omit these new facts. Variable and
+nonordinary Reconfigure costs and uncompiled attachment providers remain
+residual. [ADR 0120](../adr/0120-attachment-bound-reconfigure-effects.md) records
+the duration and operation boundary.
+
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
 source-controller, source-opponent, or global battlefield queries into

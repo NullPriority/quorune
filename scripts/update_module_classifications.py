@@ -51,6 +51,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative in {
         "quorune/additional_cost_vocabulary.py",
         "quorune/activated_ability_descriptor.py",
+        "quorune/attachment_duration.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
         "quorune/ability_line_normalization.py",
@@ -539,6 +540,10 @@ def _owner(relative: str, layer: str) -> str:
         return "combat_declaration"
     if relative in {"quorune/power_up.py", "quorune/power_up_model.py"}:
         return "activated_abilities"
+    if relative == 'quorune/rules/reconfigure.py':
+        return 'attachments'
+    if relative == 'quorune/attachment_duration.py':
+        return 'continuous_effects'
     if relative.startswith("quorune/rules/"):
         return "rules_capabilities"
     if relative.startswith("quorune/aura/"):

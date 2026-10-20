@@ -304,6 +304,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/attachment_duration.py",
+      "layer": "domain",
+      "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/attachment_references.py",
       "layer": "rules",
       "owning_subsystem": "attachments",
@@ -5093,6 +5105,21 @@
     },
     {
       "file": "quorune/compiler/reanimation_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/reconfigure_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -11945,6 +11972,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/reconfigure.py",
+      "layer": "rules",
+      "owning_subsystem": "attachments",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/reflexive_payment_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -17118,5 +17159,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "d9b9f8c8aa7326516e07729c37fbb97c50677476d387a68927f86762641324ba"
+  "fingerprint": "ac9b9bc25f175f66b7a5a850e411899001d84113c7171e6aa4981f94aa20cfb6"
 }

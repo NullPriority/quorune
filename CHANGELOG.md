@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Add two separately paid fixed-mana Reconfigure abilities and attachment-bound
+  type changes that survive ability loss, preserve object continuity and end
+  through canonical unattachment and state-based stabilization.
+
 - Add printed self-graveyard casting methods with fixed hand-discard payments,
   preserving ordinary permission provenance, complete mana costs, atomic
   selected-card payment and repeatable ordinary resolution destinations.

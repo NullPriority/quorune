@@ -42,6 +42,7 @@ VALID_EFFECT_OPERATIONS = {
     "prepare_graveyard_creature_aura",
     "reanimate_attached_creature_aura",
     "attach",
+    "unattach",
     "create_attached_token",
     "bounce",
     "return_permanent_targets_to_owner_hand",
