@@ -435,6 +435,10 @@ def _activation_choice_schema(
     ability: ActivatedAbility,
     hint: Mapping[str, Any],
 ) -> dict[str, Any] | None:
+    from ..selected_counter_costs import selected_counter_cost_choice_schema
+    counter_choice = selected_counter_cost_choice_schema(host, seat, source, ability)
+    if counter_choice is not None:
+        return counter_choice
     if ability.mana_ability:
         from ...public_quantity_mana_runtime import public_quantity_mana_choice_schema
         quantity_choice = public_quantity_mana_choice_schema(host, seat, source, ability)

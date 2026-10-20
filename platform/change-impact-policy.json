@@ -6492,6 +6492,28 @@
         "test_fixed_library_searches",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "selected-controlled-creature-counter-costs",
+      "patterns": [
+        "quorune/rules/selected_counter_costs.py",
+        "quorune/compiler/activated_counter_costs.py",
+        "quorune/abilities.py",
+        "quorune/compiler/activated_ability_catalog.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/rules/activation_costs.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/activation/proposal.py",
+        "tests/fixtures/controlled-counter-cost-cards.json",
+        "tests/test_selected_counter_costs.py"
+      ],
+      "test_modules": [
+        "test_selected_counter_costs",
+        "test_fixed_source_counter_activation_costs",
+        "test_fixed_activation_tap_costs",
+        "test_quest_counter_sacrifice_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

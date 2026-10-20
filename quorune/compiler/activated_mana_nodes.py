@@ -616,11 +616,10 @@ def _intrinsic_basic_land_mana_reminder_node(
 
 def _fixed_activated_costs(ability: ActivatedAbility) -> ActivatedAbility:
     from .activation_x_costs import announced_x_activation_cost
+    from .activated_counter_costs import fixed_selected_counter_activation
     ability = announced_x_activation_cost(ability)
     ability = fixed_complex_activation_mana_cost(fixed_power_up_ability(ability))
-    return fixed_activated_tap_cost(
-        fixed_activated_zone_change_cost(ability)
-    )
+    return fixed_selected_counter_activation(fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability)))
 
 
 def _compiled_activated_effect(

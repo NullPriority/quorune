@@ -100,6 +100,7 @@
       "test_preflight_v080",
       "test_resolution_rules",
       "test_scheduled_player_triggers",
+      "test_selected_counter_costs",
       "test_selection_ownership",
       "test_self_public_zone_casting",
       "test_semantic_choice_model",

@@ -484,6 +484,12 @@ def _pay_object_and_mana_costs(
 
 
 def _pay_selected_object_costs(host, seat, source, ability, response):
+    from ..selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, pay_selected_counter_cost
+    if any(choice.kind == SELECTED_PLUS_COUNTER_COST_KIND for choice in ability.choices):
+        try:
+            return pay_selected_counter_cost(host, seat, source, ability, response)
+        except ValueError as exc:
+            raise ActivationProposalError(str(exc), reason='selected_counter_cost_unpayable') from exc
     if ability.random_discard_payment:
         from .random_discard_costs import pay_random_discard_activation_cost
         return pay_random_discard_activation_cost(host,seat,source,ability,response)

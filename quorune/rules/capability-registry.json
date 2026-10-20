@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 410,
+  "registry_version": 411,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4346,7 +4346,9 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "negative_tests": [
         "test_activation_zone_change_costs_exclude_mana_abilities",
@@ -4365,7 +4367,9 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "multiplayer_tests": [
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
@@ -4374,7 +4378,9 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "privacy_tests": [
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
@@ -4383,7 +4389,9 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "replay_tests": [
         "test_cycling_discard_replacement_suspends_before_mutation_and_replays",
@@ -4392,7 +4400,9 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_soul_stair_source_cost_keeps_only_the_surviving_original_graveyard_target",
         "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "required_evidence": [
         "positive",
@@ -7307,7 +7317,9 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "negative_tests": [
         "test_changed_library_or_source_fails_before_draw_mutation",
@@ -7346,7 +7358,9 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "multiplayer_tests": [
         "test_draw_each_player_uses_apnap_order_and_exact_engine_path",
@@ -7364,7 +7378,9 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "privacy_tests": [
         "test_draw_replacement_choice_is_visible_only_to_affected_seat",
@@ -7381,7 +7397,9 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "replay_tests": [
         "test_first_turn_profile_modifier_and_exact_replay",
@@ -7403,7 +7421,9 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost"
+        "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "required_evidence": [
         "positive",
@@ -8132,7 +8152,9 @@
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
         "test_zero_single_reversed_groups_have_complete_nonduplicate_history",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "negative_tests": [
         "test_fixed_token_creation_rejects_dynamic_copy_attached_and_custom_ability_variants",
@@ -8146,26 +8168,34 @@
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "multiplayer_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "privacy_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "replay_tests": [
         "test_compiled_fixed_token_effect_replays_exactly",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result"
+        "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "required_evidence": [
         "positive",
@@ -9075,7 +9105,10 @@
         "test_closed_descriptor_distinguishes_effects_costs_players_and_types",
         "test_generic_compiler_emits_exact_source_spanned_card_program_node",
         "test_damage_counter_results_use_canonical_typed_owners",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "negative_tests": [
         "test_counter_quantity_component_rejects_malformed_and_nonmatching_events",
@@ -9092,24 +9125,36 @@
         "test_competing_cost_replacements_suspend_before_mutation_and_replay",
         "test_damage_counter_replacement_is_not_rediscovered_at_commit",
         "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "multiplayer_tests": [
         "test_simultaneous_counter_choices_follow_apnap",
         "test_player_counter_choices_follow_four_player_apnap",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "privacy_tests": [
         "test_counter_replacement_choice_is_seat_scoped",
         "test_competing_cost_replacements_suspend_before_mutation_and_replay",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "replay_tests": [
         "test_counter_replacement_choice_replays_exactly",
         "test_competing_cost_replacements_suspend_before_mutation_and_replay",
         "test_death_return_replacement_continuation_survives_process_restart",
         "test_saga_entry_replacement_continuation_survives_process_restart",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "required_evidence": [
         "positive",
@@ -9264,23 +9309,120 @@
     {
       "id": "counter.removal.fixed_effect",
       "version": 1,
-      "official_rules": ["101.3", "115.3", "115.6", "122.1", "608.2b", "608.2c", "609.3"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and resolve one mandatory fixed named-counter removal from one direct permanent target through the canonical typed counter-removal owner.",
-        "inputs": ["one closed fixed-count Oracle instruction", "one legal public permanent target", "positive exact integral amount", "canonical named counter", "stable physical and logical target identity", "stable source provenance reference"],
-        "outputs": ["source-spanned CardProgram node", "strict typed removal intent", "resolution-time target revalidation", "partial fixed-effect result bounded by counters available", "authoritative counter mutation", "exact replay"],
-        "exclusions": ["counter-removal costs", "player counters", "source or nontarget removals", "unspecified counter kinds", "up-to, all, variable, distributed, repeated, linked, modal, optional, or compound removal", "counter movement", "cards outside the battlefield", "unsupported target predicates"]
+        "inputs": [
+          "one closed fixed-count Oracle instruction",
+          "one legal public permanent target",
+          "positive exact integral amount",
+          "canonical named counter",
+          "stable physical and logical target identity",
+          "stable source provenance reference"
+        ],
+        "outputs": [
+          "source-spanned CardProgram node",
+          "strict typed removal intent",
+          "resolution-time target revalidation",
+          "partial fixed-effect result bounded by counters available",
+          "authoritative counter mutation",
+          "exact replay"
+        ],
+        "exclusions": [
+          "counter-removal costs",
+          "player counters",
+          "source or nontarget removals",
+          "unspecified counter kinds",
+          "up-to, all, variable, distributed, repeated, linked, modal, optional, or compound removal",
+          "counter movement",
+          "cards outside the battlefield",
+          "unsupported target predicates"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.counter_removal_templates.FixedCounterRemovalTemplate", "quorune.rules.counter_removal_capabilities.fixed_counter_removal_node_capabilities", "quorune.semantic_runtime.counter_removal_handlers.FixedCounterRemovalHandler", "quorune.semantic_runtime.intents.RemoveCountersIntent", "quorune.counter_removal.plan_counter_removal_effect", "quorune.counter_removal.commit_counter_removal_effect"],
-      "positive_tests": ["test_fixed_counter_removal_compiles_across_spell_trigger_and_activation", "test_fixed_counter_removal_does_as_much_as_possible"],
-      "negative_tests": ["test_unsupported_fixed_counter_removal_variants_remain_residual", "test_fixed_counter_removal_handler_rejects_malformed_effects", "test_counter_removal_rejects_malformed_state_before_mutation"],
-      "interaction_tests": ["test_fixed_counter_removal_preserves_target_revalidation_and_siege_trigger"],
-      "multiplayer_tests": ["test_fixed_counter_removal_replay_is_exact_in_four_player_game"],
-      "privacy_tests": [],
-      "replay_tests": ["test_fixed_counter_removal_replay_is_exact_in_four_player_game"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "implementation_components": [
+        "quorune.compiler.counter_removal_templates.FixedCounterRemovalTemplate",
+        "quorune.rules.counter_removal_capabilities.fixed_counter_removal_node_capabilities",
+        "quorune.semantic_runtime.counter_removal_handlers.FixedCounterRemovalHandler",
+        "quorune.semantic_runtime.intents.RemoveCountersIntent",
+        "quorune.counter_removal.plan_counter_removal_effect",
+        "quorune.counter_removal.commit_counter_removal_effect"
+      ],
+      "positive_tests": [
+        "test_fixed_counter_removal_compiles_across_spell_trigger_and_activation",
+        "test_fixed_counter_removal_does_as_much_as_possible",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "negative_tests": [
+        "test_unsupported_fixed_counter_removal_variants_remain_residual",
+        "test_fixed_counter_removal_handler_rejects_malformed_effects",
+        "test_counter_removal_rejects_malformed_state_before_mutation"
+      ],
+      "interaction_tests": [
+        "test_fixed_counter_removal_preserves_target_revalidation_and_siege_trigger",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "multiplayer_tests": [
+        "test_fixed_counter_removal_replay_is_exact_in_four_player_game",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "privacy_tests": [
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "replay_tests": [
+        "test_fixed_counter_removal_replay_is_exact_in_four_player_game",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The bounded counter-removal effect owns its typed transaction directly; each targeted CardProgram independently requires the existing resolution-time target revalidation capability.",
       "implementation_mutation_status": "killed",
@@ -9535,7 +9677,10 @@
         "test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
         "test_spell_trigger_and_activated_contexts_share_fixed_counter_lowering",
         "test_typed_fixed_counter_handler_places_counters_without_domain_dispatch",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "negative_tests": [
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
@@ -9550,23 +9695,35 @@
         "test_fixed_counter_effect_suspends_for_quantity_replacement",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "multiplayer_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "privacy_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "replay_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "required_evidence": [
         "positive",
@@ -13630,7 +13787,9 @@
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
         "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
-        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -13662,7 +13821,9 @@
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
         "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
-        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -13674,7 +13835,9 @@
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
         "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
-        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -13685,7 +13848,9 @@
         "test_trusted_qualified_activation_uses_real_action_path_and_replays",
         "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
-        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -13696,7 +13861,9 @@
         "test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
         "test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
-        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws"
+        "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "required_evidence": [
         "positive",
@@ -17310,23 +17477,83 @@
     {
       "id": "permanent.tap.effect",
       "version": 3,
-      "official_rules": ["701.26", "701.26a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "701.26",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and execute one closed single-object tap instruction through a shared direct target, exact source incarnation, or current-or-last-known attached-object reference and the canonical tap-state path.",
-        "inputs": ["closed typed single-object clause", "resolved battlefield permanent reference", "authoritative actor", "tap reason"],
-        "outputs": ["tapped permanent state", "public tap event on a real transition"],
-        "exclusions": ["aggregate, quantified, linked, or compound tap clauses and target sets outside the separately capability-closed fixed homogeneous target-set owner", "optional choice shapes other than the separately typed tap-or-untap owner", "tap-symbol costs", "combat declaration tapping", "continuous prohibitions against tapping", "replacement effects that modify tapping; cards representing those interactions remain material residuals and fail match trust closed"]
+        "inputs": [
+          "closed typed single-object clause",
+          "resolved battlefield permanent reference",
+          "authoritative actor",
+          "tap reason"
+        ],
+        "outputs": [
+          "tapped permanent state",
+          "public tap event on a real transition"
+        ],
+        "exclusions": [
+          "aggregate, quantified, linked, or compound tap clauses and target sets outside the separately capability-closed fixed homogeneous target-set owner",
+          "optional choice shapes other than the separately typed tap-or-untap owner",
+          "tap-symbol costs",
+          "combat declaration tapping",
+          "continuous prohibitions against tapping",
+          "replacement effects that modify tapping; cards representing those interactions remain material residuals and fail match trust closed"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.tap_state_templates.TargetedTapStateEffectTemplate", "quorune.compiler.tap_state_templates.SourceTapStateEffectTemplate", "quorune.compiler.tap_state_templates.AttachedTapStateEffectTemplate", "quorune.rules.node_capability_shapes.targeted_tap_state_node_capabilities", "quorune.semantic_runtime.tap_state_handlers.TapPermanentHandler", "quorune.semantic_runtime.executor.execute_intent_plan", "quorune.tap_state.set_permanent_tapped"],
-      "positive_tests": ["test_single_object_tap_state_forms_compile_through_typed_owners", "test_compiled_tap_activation_is_multiplayer_public_and_replays", "test_enchanted_creature_uses_pinned_attachment_and_replays", "test_tap_state_handlers_lower_typed_intents_through_read_only_context", "test_tap_state_effects_change_only_eligible_state"],
-      "negative_tests": ["test_unsupported_tap_state_variants_remain_material_residuals", "test_single_object_tap_state_shape_mutants_fail_closed", "test_tap_state_validation_fails_before_mutation"],
-      "interaction_tests": [],
-      "multiplayer_tests": ["test_compiled_tap_activation_is_multiplayer_public_and_replays"],
-      "privacy_tests": ["test_compiled_tap_activation_is_multiplayer_public_and_replays"],
-      "replay_tests": ["test_compiled_tap_activation_is_multiplayer_public_and_replays", "test_enchanted_creature_uses_pinned_attachment_and_replays", "test_tap_state_effects_replay_exactly"],
-      "required_evidence": ["positive", "negative", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.tap_state_templates.TargetedTapStateEffectTemplate",
+        "quorune.compiler.tap_state_templates.SourceTapStateEffectTemplate",
+        "quorune.compiler.tap_state_templates.AttachedTapStateEffectTemplate",
+        "quorune.rules.node_capability_shapes.targeted_tap_state_node_capabilities",
+        "quorune.semantic_runtime.tap_state_handlers.TapPermanentHandler",
+        "quorune.semantic_runtime.executor.execute_intent_plan",
+        "quorune.tap_state.set_permanent_tapped"
+      ],
+      "positive_tests": [
+        "test_single_object_tap_state_forms_compile_through_typed_owners",
+        "test_compiled_tap_activation_is_multiplayer_public_and_replays",
+        "test_enchanted_creature_uses_pinned_attachment_and_replays",
+        "test_tap_state_handlers_lower_typed_intents_through_read_only_context",
+        "test_tap_state_effects_change_only_eligible_state",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+      ],
+      "negative_tests": [
+        "test_unsupported_tap_state_variants_remain_material_residuals",
+        "test_single_object_tap_state_shape_mutants_fail_closed",
+        "test_tap_state_validation_fails_before_mutation"
+      ],
+      "interaction_tests": [
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+      ],
+      "multiplayer_tests": [
+        "test_compiled_tap_activation_is_multiplayer_public_and_replays",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+      ],
+      "privacy_tests": [
+        "test_compiled_tap_activation_is_multiplayer_public_and_replays",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+      ],
+      "replay_tests": [
+        "test_compiled_tap_activation_is_multiplayer_public_and_replays",
+        "test_enchanted_creature_uses_pinned_attachment_and_replays",
+        "test_tap_state_effects_replay_exactly",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This capability has no capability dependencies.",
       "implementation_mutation_status": "killed",
@@ -20674,7 +20901,11 @@
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "negative_tests": [
         "test_all_targets_illegal_counters_by_rules",
@@ -20696,7 +20927,11 @@
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "multiplayer_tests": [
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
@@ -20705,7 +20940,11 @@
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "privacy_tests": [
         "test_hidden_zones_are_rejected_by_target_schema",
@@ -20715,7 +20954,11 @@
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "replay_tests": [
         "test_deflecting_swat_free_cost_and_exact_retarget",
@@ -20726,7 +20969,11 @@
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement"
+        "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
       ],
       "required_evidence": [
         "positive",
@@ -20813,7 +21060,8 @@
         "test_source_action_pronoun_damage_reuses_closed_target_leaf",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
-        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "negative_tests": [
         "test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape",
@@ -20832,21 +21080,24 @@
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
-        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "multiplayer_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
-        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "privacy_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
-        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "replay_tests": [
         "test_battle_damage_and_state_action_replay_exactly",
@@ -20856,7 +21107,8 @@
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
-        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only"
+        "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "required_evidence": [
         "positive",
@@ -21211,7 +21463,8 @@
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "negative_tests": [
         "test_only_damage_not_life_loss_or_prevented_damage_unlocks_attack",
@@ -21223,18 +21476,21 @@
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "multiplayer_tests": [
         "test_reckless_fireweaver_damages_each_opponent",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "privacy_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "replay_tests": [
         "test_battle_damage_and_state_action_replay_exactly",
@@ -21242,7 +21498,8 @@
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors"
+        "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource"
       ],
       "required_evidence": [
         "positive",
@@ -28361,7 +28618,8 @@
       "positive_tests": [
         "test_lander_and_mutagen_definitions_require_complete_specific_profiles",
         "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
-        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "negative_tests": [
         "test_lander_and_mutagen_profiles_results_and_dependency_mutants_fail_closed",
@@ -28370,19 +28628,23 @@
       ],
       "interaction_tests": [
         "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
-        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "multiplayer_tests": [
         "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
-        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "privacy_tests": [
         "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
-        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ],
       "replay_tests": [
         "test_original_mutagen_native_cast_target_counter_and_sorcery_timing_replay",
-        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation"
+        "test_original_mutagen_native_target_blink_does_not_substitute_new_incarnation",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
       ]
     },
     {
@@ -35556,6 +35818,116 @@
       "dependency_fail_closed_rationale": "The spent-color reader and scalar result authority must remain present; malformed provenance and non-resolving readers reject before mutation.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh actual paid Painful Truths must distinguish committed colors from zero before family acceptance."
+    },
+    {
+      "id": "activation.selected_counter_removal.fixed",
+      "version": 1,
+      "official_rules": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Pay one +1/+1 counter from one currently controlled battlefield creature through a public selected activation cost.",
+        "inputs": [
+          "one fixed remove-one-plus-one-counter cost choice",
+          "one authoritative controlled creature reference with the counter"
+        ],
+        "outputs": [
+          "exact incarnation-pinned counter payment",
+          "selected creature remains in place unless ordinary state-based actions move it",
+          "ordinary source tap, mana, target, result and replay ownership"
+        ],
+        "exclusions": [
+          "other counter kinds or amounts",
+          "foreign-controlled, noncreature, phased-out or empty payers",
+          "multiple selectable payment groups, mana abilities and granted cost forms"
+        ]
+      },
+      "dependencies": [
+        "counter.removal.fixed_effect"
+      ],
+      "implementation_components": [
+        "quorune.compiler.activated_counter_costs.fixed_selected_counter_activation",
+        "quorune.rules.selected_counter_costs.validate_selected_counter_choice",
+        "quorune.rules.selected_counter_costs.selected_counter_cost_candidates",
+        "quorune.rules.selected_counter_costs.pay_selected_counter_cost",
+        "quorune.rules.selected_counter_costs.selected_counter_cost_choice_schema",
+        "quorune.rules.selected_counter_costs.selected_counter_runtime_dependencies"
+      ],
+      "positive_tests": [
+        "test_seven_originals_have_whole_admission_and_authoritative_payment_forms",
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "negative_tests": [
+        "test_fixed_choice_roundtrip_and_malformed_payment_shapes_reject",
+        "test_runtime_cannot_omit_selected_payment_authority",
+        "test_unrepresented_amounts_subjects_and_counter_kinds_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "multiplayer_tests": [
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "privacy_tests": [
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "replay_tests": [
+        "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
+        "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
+        "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
+        "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Malformed choice shapes, unavailable or foreign payers and omitted cost authority must fail closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual Shapers payment must distinguish counter removal from a free activation before acceptance.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

@@ -461,6 +461,9 @@ def activation_choice_candidates(
 ) -> tuple[str, ...]:
     """Return the canonical legal objects for one activation cost choice."""
 
+    from .selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, selected_counter_cost_candidates
+    if choice.kind == SELECTED_PLUS_COUNTER_COST_KIND:
+        return selected_counter_cost_candidates(host, actor, choice)
     typed_cost = choice.fixed_zone_change_cost()
     if typed_cost is not None:
         return fixed_zone_change_cost_candidates(

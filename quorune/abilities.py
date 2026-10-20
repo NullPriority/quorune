@@ -134,6 +134,9 @@ class CostChoice:
             raise ValueError("cost choice card_type must be null or nonempty")
         if type(self.another) is not bool:
             raise ValueError("cost choice another flag must be boolean")
+        from .rules.selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, validate_selected_counter_choice
+        if self.kind == SELECTED_PLUS_COUNTER_COST_KIND:
+            validate_selected_counter_choice(self)
         if self.predicate is not None:
             if not isinstance(self.predicate, Mapping):
                 raise ValueError("cost choice predicate must be an object")

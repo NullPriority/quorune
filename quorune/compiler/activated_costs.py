@@ -19,6 +19,9 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    from ..rules.selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, SELECTED_COUNTER_COST_CAPABILITY
+    if any(choice.kind == SELECTED_PLUS_COUNTER_COST_KIND for choice in ability.choices):
+        additional.append(SELECTED_COUNTER_COST_CAPABILITY)
     if ability.announced_x_symbols is not None:
         from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY
         additional.append(ANNOUNCED_ACTIVATION_X_CAPABILITY)

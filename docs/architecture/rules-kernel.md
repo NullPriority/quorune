@@ -528,6 +528,16 @@ Both typed costs keep ordinary availability, exact payment and same-source
 identity; source departure precedes resolution and never refunds a countered
 ability. Other antecedents, variable counts and unparsed tails remain residual.
 
+A separate fixed selected-counter cost removes one +1/+1 counter from one
+creature the activating player currently controls. The form, offer and payment
+share the same public candidate query, and payment pins the selected incarnation
+through the canonical exact removal owner. The source itself can pay this
+counter while also paying its distinct tap resource; a tapped or foreign-owned
+controlled creature can pay without being sacrificed. The paid object is not
+a target, and later state-based death or illegal targets never refund it.
+Other counter kinds, amounts, selectable payment groups and granted forms
+remain residual until their own contracts are represented.
+
 Fixed complex activation mana costs remain inside that same catalog and action
 path. One typed option records the selected colored-hybrid or two-brid vector,
 the selected Phyrexian life alternative, and any required snow-mana count.
