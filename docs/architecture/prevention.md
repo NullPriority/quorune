@@ -101,7 +101,10 @@ Runtime components and handlers never mutate shield state directly. Generic
 code does not recognize card names or Oracle IDs. New prevention grammar must
 compile to typed descriptors with exact predicates, provenance, duration, and
 capability dependencies; unsupported predicates and aftermath forms stay
-material residuals. Unrepresented counter and combat-role predicates, dynamic power or
+material residuals. Fixed self-prevention in both combat-damage directions
+pins its source with the same canonical public source predicate accepted by
+the shield creation owner; it does not issue a source-selection choice.
+Unrepresented counter and combat-role predicates, dynamic power or
 toughness, mana-value, secret, chosen, history-relative, linked-result, modal,
 optional-prevention, repeated-decision, and unsupported multiple-target
 predicates remain outside the represented fixed all-damage boundary. So do

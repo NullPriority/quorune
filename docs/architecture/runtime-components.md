@@ -940,6 +940,27 @@ power/toughness modifier remains a separate characteristic component. Cleanup
 expires both components through the existing journal owner. Blocking capacity
 does not waive evasion, tapped-state or other declaration restrictions.
 
+### Combat-bound blocking requirements
+
+Printed Provoke lowers through the existing keyword event production, creature
+target authority and optional-effect choice. The attack event binds the exact
+defending player. Tapped creatures remain eligible targets; ordinary target
+revalidation checks their current controller and incarnation at resolution.
+
+Choosing apply commits an immutable attacker/blocker relation in the current
+`CombatState` and delegates untapping to the canonical tap-state owner. Stun
+can replace the untap. The existing declaration solver maximizes current
+requirements while retaining evasion, capacity, tapped-state and optional-cost
+rules. Re-tapping may make the required block impossible. Later ability loss
+does not remove the resolved rule; departure or a new incarnation cannot
+substitute a combatant. Resetting combat expires all such relations.
+
+Closed runtime shapes independently require the Provoke, optional-choice,
+requirement, untap and target-revalidation capabilities. Unsupported keyword
+parameters, riders and unrepresented grants remain residual.
+[ADR 0123](../adr/0123-combat-bound-blocking-requirements.md) records the operation
+and persistence decision.
+
 ### Conditional chosen characteristics
 
 `continuous.characteristics.conditional-chosen-designation.v1` gates an existing

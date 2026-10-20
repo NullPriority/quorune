@@ -687,7 +687,8 @@ def _all_combat_damage(normalized: str) -> PreventionTemplate | None:
         "damage-prevention-all-combat-to-from-self-v1",
         (
             {**common, "subject": "$source"},
-            {**common, "subject": "*", "chosen_source": "$source"},
+            {**common, "subject": "*", "chosen_source": "$source",
+             "source_predicate": _source_predicate(None).to_dict()},
         ),
         None,
         _rules(None),

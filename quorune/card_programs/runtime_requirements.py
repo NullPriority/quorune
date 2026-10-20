@@ -25,10 +25,15 @@ from ..rules.self_cost_numeric_counts import self_cost_numeric_count_dependencie
 from ..rules.reconfigure import reconfigure_runtime_dependencies
 from ..rules.paid_color_entry import paid_color_entry_runtime_dependencies
 from ..rules.paid_mana_resolution import paid_mana_resolution_dependencies
+from ..rules.provoke_shapes import provoke_program_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(provoke_program_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_provoke:invalid:{exc}')
     try:
         required.update(paid_mana_resolution_dependencies(program))
     except (TypeError,ValueError) as exc:

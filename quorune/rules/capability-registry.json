@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 425,
+  "registry_version": 426,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -38399,6 +38399,219 @@
       "dependency_fail_closed_rationale": "The original legal target, matching incarnation and current/LKI controller information are mandatory; unavailable information cannot fall back to the caster or owner.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh native Searing Barrage witness distinguishes observer A, owner B and current controller C; a reader omission mapping the recipient to A fails.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.block.requirement_this_combat",
+      "version": 1,
+      "official_rules": [
+        "702.39a",
+        "702.39b",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "506.4",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A targeted optional attack trigger binds the defending player, may untap its target, and imposes an incarnation-bound block-this-attacker requirement only for the current combat; the existing solver maximizes compatible requirements.",
+        "inputs": [
+          "actual declared attacker and defending player",
+          "one current legal creature target",
+          "optional resolving-controller choice",
+          "current combat and exact attacker/blocker identities"
+        ],
+        "outputs": [
+          "targeted attack trigger",
+          "optional untap and combat-bound requirement",
+          "shared offer/commit declaration legality"
+        ],
+        "exclusions": [
+          "granted Provoke without a typed component",
+          "unsupported keyword costs or variants",
+          "violations of blocking restrictions or forced optional payments"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.blocking_requirement_model.ResolvedBlockingRequirement",
+        "quorune.combat_relationship_state.commit_blocking_requirement",
+        "quorune.rules.blocking_requirements.resolve_blocking_requirement"
+      ],
+      "positive_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+        "test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "negative_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_declining_does_not_untap_or_require_a_block",
+        "test_defending_player_target_rechecks_current_control_before_resolution",
+        "test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+        "test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+        "test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+        "test_two_native_provokes_share_the_maximum_requirement_solver",
+        "test_verified_withdrawals_and_stripped_runtime_minima_reject"
+      ],
+      "interaction_tests": [
+        "test_defending_player_target_rechecks_current_control_before_resolution",
+        "test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+        "test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+        "test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+        "test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "multiplayer_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "privacy_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped"
+      ],
+      "replay_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_declining_does_not_untap_or_require_a_block",
+        "test_defending_player_target_rechecks_current_control_before_resolution",
+        "test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+        "test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+        "test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "One typed combat relation is committed through the existing combat relationship owner and expires when that combat state resets.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Goblin Grappler witnesses kill compiler trigger production, actual requirement commitment and canonical target untapping omissions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.keyword.provoke.fixed",
+      "version": 1,
+      "official_rules": [
+        "702.39a",
+        "702.39b",
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "506.4",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A targeted optional attack trigger binds the defending player, may untap its target, and imposes an incarnation-bound block-this-attacker requirement only for the current combat; the existing solver maximizes compatible requirements.",
+        "inputs": [
+          "actual declared attacker and defending player",
+          "one current legal creature target",
+          "optional resolving-controller choice",
+          "current combat and exact attacker/blocker identities"
+        ],
+        "outputs": [
+          "targeted attack trigger",
+          "optional untap and combat-bound requirement",
+          "shared offer/commit declaration legality"
+        ],
+        "exclusions": [
+          "granted Provoke without a typed component",
+          "unsupported keyword costs or variants",
+          "violations of blocking restrictions or forced optional payments"
+        ]
+      },
+      "dependencies": [
+        "combat.block.requirement_this_combat",
+        "effect.choice.optional_fixed",
+        "permanent.untap.effect",
+        "target.revalidate_resolution",
+        "trigger.event.normalized_self_attack"
+      ],
+      "implementation_components": [
+        "quorune.compiler.keyword_event_effect_nodes.FixedKeywordEventEffectSpec",
+        "quorune.rules.provoke_shapes.provoke_program_runtime_dependencies"
+      ],
+      "positive_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+        "test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "negative_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_declining_does_not_untap_or_require_a_block",
+        "test_defending_player_target_rechecks_current_control_before_resolution",
+        "test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_repeated_keyword_instances_are_separate_and_parameter_or_rider_forms_reject",
+        "test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+        "test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+        "test_two_native_provokes_share_the_maximum_requirement_solver",
+        "test_verified_withdrawals_and_stripped_runtime_minima_reject"
+      ],
+      "interaction_tests": [
+        "test_defending_player_target_rechecks_current_control_before_resolution",
+        "test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+        "test_requirement_codec_and_projection_lock_incarnations_without_requiring_abilities",
+        "test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+        "test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "multiplayer_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "privacy_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped"
+      ],
+      "replay_tests": [
+        "test_actual_grappler_attack_offers_defending_player_target_even_when_tapped",
+        "test_declining_does_not_untap_or_require_a_block",
+        "test_defending_player_target_rechecks_current_control_before_resolution",
+        "test_flying_restriction_keeps_ground_target_legal_but_unable_to_block",
+        "test_native_blink_does_not_substitute_a_returned_source_or_target",
+        "test_native_retap_and_ability_loss_preserve_the_correct_resolved_requirement",
+        "test_seven_originals_admit_complete_source_and_retain_their_other_combat_bodies",
+        "test_stun_replaces_the_untap_and_impossible_requirement_does_not_force_a_block",
+        "test_two_native_provokes_share_the_maximum_requirement_solver"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Typed original attacker, target and defending-player context bind the optional requirement to canonical declaration solving.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Goblin Grappler witnesses kill compiler trigger production, actual requirement commitment and canonical target untapping omissions.",
       "blockers": [],
       "status": "trusted"
     }

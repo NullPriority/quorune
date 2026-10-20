@@ -139,7 +139,7 @@ EFFECT_FAMILY_CONTRACTS = (
         semantic_family="effect.declaration",
         rule_references=("508.1c", "509.1b", "611.2c"),
         operations=frozenset(
-            {"grant_declaration_restriction_until_end_of_turn"}
+            {"grant_declaration_restriction_until_end_of_turn","require_blocking_this_combat"}
         ),
     ),
     EffectFamilyContract(

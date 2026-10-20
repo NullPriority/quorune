@@ -22,6 +22,12 @@ from ..rules.temporary_declaration_restrictions import (
 OPERATIONS = effect_family_contract("declaration-effects.v1").operations
 
 
+def _apply_require_blocking_this_combat(host,effect,*,actor,operation,reason):
+    from ..rules.blocking_requirements import resolve_blocking_requirement
+    try:return resolve_blocking_requirement(host,effect,actor=actor,reason=reason)
+    except (TypeError,ValueError) as exc:raise GameRuleError(str(exc)) from exc
+
+
 def _apply_grant_declaration_restriction_until_end_of_turn(
     host: Any,
     effect: Mapping[str, Any],
@@ -110,6 +116,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
 
 
 HANDLERS = {
+    'require_blocking_this_combat':_apply_require_blocking_this_combat,
     "grant_declaration_restriction_until_end_of_turn": (
         _apply_grant_declaration_restriction_until_end_of_turn
     ),

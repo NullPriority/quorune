@@ -15,6 +15,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve printed Provoke through exact defending-player targets, optional
+  untapping and combat-bound requirements in the existing declaration solver.
+- Supply the canonical public source predicate for fixed self-prevention of
+  combat damage in both directions.
+
 - Lower complete paid-mana spell results through the existing condition owner,
   preserving added versus replacement damage, after-prefix quantities, private
   selections and whole-spell target revalidation.

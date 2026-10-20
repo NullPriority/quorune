@@ -8,6 +8,7 @@ from ..replacement.immutable import FrozenMap
 from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION, validate_linked_instruction
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import DomainEffectIntent, IntentPlan
+from ..blocking_requirement_model import BLOCKING_REQUIREMENT_CAPABILITY,BLOCKING_REQUIREMENT_OPERATION
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,7 +82,7 @@ class DomainEffectHandler:
 
 
 DOMAIN_EFFECT_HANDLERS = tuple(
-    DomainEffectHandler(operation=operation, contract=contract, capability_dependencies=(LINKED_EXILE_RETURN_CAPABILITY,) if operation in {LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION} else ())
+    DomainEffectHandler(operation=operation, contract=contract, capability_dependencies=(BLOCKING_REQUIREMENT_CAPABILITY,) if operation==BLOCKING_REQUIREMENT_OPERATION else (LINKED_EXILE_RETURN_CAPABILITY,) if operation in {LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION} else ())
     for operation, contract in effect_operation_contracts()
     if operation not in {"bounce", "destroy", "mill"}
 )
