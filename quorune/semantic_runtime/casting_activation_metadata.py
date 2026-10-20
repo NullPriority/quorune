@@ -14,6 +14,8 @@ from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD, prog
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .self_graveyard_discard import SelfGraveyardDiscardPermissionHandler
+from ..rules.self_graveyard_discard import HANDLER_ID as SELF_GRAVEYARD_DISCARD_HANDLER_ID, SelfGraveyardDiscardSpec
 
 
 SELF_ZONE_CAST_PERMISSION_EVENT = "cast.zone.permission"
@@ -238,7 +240,7 @@ class LoyaltyCostModifierHandler:
 
 
 class SelfZoneCastPermissionRegistry(
-    RuntimeComponentRegistry[object, SelfZoneCastPermission]
+    RuntimeComponentRegistry[object, SelfZoneCastPermission | SelfGraveyardDiscardSpec]
 ):
     pass
 
@@ -255,7 +257,7 @@ class LoyaltyCostModifierRegistry(
 @lru_cache(maxsize=1)
 def default_self_zone_cast_permission_registry() -> SelfZoneCastPermissionRegistry:
     registry = SelfZoneCastPermissionRegistry((SelfZoneCastPermissionHandler(),PublicStateSelfZoneCastPermissionHandler(),
-        SelfPublicZoneCastPermissionHandler()))
+        SelfPublicZoneCastPermissionHandler(),SelfGraveyardDiscardPermissionHandler()))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 
@@ -312,6 +314,8 @@ def compiled_self_zone_cast_permission(
         ):
             continue
         for descriptor in program.handlers:
+            if descriptor.get('handler_id') == SELF_GRAVEYARD_DISCARD_HANDLER_ID:
+                continue
             if descriptor.get('handler_id') == SELF_PUBLIC_ZONE_CAST_PERMISSION_HANDLER_ID:
                 if not program_has_complete_card_program_admission(program):
                     continue

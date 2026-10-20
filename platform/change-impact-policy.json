@@ -6667,6 +6667,22 @@
         "test_casting_activation_metadata",
         "test_self_public_zone_casting"
       ]
+    },
+    {
+      "id": "fixed-discard-self-graveyard-casting",
+      "patterns": [
+        "quorune/rules/self_graveyard_discard.py",
+        "quorune/semantic_runtime/self_graveyard_discard.py",
+        "quorune/compiler/self_graveyard_discard_templates.py",
+        "tests/test_self_zone_discard_casts.py",
+        "tests/fixtures/self-zone-discard-cast-cards.json"
+      ],
+      "test_modules": [
+        "test_self_zone_discard_casts",
+        "test_self_public_zone_casting",
+        "test_casting_activation_metadata",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 421,
+  "registry_version": 422,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37810,6 +37810,110 @@
       "implementation_mutation_rationale": "Fresh native original cases kill serialized numeric-qualifier removal; a fresh complete-source witness kills numeric-price production removal.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "casting.zone.self_graveyard.fixed_discard",
+      "version": 1,
+      "official_rules": [
+        "113.6f",
+        "118.8",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2e",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability": {
+        "summary": "The owner may use a fixed printed self-graveyard permission with its exact selected-hand discard added to the ordinary printed mana cost.",
+        "inputs": [
+          "complete source-face-bound intrinsic graveyard payment declaration",
+          "distinct currently owned hand card choices",
+          "current ordinary timing, targets and complete payment"
+        ],
+        "outputs": [
+          "one provenance-bound paid graveyard method, separate from any ordinary zone permission",
+          "canonical atomic discard and unchanged post-resolution destination"
+        ],
+        "exclusions": [
+          "other source zones or other owners",
+          "hidden, qualified or variable discard counts",
+          "mixed life/additional resources",
+          "unrepresented copied/granted/alternative-cost combinations"
+        ]
+      },
+      "dependencies": [
+        "casting.zone.self_public_repeatable",
+        "casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "implementation_components": [
+        "quorune.compiler.self_graveyard_discard_templates.self_graveyard_discard_template",
+        "quorune.semantic_runtime.self_graveyard_discard.SelfGraveyardDiscardPermissionHandler",
+        "quorune.rules.self_graveyard_discard.SelfGraveyardDiscardSpec",
+        "quorune.rules.self_graveyard_discard.compiled_self_graveyard_discard_specs",
+        "quorune.rules.self_graveyard_discard.validate_self_graveyard_discard_option"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The typed handler requires complete whole-source admission, current face/component and owner-graveyard scope; its distinct cost route preserves every declared discard dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh whole-original admission and native paid casts kill omission of the permission producer or actual canonical discard cost.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+        "test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+        "test_countered_paid_cast_returns_to_graveyard_then_pays_a_fresh_cost",
+        "test_normal_hand_and_independent_permission_keep_ordinary_unpaid_route",
+        "test_two_originals_have_complete_nonempty_paid_zone_programs"
+      ],
+      "negative_tests": [
+        "test_current_face_whole_admission_component_and_owner_are_required",
+        "test_duplicate_foreign_missing_and_unpaid_method_choices_roll_back",
+        "test_insufficient_hand_withholds_paid_route_and_preserves_source",
+        "test_paid_permission_dependencies_cannot_be_stripped_or_withdrawn",
+        "test_paid_zone_value_and_handler_reject_malformed_payment_or_scope",
+        "test_resolved_cost_contract_cannot_lose_payment_or_change_method"
+      ],
+      "interaction_tests": [
+        "test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+        "test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+        "test_countered_paid_cast_returns_to_graveyard_then_pays_a_fresh_cost",
+        "test_current_face_whole_admission_component_and_owner_are_required",
+        "test_normal_hand_and_independent_permission_keep_ordinary_unpaid_route",
+        "test_resolved_cost_contract_cannot_lose_payment_or_change_method"
+      ],
+      "multiplayer_tests": [
+        "test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+        "test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+        "test_duplicate_foreign_missing_and_unpaid_method_choices_roll_back"
+      ],
+      "privacy_tests": [
+        "test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+        "test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger"
+      ],
+      "replay_tests": [
+        "test_actual_alien_pays_one_discard_and_repeats_after_real_aura_destruction",
+        "test_actual_rona_graveyard_method_pays_two_discards_and_preserves_its_cast_trigger",
+        "test_countered_paid_cast_returns_to_graveyard_then_pays_a_fresh_cost",
+        "test_insufficient_hand_withholds_paid_route_and_preserves_source",
+        "test_normal_hand_and_independent_permission_keep_ordinary_unpaid_route"
+      ]
     }
   ]
 }

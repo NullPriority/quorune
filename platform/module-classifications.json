@@ -5347,6 +5347,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/self_graveyard_discard_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/self_graveyard_exile_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12098,6 +12113,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/self_graveyard_discard.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/self_return_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -15473,6 +15502,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/self_graveyard_discard.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/self_graveyard_exile.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -17074,5 +17118,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "20db331c4ae14c7a238f2baa5c14bd4b37d89fb6277aa90d70b57997f84cf754"
+  "fingerprint": "d9b9f8c8aa7326516e07729c37fbb97c50677476d387a68927f86762641324ba"
 }

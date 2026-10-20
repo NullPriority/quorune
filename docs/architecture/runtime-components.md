@@ -693,6 +693,16 @@ temporary designation. New incarnations use their own printed permission;
 face-down cards and unrepresented condition, cost or restriction tails fail
 closed. Existing conditional self-graveyard schemas retain their gates.
 
+`permission.cast.self-graveyard-discard.v1` supplies a separate paid graveyard
+method. Its sealed fixed count adds selected-hand discards to the ordinary
+printed mana cost through the canonical additional-cost owner. Current owner,
+source face, whole-program admission and ability-component presence gate that
+method. Normal hand casting and an independent ordinary zone permission retain
+their own costs. Revalidation binds the selected method to its normalized
+discard descriptor before payment; replacements and atomic movement remain
+with the existing zone-cost transaction. The permission is repeatable and
+retains ordinary resolution destinations and timing.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two

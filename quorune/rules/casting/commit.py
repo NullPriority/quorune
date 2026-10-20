@@ -1244,6 +1244,12 @@ def _revalidate_fixed_lifecycle_contract(
     card: Any,
     selected_option: Mapping[str, Any],
 ) -> None:
+    from ..self_graveyard_discard import validate_self_graveyard_discard_option
+    try:
+        validate_self_graveyard_discard_option(host,proposal.seat,prospective_cast_card(host,card,proposal.face),
+            selected_option,origin=proposal.origin)
+    except ValueError as exc:
+        raise CastProposalError(str(exc),reason='stale_self_graveyard_discard_contract') from exc
     lifecycle_raw = selected_option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if lifecycle_raw is None:
         return

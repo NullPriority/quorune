@@ -442,6 +442,7 @@ def _owner(relative: str, layer: str) -> str:
                     "quorune/rules/self_cost_turn_counts.py",
                     "quorune/rules/self_cost_public_counters.py",
                     "quorune/rules/self_cost_numeric_counts.py",
+                    "quorune/rules/self_graveyard_discard.py",
                     "quorune/rules/waterbend_payments.py"}:
         return "casting_activation_and_costs"
     if relative in {"quorune/target_restrictions.py", "quorune/target_source.py"}:
