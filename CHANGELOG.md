@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Enforce represented intrinsic prior-spell and current Snow-land casting
+  conditions through shared offers and accepted commands, preserving actual
+  caster binding, the legality boundary before payment, and ordinary resolution.
+
 - Extend typed activation prices with announced X, fixed mana alternatives,
   current generic modifiers, selected creature counters and complete source
   counter distributions, preserving shared offer and payment authority.

@@ -10,6 +10,7 @@ from ..cast_timing import (
     CastTimingPermissionError,
 )
 from ..rules.capabilities import load_default_capability_registry
+from ..continuous_conditions import FixedPublicStateConditionSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 
@@ -76,7 +77,7 @@ class FlashCastPermissionHandler:
 
 
 class CastPermissionRegistry(
-    RuntimeComponentRegistry[object, CastTimingPermission]
+    RuntimeComponentRegistry[object, CastTimingPermission | FixedPublicStateConditionSpec]
 ):
     pass
 
@@ -84,7 +85,9 @@ class CastPermissionRegistry(
 @lru_cache(maxsize=1)
 def default_cast_permission_registry() -> CastPermissionRegistry:
     from .conditional_flash import ConditionalFlashPermissionHandler
-    registry = CastPermissionRegistry((FlashCastPermissionHandler(),ConditionalFlashPermissionHandler()))
+    from .self_cast_restrictions import SelfCastRestrictionHandler
+    registry = CastPermissionRegistry((FlashCastPermissionHandler(),ConditionalFlashPermissionHandler(),
+        SelfCastRestrictionHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

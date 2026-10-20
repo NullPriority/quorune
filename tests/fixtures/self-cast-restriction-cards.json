@@ -1,0 +1,167 @@
+{"cards":[
+    {"cmc":1.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{G}","name":"Animate Land","oracle_id":"b2bd58ea-b2c6-47f1-b082-7969f093bbc6","oracle_text":"Until end of turn, target land becomes a 3/3 creature that's still a land.","power":null,"produced_mana":[],"released_at":"2000-02-14","toughness":null,"type_line":"Instant"},
+    {"cmc":4.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":["Enchant"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{2}{U}{U}","name":"Annex","oracle_id":"5f1f49dd-b7ce-494a-9b4b-ac702d3664c5","oracle_text":"Enchant land (Target a land as you cast this. This card enters attached to that land.)\nYou control enchanted land.","power":null,"produced_mana":[],"released_at":"2005-07-29","toughness":null,"type_line":"Enchantment — Aura"},
+    {"cmc":2.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":["Cumulative upkeep"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{G}{G}","name":"Blizzard","oracle_id":"698feaaa-2fff-4809-81d1-4caad44c6c0a","oracle_text":"Cast this spell only if you control a snow land.\nCumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nCreatures with flying don't untap during their controllers' untap steps.","power":null,"produced_mana":[],"released_at":"1995-06-03","toughness":null,"type_line":"Enchantment"},
+    {"cmc":2.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{U}{U}","name":"Boomerang","oracle_id":"dc4a4996-108a-4aac-850f-2d9f76403446","oracle_text":"Return target permanent to its owner's hand.","power":null,"produced_mana":[],"released_at":"2009-09-07","toughness":null,"type_line":"Instant"},
+    {"cmc":2.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{U}{U}","name":"Counterspell","oracle_id":"cc187110-1148-4090-bbb8-e205694a39f5","oracle_text":"Counter target spell.","power":null,"produced_mana":[],"released_at":"2024-09-27","toughness":null,"type_line":"Instant"},
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Morph"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Generic Intrinsic Restriction Morph",
+      "oracle_id": "a7eb6ad6-91a6-5d56-978e-b5f2865d0b5b",
+      "oracle_text": "Cast this spell only if you've cast another spell this turn.\nMorph {1}{G}",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Shapeshifter"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Generic Restricted Front // Generic Unrestricted Back",
+      "oracle_id": "0402c126-89f6-5803-a7e9-2cd64791e6cc",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear",
+      "card_faces": [
+        {
+          "name": "Generic Restricted Front",
+          "type_line": "Creature — Human",
+          "mana_cost": "{2}{G}",
+          "oracle_text": "Cast this spell only if you've cast another spell this turn.",
+          "power": "2",
+          "toughness": "2",
+          "colors": [
+            "G"
+          ],
+          "keywords": []
+        },
+        {
+          "name": "Generic Unrestricted Back",
+          "type_line": "Creature — Human",
+          "mana_cost": "{2}{U}",
+          "oracle_text": "",
+          "power": "2",
+          "toughness": "2",
+          "colors": [
+            "U"
+          ],
+          "keywords": []
+        }
+      ]
+    },
+    {"cmc":2.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{G}","name":"Grizzly Bears","oracle_id":"14c8f55d-d177-4c25-a931-ebeb9e6062a0","oracle_text":"","power":"2","produced_mana":[],"released_at":"2007-07-13","toughness":"2","type_line":"Creature — Bear"},
+    {"cmc":3.0,"color_identity":[],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{3}","name":"Hewed Stone Retainers","oracle_id":"a27938d2-9a15-4a87-9e77-dea37347cf62","oracle_text":"Cast this spell only if you've cast another spell this turn.","power":"4","produced_mana":[],"released_at":"2015-01-23","toughness":"4","type_line":"Artifact Creature — Golem"},
+    {"cmc":3.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":["Flying"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{2}{U}","name":"Illusory Angel","oracle_id":"6ee32b5e-3b29-47ff-87f8-913ec05f6b2f","oracle_text":"Cast this spell only if you've cast another spell this turn.\nFlying","power":"4","produced_mana":[],"released_at":"2017-11-17","toughness":"4","type_line":"Creature — Angel Illusion"},
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {"cmc":3.0,"color_identity":[],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{3}","name":"Phyrexian Altar","oracle_id":"8d02b297-97c4-4379-9862-0a462400f66f","oracle_text":"Sacrifice a creature: Add one mana of any color.","power":null,"produced_mana":["B","G","R","U","W"],"released_at":"2022-07-08","toughness":null,"type_line":"Artifact"},
+    {"cmc":0.0,"color_identity":["W"],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"legal","predh":"legal","premodern":"legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"","name":"Plains","oracle_id":"bc71ebf6-2056-41f7-be35-b2e5c34afa99","oracle_text":"({T}: Add {W}.)","power":null,"produced_mana":["W"],"released_at":"2026-11-13","toughness":null,"type_line":"Basic Land — Plains"},
+    {"cmc":2.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":["Flying"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{U}","name":"Skyshroud Condor","oracle_id":"c7c4c67e-c4db-416b-b2e8-f0e59aa80bba","oracle_text":"Cast this spell only if you've cast another spell this turn.\nFlying","power":"2","produced_mana":[],"released_at":"1997-10-14","toughness":"2","type_line":"Creature — Bird"},
+    {"cmc":0.0,"color_identity":["W"],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"not_legal","pioneer":"legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"","name":"Snow-Covered Plains","oracle_id":"ac8cc74d-e43b-4118-bba0-dfa8b9c04d45","oracle_text":"({T}: Add {W}.)","power":null,"produced_mana":["W"],"released_at":"2021-02-05","toughness":null,"type_line":"Basic Snow Land — Plains"},
+    {"cmc":2.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":["Trample"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{G}","name":"Talara's Battalion","oracle_id":"08c7a6f5-7e25-4f8d-9e4a-aec7248e45fa","oracle_text":"Cast this spell only if you've cast another green spell this turn.\nTrample","power":"4","produced_mana":[],"released_at":"2018-04-06","toughness":"3","type_line":"Creature — Elf Warrior"},
+    {"cmc":4.0,"color_identity":[],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{4}","name":"Vedalken Orrery","oracle_id":"60d640a4-032b-4279-ac75-8f200ca776fb","oracle_text":"You may cast spells as though they had flash.","power":null,"produced_mana":[],"released_at":"2022-07-08","toughness":null,"type_line":"Artifact"},
+    {"cmc":1.0,"color_identity":["G","R"],"colors":["G","R"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{R/G}","name":"Wild Cantor","oracle_id":"24472823-d33c-4d96-add1-233116f6f4f7","oracle_text":"({R/G} can be paid with either {R} or {G}.)\nSacrifice this creature: Add one mana of any color.","power":"1","produced_mana":["B","G","R","U","W"],"released_at":"2024-01-12","toughness":"1","type_line":"Creature — Human Druid"}
+  ],"fixture_kind":"public_exact-list_card_data","rulings":[{"comment":"While casting a spell with convoke, if you sacrifice Wild Cantor to add mana, Wild Cantor won't be on the battlefield when you pay that spell's costs. It can't be tapped to help cast that spell using convoke.","oracle_id":"24472823-d33c-4d96-add1-233116f6f4f7","published_at":"2006-02-01","source":"wotc"},{"comment":"The controller of Vedalken Orrery can cast nonland artifact, creature, enchantment, and sorcery cards any time they could cast an instant. This includes on other players' turns and during the upkeep step, draw step, combat phase, and end step.","oracle_id":"60d640a4-032b-4279-ac75-8f200ca776fb","published_at":"2004-12-01","source":"wotc"},{"comment":"This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\".","oracle_id":"60d640a4-032b-4279-ac75-8f200ca776fb","published_at":"2010-06-15","source":"wotc"},{"comment":"It doesn't matter whether the other spell resolved. It could have been countered or, if you've somehow cast Illusory Angel as though it had flash, it could still be on the stack.","oracle_id":"6ee32b5e-3b29-47ff-87f8-913ec05f6b2f","published_at":"2014-07-18","source":"wotc"},{"comment":"It doesn't matter whether the other spell resolved. It could have been countered or, if you've somehow cast Illusory Angel as though it had flash, it could still be on the stack.","oracle_id":"6ee32b5e-3b29-47ff-87f8-913ec05f6b2f","published_at":"2017-11-17","source":"wotc"},{"comment":"It doesn’t matter whether the other spell resolved. It could have been countered or, if you’ve somehow cast Hewed Stone Retainers as though it had flash, it could still be on the stack.","oracle_id":"a27938d2-9a15-4a87-9e77-dea37347cf62","published_at":"2014-11-24","source":"wotc"},{"comment":"In a Limited event (usually Booster Draft or Sealed Deck), you can't add basic snow lands to your card pool as you would other basic lands. You can play with basic snow lands only if you open them in your sealed deck or draft them.","oracle_id":"ac8cc74d-e43b-4118-bba0-dfa8b9c04d45","published_at":"2021-02-05","source":"wotc"},{"comment":"Snow is a supertype, not a card type. It has no rules meaning or function by itself, but spells and abilities may refer to it.","oracle_id":"ac8cc74d-e43b-4118-bba0-dfa8b9c04d45","published_at":"2021-02-05","source":"wotc"},{"comment":"Snow isn't a type of mana. If an effect says you may spend mana as though it were any type, you can't pay for {S} using mana that wasn't produced by a snow source.","oracle_id":"ac8cc74d-e43b-4118-bba0-dfa8b9c04d45","published_at":"2021-02-05","source":"wotc"},{"comment":"Some cards have additional effects for each {S} spent to cast them. You can cast these spells even if you don't spend any snow mana to cast them; their additional effects simply won't do anything.","oracle_id":"ac8cc74d-e43b-4118-bba0-dfa8b9c04d45","published_at":"2021-02-05","source":"wotc"},{"comment":"The Kaldheim set doesn't have any cards with mana costs that include {S}, but some previous sets do. If an effect says such a spell costs {1} less to cast, that reduction doesn't apply to any {S} costs. This is also true for activated abilities that include {S} in their activation costs and effects that reduce those costs.","oracle_id":"ac8cc74d-e43b-4118-bba0-dfa8b9c04d45","published_at":"2021-02-05","source":"wotc"},{"comment":"The {S} symbol is a generic mana symbol. It represents a cost that can be paid by one mana that was produced by a snow source. That mana can be any color or colorless.","oracle_id":"ac8cc74d-e43b-4118-bba0-dfa8b9c04d45","published_at":"2021-02-05","source":"wotc"},{"comment":"A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn’t matter how long the permanent has been a creature.","oracle_id":"b2bd58ea-b2c6-47f1-b082-7969f093bbc6","published_at":"2008-08-01","source":"wotc"}],"schema_version":1,"source":"Scryfall Oracle/rulings subset for offline tests"}

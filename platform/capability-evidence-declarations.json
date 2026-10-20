@@ -42373,6 +42373,564 @@
       ],
       "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
     },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_countered_prior_spell_still_qualifies_original_retainers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_selected_face_and_face_down_spell_use_their_proposed_characteristics",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_registered_adapter_uses_actual_caster_without_changing_card_ownership",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_fresh_compiler_omission_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_fresh_guard_omission_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_closed_descriptors_and_nearest_unrepresented_conditions",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_minimum_capabilities_and_compiler_producer_cannot_be_omitted",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_selected_face_and_face_down_spell_use_their_proposed_characteristics",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_countered_prior_spell_still_qualifies_original_retainers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_four_originals_have_complete_admission_with_nonempty_condition_programs",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_selected_face_and_face_down_spell_use_their_proposed_characteristics",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_countered_prior_spell_still_qualifies_original_retainers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_opponents_prior_spell_does_not_qualify_but_casters_pending_spell_does",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_keeps_legality_locked_when_snow_land_pays_mana_cost",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_blizzard_uses_current_snow_land_control_and_stale_offers",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_original_creatures_cannot_count_themselves_and_cast_after_real_prior_spell",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
+    {
+      "capability_id": "casting.restriction.self_fixed_public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_cast_restrictions.SelfCastRestrictionTests.test_selected_face_and_face_down_spell_use_their_proposed_characteristics",
+      "official_rule_ids": [
+        "109.5",
+        "113.6e",
+        "601.2e",
+        "601.3",
+        "601.3e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original cards use normal whole-program admission and shared offer/proposal/commit legality. Native cast/counter/control/return and source-sacrifice payment consequences preserve privacy, exact incarnation, wrong-principal rollback and loaded pre-action replay; cost choices outside the represented mana plan remain explicit."
+    },
     {"capability_id":"casting.timing.fixed_query_static","evidence_class":"interaction","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_qualified_aura_timing_distinguishes_enchant_creature_from_land","official_rule_ids":["117.1a","304.5","307.5","601.2","702.5","702.5a","702.8","702.8a","702.8b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Recompute current source conditions, selected-face spell queries, and the compiler-pinned Enchant restriction for offer and commit."},
     {"capability_id":"casting.timing.fixed_query_static","evidence_class":"multiplayer","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection","official_rule_ids":["117.1a","304.5","307.5","601.2","702.5","702.5a","702.8","702.8a","702.8b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Separate controller-scoped and all-player instant-timing permissions in four-player state."},
     {"capability_id":"casting.timing.fixed_query_static","evidence_class":"mutation","test_id":"tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed","official_rule_ids":["117.1a","304.5","307.5","601.2","702.5","702.5a","702.8","702.8a","702.8b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Kill removal of the shared static action-rule compiler production."},
