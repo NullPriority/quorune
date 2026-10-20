@@ -134,7 +134,7 @@ _CONDITION_NUMBER_WORDS = {
     "ten": 10,
 }
 _FIXED_NONCREATURE_CONDITION_SUBTYPES = frozenset(
-    {"aura", "equipment", "gate"}
+    {"aura", "equipment", "gate", "vehicle"}
 )
 
 
@@ -879,7 +879,7 @@ def _query_count_condition(
 def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | None:
     material = " ".join(subject.strip().split())
     from .public_condition_surfaces import fixed_condition_subject_extension
-    extension = fixed_condition_subject_extension(material)
+    extension = fixed_condition_subject_extension(material, noncreature_subtypes=_FIXED_NONCREATURE_CONDITION_SUBTYPES)
     if extension is not None:
         return extension
     parsed = fixed_characteristic_battlefield_query_subject(

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 420,
+  "registry_version": 421,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12244,6 +12244,7 @@
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
         "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
         "test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
         "test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
@@ -12270,12 +12271,16 @@
         "test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
         "test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
         "test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
         "test_fixed_public_condition_models_use_closed_current_facts",
         "test_fixed_public_condition_queries_compile_across_authoritative_facts",
         "test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
         "test_land_subtypes_snow_and_boolean_branches_use_existing_closed_values",
+        "test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
         "test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+        "test_original_has_complete_nonempty_union_permission_and_retains_crew",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
@@ -12294,6 +12299,7 @@
         "test_source_spans_unsupported_neighbors_and_surface_omissions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
         "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
       ],
       "negative_tests": [
@@ -12301,6 +12307,7 @@
         "test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+        "test_actual_key_untap_revokes_stale_offer_before_acceptance",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
         "test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
@@ -12338,17 +12345,22 @@
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_source_spans_unsupported_neighbors_and_surface_omissions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+        "test_union_and_zone_permission_authorities_cannot_be_withdrawn",
+        "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
         "test_unrepresented_conditions_and_bodies_remain_residual",
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
         "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
       ],
       "interaction_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
         "test_actual_aspirant_tenth_entry_seals_flying_before_zone_trigger_discovery",
         "test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
         "test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+        "test_actual_key_untap_revokes_stale_offer_before_acceptance",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
         "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
@@ -12361,13 +12373,16 @@
         "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
         "test_all_five_original_djinn_count_their_own_color_and_keep_printed_rules",
         "test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
         "test_history_characteristic_distinguishing_controls",
         "test_history_precedes_final_power_and_keyword_sealing",
         "test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
         "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
         "test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
         "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
         "test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
@@ -12382,11 +12397,13 @@
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_subtype_attack_threshold_counts_distinct_event_time_objects",
-        "test_turn_gated_attachment_and_anthem_compose"
+        "test_turn_gated_attachment_and_anthem_compose",
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "multiplayer_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
         "test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
@@ -12398,10 +12415,12 @@
         "test_actual_snow_devil_reads_aura_controller_land_and_enchanted_blocker_first_strike",
         "test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
         "test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
         "test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
         "test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
         "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
@@ -12409,9 +12428,11 @@
         "test_public_fact_conditions_recompute_and_replay",
         "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
-        "test_turn_gated_attachment_and_anthem_compose"
+        "test_turn_gated_attachment_and_anthem_compose",
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "privacy_tests": [
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
@@ -12419,6 +12440,7 @@
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
         "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
@@ -12429,9 +12451,11 @@
       "replay_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
         "test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
         "test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+        "test_actual_key_untap_revokes_stale_offer_before_acceptance",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
         "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
@@ -12443,13 +12467,16 @@
         "test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
         "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
         "test_all_five_original_djinn_count_their_own_color_and_keep_printed_rules",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
         "test_history_characteristic_distinguishing_controls",
         "test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
         "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
         "test_old_source_incarnation_counts_as_another_after_native_return_and_recast",
         "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
         "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
@@ -12460,7 +12487,8 @@
         "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "required_evidence": [
         "positive",
@@ -16411,36 +16439,64 @@
         "quorune.continuous_conditions.OwnerRelativeConditionSource"
       ],
       "positive_tests": [
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_closed_casting_activation_metadata_compiles_source_spanned_programs",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+        "test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+        "test_original_has_complete_nonempty_union_permission_and_retains_crew",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
         "test_self_graveyard_permission_preserves_general_public_condition",
-        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection"
       ],
       "negative_tests": [
+        "test_actual_key_untap_revokes_stale_offer_before_acceptance",
         "test_near_miss_and_malformed_casting_activation_metadata_fails_closed",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_raw_oracle_zone_permission_without_typed_metadata_fails_closed",
         "test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
-        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_union_and_zone_permission_authorities_cannot_be_withdrawn",
+        "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "interaction_tests": [
-        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+        "test_actual_key_untap_revokes_stale_offer_before_acceptance",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+        "test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "multiplayer_tests": [
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
-        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "privacy_tests": [
-        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
-        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays"
       ],
       "replay_tests": [
-        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+        "test_actual_key_untap_revokes_stale_offer_before_acceptance",
+        "test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+        "test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+        "test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "required_evidence": [
         "positive",

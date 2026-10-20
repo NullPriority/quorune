@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Lower fixed subtype unions in current public conditions through one shared
+  query, preserving individual permanent counts, tapped status, control and
+  noncreature Kindred membership at the self-graveyard casting boundary.
+
 - Lower fixed current power and toughness creature-count discounts through the
   existing public query and intrinsic price owners, preserving chosen X and
   target-controller payments after Growth, Humble and a zero generic payment.
