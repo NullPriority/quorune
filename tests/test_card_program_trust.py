@@ -505,6 +505,7 @@ def vars_for_binding(program):
     return {field: getattr(program, field) for field in (
         "ability_id", "key", "effects", "handlers", "capability_dependencies",
         "capability_closure", "trust_level", "provenance", "tests",
+        "coverage", "target_schema", "cost_schema", "event_condition", "event", "active_zone",
     )}
 
 
