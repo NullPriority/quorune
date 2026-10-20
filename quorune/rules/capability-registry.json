@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 419,
+  "registry_version": 420,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37662,6 +37662,96 @@
       "dependency_fail_closed_rationale": "Explicit version2 closed scalar form and both counter-total and intrinsic-price authority are required by normal compiler and runtime binding.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original gameplay and whole-admission witnesses kill omitted current counter totals and omitted price production.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.cost.self_numeric_creature_count",
+      "version": 1,
+      "official_rules": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Count current controlled creatures meeting one inclusive fixed power or toughness threshold for a source-pinned generic spell reduction.",
+        "inputs": [
+          "one versioned public battlefield creature query with fixed nonnegative power or toughness comparison",
+          "current derived characteristics"
+        ],
+        "outputs": [
+          "shared complete cast price preserving colored symbols and announced X"
+        ],
+        "exclusions": [
+          "other zones or player scopes",
+          "compound, source-relative, variable or hidden numeric predicates",
+          "additional query qualities",
+          "countering demands changed to the discounted mana payment"
+        ]
+      },
+      "dependencies": [
+        "casting.cost.self_public_reduction"
+      ],
+      "implementation_components": [
+        "quorune.compiler.cast_cost_modifier_templates._numeric_creature_count_metric",
+        "quorune.rules.self_cost_numeric_counts.self_cost_numeric_count_dependencies",
+        "quorune.self_cast_reductions._matching_cards_from_ids",
+        "quorune.object_query.object_query_result"
+      ],
+      "positive_tests": [
+        "test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+        "test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+        "test_numeric_count_grammar_and_typed_queries_are_closed",
+        "test_original_numeric_program_is_complete_and_nonempty",
+        "test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x"
+      ],
+      "negative_tests": [
+        "test_numeric_and_base_price_authorities_cannot_be_withdrawn",
+        "test_numeric_count_grammar_and_typed_queries_are_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+        "test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+        "test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x"
+      ],
+      "multiplayer_tests": [
+        "test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+        "test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+        "test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x"
+      ],
+      "privacy_tests": [
+        "test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+        "test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+        "test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x"
+      ],
+      "replay_tests": [
+        "test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+        "test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+        "test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The closed numeric query retains its typed codec and requires fine-grained numeric-count and base intrinsic-cost authority after rebuilt closure; malformed variants return normal binding blockers.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native original cases kill serialized numeric-qualifier removal; a fresh complete-source witness kills numeric-price production removal.",
       "blockers": [],
       "status": "trusted"
     }

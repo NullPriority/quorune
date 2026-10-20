@@ -12056,6 +12056,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/self_cost_numeric_counts.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/self_cost_public_counters.py",
       "layer": "rules",
       "owning_subsystem": "casting_activation_and_costs",
@@ -17060,5 +17074,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "717c439e86747a4994f21ad1ca1bb386e1b833d43a0ff5ab0b68a924e790e029"
+  "fingerprint": "20db331c4ae14c7a238f2baa5c14bd4b37d89fb6277aa90d70b57997f84cf754"
 }

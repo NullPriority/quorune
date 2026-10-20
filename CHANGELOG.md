@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Lower fixed current power and toughness creature-count discounts through the
+  existing public query and intrinsic price owners, preserving chosen X and
+  target-controller payments after Growth, Humble and a zero generic payment.
+
 - Price represented intrinsic counter reductions from every current public
   player and battlefield counter, retaining phasing, zone scope, colored costs
   and the locked price when a counter-bearing mana source leaves during payment.

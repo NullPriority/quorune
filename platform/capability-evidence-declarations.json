@@ -29342,6 +29342,468 @@
       "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
     },
     {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_fresh_original_kills_dropped_numeric_price_production",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_fresh_original_kills_dropped_numeric_qualifier",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_numeric_and_base_price_authorities_cannot_be_withdrawn",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_numeric_count_grammar_and_typed_queries_are_closed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_numeric_count_grammar_and_typed_queries_are_closed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_original_numeric_program_is_complete_and_nonempty",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_growth_reduces_cast_payment_and_retains_two_mana_counter_demand",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_actual_humble_loses_discount_and_opponent_can_pay_original_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
+      "capability_id": "casting.cost.self_numeric_creature_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_numeric_count_self_costs.NumericCountSelfCostTests.test_two_inclusive_power_creatures_zero_generic_but_keep_chosen_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "118.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "613.4a",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Current controlled creature power/toughness predicates feed the ordinary intrinsic price before payment. Native Growth, Humble and inclusive-threshold cases preserve chosen X, actual target-controller payment and outcome, rollback, private projection and pending exact replay."
+    },
+    {
       "capability_id": "casting.cost.self_public_counter_total",
       "evidence_class": "interaction",
       "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_bounce_removes_departed_permanent_counters_from_current_price",
