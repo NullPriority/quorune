@@ -187,6 +187,7 @@ class ZoneChangeOccurrence:
     previous_counters: Mapping[str, int] | None = None
     current_counters: Mapping[str, int] | None = None
     paid_entry_copy: Mapping[str, Any] | None = None
+    multikicker_paid: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
         for field in (
@@ -224,6 +225,7 @@ class ZoneChangeOccurrence:
                 "zone_occurrence.read_ahead_chapter must be positive or null"
             )
         object.__setattr__(self, 'paid_entry_copy', _validated_cast_metadata(self))
+        object.__setattr__(self, 'multikicker_paid', _validated_multikicker_metadata(self))
         if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise ZoneTriggerEventError(
                 "Unsupported zone-trigger occurrence schema version"
@@ -320,6 +322,8 @@ class ZoneChangeOccurrence:
             result["cast_option"] = self.cast_option
         if self.paid_entry_copy is not None:
             result['paid_entry_copy'] = thaw_value(self.paid_entry_copy)
+        if self.multikicker_paid is not None:
+            result['multikicker_paid'] = thaw_value(self.multikicker_paid)
         if self.previous_copy_snapshot is not None:
             result["previous_copy_snapshot"] = thaw_value(self.previous_copy_snapshot)
         if self.current_copy_snapshot is not None:
@@ -343,6 +347,19 @@ def _validated_cast_metadata(occurrence):
         raise ZoneTriggerEventError('Paid entry copy facts require stack-to-battlefield entry')
     try:
         return FrozenMap(validate_paid_entry_copy_fact(occurrence.paid_entry_copy))
+    except (TypeError, ValueError) as exc:
+        raise ZoneTriggerEventError(str(exc)) from exc
+
+
+def _validated_multikicker_metadata(occurrence):
+    if occurrence.multikicker_paid is None:
+        return None
+    from .multikicker_model import validate_multikicker_fact
+    if (occurrence.origin != 'stack' or occurrence.destination != 'battlefield'
+            or occurrence.cast_option != 'kicked'):
+        raise ZoneTriggerEventError('Multikicker facts require their resolving kicked spell entry')
+    try:
+        return FrozenMap(validate_multikicker_fact(occurrence.multikicker_paid))
     except (TypeError, ValueError) as exc:
         raise ZoneTriggerEventError(str(exc)) from exc
 
@@ -452,6 +469,8 @@ def normalized_zone_trigger_events(
     }
     if occurrence.cast_option is not None:
         common["cast_option"] = occurrence.cast_option
+    if occurrence.multikicker_paid is not None:
+        common['multikicker_paid'] = thaw_value(occurrence.multikicker_paid)
     if occurrence.paid_entry_copy is not None:
         common['paid_entry_copy_instance'] = occurrence.paid_entry_copy['instance_id']
         common['paid_entry_copy_count'] = occurrence.paid_entry_copy['count']

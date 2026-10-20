@@ -210,7 +210,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             if not isinstance(previous, Mapping) or set(previous) != {"identity", "value"} or previous["identity"] != identity or type(previous["value"]) is not int or previous["value"] < 0:
                 raise PublicQueryAmountError("Scalar declaration changed identity or value")
             return spec.coefficient * previous["value"]
-    if spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT:
+    if spec.origin is ScalarAmountOrigin.MULTIKICKER_COUNT:
+        from .multikicker_result_amounts import resolve_multikicker_amount
+        amount = resolve_multikicker_amount(spec, item)
+    elif spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT:
         amount=_current_target_hand_count(host,hand_target)
     elif spec.origin is ScalarAmountOrigin.EVENT_AMOUNT:
         context = item.context.get("event_context", item.context)

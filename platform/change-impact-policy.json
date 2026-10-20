@@ -6417,6 +6417,28 @@
         "test_announced_target_cardinality",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "linked-multikicker-result-amounts",
+      "patterns": [
+        "quorune/compiler/multikicker_results.py",
+        "quorune/multikicker_result_amounts.py",
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/zone_object_state.py",
+        "quorune/zone_trigger_events.py",
+        "quorune/zone_transition_model.py",
+        "quorune/zone_transitions.py",
+        "tests/fixtures/multikicker-result-cards.json",
+        "tests/test_multikicker_result_amounts.py"
+      ],
+      "test_modules": [
+        "test_multikicker_result_amounts",
+        "test_multikicker_entry_counters",
+        "test_scalar_effect_amounts",
+        "test_zone_trigger_events",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

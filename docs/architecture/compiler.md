@@ -2822,6 +2822,15 @@ counts, quantity-only targets, event-player inference, private predicates,
 per-player group arrays and hand-count arithmetic remain outside this slice.
 Earlier scalar versions and declaration identities retain their wire contract.
 
+`compiler/multikicker_results.py` links complete count-result clauses to the
+single printed fixed-mana Multikicker instance. Its version-5 scalar carries
+the typed cost identity and fingerprint, and delegates draw, life, damage and
+token consequences to existing result owners. Counter/unless plus count-draw
+composition uses the existing fixed-clause owner after projecting only the
+linked result slot. This extension does not admit other scalar sequences.
+Variable target cardinality, private count-discard choices, multiple cost
+instances and unsupported sibling clauses remain residual.
+
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed owner, prior controller, type,

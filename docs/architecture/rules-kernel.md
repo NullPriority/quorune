@@ -837,6 +837,15 @@ instruction whose captured count is stale. Source reincarnation, ability
 removal, save/load, and public projection all use those typed identities rather
 than Oracle prose.
 
+Multikicker result amounts read the immutable payment count of their linked
+printed instance. Stack copies retain the original decisions without another
+cast or payment. The zone owner seals an entering spell's fact into its entry
+trigger before object-local reset; later departure cannot erase it, and a new
+unpaid incarnation starts at zero. Entry facts are added only for typed readers,
+preserving historical events with no count-result reader. Malformed or different
+payment instances fail closed. Numeric evaluation preserves ordinary result,
+target, private-choice, rollback and replay boundaries.
+
 Source-face target-dependent reductions use the same announced-target
 witnesses for offers and accepted commands. One matching target applies one
 printed reduction once, including when several targets qualify. The cost owner

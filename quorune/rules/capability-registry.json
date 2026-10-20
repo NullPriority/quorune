@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 406,
+  "registry_version": 407,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6813,22 +6813,95 @@
         "608.2c",
         "704.4"
       ],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and commit represented fixed controller, direct-player, target-opponent, each-opponent, all-active-player, and drain life instructions through one replacement-capable typed life-change batch before mutating player life totals.",
-        "inputs": ["resolved active or selected player relation", "fixed integral life delta", "source/controller facts", "closed semantic-intent identity", "ordered replacement selections"],
-        "outputs": ["validated life-state plan", "private replacement continuation", "replacement journal", "canonical resolved gain or loss", "authoritative life mutation"],
-        "exclusions": ["paying life costs", "setting or exchanging life totals", "unrepresented dynamic or player-relative quantities", "target-player drains that may affect the controller", "life-gain prevention not represented by a trusted component"]
+        "inputs": [
+          "resolved active or selected player relation",
+          "fixed integral life delta",
+          "source/controller facts",
+          "closed semantic-intent identity",
+          "ordered replacement selections"
+        ],
+        "outputs": [
+          "validated life-state plan",
+          "private replacement continuation",
+          "replacement journal",
+          "canonical resolved gain or loss",
+          "authoritative life mutation"
+        ],
+        "exclusions": [
+          "paying life costs",
+          "setting or exchanging life totals",
+          "unrepresented dynamic or player-relative quantities",
+          "target-player drains that may affect the controller",
+          "life-gain prevention not represented by a trusted component"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.life_templates.fixed_life_effect_template", "quorune.rules.fixed_controller_effect_shapes.fixed_life_node_capabilities", "quorune.effect_runtime.life_effects._commit", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.apply_life_change_intent", "quorune.semantic_choices.counter_coordination.continue_semantic_completion", "quorune.semantic_choices.intent_replacement.semantic_intent_identity", "quorune.replacement.replay.ReplacementContinuation", "quorune.life_change.prepare_life_change_batch", "quorune.life_change.commit_life_change_batch", "quorune.life_state.plan_life_changes", "quorune.life_state.apply_life_changes"],
-      "positive_tests": ["test_life_and_loss_commit_through_the_typed_batch_owner", "test_fixed_life_self_enter_trigger_replays_exactly", "test_spell_and_activated_player_life_nodes_are_exact_and_spanned", "test_target_player_gain_uses_live_replacement_owner"],
-      "negative_tests": ["test_invalid_batch_member_rolls_back_every_life_change", "test_dynamic_and_simultaneous_unowned_life_shapes_remain_residual"],
-      "interaction_tests": ["test_drain_log_reports_final_replacement_adjusted_values", "test_semantic_life_intent_replacement_suspends_and_replays_exactly", "test_target_opponent_drain_replacement_and_replay_are_exact"],
-      "multiplayer_tests": ["test_table_wide_loss_and_drain_are_simultaneous_typed_batches", "test_each_opponent_drain_is_one_four_player_life_batch", "test_target_opponent_drain_replacement_and_replay_are_exact"],
-      "privacy_tests": ["test_semantic_life_intent_replacement_suspends_and_replays_exactly"],
-      "replay_tests": ["test_fixed_life_self_enter_trigger_replays_exactly", "test_semantic_life_intent_replacement_suspends_and_replays_exactly", "test_target_opponent_drain_replacement_and_replay_are_exact"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.life_templates.fixed_life_effect_template",
+        "quorune.rules.fixed_controller_effect_shapes.fixed_life_node_capabilities",
+        "quorune.effect_runtime.life_effects._commit",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.apply_life_change_intent",
+        "quorune.semantic_choices.counter_coordination.continue_semantic_completion",
+        "quorune.semantic_choices.intent_replacement.semantic_intent_identity",
+        "quorune.replacement.replay.ReplacementContinuation",
+        "quorune.life_change.prepare_life_change_batch",
+        "quorune.life_change.commit_life_change_batch",
+        "quorune.life_state.plan_life_changes",
+        "quorune.life_state.apply_life_changes"
+      ],
+      "positive_tests": [
+        "test_life_and_loss_commit_through_the_typed_batch_owner",
+        "test_fixed_life_self_enter_trigger_replays_exactly",
+        "test_spell_and_activated_player_life_nodes_are_exact_and_spanned",
+        "test_target_player_gain_uses_live_replacement_owner",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "negative_tests": [
+        "test_invalid_batch_member_rolls_back_every_life_change",
+        "test_dynamic_and_simultaneous_unowned_life_shapes_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_drain_log_reports_final_replacement_adjusted_values",
+        "test_semantic_life_intent_replacement_suspends_and_replays_exactly",
+        "test_target_opponent_drain_replacement_and_replay_are_exact",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "multiplayer_tests": [
+        "test_table_wide_loss_and_drain_are_simultaneous_typed_batches",
+        "test_each_opponent_drain_is_one_four_player_life_batch",
+        "test_target_opponent_drain_replacement_and_replay_are_exact",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "privacy_tests": [
+        "test_semantic_life_intent_replacement_suspends_and_replays_exactly",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "replay_tests": [
+        "test_fixed_life_self_enter_trigger_replays_exactly",
+        "test_semantic_life_intent_replacement_suspends_and_replays_exactly",
+        "test_target_opponent_drain_replacement_and_replay_are_exact",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded life-effect producer delegates to the shared replacement substrate and has no capability dependency.",
       "implementation_mutation_status": "killed",
@@ -7087,7 +7160,9 @@
         "test_controller_draw_step_additional_draw_retains_event_and_recipient",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
       ],
       "negative_tests": [
         "test_changed_library_or_source_fails_before_draw_mutation",
@@ -7117,7 +7192,9 @@
         "test_shroud_and_enchantment_cast_draw_compose",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
       ],
       "multiplayer_tests": [
         "test_draw_each_player_uses_apnap_order_and_exact_engine_path",
@@ -7126,7 +7203,9 @@
         "test_each_player_activation_draws_in_four_player_game",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
       ],
       "privacy_tests": [
         "test_draw_replacement_choice_is_visible_only_to_affected_seat",
@@ -7134,7 +7213,9 @@
         "test_resumed_multi_draw_sequence_is_private_and_replays_exactly",
         "test_draw_replacement_completes_after_cost_and_before_resolution",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
-        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
       ],
       "replay_tests": [
         "test_first_turn_profile_modifier_and_exact_replay",
@@ -7147,7 +7228,9 @@
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
       ],
       "required_evidence": [
         "positive",
@@ -7798,7 +7881,8 @@
         "test_fixed_token_batches_and_clues_promote_the_bounded_real_cards",
         "test_compiled_fixed_token_batch_is_one_simultaneous_transaction",
         "test_compiled_clue_activation_draws_privately_and_replays_exactly",
-        "test_zero_single_reversed_groups_have_complete_nonduplicate_history"
+        "test_zero_single_reversed_groups_have_complete_nonduplicate_history",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
       ],
       "negative_tests": [
         "test_fixed_token_creation_rejects_dynamic_copy_attached_and_custom_ability_variants",
@@ -7810,20 +7894,24 @@
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
         "test_compiled_fixed_token_effect_replays_exactly",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
-        "test_compiled_clue_activation_draws_privately_and_replays_exactly"
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
       ],
       "multiplayer_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
-        "test_fixed_token_batch_replacement_order_is_private_and_shared"
+        "test_fixed_token_batch_replacement_order_is_private_and_shared",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
       ],
       "privacy_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
-        "test_compiled_clue_activation_draws_privately_and_replays_exactly"
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
       ],
       "replay_tests": [
         "test_compiled_fixed_token_effect_replays_exactly",
-        "test_compiled_clue_activation_draws_privately_and_replays_exactly"
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure"
       ],
       "required_evidence": [
         "positive",
@@ -11871,7 +11959,13 @@
         "test_referenced_and_sealed_quantities_lower_through_existing_results",
         "test_source_counter_amounts_preserve_typed_identity_and_span",
         "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
-        "test_source_damage_event_amount_keeps_subscription_identity_and_amount"
+        "test_source_damage_event_amount_keeps_subscription_identity_and_amount",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "negative_tests": [
         "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
@@ -11895,19 +11989,37 @@
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
         "test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
-        "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays"
+        "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "multiplayer_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
-        "test_trusted_scalar_actions_controller_privacy_and_replay"
+        "test_trusted_scalar_actions_controller_privacy_and_replay",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "privacy_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
-        "test_trusted_scalar_actions_controller_privacy_and_replay"
+        "test_trusted_scalar_actions_controller_privacy_and_replay",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "replay_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -11919,7 +12031,13 @@
         "test_trusted_scalar_actions_controller_privacy_and_replay",
         "test_trusted_scalar_source_departure_reentry_and_replay",
         "test_unrelated_phased_scalar_preserves_actual_group_blink_and_replay",
-        "test_unrelated_phased_scalar_preserves_actual_single_return_and_replay"
+        "test_unrelated_phased_scalar_preserves_actual_single_return_and_replay",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "required_evidence": [
         "positive",
@@ -17628,23 +17746,110 @@
     {
       "id": "stack.counter.controller_payment",
       "version": 1,
-      "official_rules": ["107.3a", "107.3b", "117.1d", "118.12", "118.12a", "603.3a", "608.2b", "608.2d", "608.2g", "701.6a", "701.6b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile a closed target-controller mana payment that conditionally delegates a currently legal stack target to the existing counter owner, using fixed ordinary mana or the spell's canonically announced X.",
-        "inputs": ["one closed stack target schema", "complete ordinary mana vector", "canonical spell cost-X context when represented", "current target controller", "immutable payment continuation and resolving controller"],
-        "outputs": ["private full-payment-or-decline choice", "canonical payer mana intent or canonical counter intent", "distinct payer and countering controller", "resumable unchanged remaining instructions"],
-        "exclusions": ["nonmana, hybrid, Phyrexian and repeated payment", "state-derived or text-defined cost X", "fixed-plus-X generic payment", "multiple targets", "reflexive or linked counter-result instructions", "unsupported target predicates and independently unsupported siblings"]
+        "inputs": [
+          "one closed stack target schema",
+          "complete ordinary mana vector",
+          "canonical spell cost-X context when represented",
+          "current target controller",
+          "immutable payment continuation and resolving controller"
+        ],
+        "outputs": [
+          "private full-payment-or-decline choice",
+          "canonical payer mana intent or canonical counter intent",
+          "distinct payer and countering controller",
+          "resumable unchanged remaining instructions"
+        ],
+        "exclusions": [
+          "nonmana, hybrid, Phyrexian and repeated payment",
+          "state-derived or text-defined cost X",
+          "fixed-plus-X generic payment",
+          "multiple targets",
+          "reflexive or linked counter-result instructions",
+          "unsupported target predicates and independently unsupported siblings"
+        ]
       },
-      "dependencies": ["stack.counter.effect", "target.revalidate_resolution", "effect.choice.optional_fixed_mana_payment"],
-      "implementation_components": ["quorune.rules.stack_controller_payment_cost.StackControllerPaymentCost", "quorune.compiler.counter_templates.TargetedControllerPaymentTemplate", "quorune.compiler.counter_templates.targeted_controller_payment_template", "quorune.rules.stack_controller_payment_shapes.stack_controller_payment_node_capabilities", "quorune.semantic_choices.payments.OptionalPaymentHandler", "quorune.semantic_choices.payments._controller_payment_requirements", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent", "quorune.semantic_runtime.intents.CounterStackIntent", "quorune.stack_counter.counter_stack_item"],
-      "positive_tests": ["test_fixed_controller_payment_compiles_across_spell_trigger_and_activation", "test_trusted_stack_payment_pay_decline_projection_and_exact_replay"],
-      "negative_tests": ["test_controller_payment_cost_mutants_and_cast_x_are_strict", "test_controller_payment_missing_or_blocked_capability_withholds_trust"],
-      "interaction_tests": ["test_counter_payment_intents_keep_payer_and_countering_controller_distinct", "test_counter_payment_cast_x_uses_the_existing_scalar_owner", "test_counter_payment_rejects_changed_controller_and_continuation_cost", "test_trusted_stack_payment_cast_x_zero_and_canonical_mana_sources", "test_trusted_stack_payment_activation_and_entry_trigger_owners", "test_trusted_stack_payment_uncounterable_target_retains_legal_decline", "test_trusted_stack_payment_current_controller_and_vanished_target_boundaries", "test_stack_payment_canonical_spell_copy_preserves_announced_x"],
-      "multiplayer_tests": ["test_trusted_stack_payment_pay_decline_projection_and_exact_replay"],
-      "privacy_tests": ["test_trusted_stack_payment_pay_decline_projection_and_exact_replay"],
-      "replay_tests": ["test_trusted_stack_payment_pay_decline_projection_and_exact_replay", "test_stack_payment_historical_record_rejects_silent_reinterpretation"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "stack.counter.effect",
+        "target.revalidate_resolution",
+        "effect.choice.optional_fixed_mana_payment"
+      ],
+      "implementation_components": [
+        "quorune.rules.stack_controller_payment_cost.StackControllerPaymentCost",
+        "quorune.compiler.counter_templates.TargetedControllerPaymentTemplate",
+        "quorune.compiler.counter_templates.targeted_controller_payment_template",
+        "quorune.rules.stack_controller_payment_shapes.stack_controller_payment_node_capabilities",
+        "quorune.semantic_choices.payments.OptionalPaymentHandler",
+        "quorune.semantic_choices.payments._controller_payment_requirements",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent",
+        "quorune.semantic_runtime.intents.CounterStackIntent",
+        "quorune.stack_counter.counter_stack_item"
+      ],
+      "positive_tests": [
+        "test_fixed_controller_payment_compiles_across_spell_trigger_and_activation",
+        "test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+      ],
+      "negative_tests": [
+        "test_controller_payment_cost_mutants_and_cast_x_are_strict",
+        "test_controller_payment_missing_or_blocked_capability_withholds_trust"
+      ],
+      "interaction_tests": [
+        "test_counter_payment_intents_keep_payer_and_countering_controller_distinct",
+        "test_counter_payment_cast_x_uses_the_existing_scalar_owner",
+        "test_counter_payment_rejects_changed_controller_and_continuation_cost",
+        "test_trusted_stack_payment_cast_x_zero_and_canonical_mana_sources",
+        "test_trusted_stack_payment_activation_and_entry_trigger_owners",
+        "test_trusted_stack_payment_uncounterable_target_retains_legal_decline",
+        "test_trusted_stack_payment_current_controller_and_vanished_target_boundaries",
+        "test_stack_payment_canonical_spell_copy_preserves_announced_x",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+      ],
+      "multiplayer_tests": [
+        "test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+      ],
+      "privacy_tests": [
+        "test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+      ],
+      "replay_tests": [
+        "test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+        "test_stack_payment_historical_record_rejects_silent_reinterpretation",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Missing or blocked controller-payment capability keeps otherwise lowerable cost and target descriptors untrusted; result and payment owners remain separately required.",
       "implementation_mutation_status": "killed",
@@ -18278,7 +18483,11 @@
         "test_sacrifice_another_and_discard_counter_bodies_share_typed_events",
         "test_self_dies_trigger_uses_last_known_battlefield_zone",
         "test_source_land_entry_predicate_uses_committed_tapped_state",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
@@ -18318,7 +18527,11 @@
         "test_simultaneous_entry_history_is_complete_before_discovery_in_both_orders",
         "test_simultaneous_history_uses_final_destinations_and_previous_controllers",
         "test_source_land_entry_predicate_uses_committed_tapped_state",
-        "test_source_that_leaves_still_observes_simultaneous_death"
+        "test_source_that_leaves_still_observes_simultaneous_death",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "multiplayer_tests": [
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
@@ -18328,7 +18541,11 @@
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
         "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
         "test_sacrifice_and_discard_predicates_use_committed_lki",
-        "test_simultaneous_semantic_triggers_use_apnap_and_owner_order"
+        "test_simultaneous_semantic_triggers_use_apnap_and_owner_order",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "privacy_tests": [
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
@@ -18337,7 +18554,11 @@
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
         "test_original_anywhere_graveyard_simultaneous_death_checks_surviving_observers",
         "test_private_library_to_hand_move_produces_no_public_trigger_event",
-        "test_sacrifice_and_discard_predicates_use_committed_lki"
+        "test_sacrifice_and_discard_predicates_use_committed_lki",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "replay_tests": [
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
@@ -18352,7 +18573,11 @@
         "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_simultaneous_death_history_replays_from_pre_action_checkpoint",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "required_evidence": [
         "positive",
@@ -19870,7 +20095,11 @@
         "test_count_distinct_and_partial_resolution",
         "test_departed_bound_target_never_rebinds_but_live_repeated_target_survives",
         "test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
-        "test_original_raid_reuses_surviving_target_and_ignores_departed_target"
+        "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "negative_tests": [
         "test_all_targets_illegal_counters_by_rules",
@@ -19887,22 +20116,38 @@
         "test_target_opponent_drain_replacement_and_replay_are_exact",
         "test_target_player_characteristic_set_resolves_and_replays",
         "test_target_player_draw_validates_target_resolves_privately_and_replays",
-        "test_target_revalidation_and_self_return_coexist_on_one_card"
+        "test_target_revalidation_and_self_return_coexist_on_one_card",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "multiplayer_tests": [
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
-        "test_target_player_characteristic_set_resolves_and_replays"
+        "test_target_player_characteristic_set_resolves_and_replays",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "privacy_tests": [
         "test_hidden_zones_are_rejected_by_target_schema",
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
-        "test_target_player_characteristic_set_resolves_and_replays"
+        "test_target_player_characteristic_set_resolves_and_replays",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "replay_tests": [
         "test_deflecting_swat_free_cost_and_exact_retarget",
         "test_original_kolaghan_later_damage_does_not_affect_departed_artifact_creature",
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
-        "test_target_player_characteristic_set_resolves_and_replays"
+        "test_target_player_characteristic_set_resolves_and_replays",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "required_evidence": [
         "positive",
@@ -19986,7 +20231,8 @@
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
-        "test_source_action_pronoun_damage_reuses_closed_target_leaf"
+        "test_source_action_pronoun_damage_reuses_closed_target_leaf",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "negative_tests": [
         "test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape",
@@ -20002,22 +20248,26 @@
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
-        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay"
+        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "multiplayer_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
-        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay"
+        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "privacy_tests": [
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
-        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay"
+        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "replay_tests": [
         "test_battle_damage_and_state_action_replay_exactly",
         "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
-        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay"
+        "test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "required_evidence": [
         "positive",
@@ -20365,7 +20615,8 @@
         "test_nontarget_damage_to_you_binds_resolving_controller_and_preserves_damage",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
-        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "negative_tests": [
         "test_only_damage_not_life_loss_or_prevented_damage_unlocks_attack",
@@ -20375,20 +20626,24 @@
         "test_lifelink_counts_only_damage_not_prevented_by_protection",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
-        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "multiplayer_tests": [
         "test_reckless_fireweaver_damages_each_opponent",
-        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays"
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "privacy_tests": [
-        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays"
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "replay_tests": [
         "test_battle_damage_and_state_action_replay_exactly",
         "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
         "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
-        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure"
       ],
       "required_evidence": [
         "positive",
@@ -28315,7 +28570,13 @@
       ],
       "positive_tests": [
         "test_actual_originals_close_with_source_spans_and_linked_counter_instances",
-        "test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay"
+        "test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "negative_tests": [
         "test_variable_multiple_zero_and_unrepresented_siblings_stay_residual",
@@ -28324,19 +28585,43 @@
       ],
       "interaction_tests": [
         "test_spell_copy_retains_payment_but_new_permanent_incarnation_does_not",
-        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts"
+        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "multiplayer_tests": [
         "test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
-        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts"
+        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "privacy_tests": [
         "test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
-        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts"
+        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "replay_tests": [
         "test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
-        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts"
+        "test_actual_creature_total_reduction_counter_replacement_and_invalid_counts",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
       ],
       "required_evidence": [
         "positive",
@@ -29630,7 +29915,8 @@
         "test_original_copy_candidates_need_complete_siblings_and_current_generated_registration",
         "test_original_countered_before_copy_producer_resolves_creates_no_copy",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
-        "test_whole_source_certificate_is_enforced_without_forcing_trust"
+        "test_whole_source_certificate_is_enforced_without_forcing_trust",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
       ],
       "negative_tests": [
         "test_fixed_stack_copy_source_span_and_exact_shape_reject_unknown_variants",
@@ -29662,7 +29948,8 @@
         "test_original_countered_before_copy_producer_resolves_creates_no_copy",
         "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
-        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback"
+        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
       ],
       "multiplayer_tests": [
         "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
@@ -29677,10 +29964,12 @@
         "test_original_countered_before_copy_producer_resolves_creates_no_copy",
         "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
-        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback"
+        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
       ],
       "privacy_tests": [
-        "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay"
+        "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
       ],
       "replay_tests": [
         "test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
@@ -29695,7 +29984,8 @@
         "test_original_countered_before_copy_producer_resolves_creates_no_copy",
         "test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets",
         "test_retain_old_target_incarnation_or_choose_returned_creature_as_new_target",
-        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback"
+        "test_unsupported_source_siblings_have_no_independent_executable_copy_fallback",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles"
       ],
       "required_evidence": [
         "positive",
@@ -34192,6 +34482,116 @@
       "implementation_mutation_rationale": "Fresh original Quicksand witnesses kill omitted source reduction and substituting an unselected qualifier for an announced target.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "quantity_expression.multikicker_count",
+      "version": 1,
+      "official_rules": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Consume the sealed count of one printed fixed-mana Multikicker instance through existing scalar result slots.",
+        "inputs": [
+          "one positive fixed printed Multikicker cost instance",
+          "version5 linked scalar result",
+          "immutable original or copied stack payment facts"
+        ],
+        "outputs": [
+          "count-scaled result amounts including zero",
+          "source-entry payment facts retained on the trigger",
+          "ordinary target, result, private choice and replay ownership"
+        ],
+        "exclusions": [
+          "multiple, variable, hybrid and nonmana Multikicker costs",
+          "arbitrary number-of-targets or other unsupported result grammar",
+          "a different cost instance or an unpaid later incarnation"
+        ]
+      },
+      "dependencies": [
+        "casting.multikicker.fixed_mana",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "implementation_components": [
+        "quorune.compiler.multikicker_results.multikicker_result_node",
+        "quorune.multikicker_result_amounts.multikicker_amount_dependencies",
+        "quorune.multikicker_result_amounts.multikicker_amount_runtime_dependencies",
+        "quorune.multikicker_result_amounts.resolve_multikicker_amount",
+        "quorune.scalar_effect_amount_model.ScalarEffectAmountSpec",
+        "quorune.zone_object_state.stack_entry_cast_facts"
+      ],
+      "positive_tests": [
+        "test_four_originals_bind_results_to_the_printed_cost_and_remain_fully_admitted",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "negative_tests": [
+        "test_linked_count_rejects_malformed_and_mismatched_payment_facts",
+        "test_entry_metadata_rejects_foreign_transitions_and_preserves_legacy_unread_facts",
+        "test_unrepresented_count_discards_and_independent_siblings_remain_residual",
+        "test_runtime_withdrawal_cannot_omit_the_count_or_cast_payment_authority"
+      ],
+      "interaction_tests": [
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "multiplayer_tests": [
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "privacy_tests": [
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "replay_tests": [
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+        "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker"
+      ],
+      "status": "trusted",
+      "blockers": [],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The printed cost, linked scalar and registered result authorities must remain present; native withdrawal witnesses are required before family acceptance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh paid Lightkeeper witness must kill omission of the linked count before family acceptance."
     }
   ]
 }

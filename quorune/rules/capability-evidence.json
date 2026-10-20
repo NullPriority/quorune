@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "6aff775ca8b1d7d088038e5e52304d8c0899f575a6a645c8b83235123e8f2538",
-  "declaration_source_fingerprint": "c4eb9cdc64496eb43d9883370f1fa1deec5c61c9356749fc85f510db2c75d551",
+  "registry_fingerprint": "66b490b9880b7113de6e2b4c8114256bf204a38c6dc65f44302fe4061da9daad",
+  "declaration_source_fingerprint": "60cbf1aea7be1e931b892899b7ecd834603f9dc0da52eef4b8bc56c013782dee",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -42559,6 +42559,156 @@
     },
     {
       "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
       "official_rule_ids": [
@@ -42581,6 +42731,156 @@
         "commander_review"
       ],
       "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "casting.multikicker.fixed_mana",
@@ -42709,6 +43009,156 @@
     },
     {
       "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
       "evidence_class": "privacy",
       "test_id": "tests.test_multikicker_entry_counters.MultikickerRuntimeTests.test_actual_chalice_zero_one_two_and_six_payments_mana_privacy_and_replay",
       "official_rule_ids": [
@@ -42731,6 +43181,156 @@
         "commander_review"
       ],
       "applicability_note": "One printed positive fixed ordinary-mana Multikicker instance; strict original admission, count0/1/2/6, complete prices, typed copied decisions, replacement-aware named entry counters, rollback, privacy and pending replay. Unknown costs, instances and siblings remain closed."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "casting.multikicker.fixed_mana",
@@ -42831,6 +43431,156 @@
         "commander_review"
       ],
       "applicability_note": "Actual original casts retain their linked repeated payment; pending nested counter replacement/load, unpaid blink, current counter-derived Elf bonuses and source current/LKI damage use canonical owners. Runtime fee, count and accepted-fact omission mutants are caught."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "casting.multikicker.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "118.8",
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "casting.multikicker.fixed_mana",
@@ -120299,6 +121049,21 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
@@ -120340,6 +121105,21 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -120569,6 +121349,21 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay",
       "official_rule_ids": [
         "120.1",
@@ -120610,6 +121405,21 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -120670,6 +121480,21 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -129946,6 +130771,20 @@
     },
     {
       "capability_id": "damage.result.player_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_exact_deck_triggers.ExactDeckTriggerFamilyTests.test_reckless_fireweaver_damages_each_opponent",
       "official_rule_ids": [
@@ -129971,6 +130810,20 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "damage.result.player_life",
@@ -130100,6 +130953,20 @@
     },
     {
       "capability_id": "damage.result.player_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "damage.result.player_life",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
       "official_rule_ids": [
@@ -130111,6 +130978,20 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "damage.result.player_life",
@@ -130153,6 +131034,20 @@
         "commander_review"
       ],
       "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "damage.result.player_life",
@@ -143698,6 +144593,54 @@
     {
       "capability_id": "life.change.effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_semantic_life_intent_replacement_suspends_and_replays_exactly",
       "official_rule_ids": [
         "101.3",
@@ -143886,6 +144829,54 @@
         "commander_review"
       ],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "life.change.effect",
@@ -144154,6 +145145,54 @@
     {
       "capability_id": "life.change.effect",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "positive",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_fixed_life_self_enter_trigger_replays_exactly",
       "official_rule_ids": [
         "101.3",
@@ -144222,6 +145261,54 @@
         "commander_review"
       ],
       "applicability_note": "Original Supplicant pays its black mana, tap and private hand discard before any life loss. Unauthorized activation rolls back and nonactors receive no decision or private hand contents; one all-player result and complete replay agree."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "life.change.effect",
@@ -144390,6 +145477,54 @@
         "commander_review"
       ],
       "applicability_note": "Replay the selected opponent, fixed activated cost, replacement-adjusted loss and gain, life journal, and final authoritative hash."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "life.change.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "life.change.effect",
@@ -159956,6 +161091,783 @@
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
     },
     {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_fresh_lightkeeper_witness_kills_omitted_linked_paid_count",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_fresh_original_admission_kills_omitted_count_result_compiler",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_runtime_withdrawal_cannot_omit_the_count_or_cast_payment_authority",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_unrepresented_count_discards_and_independent_siblings_remain_residual",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultValueTests.test_entry_metadata_rejects_foreign_transitions_and_preserves_legacy_unread_facts",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultValueTests.test_linked_count_rejects_malformed_and_mismatched_payment_facts",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_four_originals_bind_results_to_the_printed_cost_and_remain_fully_admitted",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.multikicker_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "400.7d",
+        "601.2b",
+        "601.2f",
+        "608.2h",
+        "702.33c",
+        "702.33d",
+        "702.33e",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
       "capability_id": "quantity_expression.public_characteristic_aggregate",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_state_quantity_actions.AdditionalConditionalModifierRuntimeTests.test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays",
@@ -164231,6 +166143,126 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
@@ -164407,6 +166439,126 @@
         "commander_review"
       ],
       "applicability_note": "Count committed current-turn card_discarded facts for the locked controller, including redirected hand discards."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -164791,6 +166943,126 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
@@ -164971,6 +167243,126 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
@@ -165067,6 +167459,126 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -177838,6 +180350,24 @@
     },
     {
       "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
       "official_rule_ids": [
@@ -178069,6 +180599,24 @@
         "traditional"
       ],
       "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "stack.copy.fixed_instant_or_sorcery",
@@ -178648,6 +181196,24 @@
     },
     {
       "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay",
       "official_rule_ids": [
@@ -178663,6 +181229,24 @@
         "traditional"
       ],
       "applicability_note": "One closed instant/sorcery copy shape and current-controller scope use existing target and staged copy owners. Native Reverberate copies an actual Giant Growth with independent chosen targets, exact original target preservation, wrong-principal/cardinality rollback, four-seat private projection, pending load and full replay."
+    },
+    {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "stack.copy.fixed_instant_or_sorcery",
@@ -178899,6 +181483,72 @@
       "applicability_note": "Real trusted-only original spell, entry, activated, graveyard and granted copy programs use canonical target/copy owners. Tests distinguish controller from owner/grant source, source-cost payment from copied casting choices, retained old incarnations from explicitly selected returned objects, stale original spell from independent copy, complete source from unknown siblings, and copied spell cessation. Malformed/principal/cardinality rollback, private projection, pending load and full pre-action replay remain authoritative."
     },
     {
+      "capability_id": "stack.copy.fixed_instant_or_sorcery",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.7d",
+        "608.2b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
       "capability_id": "stack.counter.controller_payment",
       "evidence_class": "interaction",
       "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_stack_payment_canonical_spell_copy_preserves_announced_x",
@@ -179093,6 +181743,54 @@
     {
       "capability_id": "stack.counter.controller_payment",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
       "official_rule_ids": [
         "107.3a",
@@ -179213,6 +181911,54 @@
     {
       "capability_id": "stack.counter.controller_payment",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "positive",
       "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
       "official_rule_ids": [
         "107.3a",
@@ -179261,6 +182007,54 @@
     {
       "capability_id": "stack.counter.controller_payment",
       "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "privacy",
       "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
       "official_rule_ids": [
         "107.3a",
@@ -179281,6 +182075,54 @@
         "commander_review"
       ],
       "applicability_note": "Only the payer receives the payment decision and private affordability; other principals receive no hidden hand reference or private response."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "stack.counter.controller_payment",
@@ -193488,6 +196330,78 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_target_revalidation_and_self_return_coexist_on_one_card",
       "official_rule_ids": [
         "115.1",
@@ -193574,6 +196488,78 @@
         "commander_review"
       ],
       "applicability_note": "Use the face-named Fell spell program for both the advertised target and accepted cast, then perform no destruction after that target departs before resolution."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "target.revalidate_resolution",
@@ -193704,6 +196690,78 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
       "test_id": "tests.test_shared_modal_target_resolution.BoundTargetMutationIdentityTests.test_bound_liveness_policy_contains_only_registered_scalar_mutations",
       "official_rule_ids": [
         "115.1",
@@ -193790,6 +196848,78 @@
         "commander_review"
       ],
       "applicability_note": "Revalidate a selected public target's logical object and target restrictions immediately before resolution."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "target.revalidate_resolution",
@@ -193898,6 +197028,78 @@
         "commander_review"
       ],
       "applicability_note": "Revalidate a selected public target's logical object and target restrictions immediately before resolution."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "target.revalidate_resolution",
@@ -199506,6 +202708,29 @@
     },
     {
       "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_suspends_for_replacement_order",
       "official_rule_ids": [
@@ -199526,6 +202751,29 @@
         "commander_review"
       ],
       "applicability_note": "Resolve competing token replacements in four-player state while keeping the affected controller as the sole replacement chooser."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "token.creation.fixed_definition",
@@ -199668,6 +202916,29 @@
     {
       "capability_id": "token.creation.fixed_definition",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "positive",
       "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_zero_single_reversed_groups_have_complete_nonduplicate_history",
       "official_rule_ids": [
         "111.2",
@@ -199713,6 +202984,29 @@
     },
     {
       "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_replays_exactly",
       "official_rule_ids": [
@@ -199733,6 +203027,29 @@
         "commander_review"
       ],
       "applicability_note": "Save and exactly replay a compiled fixed Treasure instruction composed with an additional Map-token replacement."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "token.creation.fixed_definition",
@@ -211137,6 +214454,98 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_self_dies_trigger_uses_last_known_controller",
       "official_rule_ids": [
         "603.2",
@@ -211317,6 +214726,98 @@
         "commander_review"
       ],
       "applicability_note": "Use one four-player sacrifice occurrence to place active- and nonactive-controller triggers in APNAP order."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -211689,6 +215190,98 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
       "test_id": "tests.test_preflight_v080.NormalizedZoneEventTests.test_self_dies_trigger_uses_last_known_battlefield_zone",
       "official_rule_ids": [
         "603.2",
@@ -211873,6 +215466,98 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_graveyard_arrival_actions.AdditionalConditionalModifierRuntimeTests.test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
       "official_rule_ids": [
         "603.2",
@@ -212007,6 +215692,98 @@
         "commander_review"
       ],
       "applicability_note": "Replay an actual mass-destruction cast from a pre-action checkpoint through complete batch history, LKI trigger placement, two draw consequences, and the final authoritative hash."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -229033,6 +232810,60 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
       "official_rule_ids": [
         "121.1",
@@ -229110,6 +232941,60 @@
         "commander_review"
       ],
       "applicability_note": "Resolve a fixed each-player activated draw through the canonical four-player APNAP batch."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -229654,6 +233539,60 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
       "official_rule_ids": [
         "121.1",
@@ -229843,6 +233782,60 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_optional_draw_choices.OptionalDrawChoiceIntegrationTests.test_optional_draw_choice_is_seat_scoped_and_replays_exactly",
       "official_rule_ids": [
         "121.1",
@@ -229920,6 +233913,60 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact activation cost, source departure, stack resolution, and private draw result."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_multikicker_result_amounts.MultikickerResultRuntimeTests.test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -243901,5 +247948,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "cfb95d1f11f64c2fdde5aa359b900e455ee5395da6bdd4f35fcff902e6e33018"
+  "fingerprint": "f79efbacf7556b73d0468a3e5e5dc992bd0fca209b6fe5ea6069859362a498ad"
 }

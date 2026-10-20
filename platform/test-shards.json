@@ -36,6 +36,7 @@
       "test_job_select",
       "test_loyalty_abilities",
       "test_multikicker_entry_counters",
+      "test_multikicker_result_amounts",
       "test_nonmana_morph",
       "test_power_up",
       "test_public_activation_conditions",

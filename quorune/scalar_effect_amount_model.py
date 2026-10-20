@@ -9,6 +9,7 @@ from typing import Any, Mapping
 from .query_effect_amount_model import PublicQueryAmountError
 from .counter_names import normalized_counter_name
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
+from .multikicker_model import FixedManaMultikickerSpec
 
 SCALAR_AMOUNT_KIND = "scalar_effect_amount"
 SCALAR_AMOUNT_CAPABILITY = "quantity_expression.scalar_effect_amount"
@@ -19,6 +20,7 @@ TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
 
 
 class ScalarAmountOrigin(StrEnum):
+    MULTIKICKER_COUNT = 'multikicker_count'
     TARGET_HAND_COUNT='target_player_hand_count'
     PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     SOURCE = "source_characteristic"
@@ -46,10 +48,18 @@ class ScalarEffectAmountSpec:
     schema_version: int = 1
     counter_name: str | None = None
     aggregate: PublicCharacteristicAggregateSpec | None = None
+    multikicker: FixedManaMultikickerSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version == 5) != (self.origin is ScalarAmountOrigin.MULTIKICKER_COUNT):
+            raise PublicQueryAmountError('Multikicker count requires its explicit scalar version')
+        if self.schema_version == 5:
+            if not isinstance(self.multikicker, FixedManaMultikickerSpec):
+                raise PublicQueryAmountError('Multikicker count requires its linked fixed cost instance')
+        elif self.multikicker is not None:
+            raise PublicQueryAmountError('Other scalar origins cannot carry a Multikicker instance')
         if (self.schema_version==4)!=(self.origin is ScalarAmountOrigin.TARGET_HAND_COUNT):
             raise PublicQueryAmountError('Target hand count requires its explicit scalar version')
         if (self.schema_version==3)!=(self.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE):
@@ -90,7 +100,8 @@ class ScalarEffectAmountSpec:
     def producer_identity(self) -> dict[str, Any]:
         return {"origin": self.origin.value, "characteristic": self.characteristic,
                 "history_fact": self.history_fact, **({"counter_name":self.counter_name} if self.schema_version==2 else {}),
-                **({'aggregate':self.aggregate.to_dict()} if self.schema_version==3 else {})}
+                **({'aggregate':self.aggregate.to_dict()} if self.schema_version==3 else {}),
+                **({'multikicker':self.multikicker.to_dict()} if self.schema_version==5 else {})}
 
     def to_dict(self) -> dict[str, Any]:
         return {"kind": SCALAR_AMOUNT_KIND, "schema_version": self.schema_version,
@@ -104,6 +115,8 @@ class ScalarEffectAmountSpec:
             fields.add('counter_name')
         if isinstance(value,Mapping) and value.get('schema_version')==3:
             fields.add('aggregate')
+        if isinstance(value,Mapping) and value.get('schema_version')==5:
+            fields.add('multikicker')
         if not isinstance(value, Mapping) or set(value) != fields or value.get("kind") != SCALAR_AMOUNT_KIND:
             raise PublicQueryAmountError("Scalar amount fields are incomplete or unknown")
         try:
@@ -111,9 +124,10 @@ class ScalarEffectAmountSpec:
         except (TypeError, ValueError) as exc:
             raise PublicQueryAmountError("Scalar amount origin is unsupported") from exc
         try:
+            multikicker = FixedManaMultikickerSpec.from_dict(value['multikicker']) if value['schema_version']==5 else None
             aggregate=PublicCharacteristicAggregateSpec.from_dict(value['aggregate']) if value['schema_version']==3 else None
             return cls(origin=origin, characteristic=value["characteristic"], history_fact=value["history_fact"],
-                       coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],counter_name=value.get('counter_name'),aggregate=aggregate)
+                       coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],counter_name=value.get('counter_name'),aggregate=aggregate,multikicker=multikicker)
         except (TypeError,ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
 
