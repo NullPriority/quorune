@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "97295bde734b672c907c75e4bd0c10b26fa7daad86d40b1c0b39d9aed847e80e",
-  "declaration_source_fingerprint": "71d1cfd975e1956f314b7281054af7d9fdff89a2afa9bdd71b24fa3d4755cddc",
+  "registry_fingerprint": "81c38901adfb145a6669873889c18df33d3c41b608a3a0299e505e836988fc36",
+  "declaration_source_fingerprint": "35bdb2e510888e3f70fc7630984220212485f08f6ad9df7525d1aab89b08caaf",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -92,6 +92,500 @@
         "commander_review"
       ],
       "applicability_note": "Read-only source-local representation preserves Aura and recipient identity, control and effective ability presence; does not certify destruction gameplay."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_white_and_red_boast_originals_create_complete_tokens",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_native_blink_rejects_boast_for_a_returned_incarnation_that_did_not_attack",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_source_attack_condition_distinguishes_turn_incarnation_controller_and_missing_history",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_white_and_red_boast_originals_create_complete_tokens",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_fresh_actual_usage_commit_omission_is_killed",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_fresh_boast_producer_and_actual_source_attack_condition_omissions_are_killed",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_duskwielder_rejects_boast_before_attacking_without_any_cost_or_effect",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_implicit_keyword_restrictions_survive_without_reminder_and_have_closed_metadata",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_native_blink_rejects_boast_for_a_returned_incarnation_that_did_not_attack",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_source_attack_condition_distinguishes_turn_incarnation_controller_and_missing_history",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_verified_boast_withdrawal_and_runtime_minimum_stripping_reject",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_white_and_red_boast_originals_create_complete_tokens",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_implicit_keyword_restrictions_survive_without_reminder_and_have_closed_metadata",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_source_attack_condition_distinguishes_turn_incarnation_controller_and_missing_history",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_actual_white_and_red_boast_originals_create_complete_tokens",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_native_blink_rejects_boast_for_a_returned_incarnation_that_did_not_attack",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
+    },
+    {
+      "capability_id": "activation.boast.fixed_restrictions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_boast_restrictions.BoastRestrictionTests.test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage",
+      "official_rule_ids": [
+        "400.7",
+        "602.1b",
+        "602.2",
+        "613.1f",
+        "702.142a",
+        "702.142b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual normal Duskwielder, Usher and Liberator registration and commands preserve the intrinsic source-attack prerequisite, paid once-per-turn usage, full life/token effects, blink identity, countered paid use, principal rollback, private pending load and replay. Typed history/codec controls distinguish controller, turn and missing history; verified withdrawals and fresh producer/guard/commit omissions protect authority."
     },
     {
       "capability_id": "activation.condition.citys_blessing",
@@ -269695,5 +270189,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "85ab36475746210572e10fbe6fcf7c45b6293f9efeb7111aaf3feddb8a3e3287"
+  "fingerprint": "d6157fccf49a0a51a1cec5877872f08a4ce5ec44705042df37291ec64edd078f"
 }
