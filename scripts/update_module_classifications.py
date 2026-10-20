@@ -220,6 +220,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/toughness_assignment.py",
         "quorune/umbra_armor.py",
         "quorune/activation_usage.py",
+        "quorune/boast.py",
         "quorune/activation_condition_model.py",
         "quorune/abilities.py",
         "quorune/source_maintenance.py",
@@ -549,6 +550,7 @@ def _owner(relative: str, layer: str) -> str:
         return "ability_fragments"
     if relative in {
         "quorune/activation_condition_model.py",
+        "quorune/boast.py",
         "quorune/activated_ability_descriptor.py",
         "quorune/compiled_activated_abilities.py",
         "quorune/counter_keyword_abilities.py",

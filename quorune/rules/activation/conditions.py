@@ -112,6 +112,9 @@ def _typed_condition_status(
     source: Any | None,
 ) -> tuple[str, str | None]:
     kind = condition.kind
+    if kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN:
+        from .source_attack import source_attack_condition_status
+        return source_attack_condition_status(host,source)
     if kind is ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING:
         from ...city_blessing_model import player_has_citys_blessing
         return ('payable',None) if player_has_citys_blessing(host.state.players[seat]) else ('unavailable','requires_citys_blessing')
