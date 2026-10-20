@@ -6564,6 +6564,22 @@
         "test_temporary_target_interactions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-color-protection-choice",
+      "patterns": [
+        "quorune/compiler/source_protection_choices.py",
+        "quorune/rules/source_protection_choice_shapes.py",
+        "quorune/rules/source_keyword_choice_shapes.py",
+        "tests/fixtures/source-protection-choice-cards.json",
+        "tests/test_source_protection_choices.py"
+      ],
+      "test_modules": [
+        "test_source_protection_choices",
+        "test_source_keyword_choices",
+        "test_temporary_target_interactions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

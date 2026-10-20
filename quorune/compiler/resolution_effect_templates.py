@@ -77,6 +77,7 @@ from .temporary_declaration_templates import (
 )
 from .temporary_target_interactions import temporary_target_interaction_effect_template
 from .source_keyword_choices import source_keyword_choice_template
+from .source_protection_choices import source_protection_choice_template
 
 
 CompiledEffectTemplate = tuple[
@@ -242,6 +243,10 @@ def typed_resolution_effect_template(
     fixed_counter_removal = fixed_counter_removal_effect_template(text)
     if fixed_counter_removal is not None:
         return fixed_counter_removal.compiled()
+    protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if protection_choice is not None:
+        return protection_choice
     source_choice = source_keyword_choice_template(text, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types), source_name=card_name)
     if source_choice is not None:

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 414,
+  "registry_version": 415,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4715,7 +4715,9 @@
         "test_unqualified_graveyard_exile_uses_owner",
         "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
         "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue"
       ],
       "negative_tests": [
         "test_activation_zone_change_costs_exclude_mana_abilities",
@@ -4736,20 +4738,26 @@
         "test_selected_zone_cost_uses_current_effective_characteristics",
         "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
         "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue"
       ],
       "multiplayer_tests": [
         "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
         "test_selected_zone_cost_replacement_is_private_and_replays",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue"
       ],
       "privacy_tests": [
         "test_counted_discard_activation_is_private_complete_and_replays",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_selected_zone_cost_replacement_is_private_and_replays",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue"
       ],
       "replay_tests": [
         "test_counted_discard_activation_is_private_complete_and_replays",
@@ -4760,7 +4768,9 @@
         "test_selected_zone_cost_replacement_is_private_and_replays",
         "test_actual_meteor_two_card_random_cost_keeps_subset_across_replacement_load_and_replay",
         "test_actual_stormbind_single_random_cost_keeps_subset_across_replacement_load_and_replay",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay"
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue"
       ],
       "required_evidence": [
         "positive",
@@ -7032,7 +7042,14 @@
         "test_typed_protection_blocks_target_attachment_and_block_operations",
         "test_lifelink_counts_only_damage_not_prevented_by_protection",
         "test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
-        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels"
+        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "negative_tests": [
         "test_untyped_and_unsupported_protection_fail_closed",
@@ -7041,20 +7058,48 @@
       "interaction_tests": [
         "test_layer_six_granted_protection_uses_typed_fragment",
         "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
-        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "multiplayer_tests": [
         "test_four_player_protection_uses_the_actual_source",
-        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "privacy_tests": [
         "test_aura_entry_choice_projection_and_replay_are_exact",
-        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "replay_tests": [
         "test_aura_entry_choice_projection_and_replay_are_exact",
         "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
-        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure"
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "required_evidence": [
         "positive",
@@ -9015,23 +9060,81 @@
     {
       "id": "zone.discard.typed_cause",
       "version": 1,
-      "official_rules": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "400.7k",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Distinguish authoritative discard procedures from ordinary hand-to-graveyard moves through one typed zone-transition cause used by costs, effects, cleanup, post-draw actions, and simultaneous choices.",
-        "inputs": ["one requested hand-to-graveyard card move", "one typed discard cause supplied by an authoritative producer", "current replacement snapshot and source incarnation"],
-        "outputs": ["one cause-preserving replacement event", "one normalized card.discarded occurrence after the actual destination commits", "simultaneous APNAP trigger batching", "exact replay"],
-        "exclusions": ["ordinary hand-to-graveyard moves that are not discards", "cards moved from zones other than a hand", "requested destinations other than a graveyard before replacement", "random, chosen, or effect-specific discard selection grammar outside its existing owner", "historical records that contain no typed discard cause"]
+        "inputs": [
+          "one requested hand-to-graveyard card move",
+          "one typed discard cause supplied by an authoritative producer",
+          "current replacement snapshot and source incarnation"
+        ],
+        "outputs": [
+          "one cause-preserving replacement event",
+          "one normalized card.discarded occurrence after the actual destination commits",
+          "simultaneous APNAP trigger batching",
+          "exact replay"
+        ],
+        "exclusions": [
+          "ordinary hand-to-graveyard moves that are not discards",
+          "cards moved from zones other than a hand",
+          "requested destinations other than a graveyard before replacement",
+          "random, chosen, or effect-specific discard selection grammar outside its existing owner",
+          "historical records that contain no typed discard cause"
+        ]
       },
-      "dependencies": ["zone.change.destination_replacement"],
-      "implementation_components": ["quorune.zone_trigger_events.ZoneTransitionKind.DISCARD", "quorune.zone_transitions.ZoneTransitionOwner", "quorune.semantic_runtime.zone_replacements.prepare_zone_change_replacement_snapshot", "quorune.zone_trigger_events.normalized_zone_trigger_events"],
-      "positive_tests": ["test_typed_discard_cause_covers_authoritative_producers_without_inference", "test_discard_cause_routes_cleanup_activation_casting_and_post_draw"],
-      "negative_tests": ["test_typed_discard_cause_covers_authoritative_producers_without_inference"],
-      "interaction_tests": ["test_simultaneous_madness_triggers_batch_in_apnap_order"],
-      "multiplayer_tests": ["test_simultaneous_madness_triggers_batch_in_apnap_order"],
-      "privacy_tests": ["test_four_player_madness_projection_and_save_load"],
-      "replay_tests": ["test_madness_cast_and_decline_share_offer_commit_and_replay", "test_four_player_madness_projection_and_save_load"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.zone_trigger_events.ZoneTransitionKind.DISCARD",
+        "quorune.zone_transitions.ZoneTransitionOwner",
+        "quorune.semantic_runtime.zone_replacements.prepare_zone_change_replacement_snapshot",
+        "quorune.zone_trigger_events.normalized_zone_trigger_events"
+      ],
+      "positive_tests": [
+        "test_typed_discard_cause_covers_authoritative_producers_without_inference",
+        "test_discard_cause_routes_cleanup_activation_casting_and_post_draw",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice"
+      ],
+      "negative_tests": [
+        "test_typed_discard_cause_covers_authoritative_producers_without_inference"
+      ],
+      "interaction_tests": [
+        "test_simultaneous_madness_triggers_batch_in_apnap_order",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice"
+      ],
+      "multiplayer_tests": [
+        "test_simultaneous_madness_triggers_batch_in_apnap_order",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice"
+      ],
+      "privacy_tests": [
+        "test_four_player_madness_projection_and_save_load",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice"
+      ],
+      "replay_tests": [
+        "test_madness_cast_and_decline_share_offer_commit_and_replay",
+        "test_four_player_madness_projection_and_save_load",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement prevents a typed discard event from receiving trusted closure, and an invalid cause, origin, destination, or stale prepared cause fails before mutation.",
       "implementation_mutation_status": "killed",
@@ -14013,7 +14116,14 @@
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
         "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -14060,7 +14170,14 @@
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
         "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -14087,7 +14204,14 @@
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
         "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -14113,7 +14237,14 @@
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
         "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -14139,7 +14270,14 @@
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
         "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
       ],
       "required_evidence": [
         "positive",
@@ -37021,6 +37159,122 @@
       "dependency_fail_closed_rationale": "Withdrawing choice, source-characteristic or keyword authority rejects normal admission and runtime binding.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh normal original admission and real activated result witnesses reject compiler and characteristic-commit omission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.resolution.source_protection_choice",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "201.5",
+        "400.7",
+        "608.2d",
+        "611.2a",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One locked ability controller chooses a color on resolution and grants its exact source creature typed protection until end of turn.",
+        "inputs": [
+          "complete source creature instruction",
+          "one fixed five-color choice",
+          "exact source incarnation"
+        ],
+        "outputs": [
+          "typed protection fragment through the existing layer-six ability-bundle owner",
+          "ordinary cost, choice and replay semantics"
+        ],
+        "exclusions": [
+          "targeted or other-controller choices",
+          "non-color, mixed or variable qualities",
+          "different durations",
+          "independently unsupported sibling abilities or costs"
+        ]
+      },
+      "dependencies": [
+        "protection.typed.debt",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "implementation_components": [
+        "quorune.compiler.source_protection_choices.source_protection_choice_template",
+        "quorune.rules.source_protection_choice_shapes.source_protection_choice_capabilities",
+        "quorune.rules.source_protection_choice_shapes.source_protection_choice_runtime_dependencies",
+        "quorune.rules.source_protection_choice_shapes.is_closed_source_protection_choice_program",
+        "quorune.semantic_choices.scalar.ChooseOptionHandler",
+        "quorune.effect_runtime.temporary_ability_bundle.apply_temporary_ability_bundle"
+      ],
+      "positive_tests": [
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_six_originals_have_complete_nonempty_source_color_programs_and_preflight",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+      ],
+      "negative_tests": [
+        "test_shape_rejects_wrong_quality_actor_source_or_incomplete_colors",
+        "test_source_and_protection_authority_cannot_be_omitted_or_replaced_by_unknown_grammar"
+      ],
+      "interaction_tests": [
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+      ],
+      "multiplayer_tests": [
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+      ],
+      "privacy_tests": [
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+      ],
+      "replay_tests": [
+        "test_actual_cartel_pays_sacrifice_then_chooses_red_to_invalidate_a_real_bolt",
+        "test_actual_knight_white_protection_removes_pacifism_and_expiry_does_not_return_it",
+        "test_actual_named_mana_and_private_discard_costs_precede_one_owned_color_choice",
+        "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
+        "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
+        "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete color/source/quality closure and its minimum owners are required for admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh real Cartel activation and Bolt witness rejects an omitted protection-layer grant.",
       "blockers": [],
       "status": "trusted"
     }

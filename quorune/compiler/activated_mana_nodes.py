@@ -431,6 +431,7 @@ def _activated_effect_dependency_gate(
                 "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
+                "temporary-source-protection-choice",
             }.intersection(mechanics)
         )
         or (
