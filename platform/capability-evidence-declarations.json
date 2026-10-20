@@ -43884,6 +43884,386 @@
       "applicability_note": "Replay selected artifact identities, generic contribution, tap payment, and final authoritative state hash exactly."
     },
     {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_copy_provenance_retains_the_historical_no_runtime_trust_mode",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_fresh_entry_producer_payment_capture_and_color_count_mutants_are_killed",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_legacy_no_count_execution_retains_an_absent_payment_field",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_verified_capability_withdrawal_and_stripped_runtime_minima_reject",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_excess_white_qualifies_but_three_wrong_color_units_do_not",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "casting.payment.mana_unit_counts",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_legacy_no_count_execution_retains_an_absent_payment_field",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
       "capability_id": "casting.permission.one_shot_exile_without_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_cascade_rules.CascadeRuntimeTests.test_cascade_cast_revalidates_additional_cost_and_targets",
@@ -114905,6 +115285,526 @@
       "official_rule_ids": ["122.1", "122.6", "614.1c", "614.12", "614.16", "616.1", "702.98", "702.98a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the seat-scoped apply decision to the identical counter state and final authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_entry_counter_is_modified_by_hardened_scales",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_garenbrig_counter_and_current_power_blocking_restriction_compose",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_garenbrig_counter_and_current_power_blocking_restriction_compose",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_fresh_entry_producer_payment_capture_and_color_count_mutants_are_killed",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_compiler_amount_and_handler_boundaries_are_closed",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_verified_capability_withdrawal_and_stripped_runtime_minima_reject",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_compiler_amount_and_handler_boundaries_are_closed",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_excess_white_qualifies_but_three_wrong_color_units_do_not",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_five_originals_bind_completely_and_count_actual_units_for_each_color",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_entry_counter_is_modified_by_hardened_scales",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_actual_garenbrig_counter_and_current_power_blocking_restriction_compose",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
+    },
+    {
+      "capability_id": "counter.producer.paid_color_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_paid_color_entry.PaidColorEntryTests.test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation",
+      "official_rule_ids": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.12",
+        "614.16",
+        "614.1c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
     },
     {
       "capability_id": "counter.producer.persist",

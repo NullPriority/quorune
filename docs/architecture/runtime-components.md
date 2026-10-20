@@ -487,6 +487,22 @@ nonordinary Reconfigure costs and uncompiled attachment providers remain
 residual. [ADR 0120](../adr/0120-attachment-bound-reconfigure-effects.md) records
 the duration and operation boundary.
 
+Dynamic self-entry counters also accept a fixed threshold of actual mana units
+of one ordinary color spent on the original spell. An optional `mana_color`
+qualifier belongs only to that amount source; other amount payloads retain
+their existing shape. The handler requires complete-card admission and runtime
+binding independently requires `casting.payment.mana_unit_counts` and
+`counter.producer.paid_color_self_entry`.
+
+The casting owner records a versioned immutable payment fact for every original
+cast in current execution, so an entry-copy effect can acquire the ability
+after payment. Counts use concrete paid mana types, including mana spent on
+generic or additional costs. Noncast entries and spell copies supply no paid
+cast; a current cast missing its required fact fails closed. The resulting
+amount enters the existing self-entry and counter-replacement pipeline.
+Ability-word labels add no behavior. [ADR 0121](../adr/0121-spell-payment-counts-and-entry-conditions.md)
+records the payment, copy and historical-execution boundaries.
+
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
 source-controller, source-opponent, or global battlefield queries into

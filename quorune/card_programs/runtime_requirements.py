@@ -23,10 +23,15 @@ from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
 from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
 from ..rules.self_cost_numeric_counts import self_cost_numeric_count_dependencies
 from ..rules.reconfigure import reconfigure_runtime_dependencies
+from ..rules.paid_color_entry import paid_color_entry_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(paid_color_entry_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_paid_color_entry:invalid:{exc}')
     try:
         required.update(reconfigure_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:

@@ -196,6 +196,21 @@ meaning where the schema allows it. A current runtime never silently recompiles
 or reinterprets an old record as if it used current Oracle, rules, or
 CardPrograms.
 
+Current games pin `spell_mana_counts_version: 1` in the initial checkpoint.
+Each original cast stores an optional version-one `mana_spent_counts` stack
+fact with its physical/logical incarnation and exact concrete WUBRGC amounts.
+It is separate from casting decisions and the distinct-color set; spell copies
+omit it. A checkpoint without the execution marker retains historical
+no-count casting, so later replay does not add payment fields to its hashes.
+The decoder rejects malformed versions, Boolean counts and copy-owned facts.
+
+Current runtime-trust provenance also identifies a core permanent-spell copy's
+empty resolution through its pinned spell record. It retains the copy-specific
+fallback kind and original Oracle identity, independently of whether the
+original spell is still on the stack. Records without runtime-trust metadata
+retain their earlier fallback-lookup behavior. This does not admit an
+unsupported copy-producing card or alter copied casting decisions.
+
 Upkeep-relative control history is one such additive boundary. New records pin
 its version in both the initial checkpoint and manifest; records without the
 marker remain in the historical no-history mode so later replay does not add

@@ -52,6 +52,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/additional_cost_vocabulary.py",
         "quorune/activated_ability_descriptor.py",
         "quorune/attachment_duration.py",
+        "quorune/spell_mana_counts.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
         "quorune/ability_line_normalization.py",
@@ -544,6 +545,10 @@ def _owner(relative: str, layer: str) -> str:
         return 'attachments'
     if relative == 'quorune/attachment_duration.py':
         return 'continuous_effects'
+    if relative == 'quorune/spell_mana_counts.py':
+        return 'mana_rules'
+    if relative == 'quorune/rules/paid_color_entry.py':
+        return 'counter_placement'
     if relative.startswith("quorune/rules/"):
         return "rules_capabilities"
     if relative.startswith("quorune/aura/"):

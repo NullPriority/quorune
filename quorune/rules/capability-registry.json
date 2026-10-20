@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 423,
+  "registry_version": 424,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -38029,6 +38029,188 @@
       "dependency_fail_closed_rationale": "Complete-card catalog admission and source-pinned capability closure withdraw both actions when a producer or required capability is unavailable.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh native Rabbit Battery witnesses kill omission of the compiler producer, the attachment-created type consequence and the lifetime predicate at actual unattachment.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.payment.mana_unit_counts",
+      "version": 1,
+      "official_rules": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.1c",
+        "614.12",
+        "614.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Preserve immutable actual mana units paid for a cast, pinned to the original spell incarnation and omitted from spell copies and historical no-count execution.",
+        "inputs": [
+          "original cast payment and incarnation",
+          "version-one spell mana counts",
+          "complete current source program"
+        ],
+        "outputs": [
+          "sealed concrete mana-unit counts",
+          "typed fixed threshold entry amount",
+          "canonical affected-object counter event"
+        ],
+        "exclusions": [
+          "historical games without payment provenance",
+          "copied casting decisions as payment",
+          "unsupported conditional clauses, variable thresholds or mixed results"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.spell_mana_counts.SpellManaSpentCounts",
+        "quorune.spell_mana_counts.capture_spell_mana_counts",
+        "quorune.rules.casting.commit._create_spell_item"
+      ],
+      "positive_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
+        "test_excess_white_qualifies_but_three_wrong_color_units_do_not"
+      ],
+      "negative_tests": [
+        "test_actual_payment_fact_is_closed_and_legacy_game_and_stack_shapes_stay_absent",
+        "test_legacy_no_count_execution_retains_an_absent_payment_field",
+        "test_verified_capability_withdrawal_and_stripped_runtime_minima_reject"
+      ],
+      "interaction_tests": [
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_copy_provenance_retains_the_historical_no_runtime_trust_mode",
+        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability"
+      ],
+      "privacy_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability"
+      ],
+      "replay_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+        "test_legacy_no_count_execution_retains_an_absent_payment_field"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The canonical casting payment owner captures actual concrete mana types; the additive execution version preserves historical no-count records.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual Ardenvale casts kill omission of the entry compiler, payment capture, or actual colored-unit contribution.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.producer.paid_color_self_entry",
+      "version": 1,
+      "official_rules": [
+        "207.2c",
+        "400.7d",
+        "601.2h",
+        "609.4b",
+        "614.1c",
+        "614.12",
+        "614.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A fixed number of self-entry counters applies when at least a fixed positive number of mana units of one printed ordinary color was actually spent to cast that original permanent spell.",
+        "inputs": [
+          "original cast payment and incarnation",
+          "version-one spell mana counts",
+          "complete current source program"
+        ],
+        "outputs": [
+          "sealed concrete mana-unit counts",
+          "typed fixed threshold entry amount",
+          "canonical affected-object counter event"
+        ],
+        "exclusions": [
+          "historical games without payment provenance",
+          "copied casting decisions as payment",
+          "unsupported conditional clauses, variable thresholds or mixed results"
+        ]
+      },
+      "dependencies": [
+        "casting.payment.mana_unit_counts",
+        "counter.producer.dynamic_self_entry"
+      ],
+      "implementation_components": [
+        "quorune.compiler.paid_color_entry_templates.paid_color_entry_amount",
+        "quorune.entry_counters.dynamic_entry_counter_amount",
+        "quorune.rules.paid_color_entry.paid_color_entry_runtime_dependencies"
+      ],
+      "positive_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_compiler_amount_and_handler_boundaries_are_closed",
+        "test_excess_white_qualifies_but_three_wrong_color_units_do_not",
+        "test_five_originals_bind_completely_and_count_actual_units_for_each_color"
+      ],
+      "negative_tests": [
+        "test_compiler_amount_and_handler_boundaries_are_closed",
+        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+        "test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation",
+        "test_verified_capability_withdrawal_and_stripped_runtime_minima_reject"
+      ],
+      "interaction_tests": [
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_actual_entry_counter_is_modified_by_hardened_scales",
+        "test_actual_garenbrig_counter_and_current_power_blocking_restriction_compose",
+        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+        "test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_actual_garenbrig_counter_and_current_power_blocking_restriction_compose"
+      ],
+      "privacy_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation"
+      ],
+      "replay_tests": [
+        "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+        "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+        "test_actual_entry_counter_is_modified_by_hardened_scales",
+        "test_actual_garenbrig_counter_and_current_power_blocking_restriction_compose",
+        "test_existing_spell_copy_owner_does_not_copy_actual_payment_counts",
+        "test_noncast_return_does_not_reuse_a_prior_paid_spell_incarnation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Typed original-cast facts and complete-card entry descriptors are mandatory; omitted capability or unavailable provenance cannot supply the new amount.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual Ardenvale casts kill omission of the entry compiler, payment capture, or actual colored-unit contribution.",
       "blockers": [],
       "status": "trusted"
     }

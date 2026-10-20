@@ -11,7 +11,9 @@ from ..entry_counter_model import (
     DynamicEntryCounterAmountSpec,
     DynamicEntryCounterCalculation,
     DynamicEntryCounterValueSource,
+    PAID_COLOR_ENTRY_CAPABILITY,
 )
+from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
 from ..keyword_counters import (keyword_counter_mechanic, KeywordCounterError,
     FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY, KeywordCounterEntryChoiceSpec)
 from ..rules.source_references import (
@@ -176,6 +178,7 @@ def _dynamic_compiled(
             "event": "zone.change",
             "counter_name": counter_name,
             "amount_spec": amount_spec.to_dict(),
+            **({'requires_complete_card_program':True} if amount_spec.mana_color is not None else {}),
             "rule_id": (
                 "702.138c"
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -184,6 +187,7 @@ def _dynamic_compiled(
         },
         (
             DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,
+            *((PAID_COLOR_ENTRY_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY) if amount_spec.mana_color is not None else ()),
             *(
                 ("casting.lifecycle.fixed_zone_cast",)
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -457,6 +461,9 @@ def dynamic_self_entry_counter_handler(
     ability_word = _ABILITY_WORD.fullmatch(material)
     if ability_word is not None:
         material = ability_word.group("body")
+    from .paid_color_entry_templates import paid_color_entry_amount
+    paid=paid_color_entry_amount(material,source_name=source_name)
+    if paid is not None:return _dynamic_compiled(counter_name=paid[0],amount_spec=paid[1])
     escaped = _ESCAPED_ENTRY.fullmatch(material)
     if escaped is not None:
         subject = escaped.group("subject")

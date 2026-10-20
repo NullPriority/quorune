@@ -209,6 +209,9 @@ class DynamicSelfEntryCounterHandler:
         self,
         descriptor: Mapping[str, Any],
     ) -> DynamicSelfEntryCounterNode:
+        complete={'requires_complete_card_program'} if 'requires_complete_card_program' in descriptor else set()
+        if complete and descriptor['requires_complete_card_program'] is not True:
+            raise SemanticNodeError('Complete-card entry-counter admission must be true')
         exact_fields(
             descriptor,
             {
@@ -218,14 +221,14 @@ class DynamicSelfEntryCounterHandler:
                 "counter_name",
                 "amount_spec",
                 "rule_id",
-            },
+            } | complete,
             field="dynamic self-entry counter handler",
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError(
                 "Dynamic self-entry counter handler identity changed"
             )
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor['schema_version']) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError(
                 "Unsupported dynamic self-entry counter schema version"
             )
@@ -239,6 +242,8 @@ class DynamicSelfEntryCounterHandler:
             )
         except (EntryCounterError, TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+        if amount_spec.mana_color is not None and not complete:
+            raise SemanticNodeError('Paid-color entry counters require complete-card admission')
         return DynamicSelfEntryCounterNode(
             counter_name=descriptor["counter_name"],
             amount_spec=amount_spec,

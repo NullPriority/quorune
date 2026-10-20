@@ -17412,6 +17412,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Blade of the Oni Reconfigure pays2BB, makes the original source noncreature, and gives the receiver base5/5, black, Demon and Menace. Separate paid unattachment restores the source and receiver characteristics. All seven complete pinned bodies execute both actions through normal registration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "piece_ids": [
+        "capability.casting.payment.mana_unit_counts",
+        "capability.counter.producer.paid_color_self_entry"
+      ],
+      "capability_ids": [
+        "casting.payment.mana_unit_counts",
+        "counter.producer.paid_color_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Ardenvale cast consumes3W plus1C, retains original-incarnation concrete units through pending load, enters with one counter and preserves principal rollback, four-seat privacy and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_entry_counter_is_modified_by_hardened_scales",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.paid_color_self_entry"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.paid_color_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "The paid-color as-enters amount creates the existing affected-object counter event; actual Hardened Scales changes one entry counter into two with pending load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "piece_ids": [
+        "capability.counter.producer.paid_color_self_entry",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "counter.producer.paid_color_self_entry",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Clone pays3W2U under Sphere of Resistance before choosing a copy source. It acquires the entry ability and gets one counter from its own payment, independently of the original seven counters, with unauthorized-choice rollback, private projection and pending/pre-action replay."
     }
   ]
 }
