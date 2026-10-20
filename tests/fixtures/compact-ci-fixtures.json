@@ -171,6 +171,7 @@
     "tests/fixtures/noncreature-subtype-targets.json",
     "tests/fixtures/nonmana-morph-cards.json",
     "tests/fixtures/nonmodal-face-mana-value-cards.json",
+    "tests/fixtures/numeric-count-self-cost-cards.json",
     "tests/fixtures/opening-hand-battlefield-cards.json",
     "tests/fixtures/opening-hand-reveal-cards.json",
     "tests/fixtures/opponent-keyword-prohibition-cards.json",

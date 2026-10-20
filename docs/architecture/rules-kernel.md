@@ -78,6 +78,14 @@ The generic discount floors at zero and retains colored requirements. A
 counter-bearing mana source sacrificed during payment does not change the
 already locked price.
 
+Intrinsic creature-count discounts also accept a closed fixed power or
+toughness threshold over creatures the caster currently controls. The shared
+public query reads effective characteristics, so setting effects, modifiers and
+counters can change qualification. Opposing creatures and phased-out permanents
+do not contribute. The generic discount changes the payment after X is chosen;
+the spell's chosen X and any resulting target-controller payment stay intact,
+including when the generic casting payment reaches zero.
+
 Undaunted uses the same total-cost stage with the casting player's current
 in-game opponents. Eliminated players do not contribute, repeated instances
 accumulate, and a later elimination does not change an already locked cost.

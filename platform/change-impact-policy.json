@@ -6640,6 +6640,20 @@
         "test_fixed_spell_cost_reductions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "current-numeric-count-self-costs",
+      "patterns": [
+        "quorune/rules/self_cost_numeric_counts.py",
+        "tests/test_numeric_count_self_costs.py",
+        "tests/fixtures/numeric-count-self-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_numeric_count_self_costs",
+        "test_fixed_self_cost_surfaces",
+        "test_fixed_spell_cost_reductions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

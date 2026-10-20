@@ -21,10 +21,15 @@ from ..rules.source_protection_choice_shapes import source_protection_choice_run
 from ..rules.source_fixed_protection_shapes import source_fixed_protection_runtime_dependencies
 from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
 from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
+from ..rules.self_cost_numeric_counts import self_cost_numeric_count_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(self_cost_numeric_count_dependencies(program.handlers))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_self_cost_numeric_count:invalid:{exc}')
     try:
         required.update(self_cost_public_counter_dependencies(program.handlers))
     except (TypeError,ValueError) as exc:
