@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Price represented intrinsic counter reductions from every current public
+  player and battlefield counter, retaining phasing, zone scope, colored costs
+  and the locked price when a counter-bearing mana source leaves during payment.
+
 - Price source spell reductions from complete public current-turn death,
   opponent-cast and actual draw counts, preserving generic floors, colored
   payments, Flashback and the locked cost before mana activation.

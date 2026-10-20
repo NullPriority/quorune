@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 418,
+  "registry_version": 419,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37576,6 +37576,92 @@
       "dependency_fail_closed_rationale": "Counted metrics require explicit version2 TURN_VALUE form and new fine-grained authority independently of rebuilt base closure. Malformed descriptor readers return an invalid-shape blocker; base/count withdrawal keeps complete originals residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh atomic original Rebirth cases kill both zeroed actual public count and omitted counted-price production. Complete colored payments, zero generic floor, source Flashback, nondeath contrast, countered opponent cast and locked cost are independently observed.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.cost.self_public_counter_total",
+      "version": 1,
+      "official_rules": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A source-pinned spell counts every current counter on active players and unphased battlefield permanents before its cost locks.",
+        "inputs": [
+          "canonical public player and permanent counter snapshots"
+        ],
+        "outputs": [
+          "one shared complete price with generic floor and retained colored symbols"
+        ],
+        "exclusions": [
+          "counters outside the battlefield except on players",
+          "phased-out permanents",
+          "changes during payment after total cost is locked",
+          "qualified subsets or historical counter totals"
+        ]
+      },
+      "dependencies": [
+        "casting.cost.self_public_reduction",
+        "quantity_expression.public_counter_total"
+      ],
+      "implementation_components": [
+        "quorune.rules.self_cost_public_counters.public_player_permanent_counter_total",
+        "quorune.rules.self_cost_public_counters.self_cost_public_counter_dependencies",
+        "quorune.compiler.cast_cost_modifier_templates._object_count_metric",
+        "quorune.self_cast_reductions.CastReductionMetric"
+      ],
+      "positive_tests": [
+        "test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped",
+        "test_original_has_complete_nonempty_admitted_price_program"
+      ],
+      "negative_tests": [
+        "test_counter_and_base_price_authorities_cannot_be_withdrawn",
+        "test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor",
+        "test_scalar_metric_has_a_closed_version2_shape_and_malformed_readers_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_bounce_removes_departed_permanent_counters_from_current_price",
+        "test_counter_bearing_mana_source_departure_cannot_change_locked_price",
+        "test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor"
+      ],
+      "multiplayer_tests": [
+        "test_actual_bounce_removes_departed_permanent_counters_from_current_price",
+        "test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped",
+        "test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor"
+      ],
+      "privacy_tests": [
+        "test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped"
+      ],
+      "replay_tests": [
+        "test_actual_bounce_removes_departed_permanent_counters_from_current_price",
+        "test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped",
+        "test_counter_bearing_mana_source_departure_cannot_change_locked_price",
+        "test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Explicit version2 closed scalar form and both counter-total and intrinsic-price authority are required by normal compiler and runtime binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original gameplay and whole-admission witnesses kill omitted current counter totals and omitted price production.",
       "blockers": [],
       "status": "trusted"
     }

@@ -19,6 +19,7 @@ from ..self_cast_reductions import (
     SelfSpellCostReductionTerm,
 )
 from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
+from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
 from ..semantic_runtime.cast_costs import (
     FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,
     FIXED_SPELL_COST_REDUCTION_EVENT,
@@ -448,6 +449,8 @@ def _scalar_count_metric(normalized: str) -> CastReductionMetric | None:
 
 def _object_count_metric(value: str) -> CastReductionMetric | None:
     normalized = " ".join(value.casefold().split())
+    if normalized == 'counter among players and permanents':
+        return CastReductionMetric(kind=CastReductionMetricKind.PUBLIC_COUNTER_TOTAL, schema_version=2)
     scalar = _scalar_count_metric(normalized)
     if scalar is not None:
         return scalar
@@ -712,7 +715,8 @@ def self_spell_cost_reduction_handler(
             if metric is None:
                 return None
             specification = SelfSpellCostReductionSpec((_term(reduction, metric),))
-    counted_dependencies = self_cost_turn_count_dependencies(specification.to_dict())
+    counted_dependencies = (*self_cost_turn_count_dependencies(specification.to_dict()),
+                            *self_cost_public_counter_dependencies(specification.to_dict()))
     return (
         "self-spell-cost-public-reduction-v1",
         {

@@ -68,6 +68,16 @@ Flashback uses the same reduction before its complete cost locks. Generic
 reductions floor at zero and preserve colored costs and result amounts.
 Legacy truth-valued turn facts and draw thresholds keep their encoded meaning;
 historical records with disabled journals retain that compatibility mode.
+
+A represented self-price scalar counts all current counters on in-game players
+and unphased battlefield permanents through their canonical counter snapshots.
+Each individual counter contributes, including the compatibility poison and
+energy fields and other named player counters. Ownership and control do not
+restrict the total. Counters on cards outside the battlefield do not contribute.
+The generic discount floors at zero and retains colored requirements. A
+counter-bearing mana source sacrificed during payment does not change the
+already locked price.
+
 Undaunted uses the same total-cost stage with the casting player's current
 in-game opponents. Eliminated players do not contribute, repeated instances
 accumulate, and a later elimination does not change an already locked cost.

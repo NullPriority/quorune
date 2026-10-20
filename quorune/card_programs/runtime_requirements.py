@@ -20,10 +20,15 @@ from ..rules.source_keyword_choice_shapes import source_keyword_choice_runtime_d
 from ..rules.source_protection_choice_shapes import source_protection_choice_runtime_dependencies
 from ..rules.source_fixed_protection_shapes import source_fixed_protection_runtime_dependencies
 from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
+from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(self_cost_public_counter_dependencies(program.handlers))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_self_cost_public_counters:invalid:{exc}')
     try:
         required.update(self_cost_turn_count_dependencies(program.handlers))
     except (TypeError,ValueError) as exc:

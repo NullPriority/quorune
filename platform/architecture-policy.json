@@ -467,7 +467,8 @@
       "quorune/semantic_runtime/targeted_spell_costs.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/target_restrictions.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/zone_devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
-      "quorune/rules/self_cost_turn_counts.py": "typed read-only counted creature deaths, opponent casts and caster draws; consumes canonical history and draw-count ownership without mutation"
+      "quorune/rules/self_cost_turn_counts.py": "typed read-only counted creature deaths, opponent casts and caster draws; consumes canonical history and draw-count ownership without mutation",
+      "quorune/rules/self_cost_public_counters.py": "Read existing canonical public counter snapshots for one source spell cost before its payment locks."
     },
     "model_definition": "quorune/model.py"
   },
