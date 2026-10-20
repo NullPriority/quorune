@@ -37109,7 +37109,7 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "The focused dependency test blocks the phase-window capability and proves only the affected source-spanned activation remains inexact.",
+      "dependency_fail_closed_rationale": "Verified registry withdrawals of Boast and once-per-turn authority keep the original activation residual; independent runtime minima reject stripped declarations with an explicit missing-dependency reason.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh native Duskwielder witnesses kill omission of the compiler keyword metadata, actual source attack condition and actual usage commitment. The witnesses verify a legal paid effect, not only metadata shape.",
       "blockers": [],
