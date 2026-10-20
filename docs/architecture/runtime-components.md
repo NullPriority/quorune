@@ -674,6 +674,16 @@ immutable source view. The ordinary casting proposal still owns timing, cost,
 target and current-zone checks. The earlier controlled-subtype permission
 descriptor retains its existing schema and behavior.
 
+Controller-count conditions also accept a closed pair of canonical subtypes
+joined by “or” or “and/or”, with one shared tapped or untapped qualifier. One
+public query counts each matching permanent once, including a permanent with
+both subtypes. Bare creature-subtype nouns include noncreature Kindred
+permanents; they do not add a creature-type requirement. Current control and
+phasing govern membership. Changing the condition revokes a later graveyard
+cast offer. Casting checks the condition before mana abilities; payment retains
+the legal cast's locked cost and ordinary resolution when a qualifying mana
+source departs.
+
 `permission.cast.self-public-zones.v1` adds only the card owner's explicitly
 declared graveyard or face-up exile origins. The descriptor contains typed zone
 data and requires complete CardProgram admission and the current selected-face

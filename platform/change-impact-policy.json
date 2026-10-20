@@ -6654,6 +6654,19 @@
         "test_fixed_spell_cost_reductions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "controlled-subtype-union-conditions",
+      "patterns": [
+        "tests/test_subtype_union_conditions.py",
+        "tests/fixtures/subtype-union-condition-cards.json"
+      ],
+      "test_modules": [
+        "test_subtype_union_conditions",
+        "test_public_condition_surfaces",
+        "test_casting_activation_metadata",
+        "test_self_public_zone_casting"
+      ]
     }
   ],
   "symbol_rules": [

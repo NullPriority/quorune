@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f755813d820e39e32390536ca6649e35fb5742f1dd17164890f8f127bb5e80f3",
-  "declaration_source_fingerprint": "7e2664735d1a846545ff3b14ff6facaf414e714c4c6200db37177163dab624fa",
+  "registry_fingerprint": "b54e17310ad46e78390067ecaec59eb643ddb1665a9509239f30778db73cdd97",
+  "declaration_source_fingerprint": "f6e2338d9ebdb9b4bee83641d7c0be0de5c73efe902dd7542336b78221c9d926",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -52403,6 +52403,96 @@
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_key_untap_revokes_stale_offer_before_acceptance",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Voltaic Key response removes the third tapped qualifier. The formerly offered graveyard cast is rejected atomically after pending load."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting needs no qualifying subtype count. A tapped qualifying self-sacrifice mana source is consumed during actual automatic payment; loss of the third qualifier cannot revoke the already legal graveyard cast. Loaded pre-action replay retains complete payment and resolution."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_casting_activation_metadata.SelfZoneCastPermissionRuntimeTests.test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
       "official_rule_ids": [
@@ -52433,6 +52523,66 @@
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "mutation",
       "test_id": "tests.test_casting_activation_metadata.CastingActivationMetadataCompilerTests.test_casting_activation_metadata_compiler_mutant_is_killed",
       "official_rule_ids": [
@@ -52445,6 +52595,36 @@
         "commander_review"
       ],
       "applicability_note": "Remove the closed self-zone lowering and prove the represented permission returns to a material residual."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_fresh_original_kills_lost_pirate_and_vehicle_union_branches",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fresh native original casts kill each serialized union-branch omission while retaining the active typed query producer."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_fresh_original_kills_omitted_union_production",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A fresh complete original-admission witness kills removal of the union compiler production."
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
@@ -52523,6 +52703,66 @@
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_key_untap_revokes_stale_offer_before_acceptance",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Voltaic Key response removes the third tapped qualifier. The formerly offered graveyard cast is rejected atomically after pending load."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_union_and_zone_permission_authorities_cannot_be_withdrawn",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Withdrawing either established owner keeps the original residual. Removing a declared owner and rebuilding closure still rejects runtime admission."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed union grammar round-trips the existing public-condition/query codecs. Unsupported subtype/history clauses and malformed tapped values remain rejected."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "positive",
       "test_id": "tests.test_casting_activation_metadata.CastingActivationMetadataCompilerTests.test_closed_casting_activation_metadata_compiles_source_spanned_programs",
       "official_rule_ids": [
@@ -52598,6 +52838,96 @@
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting needs no qualifying subtype count. A tapped qualifying self-sacrifice mana source is consumed during actual automatic payment; loss of the third qualifier cannot revoke the already legal graveyard cast. Loaded pre-action replay retains complete payment and resolution."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_has_complete_nonempty_union_permission_and_retains_crew",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The complete original has nonempty typed union permission with threshold three, no implicit creature gate, and its independent Crew component intact."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed union grammar round-trips the existing public-condition/query codecs. Unsupported subtype/history clauses and malformed tapped values remain rejected."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
       "evidence_class": "privacy",
       "test_id": "tests.test_casting_activation_metadata.SelfZoneCastPermissionRuntimeTests.test_self_graveyard_cast_permission_is_typed_principal_scoped_and_replays",
       "official_rule_ids": [
@@ -52625,6 +52955,36 @@
         "commander_review"
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
@@ -52670,6 +53030,96 @@
         "commander_review"
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_key_untap_revokes_stale_offer_before_acceptance",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Voltaic Key response removes the third tapped qualifier. The formerly offered graveyard cast is rejected atomically after pending load."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting needs no qualifying subtype count. A tapped qualifying self-sacrifice mana source is consumed during actual automatic payment; loss of the third qualifier cannot revoke the already legal graveyard cast. Loaded pre-action replay retains complete payment and resolution."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "casting.zone.self_graveyard.controlled_subtype",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "205.3m",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
     },
     {
       "capability_id": "casting.zone.self_public_repeatable",
@@ -87587,6 +88037,234 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_key_untap_revokes_stale_offer_before_acceptance",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Voltaic Key response removes the third tapped qualifier. The formerly offered graveyard cast is rejected atomically after pending load."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting needs no qualifying subtype count. A tapped qualifying self-sacrifice mana source is consumed during actual automatic payment; loss of the third qualifier cannot revoke the already legal graveyard cast. Loaded pre-action replay retains complete payment and resolution."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_ascend_city_blessing.AscendRuntimeTests.test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
       "official_rule_ids": [
@@ -88575,6 +89253,158 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_modifier_producer_and_capability_omissions_fail_closed",
       "official_rule_ids": [
@@ -88952,6 +89782,82 @@
         "commander_review"
       ],
       "applicability_note": "Force every public-fact quantity to zero and require all fact-gated layer-6 and layer-7c results to disappear."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_fresh_original_kills_lost_pirate_and_vehicle_union_branches",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Fresh native original casts kill each serialized union-branch omission while retaining the active typed query producer."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_fresh_original_kills_omitted_union_production",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "A fresh complete original-admission witness kills removal of the union compiler production."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -90548,6 +91454,158 @@
         "commander_review"
       ],
       "applicability_note": "Keep ability-presence counts, dynamic amounts, unmarked open counts, per-opponent thresholds above existence, otherwise branches, compound or unsupported state comparisons, Ward, and quoted abilities material and residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_key_untap_revokes_stale_offer_before_acceptance",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Voltaic Key response removes the third tapped qualifier. The formerly offered graveyard cast is rejected atomically after pending load."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_union_and_zone_permission_authorities_cannot_be_withdrawn",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Withdrawing either established owner keeps the original residual. Removing a declared owner and rebuilding closure still rejects runtime admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed union grammar round-trips the existing public-condition/query codecs. Unsupported subtype/history clauses and malformed tapped values remain rejected."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -92489,6 +93547,234 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting needs no qualifying subtype count. A tapped qualifying self-sacrifice mana source is consumed during actual automatic payment; loss of the third qualifier cannot revoke the already legal graveyard cast. Loaded pre-action replay retains complete payment and resolution."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_has_complete_nonempty_union_permission_and_retains_crew",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The complete original has nonempty typed union permission with threshold three, no implicit creature gate, and its independent Crew component intact."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Closed union grammar round-trips the existing public-condition/query codecs. Unsupported subtype/history clauses and malformed tapped values remain rejected."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
       "official_rule_ids": [
@@ -93018,6 +94304,82 @@
         "commander_review"
       ],
       "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -94538,6 +95900,234 @@
         "commander_review"
       ],
       "applicability_note": "Serialize schema-v3 facts plus new entry and attack history and replay the following multiplayer command to the same hash."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Actual Steal Artifact and Icy Manipulator establish three controlled tapped qualifiers, despite foreign ownership. Complete paid graveyard cast, invalid actor/payment rollback, condition loss after acceptance, private projection and loaded pre-action replay are observed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_actual_key_untap_revokes_stale_offer_before_acceptance",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "An actual Voltaic Key response removes the third tapped qualifier. The formerly offered graveyard cast is rejected atomically after pending load."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_dual_subtype_counts_once_and_kindred_pirate_needs_no_creature_type",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Two objects do not satisfy three even when one has both subtypes. Actual tapping establishes a third object; a noncreature Kindred Pirate also qualifies for a real paid graveyard cast and replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_normal_hand_cast_is_unrestricted_and_mana_sacrifice_cannot_revoke_legal_graveyard_cast",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal hand casting needs no qualifying subtype count. A tapped qualifying self-sacrifice mana source is consumed during actual automatic payment; loss of the third qualifier cannot revoke the already legal graveyard cast. Loaded pre-action replay retains complete payment and resolution."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_original_crew_and_real_combat_keep_trample_damage_and_private_draw",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "The admitted original pays Crew three through actual selected creatures, rejects foreign actors and insufficient power, deals six combat damage and draws one private card with exact replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_subtype_union_conditions.SubtypeUnionConditionTests.test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "105.2b",
+        "105.2c",
+        "109.2",
+        "109.5",
+        "111.6",
+        "201.5",
+        "205.3i",
+        "205.4c",
+        "205.4g",
+        "303.4",
+        "400.7",
+        "603.10",
+        "603.6a",
+        "603.6b",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Untapped, phased, foreign-controlled and nonbattlefield objects cannot supply the missing third qualifier. Denied casting preserves authoritative state and replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -275198,5 +276788,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "e037ab634ccb613079639566a42bc3fab3f1160a909a45c8bb50b71e65c3109c"
+  "fingerprint": "13279039af43302907a19eeb4eac2a58b01a1265786ab4bba0e6d48dae5df57e"
 }
