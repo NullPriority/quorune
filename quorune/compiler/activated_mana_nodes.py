@@ -430,6 +430,7 @@ def _activated_effect_dependency_gate(
                 "fixed-extra-turn-after-current",
                 "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
+                "temporary-source-keyword-choice",
             }.intersection(mechanics)
         )
         or (
@@ -615,10 +616,12 @@ def _intrinsic_basic_land_mana_reminder_node(
 
 
 def _fixed_activated_costs(ability: ActivatedAbility) -> ActivatedAbility:
+    from .activation_x_costs import announced_x_activation_cost
+    from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation
+    ability = announced_x_activation_cost(ability)
+    ability = fixed_any_source_counter_activation(ability)
     ability = fixed_complex_activation_mana_cost(fixed_power_up_ability(ability))
-    return fixed_activated_tap_cost(
-        fixed_activated_zone_change_cost(ability)
-    )
+    return fixed_selected_counter_activation(fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability)))
 
 
 def _compiled_activated_effect(
@@ -721,7 +724,10 @@ def activated_oracle_node(
         mechanics = ("self-zone-move",)
         handlers = (self_zone_move_handler_descriptor(self_zone_move),)
     else:
-        template, effects, target_schema, mechanics = _compiled_activated_effect(
+        from .activation_x_costs import announced_x_activation_effect
+        compiled_x = announced_x_activation_effect(ability, source_name=card_name, text=effect_material,
+            compile_fixed=lambda text: _compiled_activated_effect(text, card_name=card_name, effect_template=effect_template))
+        template, effects, target_schema, mechanics = compiled_x or _compiled_activated_effect(
             effect_material,
             card_name=card_name,
             effect_template=effect_template,

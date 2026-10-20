@@ -25,6 +25,8 @@ from .attached_granted_ability_nodes import (
     GRANTED_TRIGGERED_ABILITY_KIND,
 )
 from .activated_mana_nodes import _activated_effect_material
+from .activation_x_costs import announced_x_activation_cost, announced_x_activation_effect
+from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY, activation_x_symbols
 from .fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
@@ -48,7 +50,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v12"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v13"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -499,6 +501,10 @@ def grammar_source_fingerprint() -> str:
         _paired_spell_resolution_body,
         _resolution_body,
         _compiled_template,
+        _compiled_source_template,
+        announced_x_activation_cost,
+        announced_x_activation_effect,
+        activation_x_symbols,
         _required_capabilities,
     )
     payload = {
@@ -637,6 +643,25 @@ def _compiled_template(
         compile_fixed=lambda text: _compiled_template(text, card_name=card_name) or (None, (), None, ()))
 
 
+def _compiled_source_template(body, *, record, node, face_index, face_name):
+    """Recover declared activation X from its complete printed cost owner."""
+    compiled = _compiled_template(body, card_name=face_name or record.name)
+    if node.kind != "activated_ability":
+        return compiled, None
+    abilities = parse_activated_abilities(card_name=face_name or record.name,
+        oracle_text=_without_parenthetical_reminder(node.text),
+        keywords=_face_keywords(record, face_index))
+    if len(abilities) != 1:
+        return compiled, None
+    ability = announced_x_activation_cost(abilities[0])
+    if ability.announced_x_symbols is None:
+        return compiled, None
+    declared = announced_x_activation_effect(ability, source_name=face_name or record.name,
+        text=body, compile_fixed=lambda text: _compiled_template(text, card_name=face_name or record.name)
+        or (None, (), None, ()))
+    return declared or compiled, ANNOUNCED_ACTIVATION_X_CAPABILITY
+
+
 def _clause_count(body: str, template_id: str) -> int:
     if template_id == STANDALONE_TEMPLATE_ID:
         return 1
@@ -712,7 +737,8 @@ def _observation(
     face_name: str,
     body: str,
 ) -> TargetEffectObservation:
-    compiled = _compiled_template(body, card_name=face_name or record.name)
+    compiled, cost_capability = _compiled_source_template(body, record=record, node=node,
+        face_index=face_index, face_name=face_name)
     if compiled is None or (
         compiled[0] != node.template_id
         and node.template_id not in COMPOSING_TEMPLATE_IDS
@@ -745,6 +771,8 @@ def _observation(
             "promoted target-effect node is outside the closed capability shape: "
             f"{record.oracle_id}:{face_id}:{node.node_id}"
         )
+    if cost_capability is not None:
+        required = tuple(sorted({*required, cost_capability}))
     missing = sorted(set(required) - set(node.capability_dependencies))
     if missing:
         raise TargetEffectAssuranceError(
@@ -821,7 +849,8 @@ class TargetEffectCorpusCollector:
                     face_name=face.face_name,
                 )
                 compiled = (
-                    _compiled_template(body, card_name=face.face_name)
+                    _compiled_source_template(body, record=record, node=node,
+                        face_index=face_index, face_name=face.face_name)[0]
                     if body is not None
                     else None
                 )

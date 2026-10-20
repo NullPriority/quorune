@@ -183,10 +183,25 @@ def _history_amount(host, item, fact):
     return sum(event.actor == item.controller for event in events)
 
 
+def _hand_count_target(item):
+    if len(item.targets)!=1 or type(item.targets[0]) is not str or not item.targets[0]:
+        raise PublicQueryAmountError('Target hand count requires one selected player')
+    return item.targets[0]
+
+
+def _current_target_hand_count(host,seat):
+    player=host.state.players.get(seat)
+    if player is None or not player.in_game or not isinstance(player.zones.get('hand'),list):
+        raise PublicQueryAmountError('Target hand count player is unavailable')
+    return len(player.zones['hand'])
+
+
 def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any], item) -> int:
     spec = ScalarEffectAmountSpec.from_dict(value)
     cache = item.context.setdefault("declared_scalar_amounts", {}) if spec.binding_id else None
     identity = {"controller": item.controller, **spec.producer_identity}
+    hand_target=_hand_count_target(item) if spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT else None
+    if hand_target is not None:identity['target_player']=hand_target
     if cache is not None:
         if not isinstance(cache, dict):
             raise PublicQueryAmountError("Scalar declaration cache is malformed")
@@ -195,7 +210,15 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             if not isinstance(previous, Mapping) or set(previous) != {"identity", "value"} or previous["identity"] != identity or type(previous["value"]) is not int or previous["value"] < 0:
                 raise PublicQueryAmountError("Scalar declaration changed identity or value")
             return spec.coefficient * previous["value"]
-    if spec.origin is ScalarAmountOrigin.EVENT_AMOUNT:
+    if spec.origin is ScalarAmountOrigin.CAST_MANA_COLOR_COUNT:
+        from .mana_spent_amounts import resolve_spent_mana_color_amount
+        amount = resolve_spent_mana_color_amount(item)
+    elif spec.origin is ScalarAmountOrigin.MULTIKICKER_COUNT:
+        from .multikicker_result_amounts import resolve_multikicker_amount
+        amount = resolve_multikicker_amount(spec, item)
+    elif spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT:
+        amount=_current_target_hand_count(host,hand_target)
+    elif spec.origin is ScalarAmountOrigin.EVENT_AMOUNT:
         context = item.context.get("event_context", item.context)
         amount = context.get("amount") if isinstance(context, Mapping) else None
     elif spec.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE:

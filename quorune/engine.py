@@ -396,8 +396,8 @@ def _stack_mode_effects(
         target_schema,
         item.modes,
         target_groups=(
-            item.context.get("target_groups_current")
-            or item.context.get("target_groups")
+            item.context.get("target_groups")
+            or item.context.get("target_groups_current")
             or {}
         ),
     )
@@ -1203,7 +1203,7 @@ class CommanderEngine(
             str, Mapping[str, Any]
         ],
         reason: str,
-        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None,
+        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None, multikicker_paid: Mapping[str, Any] | None = None,
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
     ) -> None:
@@ -1219,7 +1219,7 @@ class CommanderEngine(
                     characteristics=origin_data,
                     counters=origin_counters,
                     attachments=origin_attachments,
-                    attached_to=origin_attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy,
+                    attached_to=origin_attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy, multikicker_paid=multikicker_paid,
                     sources=departure_sources,
                     source_zones=departure_source_zones,
                     source_characteristics=departure_source_characteristics,
@@ -4244,7 +4244,7 @@ class CommanderEngine(
             return f"{card.ref} is tapped"
         if haste.summoning_sickness_prohibits_attack(self, card):
             return f"{card.ref} is summoning sick"
-        if defender.defender_prohibits_attack(data):
+        if defender.defender_prohibits_attack(data, host=self, card=card):
             return f"{card.ref} has defender and cannot attack"
         return None
 

@@ -73,11 +73,12 @@ class FixedSelfCostSurfaceCompilerTests(unittest.TestCase):
 
     def test_unsupported_costs_malformed_descriptors_and_omitted_capability_or_producer_fail_closed(self):
         for text in (TEXT.replace('{1}','{X}'),TEXT.replace('{1}','{U/P}'),
-                TEXT.replace('you control a Desert','it targets a creature with flying'),
+                TEXT.replace('you control a Desert','it targets a creature with power X or greater'),
                 TEXT.replace('you control a Desert','you reveal a card'),
                 CASES[3].replace('noncreature, nonland','noncreature or nonland')):
-            self.assertNotEqual('exact',compile_oracle_card(record(text,'Creature'),
-                capability_registry=load_default_capability_registry()).status)
+            with self.subTest(unsupported=text):
+                self.assertNotEqual('exact',compile_oracle_card(record(text,'Creature'),
+                    capability_registry=load_default_capability_registry()).status)
         descriptor=self_spell_cost_reduction_handler(CASES[-1])[1]
         for field,value in (('schema_version',True),('unknown',1),('event','damage')):
             with self.subTest(field=field),self.assertRaises(SemanticNodeError):

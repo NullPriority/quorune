@@ -147,7 +147,7 @@ class StaticActionRuleCompilerTests(unittest.TestCase):
             "Players can't cast spells that share a color with the spell "
             "most recently cast this turn.",
             "You can't cast more than two spells each turn.",
-            "Activated abilities cost {2} more to activate.",
+            "Activated abilities cost {X} more to activate, where X is the number of cards in your hand.",
             "Target spell can't be countered this turn.",
         )
         for index, text in enumerate(unsupported, 1):

@@ -26,6 +26,7 @@ def activation_offer_payload(source,selected,hint):
                 "exile_self",
                 "choose_cost",
                 "mana_options",
+                "announced_x_symbols",
             }
         },
     }

@@ -273,13 +273,17 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
             "target artifact creature or black creature",
             "target creature with power X or greater",
             "target creature that was dealt damage by a Goblin this turn",
-            "target creature with a counter on it",
+            "target creature with a counter on it that entered last turn",
             "target creature that has an activated ability with {T} in its cost",
             "target permanent with the same name as another permanent",
         )
         for subject in unsupported:
             with self.subTest(subject=subject):
                 self.assertIsNone(direct_permanent_target_spec(subject))
+
+        any_counter = direct_permanent_target_spec("target creature with a counter on it")
+        self.assertIsNotNone(any_counter)
+        self.assertEqual(1, any_counter.state_predicate.minimum_total_counter_count)
 
         valid = direct_permanent_target_spec("target monocolored creature")
         assert valid is not None

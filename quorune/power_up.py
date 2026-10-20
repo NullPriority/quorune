@@ -8,7 +8,8 @@ from .activation_mana_cost import ActivationManaCostOption
 from .util import stable_json
 
 
-def current_power_up_mana_options(host, source, ability, options):
+def current_power_up_reductions(host, source, ability):
+    """Read the one owned entry fact before ordering this cost reduction."""
     if not isinstance(ability.power_up,PowerUpSpec) or source is None or source.zone!='battlefield':
         raise ValueError('Power-up pricing requires its current battlefield source')
     turn=host.state.turn_sequence
@@ -16,9 +17,14 @@ def current_power_up_mana_options(host, source, ability, options):
     entry=source.entered_battlefield_turn_sequence
     if type(entry) is not int or entry<0:raise ValueError('Power-up entry identity is malformed')
     if turn==0 or entry!=turn:
-        return tuple(options)
+        return ()
     cost=host._effective_card_data(source).get('mana_cost')
-    reductions=power_up_reduction_options(cost)
+    return power_up_reduction_options(cost)
+
+
+def current_power_up_mana_options(host, source, ability, options):
+    reductions=current_power_up_reductions(host,source,ability)
+    if not reductions:return tuple(options)
     variants={}
     for option in options:
         for reduction in reductions:

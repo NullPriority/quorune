@@ -9,6 +9,9 @@ from ..enchant_spec import (
     TypedEnchantSpec,
 )
 from ..target_forms import TargetCharacteristicForm
+from ..target_numeric import (
+    TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison,
+)
 from .grammar import enchant_restriction_text
 
 
@@ -87,12 +90,31 @@ def _forms(
     return tuple(forms)
 
 
+def _fixed_characteristic_enchant(restriction: str) -> TypedEnchantSpec | None:
+    values = None
+    if restriction == 'creature without flying':
+        values = {'keywords_none':('flying',)}
+    match = re.fullmatch(r'creature with (?P<field>power|mana value) (?P<maximum>\d+) or less', restriction)
+    if match is not None:
+        maximum = int(match['maximum'])
+        values = ({'mana_value_max':maximum} if match['field'] == 'mana value' else
+            {'numeric_characteristic':TargetNumericCharacteristicSpec(
+                TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_MOST, maximum)})
+    if values is None:
+        return None
+    return TypedEnchantSpec(subject=AuraEnchantSubject.PERMANENT,
+        types_all=('creature',), schema_version=3, **values)
+
+
 def parse_typed_enchant_line(line: str) -> TypedEnchantSpec | None:
     """Parse closed player, public-card, and characteristic restrictions."""
 
     restriction = enchant_restriction_text(line)
     if restriction is None:
         return None
+    fixed = _fixed_characteristic_enchant(restriction)
+    if fixed is not None:
+        return fixed
     if restriction == "player":
         return TypedEnchantSpec(subject=AuraEnchantSubject.PLAYER)
     if restriction == "opponent":

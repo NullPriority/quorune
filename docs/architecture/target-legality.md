@@ -41,6 +41,30 @@ that all become illegal before resolution, where CR 608.2b stops the spell or
 ability. Nonempty batches retain their simultaneous owner and strict snapshots.
 
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
+Fixed layer-7c P/T queries can select creatures without a represented current
+keyword. The shared public predicate retains controller and source-exclusion
+scope, and reads completed layer-6 grants and keyword counters. Within continuous
+characteristic subjects, negative keywords require an explicit P/T consumer
+opt-in; layer-6 grants, cycle-sensitive
+count conditions, resolution characteristic sets and fixed counter sets keep
+their existing unadopted-keyword boundaries.
+`target_cardinality.py` provides an immutable announced-X count descriptor and
+a pure binding to exact or up-to integer bounds, including zero. Casting and
+typed activation-X owners bind that descriptor before the ordinary target
+query and retain the concrete schema with the stack item. The repeated effect
+uses the same persisted X as its target limit. An explicit announced-count
+selector owns zero and counts above six; legacy fixed descriptors retain their
+existing bounds. Dependent public forms follow exact or up-to selection, while
+the server revalidates the count and targets. Text-defined counts, unowned
+carrier contexts, target roles and linked consequences remain residual.
+Target-dependent casting taxes retain their existing source-combination owner;
+preview witnesses include the X price needed to select those targets. Exact
+selection bounds also follow eligible target count, while up-to selection
+leaves the paid X independent of that count. A zero-target cast resolves its
+independent atomic results; a spell whose chosen targets all become illegal
+does not resolve those results.
+The announced-count preview groups equivalent tax-source signatures and prices
+each signature once, retaining separate witnesses for payable public targets.
 `target_predicates.py` owns reusable characteristic and relationship tests.
 `CommanderEngine._target_row_matches` remains the orchestration facade over
 current projected rows and the complete predicate. The narrow

@@ -66,6 +66,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/basic_type_setting_model.py",
         "quorune/bloodthirst.py",
         "quorune/cast_cost_modifiers.py",
+        "quorune/activation_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
@@ -122,6 +123,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/entry_counter_model.py",
         "quorune/entry_designations.py",
         "quorune/evolve.py",
+        "quorune/increment_model.py",
         "quorune/fixed_keyword_entry_counters.py",
         "quorune/fixed_token_production.py",
         "quorune/day_night_model.py",
@@ -134,6 +136,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/model.py",
         "quorune/object_predicate.py",
         "quorune/target_forms.py",
+        "quorune/target_cardinality.py",
         "quorune/target_numeric.py",
         "quorune/prevention_triggers.py",
         "quorune/query_effect_amount_model.py",
@@ -204,6 +207,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         )
     ) or relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/activation_x.py",
         "quorune/whole_hand_discard.py",
         "quorune/random_discard.py",
         "quorune/public_quantity_mana_model.py",
@@ -340,6 +344,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/public_zone_moves.py",
         "quorune/linked_exile_return.py",
         "quorune/scalar_effect_amounts.py",
+        "quorune/multikicker_result_amounts.py",
+        "quorune/mana_spent_amounts.py",
         "quorune/linked_exile_return_model.py",
         "quorune/public_tap_state_sets.py",
         "quorune/public_alternative_costs.py",
@@ -415,6 +421,10 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative in {'quorune/activation_x.py','quorune/rules/activation/x_costs.py',
+            'quorune/activation_cost_modifiers.py','quorune/rules/activation/cost_modifiers.py',
+            'quorune/rules/activation/pricing.py'}:
+        return 'casting_activation_and_costs'
     if relative == "quorune/ability_line_normalization.py":
         return "activated_abilities"
     if relative == "quorune/copy_value_types.py":
@@ -821,6 +831,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/target_protection_engine_adapter.py",
         "quorune/target_characteristics.py",
         "quorune/target_forms.py",
+        "quorune/target_cardinality.py",
         "quorune/target_history.py",
         "quorune/target_numeric.py",
         "quorune/target_predicates.py",

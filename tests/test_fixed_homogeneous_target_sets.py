@@ -846,6 +846,124 @@ class FixedHomogeneousTargetSetRuntimeTests(unittest.TestCase):
         self.assert_replays(session, "multi-target-destruction")
 
 
+class AnnouncedTargetCardinalityModelTests(unittest.TestCase):
+    def test_clipping_announced_x_to_six_is_killed_by_fresh_count_contract(self):
+        from quorune.target_cardinality import AnnouncedTargetCardinality
+        original = AnnouncedTargetCardinality.bounds
+        def clip_to_fixed_bound(spec, value):
+            minimum, maximum = original(spec, value)
+            return min(minimum, 6), min(maximum, 6)
+        with patch.object(AnnouncedTargetCardinality, "bounds", new=clip_to_fixed_bound):
+            method = "test_declared_exact_and_up_to_counts_support_zero_and_above_six"
+            with self.assertRaises(AssertionError):
+                getattr(type(self)(method), method)()
+
+    def test_cost_count_binding_preserves_paid_x_and_projects_dependent_public_bounds(self):
+        from types import SimpleNamespace
+        from quorune.target_cardinality import AnnouncedTargetCardinality
+        from quorune.rules.casting.target_cardinality import bind_target_count_option, public_target_count_schema
+        for selection in ("exact", "up_to"):
+            schema = {"zones": ["battlefield"], "categories": ["permanent"],
+                "count_parameter": AnnouncedTargetCardinality(selection=selection).to_dict()}
+            program = SimpleNamespace(target_schema=schema)
+            option = {"id": "normal", "kind": "normal", "requirements": {"U": 1, "GENERIC": 9}}
+            bound = bind_target_count_option(program, option, {"x": 9}, has_mana_x=True)
+            self.assertEqual(9, bound["announced_target_x"])
+            self.assertEqual(option["requirements"], bound["requirements"])
+            self.assertEqual(9, bound["target_schema"]["count" if selection == "exact" else "up_to"])
+            public = public_target_count_schema({"groups": [{"min": 0, "max": 0, "legal_refs": ["P1"]}]}, bound)
+            self.assertEqual("x", public["groups"][0]["count_from" if selection == "exact" else "maximum_from"])
+            self.assertIsNone(bind_target_count_option(program, option, {"x": True}, has_mana_x=True))
+            self.assertIsNone(bind_target_count_option(program, option, {"x": 1}, has_mana_x=False))
+            self.assertNotIn("target_schema", option)
+
+    def test_variable_effect_bound_has_explicit_flag_and_legacy_six_limit_remains(self):
+        from quorune.semantic_runtime.fixed_target_set_handlers import _fixed_target_fields
+        context = ReadOnlyHandlerContext.from_sequences(actor="A", default_reason="count contract",
+            seats="ABCD", active_seats="ABCD", apnap_order="ABCD")
+        for count in (0, 9):
+            effect = {"op": "tap_targets", "cards": ["P"+str(i) for i in range(count)],
+                "maximum_targets": count, "announced_target_count": True}
+            values = _fixed_target_fields(effect, context, operation="tap_targets", replacements=False)
+            self.assertEqual(count, len(values[0]))
+            without = {key: value for key, value in effect.items() if key != "announced_target_count"}
+            with self.assertRaises(SemanticNodeError):
+                _fixed_target_fields(without, context, operation="tap_targets", replacements=False)
+
+    def test_variable_target_production_requires_mana_announced_spell_context(self):
+        from quorune.compiler.declared_effect_amounts import declared_effect_amount_template
+        from quorune.compiler.announced_target_sets import ANNOUNCED_TARGET_SET_CAPABILITY
+        from quorune.rules.fixed_homogeneous_target_set_capability_shapes import announced_target_set_node_capabilities
+        text = "Tap X target nonland permanents."
+        self.assertIsNone(declared_effect_amount_template(text, source_name="Fixture",
+            compile_fixed=lambda _text: (None, (), None, ())))
+        compiled = declared_effect_amount_template(text, source_name="Fixture", cast_x_available=True,
+            compile_fixed=lambda _text: (None, (), None, ()))
+        self.assertIsNotNone(compiled)
+        owned = announced_target_set_node_capabilities(effects=compiled[1], target_schema=compiled[2], mechanic_ids=compiled[3])
+        self.assertIn(ANNOUNCED_TARGET_SET_CAPABILITY, owned)
+        self.assertIn("permanent.tap.effect", owned)
+        malformed = dict(compiled[1][0], announced_target_count=False)
+        self.assertEqual((), announced_target_set_node_capabilities(effects=(malformed,),
+            target_schema=compiled[2], mechanic_ids=compiled[3]))
+
+    def test_announced_target_production_retains_predicates_and_explicit_count_authority(self):
+        from quorune.compiler.announced_target_sets import announced_target_set_effect_template
+        for text, selection in (("Tap X target nonland permanents.", "exact"),
+                ("Destroy up to X target artifacts.", "up_to")):
+            template = announced_target_set_effect_template(text)
+            self.assertIsNotNone(template)
+            effects, schema = template[1:3]
+            self.assertEqual(selection, schema["count_parameter"]["selection"])
+            self.assertNotIn("count", schema)
+            self.assertEqual("$targets", effects[0]["cards"])
+            self.assertIs(True, effects[0]["announced_target_count"])
+            self.assertEqual("cast_x_effect_amount", effects[0]["maximum_targets"]["kind"])
+        for text in ("Tap X target permanents, then draw a card.",
+                "Destroy X target creatures at random.", "Tap X target NotARealType."):
+            self.assertIsNone(announced_target_set_effect_template(text))
+
+    def test_declared_exact_and_up_to_counts_support_zero_and_above_six(self):
+        from quorune.target_cardinality import AnnouncedTargetCardinality, bind_announced_target_schema
+        for selection in ("exact", "up_to"):
+            spec = AnnouncedTargetCardinality(selection=selection)
+            self.assertEqual(spec, AnnouncedTargetCardinality.from_dict(spec.to_dict()))
+            for value in (None, 0, 2, 9, 100):
+                count = value or 0
+                self.assertEqual((count if selection == "exact" else 0, count), spec.bounds(value))
+                source = {"zones": ["battlefield"], "categories": ["permanent"],
+                    "count_parameter": spec.to_dict()}
+                before = json.dumps(source, separators=(",", ":"))
+                bound = bind_announced_target_schema(source, value)
+                group = TargetGroup.from_mapping(bound)
+                self.assertEqual(count if selection == "exact" else 0, group.min_targets)
+                self.assertEqual(count, group.max_targets)
+                self.assertEqual(before, json.dumps(source, separators=(",", ":")))
+
+    def test_declared_count_rejects_malformed_values_and_mixed_authority(self):
+        from quorune.target_cardinality import AnnouncedTargetCardinality, bind_announced_target_schema
+        spec = AnnouncedTargetCardinality()
+        for value in (True, -1, 1.5, "2"):
+            with self.assertRaises(ValueError): spec.bounds(value)
+        for changes in ({"schema_version": True}, {"schema_version": 2}, {"parameter": "mana_spent"},
+                {"selection": "any"}, {"selection": True}, {"extra": 1}):
+            with self.assertRaises(ValueError):
+                AnnouncedTargetCardinality.from_dict({**spec.to_dict(), **changes})
+        source = {"zones": ["battlefield"], "count_parameter": spec.to_dict()}
+        for changes in ({"count": 1}, {"up_to": 6}, {"min": 0}, {"groups": []}, {"modes": {}}):
+            with self.assertRaises(ValueError): bind_announced_target_schema({**source, **changes}, 2)
+
+    def test_legacy_fixed_schemas_are_independent_copies_with_identical_bytes(self):
+        from quorune.target_cardinality import bind_announced_target_schema
+        for count in ({"count": 2}, {"up_to": 6}, {"min": 1, "max": 2}):
+            source = {"zones": ["battlefield"], "types_any": ["creature"], **count}
+            before = json.dumps(source, separators=(",", ":"))
+            bound = bind_announced_target_schema(source, 9)
+            self.assertEqual(before, json.dumps(bound, separators=(",", ":")))
+            bound["types_any"].append("artifact")
+            self.assertEqual(before, json.dumps(source, separators=(",", ":")))
+
+
 class EmptyFixedTargetBatchRuntimeTests(unittest.TestCase):
     """CR115.6/608.2b/c: zero chosen targets differ from all chosen illegal."""
     from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Controls

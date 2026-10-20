@@ -9,6 +9,7 @@ from typing import Any, Mapping, Sequence
 from .characteristic_fragments import CharacteristicQuantityReduction
 from .object_query import ObjectQueryResult
 from .util import parse_mana_symbols
+from .counter_snapshot import permanent_counter_total
 
 
 def reduce_public_quantity(
@@ -18,6 +19,8 @@ def reduce_public_quantity(
 ) -> int:
     if reduction is CharacteristicQuantityReduction.OBJECT_COUNT:
         return len(rows)
+    if reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS:
+        return sum(permanent_counter_total(row.counters) for row, _data, _kind in rows)
     if reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS,CharacteristicQuantityReduction.DEVOTION}:
         count = 0
         for _row, data, _kind in rows:

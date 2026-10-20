@@ -108,6 +108,7 @@ class PredefinedBloodTokenCompilerTests(unittest.TestCase):
             _ability_choice_payable=lambda *args: True,
             _may_activate_creature_as_haste=lambda *args: False,
             _crew_threshold=lambda *args: None, _legendary_creatures_controlled=lambda seat: 0,
+            _semantic_event_sources=lambda **kwargs: (),
             _cost_is_affordable=lambda *args, **kwargs: True)
         with patch('quorune.semantic_runtime.static_cast_rules.split_second_is_active', return_value=False), \
                 patch('quorune.rules.activation.availability.current_activation_prohibitions', return_value=()), \

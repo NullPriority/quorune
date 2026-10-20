@@ -270,7 +270,7 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
         unsupported = (
             "Snow creatures you control get +1/+1.",
             "Commander creatures you control that were cast from the command zone get +1/+1.",
-            "Nonwhite creatures you control get +1/+1.",
+            "Nonwhite creatures you control that attacked this turn get +1/+1.",
             "Artifact token creatures you control get +1/+1.",
         )
         for text in unsupported:
@@ -290,6 +290,7 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
             "Eldrazi Spawn creatures you control get +2/+1.",
             "Land creatures you control get +1/+1.",
             "Colorless creatures you control get +2/+2.",
+            "Nonwhite creatures you control get +1/+1.",
         ):
             with self.subTest(text=text):
                 self.assertIsNotNone(fixed_power_toughness_anthem_handler(text))
@@ -303,7 +304,7 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                 (
                     "Snow creatures you control get +1/+1.",
                     "Commander creatures you control that were cast from the command zone get +1/+1.",
-                    "Nonwhite creatures you control get +1/+1.",
+                    "Nonwhite creatures you control that attacked this turn get +1/+1.",
                     "Artifact token creatures you control get +1/+1.",
                 )
             ):
@@ -353,11 +354,11 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
             base = db.lookup("Abrade")
             capabilities = load_default_capability_registry()
             cases = {
-                "Battle Frenzy": (
-                    "Nongreen creatures you control get +1/+0 until end of turn."
+                "Constructed Negative-Color Attack-History Boundary": (
+                    "Nongreen creatures you control that attacked this turn get +1/+0 until end of turn."
                 ),
-                "Flowering of the White Tree": (
-                    "Nonlegendary creatures you control get +1/+1."
+                "Constructed Nonlegendary Attack-History Boundary": (
+                    "Nonlegendary creatures you control that attacked this turn get +1/+1."
                 ),
                 "Secret Plans": (
                     "Face-down creatures you control get +0/+1."

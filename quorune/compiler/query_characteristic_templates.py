@@ -10,6 +10,7 @@ from ..ability_fragments import (
 )
 from ..characteristic_fragments import (
     CharacteristicQuantityScope,
+    CharacteristicQuantityReduction,
     CharacteristicQuantitySpec,
     PowerToughnessCalculation,
 )
@@ -116,6 +117,12 @@ def _query_quantity_descriptor(
     elif normalized.startswith("another "):
         normalized = normalized[len("another ") :]
         exclude_source = True
+    from .public_state_queries import _negative_supertype_fields
+    negative = _negative_supertype_fields(normalized)
+    if negative is not None:
+        if zone != 'battlefield':
+            return None
+        return ObjectQuerySpec(zones=(zone,), **negative), exclude_source
     normalized = re.sub(r"\bcards?$", "", normalized).strip()
     fields: dict[str, Any] = {"zones": (zone,)}
     if normalized in {"", "card"}:
@@ -265,6 +272,11 @@ def query_characteristic_quantity(
     if reduced is not None:
         return reduced
     source = SourceReferenceSpec(source_name).regex_pattern
+    total_counter = re.fullmatch(
+        rf"counters? on (?:it|him|her|this (?:artifact|Aura|creature|enchantment|Equipment|land|permanent|token)|{source})", text, re.I)
+    if total_counter is not None:
+        return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.SOURCE_COUNTER,
+            schema_version=2, reduction=CharacteristicQuantityReduction.TOTAL_COUNTERS)
     counter = re.fullmatch(
         rf"(?P<counter>[A-Za-z0-9+/-]+) counters? on "
         rf"(?:it|him|her|this (?:artifact|Aura|creature|enchantment|Equipment|land|permanent|token)|{source})",

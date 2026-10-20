@@ -1,0 +1,508 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}{B}",
+      "name": "Ascendant Evincar",
+      "oracle_id": "e32c0de7-132d-4a39-85fb-da0ed1132878",
+      "oracle_text": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nOther black creatures get +1/+1.\nNonblack creatures get -1/-1.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2009-09-04",
+      "toughness": "3",
+      "type_line": "Legendary Creature — Phyrexian Vampire Noble"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Battle Frenzy",
+      "oracle_id": "0fca46ec-ec1a-4e6c-bb0e-cdb834b38c92",
+      "oracle_text": "Green creatures you control get +1/+1 until end of turn.\nNongreen creatures you control get +1/+0 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1995-06-03",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}{W}",
+      "name": "Crovax, Ascendant Hero",
+      "oracle_id": "0cbf6ad8-9bf1-455d-bd74-9c142e17acb0",
+      "oracle_text": "Other white creatures get +1/+1.\nNonwhite creatures get -1/-1.\nPay 2 life: Return Crovax to its owner's hand.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2021-03-19",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Human Noble"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Festergloom",
+      "oracle_id": "a653ac26-e9c9-4319-88f6-c83cc64d3bdb",
+      "oracle_text": "Nonblack creatures get -1/-1 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-08-26",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Holy Light",
+      "oracle_id": "8f7dd328-b367-4546-ba79-1efc1e97f2ab",
+      "oracle_text": "Nonwhite creatures get -1/-1 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-09-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:negative-color:White",
+      "name": "Generic Negative White",
+      "colors": [
+        "W"
+      ]
+    },
+    {
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:negative-color:White Blue",
+      "name": "Generic Negative White Blue",
+      "colors": [
+        "W",
+        "U"
+      ]
+    },
+    {
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:negative-color:Colorless",
+      "name": "Generic Negative Colorless",
+      "colors": []
+    },
+    {
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:negative-color:Green",
+      "name": "Generic Negative Green",
+      "colors": [
+        "G"
+      ]
+    },
+    {
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "All creatures are blue.",
+      "power": null,
+      "toughness": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:negative-color:blue-creatures",
+      "name": "Generic Negative Blue Creatures",
+      "colors": [
+        "U"
+      ]
+    },
+    {
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:negative-color:Black",
+      "name": "Generic Negative Black",
+      "colors": [
+        "B"
+      ]
+    },
+    {
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature",
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "fixture:negative-color:Black Green",
+      "name": "Generic Negative Black Green",
+      "colors": [
+        "B",
+        "G"
+      ]
+    },
+    {
+      "oracle_id": "cfc1156c-b787-4212-96e0-a8e3609069b7",
+      "name": "Gloomdrifter",
+      "mana_cost": "{3}{B}",
+      "type_line": "Creature — Zombie Minion",
+      "oracle_text": "Flying\nThreshold — As long as there are seven or more cards in your graveyard, this creature has \"When this creature enters, nonblack creatures get -2/-2 until end of turn.\"",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Threshold"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to white creatures may become lethal if Crovax leaves the battlefield during that turn, and nonlethal damage dealt to nonwhite creatures may become lethal if Crovax enters the battlefield during that turn.",
+      "oracle_id": "0cbf6ad8-9bf1-455d-bd74-9c142e17acb0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Crovax's last ability can be activated only while it's on the battlefield.",
+      "oracle_id": "0cbf6ad8-9bf1-455d-bd74-9c142e17acb0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Crovax, Ascendant Hero stops being white, it gives itself -1/-1.",
+      "oracle_id": "0cbf6ad8-9bf1-455d-bd74-9c142e17acb0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a second Crovax, Ascendant Hero comes under your control, you'll put one into its owner's graveyard due to the \"legend rule\" at the same time that any creatures getting -2/-2 are put into their owner's graveyard for having 0 or less toughness.",
+      "oracle_id": "0cbf6ad8-9bf1-455d-bd74-9c142e17acb0",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Ascendant Evincar stops being black, it gives itself -1/-1.",
+      "oracle_id": "e32c0de7-132d-4a39-85fb-da0ed1132878",
+      "published_at": "2007-07-15",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned negative-color originals and public 4/4 color controls. Fixture identity never selects runtime behavior."
+}

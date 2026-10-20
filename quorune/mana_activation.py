@@ -88,6 +88,7 @@ def complete_mana_activation(
     payment_activations: Sequence[Mapping[str, Any]],
     source_was_snow: bool,
     source_information=None,
+    mana_payment=None,
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
@@ -156,6 +157,7 @@ def complete_mana_activation(
         and ability.tap_source
         and ability.activation_limit is None
         and not sum(ability.mana.values())
+        and not any((mana_payment or {}).values())
         and not ability.choices
         and not any(
             (

@@ -19,12 +19,12 @@ class DefenderRuleError(ValueError):
     """The current characteristic snapshot is malformed."""
 
 
-def defender_prohibits_attack(data: Mapping[str, Any]) -> bool:
+def defender_prohibits_attack(data: Mapping[str, Any], *, host=None, card=None) -> bool:
     """Whether the current represented creature has Defender.
 
     The declaration coordinator owns every other attacker restriction. This
-    query consumes only the current effective type and keyword snapshot, so
-    advertised candidates and accepted declarations can share one verdict.
+    query consumes the current effective snapshot and, when supplied, the host's
+    trusted declaration conditions. Offers and acceptance share one verdict.
     """
 
     if not isinstance(data, Mapping):
@@ -40,6 +40,9 @@ def defender_prohibits_attack(data: Mapping[str, Any]) -> bool:
         raise DefenderRuleError(str(exc)) from exc
     fragments = canonical_ability_fragments(data.get('ability_fragments', ()))
     permitted = any(isinstance(fragment, DefenderAttackPermission) for fragment in fragments)
+    if DEFENDER_KEYWORD in keywords and not permitted and host is not None and card is not None:
+        from .rules.defender_declaration import current_defender_declaration_permission
+        permitted = current_defender_declaration_permission(host, card, data)
     return DEFENDER_KEYWORD in keywords and not permitted
 
 

@@ -195,7 +195,7 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if value.startswith("$context."):
         return item.context.get(value.removeprefix("$context."))
-    target_group_match = re.fullmatch(r"\$target_group\.(?P<group>clause_[0-3])(?P<scalar>\.0)?", value)
+    target_group_match = re.fullmatch(r"\$target_group\.(?P<group>clause_[0-3]|target_[0-9]+)(?P<scalar>\.0)?", value)
     if target_group_match:
         groups = item.context.get('target_groups_current')
         if groups is None:

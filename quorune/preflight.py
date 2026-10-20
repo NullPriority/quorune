@@ -10,6 +10,7 @@ from typing import Any
 from .abilities import parse_activated_abilities
 from .carddb import CardDatabase, CardRecord
 from .compiler.entry_state_templates import static_entry_state_handler
+from .compiler.preflight_keyword_coverage import static_lines_without_keyword_owners
 from .card_programs.binding import bind_card_program_runtime
 from .card_programs.trust import compute_match_trust_closure
 from .deck import DeckDefinition, DeckLoader
@@ -161,13 +162,14 @@ def _material_oracle_text(record: CardRecord) -> str:
 
 
 def _printed_activated_abilities(record: CardRecord) -> tuple[Any, ...]:
-    return parse_activated_abilities(
+    from .compiler.activated_ability_catalog import specialize_compiled_activation_costs
+    return specialize_compiled_activation_costs(parse_activated_abilities(
         card_name=record.name,
         oracle_text=_without_quoted_granted_text(
             _material_oracle_text(record)
         ),
         keywords=record.keywords,
-    )
+    ),source_name=record.name)
 
 
 def _printed_trigger_lines(record: CardRecord) -> list[str]:
@@ -446,6 +448,8 @@ def _trusted_activated_ability_is_covered(
 ) -> bool:
     if f"ability:{ability.ability_id}" in trusted_ids:
         return True
+    from .rules.equip_preflight_coverage import trusted_equip_keyword_covers
+    if trusted_equip_keyword_covers(ability,trusted_programs):return True
     if ability.crew_threshold is None:
         return False
     source_line = ability.line_index + 1
@@ -579,7 +583,7 @@ def card_semantic_status(
         ):
             unresolved.append(f"activated_ability:{ability.ability_id}")
     if (
-        _static_lines_needing_program(record)
+        static_lines_without_keyword_owners(_static_lines_needing_program(record),record=record,trusted_programs=trusted_programs)
         and not trusted_coverage.intersection({
             "static_ability", "continuous_effect", "runtime_static_handler", "cost_reduction",
         })

@@ -16684,6 +16684,558 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "piece_ids": [
+        "capability.continuous.soulbond.paired_grant",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.soulbond.paired_grant",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual admitted Imperious Mindbreaker grants its paired Wight an attack trigger with one current toughness amount. First opponent mill changes Wight toughness, but every opponent mills the originally resolved one; controller mills zero. Pending load, private projection, foreign rollback and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
+      "piece_ids": [
+        "capability.pairing.soulbond",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "pairing.soulbond",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real control response ends pairing and changes the referenced Wight toughness from three to one. Its pending A attack trigger survives and mills B/C/D one each, retaining current information and locked trigger control with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.trigger.event.normalized_self_attack"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "trigger.event.normalized_self_attack"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual paired-recipient attack produces one normalized source attack trigger and uses that attacking incarnation for the scalar, with authenticated command rollback and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real Giant Growth then Unsummon responses leave a pending attack trigger whose source departure LKI is six. All opponents mill six while the new hand incarnation has toughness one; pairing has ended, privacy and replay hold."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "piece_ids": [
+        "capability.quantity_expression.declared_effect_amount",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "quantity_expression.declared_effect_amount",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual admitted constructed entrant reads its declared public land count only after a real Zuran Orb sacrifice response. It mills one own card rather than the occurrence-time two; foreign command rollback and pending/full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Mandatory equal-to mill uses the existing current public battlefield quantity and fixed controller subject; a real sacrificed own land reduces count from two to one while three foreign lands remain excluded. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_power_restriction_rechecks_resolution_and_attached_state",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Runners Bane attaches to a boundary-power-three Centaur then a real Giant Growth makes it six and causes illegal-Aura state action. A separate pending spell targets power two; Growth makes five and prevents resolution. Wrong-principal rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonflying_restriction_uses_current_keyword_before_and_after_attachment",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.combat.block.flying"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "combat.block.flying"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Roots pending target and attached Trapped in the Tower use current Flying after real Jump responses. The former fails resolution; the latter moves to graveyard by state action, with private projection and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.control.attached_source"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mana_value_restriction_changes_control_but_rejects_three_and_new_incarnations",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.permanent.return.owner_hand"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "permanent.return.owner_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Threads rejects a mana-value-three Centaur atomically and controls a mana-value-two Grizzly Bears. Real Unsummon removes that incarnation and the Aura; owner and new hand identity remain correct, with pending/full replay and private projection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonspell_entry_uses_untargeted_restriction_choice_despite_shroud",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.target.protection.shroud_permanent"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "target.protection.shroud_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "A normally admitted constructed enchantment-return spell returns original Roots from graveyard. Shroud rejects Aura spell targeting but allows the untargeted entry choice onto original Deadly Insect; enter-tap resolves. Foreign-choice rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.power_toughness.fixed_anthem"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.continuous.power_toughness.fixed_anthem"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.control.attached_source"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Flowering gives own nonlegendary Bear +1/+1 and legendary Isamaru +2/+1 with Ward1. An explicit negative-query Vigilance source excludes Isamaru; real Threads borrows a Bear and both modifiers apply. Real Disenchants remove the independent sources and effects. Foreign rollback, private projection, pending load and full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.continuous.characteristics.query_power_toughness_definition"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "continuous.characteristics.query_power_toughness_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_power_toughness_definition",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_power_toughness_definition",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_power_toughness_definition",
+        "capability.permanent.return.owner_hand"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_power_toughness_definition",
+        "permanent.return.owner_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Wilderness counts opponent nonbasic Taiga and Tree of Tales, excludes own Seat and basic Snow-Covered Forest, and has power2 in hand and battlefield. Real Blood Moon changes Taiga from Forest/Mountain to Mountain without making it basic. Stone Rain makes power1; Unsummon creates a new hand incarnation; a second real Stone Rain changes current hand CDA to0 rather than stale departure LKI1. Four-seat privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "An explicitly constructed admitted nonbasic-count entrant first mills exactly1 despite also controlling basic Forest. A second identical entrant resolves after real Zuran Orb sacrifice of the only nonbasic Taiga and mills0 for every seat while life rises2. Distinct instruction instances, foreign rollback, private projection and pending/full replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
+      "piece_ids": [
+        "capability.activation.mana_cost.announced_x",
+        "capability.permanent.destroy.effect",
+        "capability.quantity_expression.declared_effect_amount"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.announced_x",
+        "permanent.destroy.effect",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Armor pays chosen X, then actual Disenchant removes the source while the queued stat result retains that X, private projection, pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+      "piece_ids": [
+        "capability.activation.mana_cost.announced_x",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.announced_x",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cloudshift changes the targeted logical incarnation while the paid Armor activation is pending. The returned creature remains unmodified; mana/tap stay paid through load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_panacea_double_x_shield_prevents_only_the_chosen_amount",
+      "piece_ids": [
+        "capability.activation.mana_cost.announced_x",
+        "capability.damage.prevention.persistent_amount"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.announced_x",
+        "damage.prevention.persistent_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Panacea pays twice X and creates only an X-point shield. Actual Bolt leaves one damage on the target, and subsequent Shock kills it after the shield is consumed; load, privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
+      "piece_ids": [
+        "capability.activation.exhaust.once_per_object",
+        "capability.activation.mana_cost.announced_x",
+        "capability.counter.producer.fixed_permanent_set_effect",
+        "capability.quantity_expression.declared_effect_amount",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "activation.exhaust.once_per_object",
+        "activation.mana_cost.announced_x",
+        "counter.producer.fixed_permanent_set_effect",
+        "quantity_expression.declared_effect_amount",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 5,
+      "assertion": "Original Merfolk pays XUU/tap, privately draws X and places one counter only on controlled Merfolk. Actual untapping does not restore Exhaust; failed reactivation is atomic and load/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_whetwheel_hides_x_face_down_then_uses_artifact_tap_price",
+      "piece_ids": [
+        "capability.activation.mana_cost.announced_x",
+        "capability.casting.morph.fixed_mana",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.announced_x",
+        "casting.morph.fixed_mana",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Whetwheel has no X activation while face down. Actual turn-up restores the artifact ability, which pays twice X/tap and mills the selected player by X during the same turn, with privacy/load/replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_ballista_uses_current_combat_target_domain",
+      "piece_ids": [
+        "capability.activation.mana_cost.announced_x",
+        "capability.damage.amount.positive",
+        "capability.state_query.permanent.public_state_predicate"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.announced_x",
+        "damage.amount.positive",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Ballista has no legal X damage activation before combat. An actual attack makes the target legal; canonical mana-source payment and source tap precede exactly X damage and lethal stabilization, with privacy/load/replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_training_grounds_pays_one_for_x_three_and_retains_result",
+      "piece_ids": [
+        "capability.activation.mana_cost.announced_x",
+        "capability.activation.mana_cost.static_generic"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.announced_x",
+        "activation.mana_cost.static_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_gloom_mana_tax_requires_payment_and_prevents_mana_undo",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.mana.activated.fixed_output"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "mana.activated.fixed_output"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.cost.waterbend.fixed"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "cost.waterbend.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_phyrexian_alternatives_keep_their_distinct_mana_minimum_and_life_price",
+      "piece_ids": [
+        "capability.activation.mana_cost.fixed_complex",
+        "capability.activation.mana_cost.static_generic"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.fixed_complex",
+        "activation.mana_cost.static_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_power_up_source_reduction_orders_with_static_minimum_after_an_actual_cast",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.activation.power_up.entered_turn_cost"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "activation.power_up.entered_turn_cost"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_power_artifact_applies_only_to_the_actual_enchanted_source",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.attachment.aura.simple_object"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "attachment.aura.simple_object"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_forensic_investigation_creates_a_clue_with_reduced_draw_cost",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.keyword_action.investigate.fixed"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "keyword_action.investigate.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_generic_nonmana_tax_includes_loyalty_mana_without_changing_counter_cost",
+      "piece_ids": [
+        "capability.activation.loyalty.positive_counter_cost",
+        "capability.activation.mana_cost.static_generic"
+      ],
+      "capability_ids": [
+        "activation.loyalty.positive_counter_cost",
+        "activation.mana_cost.static_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "The named native witness asserts actual supported composition of the static activation price with this independent owner, including the paid consequence, principal-correct projection, pending load and exact pre-action replay. It does not claim arbitrary unmodeled combinations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_depthguard_reads_its_buffed_power_after_characteristics_finish",
+      "piece_ids": [
+        "capability.combat.attack.defender_permission.declaration_numeric",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.attack.defender_permission.declaration_numeric",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual normally admitted Giant Growth changes Karsus Depthguard current power before legal declaration and complete combat damage. The numeric exception reads full characteristics after layering; principal privacy and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_qualifier_departure_before_declaration_removes_the_offer",
+      "piece_ids": [
+        "capability.combat.attack.defender_permission.declaration_numeric",
+        "capability.permanent.return.owner_hand"
+      ],
+      "capability_ids": [
+        "combat.attack.defender_permission.declaration_numeric",
+        "permanent.return.owner_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual normally admitted Unsummon removes the controlled power qualifier before declaration. The original numeric Defender loses its offer and rejects a submitted attack atomically; private projection, pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_ability_loss_removes_numeric_permission_while_defender_remains",
+      "piece_ids": [
+        "capability.combat.attack.defender_permission.declaration_numeric",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "combat.attack.defender_permission.declaration_numeric",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual normally admitted Deep Freeze removes the source numeric permission while granting Defender. A separate controlled power qualifier still exists, but the source is excluded from attack offers and rejection preserves state; privacy/load/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_original_prism_can_pay_its_filter_cost_explicitly_then_cast_and_replay",
       "piece_ids": [
         "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -16695,6 +17247,141 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Prism explicitly pays its generic filtering cost, produces green immediately, and funds an actual normally admitted Growth cast with its full untap/stat/trample consequences. Wrong-principal rollback, private projection, pending load and pre-action replay agree; its free colorless mode is separately retained."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_static_original_rechecks_color_and_source_departure_after_actual_casts",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.state_query.permanent.negative_color"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "state_query.permanent.negative_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "A normally admitted generic blue setting changes all creature colors after an original Crovax exists: the static negative query recomputes and includes the now-blue source itself. Actual Unsummon removes Crovax and restores original stats; principal privacy, pending load and exact replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_resolution_set_ignores_later_color_and_entrants_and_returned_incarnation",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.negative_color"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.negative_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Holy Light locks nonwhite current incarnations. A later normally admitted blue setting does not add white recipients; an actual later entrant and a returned/recast affected card receive no earlier modifier. Private projection and exact replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_gloomdrifter_entry_uses_threshold_before_creating_locked_set",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_public_state_grant",
+        "capability.state_query.permanent.negative_color"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_public_state_grant",
+        "state_query.permanent.negative_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual normally admitted original Gloomdrifter at six versus seven graveyard cards distinguishes the conditionally present entry trigger. Only the threshold case resolves the complete nonblack penalty; black controls remain unchanged and private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_rishkar_grants_green_mana_to_a_charge_counter_creature",
+      "piece_ids": [
+        "capability.mana.activated.fixed_output",
+        "capability.state_query.permanent.any_counter"
+      ],
+      "capability_ids": [
+        "mana.activated.fixed_output",
+        "state_query.permanent.any_counter"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Rishkar grants green tap mana to a normally registered charge-counter creature. Actual auto-paid Growth taps that creature as payment, then untaps and buffs it on resolution. Private projection and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_razorfin_revalidates_last_counter_after_actual_response_and_pending_load",
+      "piece_ids": [
+        "capability.permanent.return.owner_hand",
+        "capability.state_query.permanent.any_counter"
+      ],
+      "capability_ids": [
+        "permanent.return.owner_hand",
+        "state_query.permanent.any_counter"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Razorfin pays its actual mana/tap costs and targets a charged creature. An actual counter-removal response removes its final counter before resolution; after pending load the target remains on the battlefield, payment remains committed and private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_acolyte_grants_actual_ward_for_a_charge_counter",
+      "piece_ids": [
+        "capability.state_query.permanent.any_counter",
+        "capability.trigger.keyword.ward.fixed_generic"
+      ],
+      "capability_ids": [
+        "state_query.permanent.any_counter",
+        "trigger.keyword.ward.fixed_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Cathedral Acolyte grants Ward for a charge counter. An opponent actual Unsummon creates the opponent-owned payment choice; wrong-principal rejection is atomic, decline counters the spell, and pending load/private replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_baxter_locks_counter_qualified_recipients_until_end_of_turn",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.any_counter"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.any_counter"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Baxter entry locks only controlled counter-qualified recipients. Actual counter removal preserves the old flying grant, later counter placement adds no earlier recipient, and a real empty attack/turn transition expires the grant. Private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+      "piece_ids": [
+        "capability.combat.attack.defender_permission",
+        "capability.quantity_expression.public_counter_total"
+      ],
+      "capability_ids": [
+        "combat.attack.defender_permission",
+        "quantity_expression.public_counter_total"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Backstreet counts individual counters on controlled creatures, including itself. One counter, foreign counters and own artifact counters reject; split counters qualify, while stabilized plus/minus counters cancel before selection. Offers/acceptance and private replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+      "piece_ids": [
+        "capability.continuous.power_toughness.fixed_anthem",
+        "capability.quantity_expression.public_counter_total"
+      ],
+      "capability_ids": [
+        "continuous.power_toughness.fixed_anthem",
+        "quantity_expression.public_counter_total"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Kyler sums charge, lore and +1/+1 counters on its current source. A real Human entry adds a +1/+1 counter and increases the bonus; actual charge removal reduces it. Opponent Humans stay unmodified and private replay agrees."
     }
   ]
 }

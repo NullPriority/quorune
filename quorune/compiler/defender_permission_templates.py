@@ -8,6 +8,7 @@ from ..defender_permission import (
     DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY,
     DEFENDER_PERMISSION_HANDLER, CONDITIONAL_DEFENDER_PERMISSION_HANDLER,
     DEFENDER_TEMPORARY_MECHANIC, DEFENDER_TEMPORARY_OPERATION,
+    DEFENDER_DECLARATION_CAPABILITY, DEFENDER_DECLARATION_EVENT, DEFENDER_DECLARATION_HANDLER,
 )
 from ..declaration_costs import normalized_oracle_line
 from .continuous_templates import (
@@ -21,6 +22,9 @@ _PERMISSION = re.compile(r"can attack as though (?:it|they) didn't have defender
 
 
 def static_defender_permission_handler(text: str, *, source_name: str):
+    late = declaration_defender_permission_handler(text, source_name=source_name)
+    if late is not None:
+        return late
     normalized = normalized_oracle_line(text, card_name=source_name)
     fragment = ability_fragment_to_dict(DefenderAttackPermission())
     if normalized == "this creature can attack as though it didn't have defender.":
@@ -62,6 +66,31 @@ def static_defender_permission_handler(text: str, *, source_name: str):
         capabilities.discard('continuous.ability.fixed_query_keyword_grant')
         capabilities.add('continuous.ability.fixed_query_grant')
     return 'static-defender-permission-composition-v1', handler, tuple(sorted(capabilities))
+
+
+def declaration_defender_permission_handler(text: str, *, source_name: str):
+    from .public_state_queries import fixed_public_state_condition
+    from ..semantic_runtime.defender_declarations import DefenderDeclarationRule
+
+    normalized = normalized_oracle_line(text, card_name=source_name)
+    match = re.fullmatch(r"as long as (?P<condition>.+?), (?P<subject>this creature|it) can attack as though "
+        r"it didn't have defender\.?", normalized, re.I)
+    if match is None:
+        return None
+    condition = fixed_public_state_condition(match['condition'], source_name=source_name)
+    if condition is None:
+        return None
+    if match['subject'].casefold() == 'it' and condition.kind.value != 'source_matches_query':
+        return None
+    try:
+        DefenderDeclarationRule(condition)
+    except ValueError:
+        return None
+    return 'declaration-current-numeric-defender-permission-v1', {
+        'handler_id': DEFENDER_DECLARATION_HANDLER, 'schema_version': 1,
+        'event': DEFENDER_DECLARATION_EVENT, 'permission': 'ignore_defender',
+        'source_condition': condition.to_dict(),
+    }, (DEFENDER_DECLARATION_CAPABILITY,)
 
 
 def temporary_defender_permission_template(text: str, *, source_name: str,

@@ -68,6 +68,19 @@ _FIXED_ZONE_CHANGE_FIELDS = frozenset(
 _FIXED_COMBAT_RETURN_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {
     "unblocked_attacker"
 }
+_ANNOUNCED_ZONE_CHANGE_FIELDS = (_FIXED_ZONE_CHANGE_FIELDS - {'count'}) | {'count_parameter'}
+ANNOUNCED_X_EXILE_CAPABILITY = 'casting.additional_cost.announced_x_graveyard_exile'
+ANNOUNCED_X_LIFE_CAPABILITY = 'casting.additional_cost.announced_x_life'
+
+
+def announced_cost_x(value: Any) -> int:
+    """Resolve the one declared integer parameter; absent means zero."""
+    if value is None:
+        return 0
+    if type(value) is not int or value < 0:
+        raise AdditionalCostError('Additional-cost X must be a nonnegative integer')
+    return value
+
 _PERMANENT_CARD_TYPES = frozenset(
     {
         "artifact",
@@ -289,13 +302,14 @@ class FixedZoneChangeAdditionalCost:
     predicate: ObjectQuerySpec
     schema_version: int = 1
     kind: str = ZONE_CHANGE_COST_KIND
-    count: int = 1
+    count: int | None = 1
+    count_parameter: str | None = None
     unblocked_attacker: bool = False
 
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2}
+            or self.schema_version not in {1, 2, 3}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -308,10 +322,12 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional-cost operation is unsupported"
             )
-        if type(self.count) is not int or not 1 <= self.count <= 99:
-            raise AdditionalCostError(
-                "Fixed zone-change additional costs require 1-99 objects"
-            )
+        if self.schema_version == 3:
+            if (self.count is not None or self.count_parameter != 'x'
+                    or self.operation != EXILE_ONE_FROM_GRAVEYARD_COST or self.unblocked_attacker):
+                raise AdditionalCostError('Declared-X zone costs require one owned graveyard exile parameter')
+        elif self.count_parameter is not None or type(self.count) is not int or not 1 <= self.count <= 99:
+            raise AdditionalCostError('Fixed zone-change additional costs require 1-99 objects')
         origin, _, expected_field = FIXED_ZONE_CHANGE_COST_CONTRACTS[
             self.operation
         ]
@@ -368,6 +384,7 @@ class FixedZoneChangeAdditionalCost:
             or self.predicate.known_to_actor is not True
             or self.predicate.include_phased_out
             or self.predicate.keywords_all
+            or self.predicate.colors_none
             or self.predicate.excluded_controllers
             or self.predicate.excluded_subtypes
             or self.predicate.colorless is not None
@@ -436,6 +453,7 @@ class FixedZoneChangeAdditionalCost:
             not in {
                 _FIXED_ZONE_CHANGE_FIELDS,
                 _FIXED_COMBAT_RETURN_FIELDS,
+                _ANNOUNCED_ZONE_CHANGE_FIELDS,
             }
         ):
             raise AdditionalCostError(
@@ -451,7 +469,8 @@ class FixedZoneChangeAdditionalCost:
             schema_version=value["schema_version"],
             kind=value["kind"],
             operation=value["operation"],
-            count=value["count"],
+            count=value.get("count"),
+            count_parameter=value.get("count_parameter"),
             choice_field=value["choice_field"],
             predicate=predicate,
             unblocked_attacker=value.get("unblocked_attacker", False),
@@ -497,7 +516,16 @@ class FixedZoneChangeAdditionalCost:
         }
         if self.schema_version == 2:
             value["unblocked_attacker"] = self.unblocked_attacker
+        if self.schema_version == 3:
+            value.pop('count')
+            value['count_parameter'] = self.count_parameter
         return value
+
+    def required_count(self, declared_x: Any = None) -> int:
+        if self.count_parameter == 'x':
+            return announced_cost_x(declared_x)
+        assert type(self.count) is int
+        return self.count
 
     def bound_predicate(self, actor: str) -> ObjectQuerySpec:
         if type(actor) is not str or not actor:

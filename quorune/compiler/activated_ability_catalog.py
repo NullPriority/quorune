@@ -8,6 +8,7 @@ from typing import Any, Iterable, Mapping
 
 from ..abilities import ActivatedAbility, parse_activated_abilities
 from ..carddb import CardRecord
+from ..card_programs.admission import CARD_PROGRAM_ADMISSION_FIELD, CompleteCardProgramAdmission
 from ..color_set_mana_abilities import (
     compile_color_set_activated_mana_ability,
 )
@@ -49,6 +50,7 @@ from ..semantic_runtime.mana_abilities import (
 from ..semantics import SemanticProgram
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
+from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation
 from .activation_mana_costs import fixed_complex_activation_mana_cost
 from .power_up_templates import fixed_power_up_ability
 
@@ -90,14 +92,21 @@ def compile_activated_ability_catalog(
     }
 
 
+def specialize_compiled_activation_costs(abilities,*,source_name):
+    """Share canonical specialization with preflight's normalized source view."""
+    return tuple(_specialize_compiled_ability(ability,source_name=source_name) for ability in abilities)
+
+
 def _specialize_compiled_ability(
     ability: ActivatedAbility,
     *,
     source_name: str,
 ) -> ActivatedAbility:
-    ability = fixed_power_up_ability(ability)
+    from .activation_x_costs import announced_x_activation_cost
+    ability = announced_x_activation_cost(fixed_power_up_ability(ability))
+    ability = fixed_any_source_counter_activation(ability)
     ability = fixed_complex_activation_mana_cost(ability)
-    ability = fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability))
+    ability = fixed_selected_counter_activation(fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability)))
     candidates = tuple(
         spec.to_activated_ability()
         for spec in (
@@ -296,6 +305,28 @@ def _catalog_ability_for_program(
     )
 
 
+def with_compiled_activated_ability_catalog(
+    record: CardRecord,
+    programs: Iterable[SemanticProgram],
+    *,
+    ir: Any,
+    rulings_hash: str,
+    authored_by: str,
+) -> tuple[SemanticProgram, ...]:
+    """Attach catalogs using the invocation's pinned whole-source boundary."""
+    return with_activated_ability_catalog(
+        record,
+        programs,
+        carrier_provenance={
+            CARD_PROGRAM_ADMISSION_FIELD: CompleteCardProgramAdmission.from_oracle_ir(ir).to_dict(),
+            "source_oracle_hash": ir.oracle_hash,
+            "source_rulings_hash": rulings_hash,
+            "authored_by": authored_by,
+            "review_status": "generated_review_required",
+        },
+    )
+
+
 def with_activated_ability_catalog(
     record: CardRecord,
     programs: Iterable[SemanticProgram],
@@ -335,6 +366,9 @@ def with_activated_ability_catalog(
         result.append(
             replace(
                 program,
+                provenance=_catalog_provenance(
+                    program, ability, references, carrier_provenance
+                ),
                 handlers=[
                     *program.handlers,
                     activated_ability_catalog_descriptor(ability),
@@ -349,6 +383,22 @@ def with_activated_ability_catalog(
             provenance=carrier_provenance,
         )
     return tuple(result)
+
+
+def _catalog_provenance(
+    program: SemanticProgram,
+    ability: ActivatedAbility,
+    references: tuple[SemanticProgram, ...],
+    carrier_provenance: Mapping[str, Any] | None,
+) -> Mapping[str, Any]:
+    if ability.announced_x_symbols is None:
+        return program.provenance
+    reference = next((value for value in references if value.key == program.key), None)
+    source = reference.provenance if reference is not None else carrier_provenance or {}
+    certificate = source.get(CARD_PROGRAM_ADMISSION_FIELD)
+    if certificate is None:
+        return program.provenance
+    return {**program.provenance, CARD_PROGRAM_ADMISSION_FIELD: certificate}
 
 
 def _append_catalog_carriers(
@@ -402,7 +452,9 @@ def _append_catalog_carriers(
                     event="activate",
                     trust_level="provisional",
                     provenance={
-                        **dict(provenance),
+                        **{key: value for key, value in provenance.items()
+                           if key != CARD_PROGRAM_ADMISSION_FIELD
+                           or ability.announced_x_symbols is not None},
                         "face_id": face_id,
                         "template_id": "activated-ability-catalog-v1",
                     },
@@ -492,4 +544,5 @@ __all__ = [
     "catalog_carrier_is_shadowed",
     "compile_activated_ability_catalog",
     "with_activated_ability_catalog",
+    "with_compiled_activated_ability_catalog",
 ]

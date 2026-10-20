@@ -66,6 +66,15 @@ def declared_effect_amount_template(
     if type(cast_x_available) is not bool or type(forbid_public_x) is not bool:
         return None
     normalized = text.strip()
+    if cast_x_available:
+        from .announced_target_sets import announced_target_set_effect_template
+        target_set = announced_target_set_effect_template(normalized)
+        if target_set is not None:
+            return target_set
+    mill = re.fullmatch(r'(?P<head>(?:(?:you|target player|target opponent|each player|each opponent) )?mills?) '
+        r'cards equal to (?P<quantity>[^.]+?)\.?', normalized, re.I)
+    if mill is not None:
+        normalized = f"{mill['head']} X cards, where X is {mill['quantity']}."
     library_definition = _LIBRARY_DEFINITION.fullmatch(normalized)
     definition = library_definition or _DEFINITION.fullmatch(normalized)
     quantity = None
@@ -146,7 +155,8 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
     available = bool(is_spell and not record.faces and symbols and set(symbols) == {"X"})
     return partial(compile_effect,
         cast_x_available=available and re.search(r"\bX (?:is|can't|cannot)\b",oracle_text) is None,
-        forbid_public_x=available)
+        forbid_public_x=available,
+        kicked_self_replacement_available=bool(is_spell and not record.faces))
 
 
 def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:

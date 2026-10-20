@@ -45,7 +45,7 @@ class PublicResolutionConditionHandler:
         from .resolution_result_validation import validate_resolution_result_children
         validate_resolution_result_children(effect, effects, otherwise, context)
         try:
-            matched = effect['cast_fact'] if effect.get('schema_version') == 2 else context.query.resolution_condition_matches(condition.to_dict())
+            matched = effect['cast_fact'] if effect.get('schema_version') in {2,4,5} else context.query.resolution_condition_matches(condition.to_dict())
             if type(matched) is not bool:
                 raise ValueError('Resolution cast fact is unavailable')
         except (ValueError, TypeError, KeyError) as exc:

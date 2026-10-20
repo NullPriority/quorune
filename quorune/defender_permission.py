@@ -11,6 +11,9 @@ CONDITIONAL_DEFENDER_PERMISSION_HANDLER = 'continuous.defender-permission.public
 DEFENDER_TEMPORARY_CAPABILITY = 'combat.attack.defender_permission.temporary'
 DEFENDER_TEMPORARY_MECHANIC = 'fixed-temporary-defender-permission'
 DEFENDER_TEMPORARY_OPERATION = 'apply_source_characteristics_until_end_of_turn'
+DEFENDER_DECLARATION_CAPABILITY = 'combat.attack.defender_permission.declaration_numeric'
+DEFENDER_DECLARATION_HANDLER = 'permission.attack.defender-current-numeric.v1'
+DEFENDER_DECLARATION_EVENT = 'combat.attack.permission'
 
 
 @dataclass(frozen=True, slots=True)

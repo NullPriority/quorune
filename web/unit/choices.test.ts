@@ -16,6 +16,51 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Declared X updates exact and up-to target groups without limiting paid X", () => {
+  for (const exact of [true, false]) {
+    const choices = form([
+      { name: "x", control: "integer", minimum: 0, maximum: 20 },
+      { name: "targets", control: "targets", schema: { groups: [{ id: "target", min: 0, max: 0,
+        legal_refs: ["P1", "P2"], [exact ? "count_from" : "maximum_from"]: "x" }] } },
+    ]);
+    assert.deepEqual(validateChoices(choices, { x: 0, targets: { target: [] } }), []);
+    assert.deepEqual(validateChoices(choices, { x: 2, targets: { target: ["P1", "P2"] } }), []);
+    assert.equal(validateChoices(choices, { x: 2, targets: { target: ["P1"] } }).length === 0, !exact);
+    if (!exact) assert.deepEqual(validateChoices(choices, { x: 20, targets: { target: [] } }), []);
+    const target = activeFields(choices, { x: 9, targets: [] })[1];
+    assert.equal((target.schema as { groups: { max: number }[] }).groups[0].max, 9);
+  }
+});
+
+test("Declared X updates the exact graveyard payment count", () => {
+  const choices = form([
+    { name: "x", control: "integer", minimum: 0, maximum: 3, required: true },
+    { name: "exile_cards", control: "refs", minimum: 0, maximum: 0, count_from: "x",
+      options: ["C1", "C2", "C3"].map((value) => ({ value, label: value })) },
+  ]);
+  assert.deepEqual(validateChoices(choices, { x: 0, exile_cards: [] }), []);
+  const field = activeFields(choices, { x: 2, exile_cards: [] })[1];
+  assert.equal(field.minimum, 2);
+  assert.equal(field.maximum, 2);
+  assert.ok(validateChoices(choices, { x: 2, exile_cards: ["C1"] }).length);
+  assert.deepEqual(validateChoices(choices, { x: 2, exile_cards: ["C1", "C2"] }), []);
+  assert.ok(validateChoices(choices, { x: 1, exile_cards: ["C1", "C2"] }).length);
+  assert.deepEqual(executableChoices(choices, { x: 2, exile_cards: ["C1", "C2"] }),
+    { x: 2, exile_cards: ["C1", "C2"] });
+});
+
+test("Declared X uses the server's affordable maximum for the selected tax sources", () => {
+  const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target", min: 0, max: 0,
+    count_from: "x", legal_refs: ["TAXED", "ORDINARY"] }] },
+    target_costs: { clauses: [{ component_id: "tax", any_target_refs: ["TAXED"] }], prices: [
+      { modes: [], components: [], label: "Pay {U}", maximum_x: 4 },
+      { modes: [], components: ["tax"], label: "Pay {2}{U}", maximum_x: 2 }] } };
+  const choices = form([{ name: "x", control: "integer", minimum: 0, maximum: 4 }, field]);
+  assert.deepEqual(validateChoices(choices, { x: 2, targets: { target: ["TAXED", "ORDINARY"] } }), []);
+  assert.match(selectedTargetCostLabel(field, { x: 3, targets: { target: ["TAXED"] } }) ?? "", /No payable/);
+  assert.equal(selectedTargetCostLabel(field, { x: 3, targets: { target: ["ORDINARY"] } }), "Pay {U}");
+});
+
 test("Target-dependent casting prices display the server row once per source and reject missing combinations", () => {
   const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target_0", min: 0, max: 2 }] },
     target_costs: { kind: "generic_increase_once_per_source", clauses: [

@@ -518,8 +518,54 @@ Exactly one fixed positive named-counter removal from the current battlefield
 source is also part of the pinned catalog. Offer and commit read the same
 public counter state, pin the source incarnation, and pay through the canonical
 exact counter-removal transaction before stack placement or immediate mana
-production. Variable, all, chosen-kind, repeated, another-object,
-nonbattlefield, and granted forms remain fail closed.
+production. Version 1 retains one fixed counter name. Variable, all, repeated,
+nonbattlefield and granted forms remain fail closed in this source-local owner.
+
+Activated-cost parsing can split one complete fixed source-counter removal
+followed by an unambiguous “and sacrifice it” conjunction after validating the
+counter clause through the existing owner. The original cost text is retained.
+Both typed costs keep ordinary availability, exact payment and same-source
+identity; source departure precedes resolution and never refunds a countered
+ability. Other antecedents, variable counts and unparsed tails remain residual.
+
+A separate fixed selected-counter cost removes one +1/+1 counter from one
+creature the activating player currently controls. The form, offer and payment
+share the same public candidate query, and payment pins the selected incarnation
+through the canonical exact removal owner. The source itself can pay this
+counter while also paying its distinct tap resource; a tapped or foreign-owned
+controlled creature can pay without being sacrificed. The paid object is not
+a target, and later state-based death or illegal targets never refund it.
+Other counter kinds, amounts, selectable payment groups and granted forms
+remain residual until their own contracts are represented.
+
+Version-2 source-counter costs represent exactly one or two counters of any
+present kinds. The source-scoped form lists every legal distribution, including
+two different counter kinds, with human-readable labels and incarnation-bound
+choice IDs. Commit resolves that same current distribution and removes its
+exact total through the existing owner. Removing negative, keyword or stun
+counters updates ordinary characteristics without inventing an untap. Hybrid
+mana and sorcery timing keep their own authority. The version-1 wire remains
+unchanged; variable amounts, all counters and other payment objects are outside
+this source-only grammar.
+
+Fixed source keyword choices compose the existing scalar option choice with
+the source-incarnation characteristic owner. The ability controller chooses
+one printed ordinary keyword during resolution, even if control of its source
+has changed. Existing sacrifice, other-creature tap, counter and mana costs
+remain paid. Departure or blink cannot transfer the effect to another
+incarnation. An optional fixed P/T prefix runs once before the choice;
+state-based actions wait until resolution completes. Both components expire
+through the existing duration owner. Grammar admission, normal registration
+and minimum runtime dependencies validate the same complete branch set.
+Mixed protection choices, variable quantities and other choosers remain residual.
+
+Ordinary two-arm activation prices use that same immutable option model when
+both printed arms have the same source-tap resource. The compiler retains each
+complete mana vector and the original cost text. Offer and commit apply current
+generic increases to each arm and pay only the selected arm, with one source
+tap. The runtime dependency reader validates option descriptors and requires
+their existing mana-cost authority. Distinct nonmana resources, variable prices
+and independently unsupported results remain residual.
 
 Fixed complex activation mana costs remain inside that same catalog and action
 path. One typed option records the selected colored-hybrid or two-brid vector,
@@ -530,6 +576,39 @@ one lot. Offer and commit therefore agree on current mana, life, Snow-source,
 and restriction payability, and a stale option rejects before source tap, mana
 spend, life payment, or stack placement. The lot journal is authoritative
 checkpoint state but is not projected as mana-source identity.
+
+Ordinary announced activation X uses that catalog and the same proposal and
+payment path. `activation_x.py` validates the optional symbol count;
+`rules/activation/x_costs.py` prices each symbol at the explicit nonnegative
+integer chosen by the authenticated activator, before existing generic
+reductions. Source-tap costs reserve the source from its own mana payment.
+Offers advertise the numeric choice, and acceptance rechecks the chosen price.
+The canonical `StackItem.x_value` retains each activation's independent value
+through source departure, save/load and replay; existing result owners consume
+it. Non-X descriptors and records preserve the field's historical absence.
+The typed target-cardinality owner also binds homogeneous exact or up-to X
+targets before shared target legality, retaining the same X on the stack.
+Text-defined or restricted X, unrepresented target roles and nonordinary or
+nonmana X costs remain outside this boundary. Activated-ability copying has
+no represented owner and gains no execution path here.
+
+Static generic activation-cost modifiers use the existing cost-component
+registry. `rules/activation/cost_modifiers.py` reads only current trusted
+sources, faces, controllers, attachments and public source types.
+`rules/activation/pricing.py` shares their prices across availability, offers,
+proposals and pre-payment validation. The chosen X enters the base price
+before taxes and reductions. Minimum-one restrictions belong to each effect;
+colored, colorless and snow obligations count toward the minimum, and an
+already-zero cost stays zero. Distinct legal reduction-order prices remain
+selectable. The paid total locks before payment changes its sources.
+
+Fixed alternatives retain their life and snow obligations. Power-up supplies
+its existing current-entry reduction facts to the same ordered price model,
+and Waterbend reservations use the reduced generic amount before selecting
+tapped objects. Automatic source/output plans accept only a currently zero
+mana price; an explicit activation that pays mana cannot create reversible
+mana undo. Unknown modifier qualifiers, variable or colored static reductions,
+and unrepresented nonmana adjustments remain residual.
 
 Ordinary printed `Crew N` is compiled once into a source-spanned activated-
 ability descriptor. `crew.py` owns the immutable current-characteristic
@@ -561,6 +640,21 @@ normalized discard, graveyard-departure, or battlefield-departure facts before
 the cast event. Historical unversioned discard and sacrifice schemas remain in
 an isolated compatibility query outside `CommanderEngine`. Unsupported cost
 grammar residualizes the entire spell rather than exposing a cost-free result.
+
+Mandatory announced-X life and owned-graveyard exile costs retain one declared
+nonnegative integer across the cost option, proposal, payment and spell result.
+The life query bounds X by current life. The zone query requires exactly X
+distinct qualifying owned graveyard incarnations, excluding the spell itself;
+its version-three descriptor carries `count_parameter: "x"` rather than a fixed
+count. Existing fixed descriptors retain their serialized shape. A zero payment
+needs no objects and is legal. The browser's dependent payment field follows
+the declared X, while acceptance and commit revalidate the same typed query.
+Reducing the mana price does not change X. Casting without paying the mana cost
+forces X to zero when the mana cost contains X; an additional X on a fixed-mana
+spell remains chosen and payable. Completed additional payments are not refunded
+when the spell is countered. Optional, random, mixed selected groups, alternative
+variable prices, and combinations with Convoke, Delve or Improvise remain
+outside this announced-X cost family.
 
 A fixed reveal leaf shares the existing alternative additional-cost algebra.
 Its hand query excludes the casting spell and pins one other qualifying owned
@@ -796,6 +890,51 @@ instruction whose captured count is stale. Source reincarnation, ability
 removal, save/load, and public projection all use those typed identities rather
 than Oracle prose.
 
+Multikicker result amounts read the immutable payment count of their linked
+printed instance. Stack copies retain the original decisions without another
+cast or payment. The zone owner seals an entering spell's fact into its entry
+trigger before object-local reset; later departure cannot erase it, and a new
+unpaid incarnation starts at zero. Entry facts are added only for typed readers,
+preserving historical events with no count-result reader. Malformed or different
+payment instances fail closed. Numeric evaluation preserves ordinary result,
+target, private-choice, rollback and replay boundaries.
+
+Spell result amounts that count spent mana colors use the canonical committed
+WUBRG set. Payment validation still rejects overpayment, and cost increases,
+reductions and alternate costs retain their normal order. Actual spell copies
+use zero, independently of copied optional-cost decisions. Numeric projection
+refines only existing typed result owners; fixed discard, draw and keyword
+consequences continue after a zero variable result. Missing or malformed
+payment provenance and readers outside spell resolution fail closed.
+
+Modal effect projection uses the canonical target plan for group identities
+and cardinalities, including flat mode definitions. Original selected counts
+retain later-mode reference offsets after target departure. A flat mode's
+target-set reference resolves through its server-captured current group, so
+an illegal target is filtered without moving another mode's target role.
+Missing or malformed captured groups fail closed. Existing explicitly grouped
+reference projections retain their legacy representation.
+
+Source-face target-dependent reductions use the same announced-target
+witnesses for offers and accepted commands. One matching target applies one
+printed reduction once, including when several targets qualify. The cost owner
+adds increases before reducing generic requirements, preserves colored mana,
+and locks the actual paid cost before responses. Captured cost schema 2 keeps
+generic increases and reductions separate; historical tax schema 1 retains its
+original bytes. X previews and public price tables retain each target set's
+affordable bound instead of hiding a supported larger X or allowing an
+underpaid different target. Copies and ordinary counter or invalid-target
+resolution continue under their existing owners.
+
+The current committed spell-cast event adds actual mana spent as a
+nonnegative integer in schema version 7. The cast commit publishes the already
+sealed paid stack fact, including additional costs and reductions; it does not
+reconstruct payment from mana value or current prices. Earlier event versions
+retain their exact field sets. Printed Increment consumes this fact through
+the ordinary APNAP trigger path and rechecks current source creature P/T before
+the existing counter-placement transaction. Independent instances recheck
+after earlier counters; copies do not become casts.
+
 Committed represented casts dispatch one strict immutable `SpellCastEvent`
 that pins the physical spell, logical incarnation, controller, origin, stack
 reference, and canonical current card types. Ordinary Prowess is lowered once
@@ -886,6 +1025,26 @@ public permanent-state predicates such as a named counter minimum. Historical
 schema-v1 through schema-v6 payloads retain their original field sets so Game
 Record v3 replay does not silently rewrite old descriptors.
 
+Version-three permanent-state predicates add an explicit any-kind counter
+minimum. `counter_snapshot.permanent_counter_total` validates and sums individual
+public counters; zero entries do not qualify and malformed amounts reject.
+Named-counter predicates and state schemas one and two keep their field sets.
+Static queries use current counters after stabilization. Direct targets share
+the same matcher and revalidate at resolution, while resolved characteristic
+sets retain their incarnation locks. Public collection and source-total
+quantities use this counter owner without reading later-layer characteristics.
+An attack legally declared under a conditional Defender exception remains
+declared when the final qualifying counter is removed afterward.
+
+Version-nine queries add `colors_none` for negative-color battlefield sets.
+The shared matcher checks current color membership, so colorless objects match
+and a multicolored object containing the excluded color does not. Static
+characteristic effects recheck the live set after layer five; resolution
+characteristic effects lock the current incarnations. Schemas one through eight
+retain their serialized field sets. Specialized consumers keep their own
+admission boundaries, and compiler/runtime binding both require the separate
+negative-color query capability when the field is used.
+
 Version-seven queries carry a fixed typed numeric characteristic predicate for
 represented battlefield creature selection. They use the same comparison
 value as direct targets and require exact effective stats. Live layer matching
@@ -924,6 +1083,13 @@ recheck intervening conditions at occurrence and resolution, include counters
 and represented buffs, and reject unavailable numeric facts. Static
 characteristic conditions reject this schema because their cycle-safe read
 boundary remains at layer five.
+
+`rules/defender_declaration.py` evaluates the separate numeric Defender
+exception after the full characteristic query has finished. The source's
+current trusted face and ability must still provide the declaration component.
+Offers and acceptance share this check, which disregards only Defender while
+the numeric condition holds. A later condition change affects the next
+declaration, without removing a creature from an already declared attack.
 
 Fixed public static conditions snapshot the same layer-5 query boundary along
 with canonical aggregate hand/draw counts, typed current-turn spell-cast

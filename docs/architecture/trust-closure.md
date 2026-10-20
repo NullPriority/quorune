@@ -77,10 +77,15 @@ closed. The global inventories are metadata aggregations; family registries
 remain the execution owners.
 
 An activation-catalogue carrier with no resolution effects is structural
-discovery metadata, not a hidden legacy rules program. Binding validates its
+discovery metadata, not a hidden legacy rules program. Preflight may recognize a printed Equip through its source-matching trusted keyword owner on the exact parsed ability line. The fixed price, target restriction and sorcery timing must agree; provisional discovery catalogs do not establish coverage. Source drift and missing keyword capability retain the residual. Preflight also uses the canonical activation-cost specializer for its normalized printed abilities. Complete keyword-only static lines are covered only by their trusted printed keyword owner; unrelated static siblings and unknown cost symbols keep their residuals. Binding validates its
 registered closed descriptor and schema/event identity without inventing a
 behavioral capability closure. Any attached resolution effect still requires
 its actual registered capabilities; a catalogue identity cannot excuse it.
+Announced activation X additionally requires the existing complete-card
+admission certificate at discovery. The compiler carries that certificate
+through catalog attachment; missing certificates, unknown bodies and partial
+siblings do not expose a paid X activation. Executable X catalogs separately
+declare their ordinary activation-X capability dependency.
 
 New Game Record v3 manifests pin capability registry/evidence, semantic-handler,
 runtime-component, CardProgram, and CardProgram-trust fingerprints. A command

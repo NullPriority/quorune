@@ -33,7 +33,7 @@ class CountedSpellCostCompilerTests(unittest.TestCase):
             self.assertEqual((0,len(text)),(node.span.start,node.span.end))
 
     def test_random_variable_and_mixed_prices_remain_material(self):
-        for price in ('discard a card at random','exile X cards from your graveyard','discard a card and sacrifice a creature',
+        for price in ('discard a card at random','exile X cards with different mana values from your graveyard','discard a card and sacrifice a creature',
                       'sacrifice two creatures with different powers','you may sacrifice one or more creatures'):
             text='As an additional cost to cast this spell, '+price+'.\nDraw three cards.'
             self.assertNotEqual('exact',compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=load_default_capability_registry()).status)

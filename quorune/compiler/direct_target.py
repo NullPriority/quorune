@@ -184,13 +184,14 @@ def _validate_public_state_predicate(
             state.entered_this_turn,
             state.tapped is not None,
             state.counter_name is not None,
+            state.minimum_total_counter_count is not None,
         )
     )
     invalid_creature_state = (
         state.entered_this_turn or state.tapped is not None
     ) and spec.types_any != ("creature",)
     invalid_counter_state = (
-        state.counter_name is not None
+        (state.counter_name is not None or state.minimum_total_counter_count is not None)
         and spec.types_any not in {(), ("creature",)}
     )
     if state_kinds != 1 or invalid_creature_state or invalid_counter_state:
@@ -810,6 +811,8 @@ class DirectPermanentTargetSpec:
                 predicate += "-entered-this-turn"
             elif state.tapped is not None:
                 predicate += "-tapped" if state.tapped else "-untapped"
+            elif state.minimum_total_counter_count is not None:
+                predicate += '-with-any-counter'
             else:
                 assert state.counter_name is not None
                 predicate += "-with-" + direct_target_slug(
@@ -1012,6 +1015,49 @@ class DirectPermanentTargetSpec:
         return spec
 
 
+def _strip_public_state_predicate(phrase: str) -> tuple[str, PermanentStatePredicateSpec | None] | None:
+    """Keep one exact counter or arrival qualifier before the target composition."""
+    state_predicate: PermanentStatePredicateSpec | None = None
+    total_counter = re.fullmatch(r'(?P<body>.+) with (?:a|one or more) counters? on it', phrase)
+    if total_counter is not None:
+        phrase = total_counter['body']
+        state_predicate = PermanentStatePredicateSpec(minimum_total_counter_count=1)
+    counter_state = re.fullmatch(
+        r"(?P<body>.+) with (?:a|an) "
+        r"(?P<counter>[+-]\d+/[+-]\d+|[a-z][a-z'-]*(?: [a-z][a-z'-]*){0,2}) "
+        r"counter on it",
+        phrase,
+    )
+    if counter_state is not None:
+        if counter_state.group("counter") == "counter":
+            return None
+        if state_predicate is not None:
+            return None
+        phrase = counter_state.group("body")
+        try:
+            state_predicate = PermanentStatePredicateSpec(
+                counter_name=counter_state.group("counter"),
+                minimum_counter_count=1,
+            )
+        except ObjectQueryError:
+            return None
+    else:
+        for suffix in (
+            " that entered the battlefield this turn",
+            " that entered this turn",
+        ):
+            if phrase.endswith(suffix):
+                if state_predicate is not None:
+                    return None
+                phrase = phrase[: -len(suffix)]
+                state_predicate = PermanentStatePredicateSpec(
+                    entered_this_turn=True
+                )
+                break
+
+    return phrase, state_predicate
+
+
 def direct_permanent_target_spec(
     subject: str,
 ) -> DirectPermanentTargetSpec | None:
@@ -1038,34 +1084,11 @@ def direct_permanent_target_spec(
     )
     phrase, damage_history = _strip_damage_history_predicate(phrase)
     phrase, suffix_combat_state = _strip_relative_combat_state(phrase)
-    state_predicate: PermanentStatePredicateSpec | None = None
     phrase, mana_value_fields = _strip_mana_value_predicate(phrase)
-    counter_state = re.fullmatch(
-        r"(?P<body>.+) with (?:a|an) "
-        r"(?P<counter>[+-]\d+/[+-]\d+|[a-z][a-z'-]*(?: [a-z][a-z'-]*){0,2}) "
-        r"counter on it",
-        phrase,
-    )
-    if counter_state is not None:
-        phrase = counter_state.group("body")
-        try:
-            state_predicate = PermanentStatePredicateSpec(
-                counter_name=counter_state.group("counter"),
-                minimum_counter_count=1,
-            )
-        except ObjectQueryError:
-            return None
-    else:
-        for suffix in (
-            " that entered the battlefield this turn",
-            " that entered this turn",
-        ):
-            if phrase.endswith(suffix):
-                phrase = phrase[: -len(suffix)]
-                state_predicate = PermanentStatePredicateSpec(
-                    entered_this_turn=True
-                )
-                break
+    public_state = _strip_public_state_predicate(phrase)
+    if public_state is None:
+        return None
+    phrase, state_predicate = public_state
 
     relation = "any"
     for suffix, candidate in (
@@ -1088,12 +1111,6 @@ def direct_permanent_target_spec(
     }
     if suffix_combat_state is not None:
         kwargs["combat_state"] = suffix_combat_state
-    if (
-        counter_state is not None
-        and counter_state.group("counter") == "counter"
-    ):
-        return None
-
     for prefix, combat_state in (
         ("attacking or blocking ", "attacking_or_blocking"),
         ("attacking ", "attacking"),

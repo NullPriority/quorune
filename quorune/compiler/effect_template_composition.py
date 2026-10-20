@@ -35,11 +35,16 @@ def reviewed_contextual_effect_template(
     compile_atomic: Callable[..., CompiledEffectTemplate],
     compile_fixed: Callable[..., CompiledEffectTemplate],
     cast_x_available: bool = False, forbid_public_x: bool = False,
+    kicked_self_replacement_available: bool = False,
     **source_context: Any,
 ) -> CompiledEffectTemplate:
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .temporary_keyword_removal_templates import temporary_keyword_removal_template
+        removal=temporary_keyword_removal_template(body,source_name=card_name,
+            source_is_permanent=source_context.get('source_is_permanent'),source_card_types=tuple(source_context.get('source_card_types',())))
+        if removal is not None:return removal
         controller_payment = targeted_controller_payment_template(body, cast_x_available=cast_x_available)
         if controller_payment is not None:
             return controller_payment.compiled()
@@ -56,6 +61,12 @@ def reviewed_contextual_effect_template(
             source_is_permanent=source_context.get("source_is_permanent"),
             source_card_types=tuple(source_context.get("source_card_types", ())),
         ) or current
+
+    if kicked_self_replacement_available is True:
+        from .kicked_self_replacement_templates import kicked_self_replacement_template
+        replacement=kicked_self_replacement_template(text,source_name=card_name,compile_component=atomic_with_characteristics)
+        if replacement is not None:
+            return replacement
 
     # Preserve the certified v1 one-mana/one-leaf payload before using v2.
     legacy_payment=fixed_optional_mana_payment_template(text,compile_effect=atomic_with_characteristics)
@@ -146,9 +157,10 @@ def reviewed_effect_template_composition(
             return declared
     query_counters = ordered_quantity_sequence_template(text, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed)
     if query_counters is not None:return query_counters
+    from .announced_target_sets import announced_target_clause_compiler
     sequence = fixed_effect_clause_sequence_template(
         text,
-        compile_clause=compile_atomic,
+        compile_clause=announced_target_clause_compiler(compile_atomic) if cast_x_available else compile_atomic,
     )
     if sequence is not None:
         return sequence.compiled()

@@ -8,8 +8,8 @@ from typing import Any, Protocol
 from ...abilities import ActivatedAbility
 from ...activation_mana_cost import (
     ActivationManaCostOption,
-    select_activation_mana_option,
 )
+from .pricing import select_activation_mana_option
 from ...attachment_references import (
     SourceAttachmentSnapshot,
     capture_source_attachment_snapshot,
@@ -175,6 +175,19 @@ def _revalidate_activation(
             reason=condition_reason or "stale_activation_condition",
         )
     details = thaw_json(proposal.details)
+    if not ability.mana_cost_options:
+        from .x_costs import activation_requirements, validate_activation_x_payment
+        try:
+            snapshot=details.get('static_activation_price') or {}
+            response={'x':details.get('announced_x')}
+            if snapshot:response['cost_reduction_order']=snapshot['order']
+            expected, value = activation_requirements(host,proposal.seat,source,ability,response)
+            if ability.waterbend is not None:
+                payment=details.get('waterbend_payment') or {}
+                expected['GENERIC']-=len(payment.get('objects',()))
+            if expected != dict(thaw_json(proposal.requirements)):raise ValueError('Activation mana price changed after proposal')
+            if ability.waterbend is None:validate_activation_x_payment(host,proposal.seat,source,ability,expected)
+        except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_activation_price') from exc
     raw_option = details.get("mana_cost_option")
     mana_option = None
     if ability.mana_cost_options:
@@ -471,6 +484,12 @@ def _pay_object_and_mana_costs(
 
 
 def _pay_selected_object_costs(host, seat, source, ability, response):
+    from ..selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, pay_selected_counter_cost
+    if any(choice.kind == SELECTED_PLUS_COUNTER_COST_KIND for choice in ability.choices):
+        try:
+            return pay_selected_counter_cost(host, seat, source, ability, response)
+        except ValueError as exc:
+            raise ActivationProposalError(str(exc), reason='selected_counter_cost_unpayable') from exc
     if ability.random_discard_payment:
         from .random_discard_costs import pay_random_discard_activation_cost
         return pay_random_discard_activation_cost(host,seat,source,ability,response)
@@ -491,7 +510,7 @@ def _commit_activation_resource_costs(
     mana_option: ActivationManaCostOption | None,
 ) -> None:
     try:
-        commit_source_counter_removal_cost(host, source, ability)
+        commit_source_counter_removal_cost(host, source, ability, response=response)
     except SourceCounterActivationCostError as exc:
         raise ActivationProposalError(
             str(exc),
@@ -632,6 +651,7 @@ def _activation_stack_item(
         semantic_key=str(proposal.semantic_key or ""),
         targets=list(proposal.targets),
         modes=list(details.get("selected_modes") or []),
+        x_value=details.get('announced_x'),
         notes=str(response.get("note") or ""),
         visibility=list(host.seats),
         context={
@@ -810,6 +830,7 @@ def _commit_activation_costs_and_stack(
             payment_activations=activations,
             source_was_snow=source_was_snow,
             source_information=mana_source_information or chosen_source_information,
+            mana_payment=spent,
         )
         return True
     item = _activation_stack_item(

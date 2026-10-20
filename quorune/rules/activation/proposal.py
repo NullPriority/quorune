@@ -6,8 +6,8 @@ from collections.abc import Mapping
 from dataclasses import replace
 from typing import Any, Protocol
 
-from ...abilities import ActivatedAbility, choose_ability, reduced_requirements
-from ...activation_mana_cost import (
+from ...abilities import ActivatedAbility, choose_ability
+from .pricing import (
     payable_activation_mana_options,
     select_activation_mana_option,
 )
@@ -276,6 +276,9 @@ def build_activation_proposal(
         )
     source = _resolve_activation_source(host, request)
     ability = _select_ability(host, source, request.ability_selector)
+    from ...activation_x import chosen_activation_x
+    try: announced_x = chosen_activation_x(ability, response)
+    except ValueError as exc: raise ActivationProposalError(str(exc),reason='invalid_activation_x') from exc
     supplied_fingerprint = response.get("proposal_fingerprint")
     if supplied_fingerprint:
         advertised = build_activation_offer(
@@ -306,8 +309,13 @@ def build_activation_proposal(
     target_schema = (
         thaw_value(ability.target_schema)
         if ability.target_schema is not None
-        else None
+        else getattr(program, "target_schema", None)
     )
+    from ...activation_x import bind_activation_target_cardinality
+    try:
+        target_schema = bind_activation_target_cardinality(ability, target_schema, response)
+    except ValueError as exc:
+        raise ActivationProposalError(str(exc), reason="invalid_announced_target_count") from exc
     targets, target_groups = host._validate_semantic_targets(
         request.actor,
         program,
@@ -353,19 +361,21 @@ def build_activation_proposal(
             ) from exc
         requirements = dict(mana_option.requirements)
     else:
-        requirements = reduced_requirements(
-            ability,
-            legendary_creatures=host._legendary_creatures_controlled(
-                request.actor
-            ),
-        )
+        from .x_costs import activation_requirements, validate_activation_x_payment
+        requirements, announced_x = activation_requirements(host, request.actor, source, ability, response)
+        if announced_x is not None:
+            try: validate_activation_x_payment(host,request.actor,source,ability,requirements)
+            except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
     waterbend_details={}
+    if not ability.mana_cost_options:
+        from .pricing import activation_price_details
+        waterbend_details.update(activation_price_details(host,request.actor,source,ability,response))
     if ability.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
         try:payment=activation_waterbend_plan(host,request.actor,source,ability,requirements,response,hint=False)
         except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_waterbend_payment') from exc
         if payment is None:raise ActivationProposalError('Waterbend payment is not payable',status='unpayable',reason='waterbend_unpayable')
-        requirements,_,waterbend,_=payment;waterbend_details={'waterbend_payment':waterbend.to_dict()}
+        requirements,_,waterbend,_=payment;waterbend_details['waterbend_payment']=waterbend.to_dict()
     proposal = ActivationProposal(
         seat=request.actor,
         source_ref=source.ref,
@@ -387,6 +397,7 @@ def build_activation_proposal(
                 "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
                 "builtin_context": context,
+                **({'announced_x':announced_x} if announced_x is not None else {}),
                 **waterbend_details,
                 **(
                     {
@@ -424,6 +435,14 @@ def _activation_choice_schema(
     ability: ActivatedAbility,
     hint: Mapping[str, Any],
 ) -> dict[str, Any] | None:
+    from ..selected_counter_costs import selected_counter_cost_choice_schema
+    counter_choice = selected_counter_cost_choice_schema(host, seat, source, ability)
+    if counter_choice is not None:
+        return counter_choice
+    from .source_counter_choices import source_counter_cost_choice_schema
+    source_counters = source_counter_cost_choice_schema(source, ability)
+    if source_counters is not None:
+        return source_counters
     if ability.mana_ability:
         from ...public_quantity_mana_runtime import public_quantity_mana_choice_schema
         quantity_choice = public_quantity_mana_choice_schema(host, seat, source, ability)
@@ -515,6 +534,12 @@ def build_activation_offer(
         if selected.target_schema is not None
         else program.target_schema if program is not None else None
     )
+    unbound_target_schema = target_schema
+    from ...activation_x import bind_activation_target_cardinality
+    try:
+        target_schema = bind_activation_target_cardinality(selected, target_schema, {}, hint=True)
+    except ValueError:
+        return ActivationProposalResult("unavailable", "invalid_announced_target_count")
     public_schema = None
     if target_schema is not None:
         public_schema = host._public_target_schema(
@@ -595,13 +620,23 @@ def build_activation_offer(
     )
     if selected.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
-        requirements=reduced_requirements(selected,legendary_creatures=host._legendary_creatures_controlled(seat))
+        from .x_costs import activation_requirements
+        requirements,_=activation_requirements(host,seat,source,selected)
         payment=activation_waterbend_plan(host,seat,source,selected,requirements,{},hint=True)
         if payment is None:return ActivationProposalResult('unpayable','waterbend_unpayable')
         choice_schema={**(choice_schema or {}),**payment[3]}
+    if selected.announced_x_symbols is not None:
+        choice_schema={**(choice_schema or {}),'x':{'type':'integer','label':'X','minimum':0,'default':0}}
+    if not selected.mana_cost_options:
+        from .pricing import activation_price_choice_schema
+        price_choices=activation_price_choice_schema(host,seat,source,selected)
+        if price_choices:choice_schema={**(choice_schema or {}),**price_choices}
     if choice_schema is not None:
         payload["choice_schema"] = choice_schema
     if public_schema is not None:
+        if isinstance(unbound_target_schema, Mapping) and 'count_parameter' in unbound_target_schema:
+            from ...target_cardinality import link_announced_public_bounds
+            public_schema = link_announced_public_bounds(public_schema, unbound_target_schema['count_parameter'])
         payload["target_schema"] = public_schema
     offer = ActionOffer(
         action_id=f"activate:{source.ref}:{selected.ability_id}",

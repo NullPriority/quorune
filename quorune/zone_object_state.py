@@ -55,9 +55,11 @@ def mark_multikicker_paid(card: CardInstance, context) -> None:
     card.annotations[KICKER_ANNOTATION] = True
 
 
-def stack_entry_cast_facts(card: CardInstance):
+def stack_entry_cast_facts(card: CardInstance, *, include_multikicker_result=False):
     value = card.annotations.get(PAID_ENTRY_COPY_FIELD)
     return {'cast_option': 'kicked' if card.annotations.get(KICKER_ANNOTATION) is True else None,
+        **({MULTIKICKER_FIELD: validate_multikicker_fact(card.annotations[MULTIKICKER_FIELD])}
+           if include_multikicker_result and card.zone == 'stack' and MULTIKICKER_FIELD in card.annotations else {}),
         'paid_entry_copy': validate_paid_entry_copy_fact(value)
         if card.zone == 'stack' and value is not None else None}
 

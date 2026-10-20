@@ -119,6 +119,7 @@ function selectedTargetPrice(field: ChoiceField, values: ChoiceValues): ChoiceFi
   const price = list(costs.prices).map(record).find((row) =>
     same(list(row.components).map(String).sort(), components)
     && same(list(row.modes).map(String).sort(), modes));
+  if (price?.maximum_x !== undefined && Number(values.x ?? 0) > Number(price.maximum_x)) return null;
   return price ?? null;
 }
 
@@ -129,6 +130,25 @@ export function selectedTargetCostLabel(field: ChoiceField, values: ChoiceValues
 }
 
 function resolveDependentField(field: ChoiceField, values: ChoiceValues): ChoiceField {
+  if (stringValue(field.control) === "targets") {
+    const schema = record(field.schema);
+    const groups = list(schema.groups).map((rawGroup) => {
+      const group = record(rawGroup);
+      const exact = stringValue(group.count_from);
+      const source = exact || stringValue(group.maximum_from);
+      if (!source) return group;
+      const count = Number(values[source] ?? 0);
+      if (!Number.isInteger(count) || count < 0) return group;
+      return { ...group, min: exact ? count : 0, max: count };
+    });
+    field = { ...field, schema: { ...schema, groups } };
+  }
+  const countFrom = stringValue(field.count_from);
+  if (countFrom) {
+    const count = Number(values[countFrom] ?? 0);
+    if (!Number.isInteger(count) || count < 0) return field;
+    field = { ...field, minimum: count, maximum: count, required: count > 0 };
+  }
   const source = stringValue(field.options_from_map);
   if (!source) return field;
   const requiredValue = stringValue(field.required_value);

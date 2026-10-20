@@ -32,7 +32,7 @@ def validate_resolution_result_children(effect, effects, otherwise, context):
 
     for children, mechanics in ((effects, effect['mechanic_ids']), (otherwise, effect.get('otherwise_mechanic_ids', ()))):
         for child in children:
-            if child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') == 3:
+            if child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') in {3,4}:
                 _self_replacement_apnap(child, context.actor, mechanics)
             elif child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') == 2:
                 from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities

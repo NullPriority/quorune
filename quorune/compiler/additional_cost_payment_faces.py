@@ -25,6 +25,10 @@ def compile_additional_cost_payment_face(*,record,face_id,face_name,oracle_text,
     gate=dependency_gate(mechanics=mechanics,effects=node.effects,target_schema=node.target_schema,cost_schema=node.cost,
         trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,capability_profile=capability_profile)
     added=[]
+    from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
+    if announced_additional_cost_dependencies(node.cost):
+        added.append(append_residual(residuals,kind='spell_payment_composition',text=oracle_text[node.span.start:node.span.end],span=node.span,
+            reason='Declared-X additional prices with payment keywords need a shared dependent payment plan',blockers=('declared-X payment-keyword composition',)))
     if gate.blockers:
         added.append(append_residual(residuals,kind='dependency_contract',text=oracle_text[node.span.start:node.span.end],span=node.span,
             reason='Additional price and payment-keyword composition requires its producer and result capabilities',blockers=gate.blockers))

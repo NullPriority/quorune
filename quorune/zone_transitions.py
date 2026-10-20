@@ -48,6 +48,7 @@ from .semantic_runtime import (
 from .semantic_runtime.explore import capture_explore_source_departure
 from .trigger_processing import enqueue_trigger_batch
 from .zone_object_state import reset_card_after_zone_change, stack_entry_cast_facts
+from .multikicker_result_amounts import needs_multikicker_entry_fact
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
@@ -513,7 +514,7 @@ class ZoneTransitionOwner:
             ),
             copy_snapshot=(token_copy_snapshot(self.host, card)
                            if semantic_events and card.zone == "battlefield" else None),
-            **stack_entry_cast_facts(card),
+            **stack_entry_cast_facts(card, include_multikicker_result=needs_multikicker_entry_fact(self.host, card)),
         )
 
     def _commit_move(
@@ -755,6 +756,7 @@ class ZoneTransitionOwner:
                 ),
                 cast_option=departure.cast_option,
                 paid_entry_copy=departure.paid_entry_copy,
+                multikicker_paid=departure.multikicker_paid,
                 trigger_batch=trigger_batch,
             )
         if not defer_control_sync:
@@ -935,6 +937,7 @@ class ZoneTransitionOwner:
             read_ahead_chapter=read_ahead_chapter,
             cast_option=departure.cast_option if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             paid_entry_copy=departure.paid_entry_copy if departure.origin == 'stack' and card.zone == 'battlefield' else None,
+            multikicker_paid=departure.multikicker_paid if departure.origin == 'stack' and card.zone == 'battlefield' else None,
         )
 
     def move_cards_simultaneously(
@@ -1047,6 +1050,7 @@ class ZoneTransitionOwner:
                 origin_attached_to=departure.attached_to,
                 cast_option=departure.cast_option,
                 paid_entry_copy=departure.paid_entry_copy,
+                multikicker_paid=departure.multikicker_paid,
                 departure_sources=sources.sources,
                 departure_source_zones=sources.source_zones,
                 departure_source_characteristics=(

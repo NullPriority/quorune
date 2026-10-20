@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from collections.abc import Mapping
 from dataclasses import replace
 import json
 import tempfile
@@ -17,6 +18,7 @@ from quorune.compiler.public_state_queries import fixed_public_state_condition
 from quorune.compiler.public_condition_surfaces import fixed_condition_subject_extension
 from quorune.oracle_ir import compile_oracle_card
 from quorune.continuous_conditions import FixedPublicStateConditionSpec
+from quorune.object_predicate import ObjectQuerySpec
 from test_granted_skulk import record
 from scripts.build_test_database import build_fixture_database
 import test_spree_mode_costs as spree
@@ -63,14 +65,41 @@ class PublicConditionSurfaceCompilerTests(unittest.TestCase):
         node,=ir.faces[0].nodes
         self.assertEqual(text,node.text)
         self.assertEqual((0,len(text)),(node.span.start,node.span.end))
+        method='test_nonbasic_source_keeps_its_exact_basic_supertype_exclusion'
+        # The generic quantity owner retains the complete qualifier when the
+        # narrower surface extension is absent.
         with patch('quorune.compiler.public_condition_surfaces.fixed_condition_subject_extension',return_value=None):
-            self.assertNotEqual('exact',compile_oracle_card(record(text,'Creature'),
-                capability_registry=load_default_capability_registry()).status)
+            getattr(type(self)(method),method)()
+        original=ObjectQuerySpec.to_dict
+        def omitted(query,*args,**kwargs):
+            payload=original(query,*args,**kwargs)
+            if 'basic' in query.excluded_supertypes:
+                payload={**payload,'excluded_supertypes':[]}
+            return payload
+        with patch.object(ObjectQuerySpec,'to_dict',new=omitted):
+            with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
         for bad in (text.replace('nonbasic land','nonbasic creature'),
                     text.replace('nonbasic land','stickered permanent'),
                     text.replace('+1/+2','+X/+X')):
             self.assertNotEqual('exact',compile_oracle_card(record(bad,'Creature'),
                 capability_registry=load_default_capability_registry()).status)
+
+    def test_nonbasic_source_keeps_its_exact_basic_supertype_exclusion(self):
+        text='This creature gets +1/+2 as long as an opponent controls a nonbasic land.'
+        ir=compile_oracle_card(record(text,'Creature'),capability_registry=load_default_capability_registry())
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        queries=[]
+        def visit(value):
+            if isinstance(value,Mapping):
+                if tuple(value.get('types_all',()))==('land',) and 'excluded_supertypes' in value:
+                    queries.append(value)
+                for child in value.values():visit(child)
+            elif isinstance(value,(list,tuple)):
+                for child in value:visit(child)
+        for face in ir.faces:
+            for node in face.nodes:visit(node.handlers)
+        self.assertTrue(queries)
+        self.assertTrue(all(tuple(query['excluded_supertypes'])==('basic',) for query in queries))
 
 
 class PublicConditionSurfaceRuntimeTests(unittest.TestCase):
@@ -276,18 +305,16 @@ class PublicConditionSurfaceRuntimeTests(unittest.TestCase):
         self.replay(session,load=True)
 
     def test_dropping_basic_supertype_exclusion_is_killed_by_the_actual_native_control(self):
-        original=fixed_condition_subject_extension
-
-        def remove_exclusion(text):
-            parsed=original(text)
-            if parsed is not None and parsed[0].excluded_supertypes:
-                return replace(parsed[0],excluded_supertypes=()),parsed[1]
-            return parsed
-
-        with patch('quorune.compiler.public_condition_surfaces.fixed_condition_subject_extension',
-                side_effect=remove_exclusion):
+        original=ObjectQuerySpec.to_dict
+        def remove_exclusion(query,*args,**kwargs):
+            payload=original(query,*args,**kwargs)
+            if 'basic' in query.excluded_supertypes:
+                payload={**payload,'excluded_supertypes':[]}
+            return payload
+        method='test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types'
+        with patch.object(ObjectQuerySpec,'to_dict',new=remove_exclusion):
             with self.assertRaises(AssertionError):
-                self.test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types()
+                getattr(type(self)(method),method)()
 
 
 if __name__ == '__main__':

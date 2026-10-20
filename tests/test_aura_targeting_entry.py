@@ -270,12 +270,12 @@ class SimpleEnchantModelTests(unittest.TestCase):
 
     def test_dynamic_and_malformed_typed_enchant_forms_fail_closed(self):
         for line in (
-            "Enchant creature without flying",
+            "Enchant creature without flying or vigilance",
             "Enchant creature with another Aura attached to it",
             "Enchant nonbasic land",
             "Enchant modified creature",
-            "Enchant creature with power 3 or less",
-            "Enchant creature with mana value 2 or less",
+            "Enchant creature with power X or less",
+            "Enchant creature with mana value less than this creature's power",
         ):
             with self.subTest(line=line):
                 self.assertIsNone(parse_enchant_line(line))
@@ -443,8 +443,8 @@ class SimpleEnchantModelTests(unittest.TestCase):
                 self.assertFalse(qualified.faces[0].residuals)
 
         for restriction in (
-            "creature without flying",
-            "creature with power 3 or less",
+            "creature without flying or vigilance",
+            "creature with power X or less",
             "creature with another Aura attached to it",
         ):
             with self.subTest(unsupported=restriction):

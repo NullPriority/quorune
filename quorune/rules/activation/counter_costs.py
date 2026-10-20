@@ -26,12 +26,22 @@ def plan_source_counter_removal_cost(
     host: SourceCounterActivationCostHost,
     source: Any,
     ability: ActivatedAbility,
+    *, response=None,
 ):
     """Plan the same identity-pinned exact removal for offers and payment."""
 
     cost = ability.source_counter_removal_cost
     if cost is None:
         return None
+    if cost.schema_version == 2:
+        from .source_counter_choices import selected_source_counter_removals
+        try:
+            selected = selected_source_counter_removals(source, cost, response)
+            return plan_counter_removals(host, tuple(CounterRemoval(object_id=source.object_id,
+                counter_name=name, amount=amount, expected_zone='battlefield',
+                expected_logical_object_id=source.logical_object_id) for name, amount in selected))
+        except ValueError as exc:
+            raise SourceCounterActivationCostError(str(exc)) from exc
     try:
         return plan_counter_removals(
             host,
@@ -61,9 +71,9 @@ def preview_source_counter_removal_cost(host, source, ability):
     return replace(source, counters=counters)
 
 
-def commit_source_counter_removal_cost(host, source, ability) -> None:
+def commit_source_counter_removal_cost(host, source, ability, *, response=None) -> None:
     """Pay the exact plan used by the read-only source-counter preview."""
-    plan = plan_source_counter_removal_cost(host, source, ability)
+    plan = plan_source_counter_removal_cost(host, source, ability, response=response)
     if plan is not None:
         try:
             commit_counter_removals(host, plan)

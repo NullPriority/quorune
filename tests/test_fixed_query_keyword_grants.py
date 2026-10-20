@@ -373,7 +373,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 self.assertIsNotNone(compiled)
                 self.assertEqual(counter,compiled[1]['modifier']['source_counter'])
         for text in ('Each creature you control gets +1/+1 for each +1/+1 counter on it.',
-                     'Creatures you control get +1/+1 for each counter on this creature.',
+                     'Creatures you control get +1/+1 for each counter on another creature.',
                      'Creatures you control get +1/+1 for each unity counter on target enchantment.'):
             self.assertIsNone(fixed_power_toughness_anthem_handler(text))
 

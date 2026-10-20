@@ -20,7 +20,7 @@ from ..additional_cost_vocabulary import (
 from .reveal_additional_cost import FixedRevealAdditionalCost,REVEAL_ADDITIONAL_COST_CAPABILITY,fixed_reveal_additional_cost
 from .tap_additional_cost import FixedTapAdditionalCost,TAP_ADDITIONAL_COST_CAPABILITY,fixed_tap_additional_cost
 from .casting_additional_costs import (
-    AdditionalCostError,
+    AdditionalCostError, announced_cost_x, ANNOUNCED_X_EXILE_CAPABILITY, ANNOUNCED_X_LIFE_CAPABILITY,
     FixedZoneChangeAdditionalCost,
     fixed_zone_change_additional_cost,
 )
@@ -80,6 +80,50 @@ class FixedLifePaymentAdditionalCost:
             "kind": self.kind,
             "amount": self.amount,
         }
+
+
+@dataclass(frozen=True, slots=True)
+class AnnouncedXLifeAdditionalCost:
+    schema_version: int = 1
+    kind: str = 'announced_x_life'
+    parameter: str = 'x'
+
+    def __post_init__(self):
+        if type(self.schema_version) is not int or self.schema_version != 1 or self.kind != 'announced_x_life' or self.parameter != 'x':
+            raise AdditionalCostError('Declared life costs require the closed X parameter')
+
+    def amount_for(self, value):
+        return announced_cost_x(value)
+
+    def to_descriptor(self):
+        return {'schema_version': 1, 'kind': self.kind, 'parameter': self.parameter}
+
+    @classmethod
+    def from_descriptor(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {'schema_version', 'kind', 'parameter'}:
+            raise AdditionalCostError('Declared life additional-cost fields are closed')
+        return cls(**dict(value))
+
+
+def announced_x_life_additional_cost(value):
+    return AnnouncedXLifeAdditionalCost.from_descriptor(value) if value.get('kind') == 'announced_x_life' else None
+
+
+def announced_additional_cost_dependencies(cost_schema):
+    """Retain runtime authority for typed declaration-dependent cost prices."""
+    if not isinstance(cost_schema, Mapping):
+        return ()
+    required = set()
+    for raw in cost_schema.get('additional_costs', ()):
+        if not isinstance(raw, Mapping):
+            continue
+        if raw.get('kind') == 'announced_x_life':
+            AnnouncedXLifeAdditionalCost.from_descriptor(raw)
+            required.update((ANNOUNCED_X_LIFE_CAPABILITY, 'casting.additional_cost.fixed_life_payment'))
+        if raw.get('kind') == 'zone_change' and raw.get('schema_version') == 3:
+            FixedZoneChangeAdditionalCost.from_descriptor(raw)
+            required.update((ANNOUNCED_X_EXILE_CAPABILITY, 'casting.additional_cost.zone_change.fixed_exile'))
+    return tuple(sorted(required))
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,6 +213,8 @@ def fixed_additional_cost_leaf(
     try:
         zone_change = fixed_zone_change_additional_cost(value)
         if zone_change is not None:
+            if zone_change.count_parameter is not None:
+                raise AdditionalCostError("Declared-X alternative additional costs need their own composition")
             return zone_change
     except AdditionalCostError:
         raise
@@ -299,6 +345,12 @@ def fixed_life_payment_additional_cost_node_capabilities(
     raw_costs = cost_schema.get("additional_costs")
     if not isinstance(raw_costs, list) or len(raw_costs) != 1:
         return ()
+    if isinstance(raw_costs[0], Mapping) and raw_costs[0].get('kind') == 'announced_x_life':
+        try:
+            AnnouncedXLifeAdditionalCost.from_descriptor(raw_costs[0])
+        except (AdditionalCostError, TypeError):
+            return ()
+        return (ANNOUNCED_X_LIFE_CAPABILITY, 'casting.additional_cost.fixed_life_payment')
     try:
         FixedLifePaymentAdditionalCost.from_descriptor(raw_costs[0])
     except (AdditionalCostError, TypeError):

@@ -1572,6 +1572,22 @@ def _declaration_revises_unlanded_content_entry(
     )
 
 
+def _declaration_upgrades_legacy_measurement(
+    declaration: Mapping[str, Any], entry: Mapping[str, Any]
+) -> bool:
+    """Allow a measured forecast for the identical unmerged legacy identity."""
+    bundle = entry.get("bundle_id")
+    return bool(
+        declaration.get("outcome_kind") == "harvest"
+        and isinstance(bundle, str)
+        and bundle.startswith("bundle:")
+        and "measurement_id" not in entry
+        and entry.get("expected_complete_card_gain_basis") == "authoritative_source"
+        and declaration.get("measurement_id") == "measurement:" + bundle.split(":", 1)[1]
+        and _declaration_matches_content_entry({**declaration, "measurement_id": None}, entry)
+    )
+
+
 def _replace_unlanded_content_entry(
     entry: Mapping[str, Any],
     *,
@@ -1923,9 +1939,7 @@ def build_harvest_outcome_history(
             validated_declaration["transition_id"],
         )
         and not _semantic_receipts_match(
-            latest,
-            current_receipt,
-            repository=repository,
+            latest, current_receipt, repository=repository,
         )
     ):
         if validated_declaration["compiler_version"] != current_receipt[
@@ -1963,10 +1977,9 @@ def build_harvest_outcome_history(
             repository,
             str(entries[-1]["transition_id"]),
         )
-        and not _semantic_receipts_match(
-            latest,
-            current_receipt,
-            repository=repository,
+        and (
+            not _semantic_receipts_match(latest, current_receipt, repository=repository)
+            or _declaration_upgrades_legacy_measurement(validated_declaration, entries[-1])
         )
     ):
         if validated_declaration["compiler_version"] != current_receipt[

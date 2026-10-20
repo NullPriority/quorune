@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Iterable
+from collections.abc import Mapping
 import re
 
 from ..characteristic_evaluation import type_parts
@@ -176,14 +177,17 @@ def closed_static_or_replacement_node(
         source_name=source_name,
     )
     if declaration_grant is not None:
+        numeric_permission = (isinstance(declaration_grant[1], Mapping)
+            and declaration_grant[1].get('handler_id') == 'permission.attack.defender-current-numeric.v1')
         return runtime_handler_node(
             node_id=node_id,
             line=line,
             span=span,
             compiled=declaration_grant,
             kind="static_ability",
-            event="characteristics.evaluate",
-            runtime_coverage=("fixed_static_declaration_grant",),
+            event=(declaration_grant[1]['event'] if numeric_permission else "characteristics.evaluate"),
+            runtime_coverage=("fixed_static_declaration_grant", *(
+                ('current_ability_fragment_required',) if numeric_permission else ())),
             dependency_reason=(
                 "queried declaration rules require their continuous ability "
                 "grant and combat declaration capabilities"

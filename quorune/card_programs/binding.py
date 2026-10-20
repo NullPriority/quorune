@@ -9,6 +9,7 @@ from ..semantic_runtime import (
     runtime_component_registry_fingerprint,
 )
 from ..util import stable_json
+from .runtime_requirements import program_dynamic_runtime_requirements
 from ..semantic_runtime.activated_abilities import (
     is_structural_activated_ability_catalog_program,
     activated_abilities_from_descriptors,
@@ -33,8 +34,7 @@ def bind_semantic_program_runtime(
     }
     semantic_identities: list[dict[str, Any]] = []
     component_identities: list[dict[str, Any]] = []
-    required: set[str] = set()
-    blockers: set[str] = set()
+    required,blockers=program_dynamic_runtime_requirements(program)
     unregistered_operations: set[str] = set()
     if getattr(program, "trigger_limit", None) is not None:
         from ..rules.trigger_limits import validate_program_trigger_limit, TRIGGER_ONCE_PER_TURN_CAPABILITY
@@ -76,6 +76,9 @@ def bind_semantic_program_runtime(
         if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('power_up') is not None:
             from ..power_up_model import POWER_UP_CAPABILITY
             required.add(POWER_UP_CAPABILITY)
+        if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('announced_x_symbols') is not None:
+            from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY
+            required.add(ANNOUNCED_ACTIVATION_X_CAPABILITY)
         if descriptor.get("schema_version") != registered["schema_version"]:
             blockers.add(f"runtime_handler:schema_mismatch:{handler_id}")
         if descriptor.get("event") != registered["event"]:

@@ -44,6 +44,7 @@ class CharacteristicQuantityReduction(str, Enum):
     DISTINCT_COLORS = "distinct_colors"
     MAXIMUM_MANA_VALUE = "maximum_mana_value"
     TOTAL_MANA_VALUE = "total_mana_value"
+    TOTAL_COUNTERS = "total_counters"
     SUM_QUANTITIES = "sum_quantities"
     COLORED_MANA_SYMBOLS = "colored_mana_symbols"
     DEVOTION = "devotion"
@@ -140,6 +141,11 @@ class CharacteristicQuantitySpec:
         object.__setattr__(self, "terms", tuple(self.terms))
 
     def _validate_source_counter(self) -> None:
+        if self.reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS:
+            if (self.schema_version != 2 or self.counter_name is not None or self.query is not None
+                    or self.exclude_source or self.exclude_attached_object):
+                raise CharacteristicFragmentError('Source total counters require their explicit public reduction')
+            return
         if (
             type(self.counter_name) is not str or not self.counter_name.strip()
             or self.query is not None or self.exclude_source
@@ -154,6 +160,9 @@ class CharacteristicQuantitySpec:
         object.__setattr__(self, "counter_name", counter_name)
 
     def _validate_object_query(self) -> None:
+        if self.reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS and (
+                not isinstance(self.query, ObjectQuerySpec) or self.query.zones != ('battlefield',)):
+            raise CharacteristicFragmentError('Total counters require current public battlefield objects')
         if self.counter_name is not None or not isinstance(
             self.query, ObjectQuerySpec
         ):
@@ -201,6 +210,7 @@ class CharacteristicQuantitySpec:
             or query.exclude_ref is not None
             or query.known_to_actor is not None
             or query.keywords_all
+            or query.colors_none
             or query.keywords_none
             or query.numeric_characteristic is not None
             or query.include_phased_out

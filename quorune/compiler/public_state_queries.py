@@ -208,7 +208,7 @@ def _controller_relation_suffix(
 
 def _public_query_qualifiers(
     subject: str,
-) -> tuple[str, str, bool, str | None, dict[str, Any]] | None:
+) -> tuple[str, str, bool, dict[str, tuple[str, ...]], dict[str, Any]] | None:
     text = " ".join(subject.strip().split())
     prefix = re.match(
         r"^(?:(?P<each>Each) )?(?P<other>Other )?",
@@ -224,22 +224,26 @@ def _public_query_qualifiers(
     if stripped is None:
         return None
     text, relation = stripped
+    total_counter = re.fullmatch(r'(?P<body>.+?) with (?:a|one or more) counters? on (?:it|them)', text, re.I)
+    if total_counter is not None:
+        text = total_counter['body']
     ability_qualifier = re.fullmatch(
-        r"(?P<body>.+?) with (?P<ability>[A-Za-z][A-Za-z ]+)",
+        r"(?P<body>.+?) (?P<relation>with|without) (?P<ability>[A-Za-z][A-Za-z ]+)",
         text,
         re.IGNORECASE,
     )
-    required_ability = None
+    keyword_fields: dict[str, tuple[str, ...]] = {}
     if ability_qualifier is not None:
         candidate = " ".join(
             ability_qualifier.group("ability").casefold().split()
         )
         if candidate.title() not in FIXED_CHARACTERISTIC_KEYWORDS:
             return None
-        required_ability = candidate
+        field = "keywords_none" if ability_qualifier["relation"].casefold() == "without" else "keywords_all"
+        keyword_fields[field] = (candidate,)
         text = ability_qualifier.group("body")
 
-    state_fields: dict[str, Any] = {}
+    state_fields: dict[str, Any] = {'minimum_total_counter_count': 1} if total_counter is not None else {}
     state_match = re.fullmatch(
         r"(?P<body>.+?) that are (?P<state>enchanted|equipped|modified)",
         text,
@@ -275,12 +279,32 @@ def _public_query_qualifiers(
     if stripped is None:
         return None
     text, relation = stripped
-    return text, relation, exclude_source, required_ability, state_fields
+    return text, relation, exclude_source, keyword_fields, state_fields
+
+
+def _negative_supertype_fields(text: str) -> dict[str, Any] | None:
+    quality = {
+        'nonlegendary creature':('creature', 'legendary'),
+        'nonlegendary creatures':('creature', 'legendary'),
+        'nonbasic land':('land', 'basic'),
+        'nonbasic lands':('land', 'basic'),
+    }.get(' '.join(text.casefold().split()))
+    if quality is None:
+        return None
+    return {'types_all':(quality[0],), 'excluded_supertypes':(quality[1],)}
 
 
 def _public_query_primary_fields(text: str) -> dict[str, Any] | None:
     fields: dict[str, Any] = {"zones": ("battlefield",)}
     normalized = text.casefold()
+    negative_color = re.fullmatch(r'non(?P<color>white|blue|black|red|green) creatures?', normalized)
+    if negative_color is not None:
+        return {**fields, 'types_all': ('creature',),
+            'colors_none': (_COLOR_SYMBOLS[negative_color['color']],)}
+
+    negative = _negative_supertype_fields(normalized)
+    if negative is not None:
+        return {**fields, **negative}
     basic_land_types = {
         "plains": "plains",
         "islands": "island",
@@ -488,7 +512,7 @@ def _extended_public_battlefield_query(
     qualified = _public_query_qualifiers(subject)
     if qualified is None:
         return None
-    text, relation, exclude_source, required_ability, state_fields = qualified
+    text, relation, exclude_source, keyword_fields, state_fields = qualified
     parsed = _public_query_characteristic_fields(text)
     if parsed is None:
         return None
@@ -499,10 +523,10 @@ def _extended_public_battlefield_query(
         relation = relation_override
     if state_fields:
         fields["state_predicate"] = PermanentStatePredicateSpec(**state_fields)
-    if required_ability is not None:
+    if keyword_fields:
         if "creature" not in fields.get("types_all", ()):
             return None
-        fields["keywords_all"] = (required_ability,)
+        fields.update(keyword_fields)
     return relation, ObjectQuerySpec(**fields), exclude_source
 
 
@@ -714,6 +738,7 @@ def fixed_battlefield_query_subject(
 
 def fixed_characteristic_battlefield_query_subject(
     subject: str,
+    *, allow_negative_keyword: bool = False,
 ) -> tuple[str, ObjectQuerySpec, bool] | None:
     """Return the one shared live query admitted by layer-6 and layer-7c owners."""
 
@@ -735,6 +760,7 @@ def fixed_characteristic_battlefield_query_subject(
         or predicate.tapped is not None
         or predicate.include_phased_out
         or predicate.known_to_actor is not None
+        or (predicate.keywords_none and not allow_negative_keyword)
     ):
         return None
     return parsed
@@ -793,7 +819,7 @@ def fixed_power_toughness_battlefield_query(
     """Apply the closed layer-7c subject policy before parsing its query."""
 
     del oracle_line
-    parsed = fixed_characteristic_battlefield_query_subject(subject)
+    parsed = fixed_characteristic_battlefield_query_subject(subject, allow_negative_keyword=True)
     if parsed is None or not (
         "creature" in parsed[1].types_all
         or (not parsed[1].types_all and (parsed[1].subtypes_all or parsed[1].subtypes_any))
@@ -927,7 +953,7 @@ def _controller_query_count_condition(
     if parsed is None:
         return None
     query, exclude_source = parsed
-    if query.keywords_all:
+    if query.keywords_all or query.keywords_none:
         # Dynamic set counts stop at the cycle-safe layer-5 boundary.
         return None
     return _query_count_condition(
@@ -1394,6 +1420,21 @@ def _fixed_public_state_condition(
     normalized = normalize_public_condition_surface(text.strip().rstrip("."))
     if normalized.casefold() in {"it's your turn","it’s your turn"}:
         normalized='your turn'
+    total = re.fullmatch(r'there are (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+) or more counters among creatures you control', normalized, re.I)
+    if total is not None:
+        from ..characteristic_fragments import CharacteristicQuantityReduction
+        amount = _fixed_condition_amount(total['amount'])
+        if amount is None or amount <= 0:
+            return None
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+            amount=amount, schema_version=2, quantity=CharacteristicQuantitySpec(
+                scope=CharacteristicQuantityScope.CONTROLLER_ZONE, schema_version=2,
+                query=ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)),
+                reduction=CharacteristicQuantityReduction.TOTAL_COUNTERS))
+    if re.fullmatch(rf"{_condition_source_subject_pattern(source_name)} has (?:a|one or more) counters? on it", normalized, re.I):
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+            schema_version=2, predicate=ObjectQuerySpec(zones=('battlefield',),
+                state_predicate=PermanentStatePredicateSpec(minimum_total_counter_count=1)))
     numeric = re.fullmatch(r'you control a creature with (?P<stat>power|toughness) (?P<amount>[0-9]+) or (?P<bound>greater|less)', normalized, re.I)
     if numeric is not None:
         return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,

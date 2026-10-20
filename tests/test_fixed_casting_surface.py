@@ -182,7 +182,7 @@ class FixedCastingSurfaceCompilerTests(unittest.TestCase):
             "The first historic spell you cast each turn costs {1} less to cast.",
             "Spells of the chosen type cost {1} more to cast.",
             "Creature spells cost {1} less to cast for each creature you control.",
-            "This spell costs {2} less to cast if it targets a creature.",
+            "This spell costs {2} less to cast if it targets a creature with power X or greater.",
         )
         for index, text in enumerate(cases, start=1):
             with self.subTest(text=text):

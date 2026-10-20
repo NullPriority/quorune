@@ -1774,97 +1774,267 @@
         },
         {
           "bundle_id": "bundle:copiable-token-production-recipes",
-          "member_family_ids": ["activated_effect:create-token", "effect_clause:create-token", "event_binding:normalized-event-binding", "keyword_dependency:populate"],
-          "canonical_owner_ids": ["capability:token.creation.fixed_copy", "component:quorune.compiler.token_copy_templates.token_copy_recipe_template", "component:quorune.token_copy_references.pin_copy_characteristic_departures", "component:quorune.token_creation.create_tokens"],
-          "source_contexts": ["activated", "spell", "triggered"],
-          "normalized_literal_parameters": ["copiable-fixed-exceptions", "fixed-quantity", "independent-aftercare", "populate-choice", "source-target-event-incarnation"],
-          "shared_dependencies": ["target.revalidate_resolution", "trigger.placement.apnap", "zone.change.destination_replacement"],
+          "member_family_ids": [
+            "activated_effect:create-token",
+            "effect_clause:create-token",
+            "event_binding:normalized-event-binding",
+            "keyword_dependency:populate"
+          ],
+          "canonical_owner_ids": [
+            "capability:token.creation.fixed_copy",
+            "component:quorune.compiler.token_copy_templates.token_copy_recipe_template",
+            "component:quorune.token_copy_references.pin_copy_characteristic_departures",
+            "component:quorune.token_creation.create_tokens"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "copiable-fixed-exceptions",
+            "fixed-quantity",
+            "independent-aftercare",
+            "populate-choice",
+            "source-target-event-incarnation"
+          ],
+          "shared_dependencies": [
+            "target.revalidate_resolution",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
           "shared_grammar": "Fixed token-copy recipes and normal Populate through current-or-immediate-LKI references, typed copiable exceptions and the existing choice, creation and delayed zone owners.",
           "estimated_implementation_hours": 5,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "One copy recipe boundary serves spells, activations and normalized public triggers without another copy or replacement engine.",
-          "explicit_exclusions": ["attacking copies, variable or optional quantities", "linked, hidden, graveyard and spell copy sources", "unavailable characteristic boundaries", "unrepresented copy exceptions and independent unsupported siblings"],
+          "explicit_exclusions": [
+            "attacking copies, variable or optional quantities",
+            "linked, hidden, graveyard and spell copy sources",
+            "unavailable characteristic boundaries",
+            "unrepresented copy exceptions and independent unsupported siblings"
+          ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "copiable-token-recipes-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:public-collection-quantity-reductions",
-          "member_family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "quantity_expression:dynamic-quantity"],
-          "canonical_owner_ids": ["capability:continuous.characteristics.query_count_modifier", "capability:continuous.characteristics.query_power_toughness_definition", "capability:quantity_expression.public_query_effect_amount", "component:quorune.compiler.collection_quantity_templates.collection_quantity", "component:quorune.dynamic_characteristics.query_characteristic_count", "component:quorune.public_quantity_reductions.reduce_public_quantity"],
-          "source_contexts": ["activated", "spell", "static", "triggered"],
-          "normalized_literal_parameters": ["card-domain", "closed-leaf-sum", "current-layer-five-membership", "fixed-affine-value", "independent-characteristic-offset", "public-collection-reduction"],
-          "shared_dependencies": ["continuous.characteristics.query_count_modifier", "continuous.characteristics.query_power_toughness_definition", "quantity_expression.public_query_effect_amount"],
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "quantity_expression:dynamic-quantity"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.query_count_modifier",
+            "capability:continuous.characteristics.query_power_toughness_definition",
+            "capability:quantity_expression.public_query_effect_amount",
+            "component:quorune.compiler.collection_quantity_templates.collection_quantity",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.public_quantity_reductions.reduce_public_quantity"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "card-domain",
+            "closed-leaf-sum",
+            "current-layer-five-membership",
+            "fixed-affine-value",
+            "independent-characteristic-offset",
+            "public-collection-reduction"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.query_count_modifier",
+            "continuous.characteristics.query_power_toughness_definition",
+            "quantity_expression.public_query_effect_amount"
+          ],
           "shared_grammar": "Closed distinct basic-land-type, graveyard card-type, color, mana-value and colored-mana-symbol quantities with fixed affine values or two independent public leaf counts, shared by existing static and fixed-result owners.",
           "estimated_implementation_hours": 5,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "One typed quantity boundary fans into characteristic definitions, self modifiers, draw, life, damage and fixed-token results without another query or mutation registry.",
-          "explicit_exclusions": ["Devotion and unavailable characteristic boundaries", "hidden characteristic collections and higher-layer aggregates", "independently unsupported carriers, results or siblings", "negative, chosen, linked, nested or open arithmetic"],
+          "explicit_exclusions": [
+            "Devotion and unavailable characteristic boundaries",
+            "hidden characteristic collections and higher-layer aggregates",
+            "independently unsupported carriers, results or siblings",
+            "negative, chosen, linked, nested or open arithmetic"
+          ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-collection-quantity-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:normalized-tap-state-event-closure",
-          "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
-          "canonical_owner_ids": ["capability:trigger.event.normalized_public_action", "component:quorune.compiler.tap_state_event_bindings.tap_state_event_binding_spec", "component:quorune.tap_state.dispatch_tap_state_occurrence"],
-          "source_contexts": ["triggered"],
-          "normalized_literal_parameters": ["attack-declaration-cause", "current-attachment", "event-controller", "source-exclusion", "transition-kind"],
-          "shared_dependencies": ["continuous.ability.fixed_query_grant", "trigger.placement.apnap"],
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.normalized_public_action",
+            "component:quorune.compiler.tap_state_event_bindings.tap_state_event_binding_spec",
+            "component:quorune.tap_state.dispatch_tap_state_occurrence"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "attack-declaration-cause",
+            "current-attachment",
+            "event-controller",
+            "source-exclusion",
+            "transition-kind"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_grant",
+            "trigger.placement.apnap"
+          ],
           "shared_grammar": "closed source, attachment, and public-subject tap or untap transitions composed with existing exact result bodies and sealed nontargeted event-controller results",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "The canonical transition serves mana, activation and casting costs, attack declarations, untap steps, and simultaneous public tap-state instructions without a second trigger or mutation owner.",
-          "explicit_exclusions": ["first-time and once-per-turn qualifications", "objects entering already tapped or untapped", "unsupported linked or dynamic bodies and siblings", "unsupported numeric or hidden subject predicates"],
+          "explicit_exclusions": [
+            "first-time and once-per-turn qualifications",
+            "objects entering already tapped or untapped",
+            "unsupported linked or dynamic bodies and siblings",
+            "unsupported numeric or hidden subject predicates"
+          ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "normalized-tap-state-event-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:typed-scalar-effect-quantities",
-          "member_family_ids": ["activated_effect:life-change", "effect_clause:life-change", "effect_clause:ordered-effect-composition", "event_binding:normalized-event-binding"],
-          "canonical_owner_ids": ["capability:quantity_expression.scalar_effect_amount", "component:quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template", "component:quorune.scalar_effect_amounts.resolve_scalar_effect_amount", "component:quorune.zone_transitions.ZoneTransitionOwner.pin_characteristic_departures"],
-          "source_contexts": ["activated", "spell", "triggered"],
-          "normalized_literal_parameters": ["committed-event-amount", "explicit-reference-origin", "instruction-scoped-declaration", "resolution-current-or-departure-lki"],
-          "shared_dependencies": ["target.revalidate_resolution", "trigger.placement.apnap", "zone.change.destination_replacement"],
+          "member_family_ids": [
+            "activated_effect:life-change",
+            "effect_clause:life-change",
+            "effect_clause:ordered-effect-composition",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:quantity_expression.scalar_effect_amount",
+            "component:quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template",
+            "component:quorune.scalar_effect_amounts.resolve_scalar_effect_amount",
+            "component:quorune.zone_transitions.ZoneTransitionOwner.pin_characteristic_departures"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "committed-event-amount",
+            "explicit-reference-origin",
+            "instruction-scoped-declaration",
+            "resolution-current-or-departure-lki"
+          ],
+          "shared_dependencies": [
+            "target.revalidate_resolution",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
           "shared_grammar": "complete scalar characteristic, committed-event and represented current-turn definitions projected only onto existing fixed numeric result slots with unchanged targets and owners",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "One scalar boundary serves source, target and event references across spell, activated and triggered result families without another query, event or mutation registry.",
-          "explicit_exclusions": ["X-dependent costs, targets or cardinalities", "ambiguous and optional target references", "chosen facts, extrema, division and open arithmetic", "nested declaration scopes and independently unsupported bodies or siblings", "unavailable characteristics or history"],
+          "explicit_exclusions": [
+            "X-dependent costs, targets or cardinalities",
+            "ambiguous and optional target references",
+            "chosen facts, extrema, division and open arithmetic",
+            "nested declaration scopes and independently unsupported bodies or siblings",
+            "unavailable characteristics or history"
+          ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "typed-scalar-effect-amount-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:linked-exile-return-lifecycle",
-          "member_family_ids": ["activated_effect:exile", "effect_clause:exile", "effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
-          "canonical_owner_ids": ["capability:zone.linked_exile_return.fixed", "component:quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template", "component:quorune.linked_exile_return.resolve_linked_exile_return", "component:quorune.trigger_processing.schedule_delayed_trigger", "component:quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-          "source_contexts": ["activated", "modal", "spell", "triggered"],
-          "normalized_literal_parameters": ["committed-exiled-incarnation", "fixed-owner-or-resolver-controller", "immediate-or-next-end-step"],
-          "shared_dependencies": ["target.revalidate_resolution", "trigger.placement.apnap", "zone.change.destination_replacement"],
+          "member_family_ids": [
+            "activated_effect:exile",
+            "effect_clause:exile",
+            "effect_clause:ordered-effect-composition",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:zone.linked_exile_return.fixed",
+            "component:quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template",
+            "component:quorune.linked_exile_return.resolve_linked_exile_return",
+            "component:quorune.trigger_processing.schedule_delayed_trigger",
+            "component:quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "committed-exiled-incarnation",
+            "fixed-owner-or-resolver-controller",
+            "immediate-or-next-end-step"
+          ],
+          "shared_dependencies": [
+            "target.revalidate_resolution",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
           "shared_grammar": "one source or homogeneous target-set exile followed by identity-pinned immediate or next-end-step return through canonical zone, replacement, entry and delayed-trigger owners",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "The same tracked two-zone lifecycle closes spells, activations, entry/action triggers and modal carriers without inferring identity from a reused physical card or final zone.",
-          "explicit_exclusions": ["conditional outcomes, optional-return, payment and attachment restoration riders", "linked source-departure banishment", "transformed and face-down returns", "unrepresented entry, target, event, cost and sibling grammar"],
+          "explicit_exclusions": [
+            "conditional outcomes, optional-return, payment and attachment restoration riders",
+            "linked source-departure banishment",
+            "transformed and face-down returns",
+            "unrepresented entry, target, event, cost and sibling grammar"
+          ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "linked-exile-return-existing-owner-v2"
         },
         {
           "bundle_id": "bundle:public-history-condition-closure",
-          "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
-          "canonical_owner_ids": ["capability:continuous.characteristics.fixed_public_state", "capability:trigger.condition.fixed_public_state", "component:quorune.card_programs.runtime.fixed_public_state_condition_matches", "component:quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "component:quorune.turn_history.current_turn_history_events", "component:quorune.zone_trigger_processing.record_zone_change_history"],
-          "source_contexts": ["static", "triggered"],
-          "normalized_literal_parameters": ["event-time-actor-and-incarnation", "fixed-life-total-threshold", "locked-trigger-controller", "versioned-departure-history"],
-          "shared_dependencies": ["continuous.characteristics.fixed_public_state", "trigger.condition.fixed_public_state", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.fixed_public_state",
+            "capability:trigger.condition.fixed_public_state",
+            "component:quorune.card_programs.runtime.fixed_public_state_condition_matches",
+            "component:quorune.compiler.public_state_fact_queries.fixed_public_fact_condition",
+            "component:quorune.turn_history.current_turn_history_events",
+            "component:quorune.zone_trigger_processing.record_zone_change_history"
+          ],
+          "source_contexts": [
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "event-time-actor-and-incarnation",
+            "fixed-life-total-threshold",
+            "locked-trigger-controller",
+            "versioned-departure-history"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.fixed_public_state",
+            "trigger.condition.fixed_public_state",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
           "shared_grammar": "one fully consumed closed current-turn death, attack, departure or life predicate over the canonical sealed history, shared by existing static and intervening-trigger consumers with independently exact result owners",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Public historical conditions fan into existing entry, step and action-trigger result families without adding another event or rules registry.",
-          "explicit_exclusions": ["Descend and graveyard-from-anywhere permanent-card history", "incomplete or unversioned departure history", "independently unsupported event, effect or sibling grammar", "kicked, cast-payment, chosen, negative, dynamic, mixed and otherwise conditions"],
+          "explicit_exclusions": [
+            "Descend and graveyard-from-anywhere permanent-card history",
+            "incomplete or unversioned departure history",
+            "independently unsupported event, effect or sibling grammar",
+            "kicked, cast-payment, chosen, negative, dynamic, mixed and otherwise conditions"
+          ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-intervening-if-trigger-closure-existing-owner-v1"
         },
@@ -3774,7 +3944,7 @@
           "expected_downstream_closure": "Promotes all current ordinary named Partner with carriers through one typed two-ability production without granting ordinary Partner authority or introducing another setup, trigger, search, or zone-transition path.",
           "explicit_exclusions": [
             "Partner with itself and the choose-any-legendary-Knight variant",
-            "Partner—named variants such as Friends forever, Doctors, Survivors, Character select, and Father and son",
+            "Partner\u2014named variants such as Friends forever, Doctors, Survivors, Character select, and Father and son",
             "independently unsupported sibling abilities",
             "multiple names, compound tails, alternative destinations, nonlibrary searches, and search-replacement effects",
             "nonreciprocal, missing, duplicate, copied, granted, removed, or text-changed setup declarations"
@@ -3860,7 +4030,9 @@
             "component:quorune.spell_copy_engine_adapter.dispatch_normalized_spell_copy_event",
             "component:quorune.trigger_discovery.dispatch_semantic_event"
           ],
-          "source_contexts": ["triggered"],
+          "source_contexts": [
+            "triggered"
+          ],
           "normalized_literal_parameters": [
             "controlled-enchantment-entry",
             "controller-instant-or-sorcery-cast-or-copy",
@@ -4734,7 +4906,12 @@
             "component:quorune.self_zone_move.SelfZoneMoveSpec",
             "component:quorune.zone_transitions.ZoneTransitionOwner.move_card"
           ],
-          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
           "normalized_literal_parameters": [
             "fixed-permanent-characteristic-target",
             "fixed-public-graveyard-relation",
@@ -4792,7 +4969,12 @@
             "component:quorune.damage.resolve_damage_batch",
             "component:quorune.rules.creature_power_damage_capability_shapes.fixed_creature_power_damage_node_capabilities"
           ],
-          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
           "normalized_literal_parameters": [
             "exact-current-creature-power",
             "fight-simultaneous-batch",
@@ -4842,7 +5024,12 @@
             "component:quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities",
             "component:quorune.selection.targeting.legal_target_refs"
           ],
-          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
           "normalized_literal_parameters": [
             "current-public-characteristic-predicate",
             "current-public-combat-state-predicate",
@@ -4912,7 +5099,10 @@
             "component:quorune.rules.casting.alternative_costs.augment_fixed_public_alternative_costs",
             "component:quorune.rules.casting.costs.build_cast_cost_proposal"
           ],
-          "source_contexts": ["spell", "static"],
+          "source_contexts": [
+            "spell",
+            "static"
+          ],
           "normalized_literal_parameters": [
             "fixed-ordinary-mana-vector",
             "fixed-positive-life-payment",
@@ -4972,7 +5162,12 @@
             "component:quorune.rules.library_search_capability_shapes.fixed_type_to_hand_search_node_capabilities",
             "component:quorune.selection.searching.HiddenSearchOwnerMixin"
           ],
-          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
           "normalized_literal_parameters": [
             "fixed-positive-search-count",
             "printed-reveal-policy",
@@ -5544,193 +5739,193 @@
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-combat-entry-keyword-lifecycles-existing-owner-v1"
         },
-    {
-      "bundle_id": "bundle:typed-ward-cost-and-composition-closure",
-      "member_family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "keyword_dependency:ward"
-      ],
-      "canonical_owner_ids": [
-        "capability:continuous.ability.fixed_query_keyword_grant",
-        "capability:continuous.attached.fixed_characteristics",
-        "capability:trigger.keyword.ward.fixed_generic",
-        "capability:trigger.keyword.ward.fixed_nonmana",
-        "component:quorune.compiler.ability_keyword_fragments.lower_ability_keyword_fragments",
-        "component:quorune.compiler.continuous_templates.attached_fixed_characteristics_handler",
-        "component:quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler",
-        "component:quorune.semantic_choices.payments.WardPaymentChoiceHandler",
-        "component:quorune.trigger_processing.TriggerProcessingOwner.collect_ward_occurrences"
-      ],
-      "source_contexts": [
-        "static"
-      ],
-      "normalized_literal_parameters": [
-        "fixed-generic-life-or-discard-one-payment",
-        "intrinsic-query-or-attachment-layer-six-fragment",
-        "one-current-effective-ward-occurrence-per-instance",
-        "targeting-controller-private-payment-choice"
-      ],
-      "shared_dependencies": [
-        "continuous.ability.fixed_query_keyword_grant",
-        "continuous.attached.fixed_characteristics",
-        "trigger.keyword.ward.fixed_generic",
-        "trigger.keyword.ward.fixed_nonmana",
-        "trigger.placement.apnap",
-        "zone.discard.typed_cause"
-      ],
-      "shared_grammar": "one fixed-generic Ward instance composed with supported printed keywords or granted through an existing query or attachment static component, or one isolated fixed-life or discard-one Ward payment, all represented by the same current layer-6 fragment, ordinary APNAP trigger, typed private payment choice, and stack-counter owner",
-      "estimated_implementation_hours": 6,
-      "estimated_probe_hours": 1,
-      "estimated_generation_hours": 1,
-      "expected_downstream_closure": "Promotes a policy-floor cross-era Ward cohort while reusing the shared ability-presence applicability query, fixed public cost fragments, actor-private hand projection, replacement-aware discard transition, life payment, APNAP placement, rollback, and exact replay without a parallel targeting or trigger path.",
-      "explicit_exclusions": [
-        "dynamic characteristic counts, source-power-relative payments, and cycle-sensitive characteristic queries",
-        "grants whose affected set is outside the existing shared layer-6 ability-presence applicability query",
-        "independently unsupported sibling abilities",
-        "quoted, emblem, temporary, copied, text-changed, and independently unsupported grants",
-        "random, qualified, multiple-card, optional, alternative, sacrifice, counter, energy, poison, evidence, blight, waterbend, dynamic, composite, variable, hybrid, Phyrexian, snow, and restricted Ward costs"
-      ],
-      "measurement_status": "generated_probe",
-      "measurement_probe_id": "typed-ward-cost-and-composition-closure-existing-owner-v2"
-    },
-    {
-      "bundle_id": "bundle:typed-token-ability-programs",
-      "member_family_ids": [
-        "activated_effect:create-token",
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:create-token",
-        "event_binding:normalized-event-binding"
-      ],
-      "canonical_owner_ids": [
-        "capability:token.creation.fixed_definition",
-        "capability:token.creation.typed_ability_definition",
-        "component:quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
-        "component:quorune.compiler.typed_token_ability_nodes.typed_token_ability_nodes",
-        "component:quorune.rules.activation.query.activated_abilities",
-        "component:quorune.token_creation.create_tokens",
-        "component:quorune.trigger_discovery.dispatch_semantic_event"
-      ],
-      "source_contexts": [
-        "activated",
-        "modal",
-        "spell",
-        "triggered"
-      ],
-      "normalized_literal_parameters": [
-        "independently-exact-typed-child-program",
-        "one-fixed-creature-token-definition",
-        "one-or-two-explicit-quoted-abilities",
-        "recipient-bound-token-source-identity"
-      ],
-      "shared_dependencies": [
-        "token.creation.fixed_definition",
-        "token.creation.typed_ability_definition"
-      ],
-      "shared_grammar": "one fixed positive creature-token definition carrying one or two explicit quoted activated, mana, triggered, declaration, or cycle-safe self-characteristic abilities, compiled into copiable typed fragments and source-pinned child programs through the existing token, current-ability, activation, normalized-event, APNAP, and replay owners",
-      "estimated_implementation_hours": 7,
-      "estimated_probe_hours": 1,
-      "estimated_generation_hours": 1,
-      "expected_downstream_closure": "Promotes a policy-floor cross-era token cohort across spell, triggered, activated, loyalty, and modal contexts while making the same typed child-program boundary reusable for later created-object families without runtime Oracle interpretation.",
-      "explicit_exclusions": [
-        "attached, attacking, Role, copy, variable-quantity, or otherwise unsupported token shells",
-        "dynamic, linked, delayed, modal, replacement, prevention, copied, granted, or text-changing child programs",
-        "independently unsupported sibling abilities and unsupported token replacement families",
-        "more than two quoted abilities or any independently unsupported child ability",
-        "reminder-only predefined-token text already owned by canonical token profiles"
-      ],
-      "measurement_status": "generated_probe",
-      "measurement_probe_id": "typed-token-ability-programs-existing-owner-v1"
-    },
-    {
-      "bundle_id": "bundle:public-static-condition-closure",
-      "member_family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
-      ],
-      "canonical_owner_ids": [
-        "capability:continuous.characteristics.fixed_public_state",
-        "capability:state_query.permanent.public_state_predicate",
-        "component:quorune.card_programs.runtime._FixedPublicStateSnapshotResolver",
-        "component:quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler",
-        "component:quorune.compiler.public_state_queries.fixed_public_state_parts",
-        "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
-        "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler"
-      ],
-      "source_contexts": [
-        "static"
-      ],
-      "normalized_literal_parameters": [
-        "cycle-safe-distinct-graveyard-card-types-or-mana-values",
-        "fixed-public-fact-threshold",
-        "live-layer-five-object-query",
-        "source-controller-and-logical-incarnation"
-      ],
-      "shared_dependencies": [
-        "continuous.characteristics.fixed_public_state",
-        "state_query.permanent.public_state_predicate"
-      ],
-      "shared_grammar": "one fixed layer-6 keyword or layer-7c power/toughness body gated by a closed current public query, cycle-safe distinct controller-graveyard characteristic count, sealed entry, attack, sacrifice, death, or life history fact, public hand or starting-life relation, or exact attachment count through the existing typed static-condition owner",
-      "estimated_implementation_hours": 6,
-      "estimated_probe_hours": 1,
-      "estimated_generation_hours": 1,
-      "expected_downstream_closure": "Promotes a normal-floor cross-era conditional-static cohort while making the same schema-v3 public-fact boundary reusable by later legality, trigger, and cost owners without runtime Oracle interpretation or another continuous-effect engine.",
-      "explicit_exclusions": [
-        "ability-presence counts and every quantity outside the cycle-safe layer-5 or sealed public-fact boundary",
-        "city blessing, dungeon, initiative, speed, sticker, crime, dice, top-library, chosen, secret, and named-object conditions",
-        "copied, granted, text-changed, Class-level, and independently unsupported sibling abilities",
-        "dynamic characteristic amounts, type or color changes, base-setting, ability removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
-        "most-common, tied, open arithmetic, arbitrary comparisons, linked results, and otherwise branches"
-      ],
-      "measurement_status": "generated_probe",
-      "measurement_probe_id": "public-static-condition-closure-existing-owner-v1"
-    },
-    {
-      "bundle_id": "bundle:public-intervening-if-trigger-closure",
-      "member_family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
-      ],
-      "canonical_owner_ids": [
-        "capability:trigger.condition.fixed_public_state",
-        "capability:trigger.effect.fixed_event",
-        "component:quorune.card_programs.runtime.fixed_public_state_condition_matches",
-        "component:quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
-        "component:quorune.compiler.public_state_queries.fixed_public_state_condition",
-        "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
-        "component:quorune.trigger_discovery.semantic_event_condition_matches"
-      ],
-      "source_contexts": [
-        "triggered"
-      ],
-      "normalized_literal_parameters": [
-        "closed-public-state-condition-descriptor",
-        "independently-exact-normalized-event-binding",
-        "independently-exact-typed-effect-body",
-        "trigger-controller-locked-revalidation"
-      ],
-      "shared_dependencies": [
-        "state_query.permanent.public_state_predicate",
-        "trigger.condition.fixed_public_state",
-        "trigger.effect.fixed_event",
-        "trigger.placement.apnap"
-      ],
-      "shared_grammar": "one source-spanned intervening-if clause whose condition is represented by the existing closed public-state descriptor and whose normalized event binding and typed effect body are independently exact, checked at occurrence and again before resolution through the same trigger-controller-relative owner",
-      "estimated_implementation_hours": 6,
-      "estimated_probe_hours": 1,
-      "estimated_generation_hours": 1,
-      "expected_downstream_closure": "Promotes a normal-floor cross-era conditional-trigger cohort while reusing the public query, sealed turn-history, normalized event, current layer-6 ability-applicability, APNAP, target, effect, projection, and replay owners without another trigger engine or runtime Oracle parser.",
-      "explicit_exclusions": [
-        "chosen, secret, hidden-zone, named-object, top-library, and unsupported public-state conditions",
-        "copied, granted, text-changed, and independently unsupported sibling abilities",
-        "event bindings and effect bodies without independent exact typed owners",
-        "otherwise branches, linked results, open arithmetic, arbitrary comparisons, and dynamic amounts",
-        "reflexive, delayed, first-time, once-per-turn, and otherwise unrepresented trigger grammar",
-        "same-layer and cycle-sensitive characteristic queries outside the shared layer-5 boundary"
-      ],
-      "measurement_status": "generated_probe",
-      "measurement_probe_id": "public-intervening-if-trigger-closure-existing-owner-v1"
-    },
-    {
-      "bundle_id": "bundle:standalone-reminder-line-closure",
+        {
+          "bundle_id": "bundle:typed-ward-cost-and-composition-closure",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "keyword_dependency:ward"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.ability.fixed_query_keyword_grant",
+            "capability:continuous.attached.fixed_characteristics",
+            "capability:trigger.keyword.ward.fixed_generic",
+            "capability:trigger.keyword.ward.fixed_nonmana",
+            "component:quorune.compiler.ability_keyword_fragments.lower_ability_keyword_fragments",
+            "component:quorune.compiler.continuous_templates.attached_fixed_characteristics_handler",
+            "component:quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler",
+            "component:quorune.semantic_choices.payments.WardPaymentChoiceHandler",
+            "component:quorune.trigger_processing.TriggerProcessingOwner.collect_ward_occurrences"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-generic-life-or-discard-one-payment",
+            "intrinsic-query-or-attachment-layer-six-fragment",
+            "one-current-effective-ward-occurrence-per-instance",
+            "targeting-controller-private-payment-choice"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_keyword_grant",
+            "continuous.attached.fixed_characteristics",
+            "trigger.keyword.ward.fixed_generic",
+            "trigger.keyword.ward.fixed_nonmana",
+            "trigger.placement.apnap",
+            "zone.discard.typed_cause"
+          ],
+          "shared_grammar": "one fixed-generic Ward instance composed with supported printed keywords or granted through an existing query or attachment static component, or one isolated fixed-life or discard-one Ward payment, all represented by the same current layer-6 fragment, ordinary APNAP trigger, typed private payment choice, and stack-counter owner",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era Ward cohort while reusing the shared ability-presence applicability query, fixed public cost fragments, actor-private hand projection, replacement-aware discard transition, life payment, APNAP placement, rollback, and exact replay without a parallel targeting or trigger path.",
+          "explicit_exclusions": [
+            "dynamic characteristic counts, source-power-relative payments, and cycle-sensitive characteristic queries",
+            "grants whose affected set is outside the existing shared layer-6 ability-presence applicability query",
+            "independently unsupported sibling abilities",
+            "quoted, emblem, temporary, copied, text-changed, and independently unsupported grants",
+            "random, qualified, multiple-card, optional, alternative, sacrifice, counter, energy, poison, evidence, blight, waterbend, dynamic, composite, variable, hybrid, Phyrexian, snow, and restricted Ward costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-ward-cost-and-composition-closure-existing-owner-v2"
+        },
+        {
+          "bundle_id": "bundle:typed-token-ability-programs",
+          "member_family_ids": [
+            "activated_effect:create-token",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:create-token",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:token.creation.fixed_definition",
+            "capability:token.creation.typed_ability_definition",
+            "component:quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+            "component:quorune.compiler.typed_token_ability_nodes.typed_token_ability_nodes",
+            "component:quorune.rules.activation.query.activated_abilities",
+            "component:quorune.token_creation.create_tokens",
+            "component:quorune.trigger_discovery.dispatch_semantic_event"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "independently-exact-typed-child-program",
+            "one-fixed-creature-token-definition",
+            "one-or-two-explicit-quoted-abilities",
+            "recipient-bound-token-source-identity"
+          ],
+          "shared_dependencies": [
+            "token.creation.fixed_definition",
+            "token.creation.typed_ability_definition"
+          ],
+          "shared_grammar": "one fixed positive creature-token definition carrying one or two explicit quoted activated, mana, triggered, declaration, or cycle-safe self-characteristic abilities, compiled into copiable typed fragments and source-pinned child programs through the existing token, current-ability, activation, normalized-event, APNAP, and replay owners",
+          "estimated_implementation_hours": 7,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era token cohort across spell, triggered, activated, loyalty, and modal contexts while making the same typed child-program boundary reusable for later created-object families without runtime Oracle interpretation.",
+          "explicit_exclusions": [
+            "attached, attacking, Role, copy, variable-quantity, or otherwise unsupported token shells",
+            "dynamic, linked, delayed, modal, replacement, prevention, copied, granted, or text-changing child programs",
+            "independently unsupported sibling abilities and unsupported token replacement families",
+            "more than two quoted abilities or any independently unsupported child ability",
+            "reminder-only predefined-token text already owned by canonical token profiles"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-token-ability-programs-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-static-condition-closure",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.fixed_public_state",
+            "capability:state_query.permanent.public_state_predicate",
+            "component:quorune.card_programs.runtime._FixedPublicStateSnapshotResolver",
+            "component:quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler",
+            "component:quorune.compiler.public_state_queries.fixed_public_state_parts",
+            "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+            "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "cycle-safe-distinct-graveyard-card-types-or-mana-values",
+            "fixed-public-fact-threshold",
+            "live-layer-five-object-query",
+            "source-controller-and-logical-incarnation"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.fixed_public_state",
+            "state_query.permanent.public_state_predicate"
+          ],
+          "shared_grammar": "one fixed layer-6 keyword or layer-7c power/toughness body gated by a closed current public query, cycle-safe distinct controller-graveyard characteristic count, sealed entry, attack, sacrifice, death, or life history fact, public hand or starting-life relation, or exact attachment count through the existing typed static-condition owner",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a normal-floor cross-era conditional-static cohort while making the same schema-v3 public-fact boundary reusable by later legality, trigger, and cost owners without runtime Oracle interpretation or another continuous-effect engine.",
+          "explicit_exclusions": [
+            "ability-presence counts and every quantity outside the cycle-safe layer-5 or sealed public-fact boundary",
+            "city blessing, dungeon, initiative, speed, sticker, crime, dice, top-library, chosen, secret, and named-object conditions",
+            "copied, granted, text-changed, Class-level, and independently unsupported sibling abilities",
+            "dynamic characteristic amounts, type or color changes, base-setting, ability removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
+            "most-common, tied, open arithmetic, arbitrary comparisons, linked results, and otherwise branches"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-static-condition-closure-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-intervening-if-trigger-closure",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.condition.fixed_public_state",
+            "capability:trigger.effect.fixed_event",
+            "component:quorune.card_programs.runtime.fixed_public_state_condition_matches",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
+            "component:quorune.compiler.public_state_queries.fixed_public_state_condition",
+            "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+            "component:quorune.trigger_discovery.semantic_event_condition_matches"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-public-state-condition-descriptor",
+            "independently-exact-normalized-event-binding",
+            "independently-exact-typed-effect-body",
+            "trigger-controller-locked-revalidation"
+          ],
+          "shared_dependencies": [
+            "state_query.permanent.public_state_predicate",
+            "trigger.condition.fixed_public_state",
+            "trigger.effect.fixed_event",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one source-spanned intervening-if clause whose condition is represented by the existing closed public-state descriptor and whose normalized event binding and typed effect body are independently exact, checked at occurrence and again before resolution through the same trigger-controller-relative owner",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a normal-floor cross-era conditional-trigger cohort while reusing the public query, sealed turn-history, normalized event, current layer-6 ability-applicability, APNAP, target, effect, projection, and replay owners without another trigger engine or runtime Oracle parser.",
+          "explicit_exclusions": [
+            "chosen, secret, hidden-zone, named-object, top-library, and unsupported public-state conditions",
+            "copied, granted, text-changed, and independently unsupported sibling abilities",
+            "event bindings and effect bodies without independent exact typed owners",
+            "otherwise branches, linked results, open arithmetic, arbitrary comparisons, and dynamic amounts",
+            "reflexive, delayed, first-time, once-per-turn, and otherwise unrepresented trigger grammar",
+            "same-layer and cycle-sensitive characteristic queries outside the shared layer-5 boundary"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-intervening-if-trigger-closure-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
             "effect_clause:unparsed-spell-effect-has-no-exact-generic-template"
@@ -5977,17 +6172,26 @@
             "component:quorune.rules.temporary_target_interaction_shapes.temporary_target_interaction_node_capabilities",
             "component:quorune.semantic_choices.scalar.ChooseOptionHandler"
           ],
-          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
           "normalized_literal_parameters": [
-            "cost-bound-signed-spell-x", "current-target-condition",
-            "fixed-keyword-or-color-choice", "fixed-protection-quality",
-            "fixed-regeneration-or-unblockable-tail", "supported-keyword-list"
+            "cost-bound-signed-spell-x",
+            "current-target-condition",
+            "fixed-keyword-or-color-choice",
+            "fixed-protection-quality",
+            "fixed-regeneration-or-unblockable-tail",
+            "supported-keyword-list"
           ],
           "shared_dependencies": [
             "combat.declaration.typed_components",
             "continuous.resolution.declaration_rules_until_end_of_turn",
             "continuous.resolution.fixed_characteristics_until_end_of_turn",
-            "permanent.regeneration.fixed_effect", "protection.typed.debt",
+            "permanent.regeneration.fixed_effect",
+            "protection.typed.debt",
             "target.revalidate_resolution"
           ],
           "shared_grammar": "one complete temporary direct-target effect with supported signed spell-cost X, fixed keyword lists, typed protection qualities, resolution-time keyword or color choice, a closed current-target condition, or a fixed regeneration or unblockable tail",
@@ -6005,17 +6209,47 @@
         },
         {
           "bundle_id": "bundle:controller-program-composition",
-          "member_family_ids": ["effect_clause:create-token", "effect_clause:draw", "effect_clause:ordered-effect-composition", "effect_clause:return", "target_or_choice:conditional-effect"],
-          "canonical_owner_ids": ["capability:resolution.effect.public_condition", "component:quorune.compiler.effect_template_composition.reviewed_effect_template_composition", "component:quorune.compiler.resolution_condition_templates.resolution_condition_template", "component:quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities", "component:quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"],
-          "source_contexts": ["activated", "spell", "triggered"],
-          "normalized_literal_parameters": ["closed-public-condition", "existing-typed-components", "printed-order", "resolving-controller"],
-          "shared_dependencies": ["continuous.characteristics.fixed_public_state", "target.revalidate_resolution"],
+          "member_family_ids": [
+            "effect_clause:create-token",
+            "effect_clause:draw",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:return",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:resolution.effect.public_condition",
+            "component:quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+            "component:quorune.compiler.resolution_condition_templates.resolution_condition_template",
+            "component:quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities",
+            "component:quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-public-condition",
+            "existing-typed-components",
+            "printed-order",
+            "resolving-controller"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.fixed_public_state",
+            "target.revalidate_resolution"
+          ],
           "shared_grammar": "closed controller programs composing existing typed leaves and one nontargeted public conditional result at its printed instruction boundary",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Shared typed result composition across spell, activated and triggered carriers; full original-source CardProgram closure is measured from the current frontier.",
-          "explicit_exclusions": ["derived-quantity or source-relative conditional results without a represented timing boundary", "instead, linked-result, nested and alternative conditions", "modal conditional programs", "source- or attachment-relative conditions", "targeted conditional results and unsupported leaf effects"],
+          "explicit_exclusions": [
+            "derived-quantity or source-relative conditional results without a represented timing boundary",
+            "instead, linked-result, nested and alternative conditions",
+            "modal conditional programs",
+            "source- or attachment-relative conditions",
+            "targeted conditional results and unsupported leaf effects"
+          ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "controller-program-composition-existing-owner-v1"
         },
@@ -6037,13 +6271,22 @@
             "component:quorune.engine.CommanderEngine._continue_resolution",
             "component:quorune.rules.bound_effect_program_shapes.bound_effect_program_node_capabilities"
           ],
-          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
           "normalized_literal_parameters": [
-            "fixed-player-subject", "one-explicit-target-occurrence",
-            "original-target-qualifiers", "printed-order", "single-current-incarnation-reference"
+            "fixed-player-subject",
+            "one-explicit-target-occurrence",
+            "original-target-qualifiers",
+            "printed-order",
+            "single-current-incarnation-reference"
           ],
           "shared_dependencies": [
-            "resolution.effect_program.closed_components", "target.revalidate_resolution"
+            "resolution.effect_program.closed_components",
+            "target.revalidate_resolution"
           ],
           "shared_grammar": "two through four mandatory typed components sharing one player subject or reusing one explicitly established public target through it, that player, that creature or that permanent; every component remains independently capability-closed and executes in printed order",
           "estimated_implementation_hours": 4,
@@ -6060,7 +6303,11 @@
         },
         {
           "bundle_id": "bundle:declared-effect-amounts",
-          "member_family_ids": ["effect_clause:deal-damage", "effect_clause:draw", "quantity_expression:dynamic-quantity"],
+          "member_family_ids": [
+            "effect_clause:deal-damage",
+            "effect_clause:draw",
+            "quantity_expression:dynamic-quantity"
+          ],
           "canonical_owner_ids": [
             "capability:quantity_expression.declared_effect_amount",
             "component:quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
@@ -6068,9 +6315,22 @@
             "component:quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount",
             "component:quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount"
           ],
-          "source_contexts": ["activated", "spell", "triggered"],
-          "normalized_literal_parameters": ["existing-result-operation", "instruction-scoped-public-count", "invariant-target-schema", "ordinary-announced-cast-X", "signed-unit-coefficient"],
-          "shared_dependencies": ["quantity_expression.public_query_effect_amount", "target.revalidate_resolution"],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "existing-result-operation",
+            "instruction-scoped-public-count",
+            "invariant-target-schema",
+            "ordinary-announced-cast-X",
+            "signed-unit-coefficient"
+          ],
+          "shared_dependencies": [
+            "quantity_expression.public_query_effect_amount",
+            "target.revalidate_resolution"
+          ],
           "shared_grammar": "ordinary announced spell-cost X or a fully consumed public count definition in closed numeric result slots of existing fixed instructions; targets, payment, and result operations retain their typed owners",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
@@ -6356,7 +6616,11 @@
         },
         {
           "bundle_id": "bundle:fixed-resolution-payment",
-          "member_family_ids": ["effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "target_or_choice:conditional-effect"],
+          "member_family_ids": [
+            "effect_clause:ordered-effect-composition",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "target_or_choice:conditional-effect"
+          ],
           "canonical_owner_ids": [
             "capability:effect.choice.optional_fixed_mana_payment",
             "component:quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
@@ -6364,9 +6628,24 @@
             "component:quorune.semantic_choices.counter_coordination.continue_semantic_completion",
             "component:quorune.semantic_choices.payments.OptionalPaymentHandler"
           ],
-          "source_contexts": ["activated", "spell", "triggered"],
-          "normalized_literal_parameters": ["closed-private-or-public-payment-predicate", "fixed-full-payment-count", "fixed-mana-life-discard-or-sacrifice", "independent-typed-result", "locked-resolving-controller"],
-          "shared_dependencies": ["choice.affected_player.fixed_discard", "choice.affected_player.fixed_sacrifice", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-private-or-public-payment-predicate",
+            "fixed-full-payment-count",
+            "fixed-mana-life-discard-or-sacrifice",
+            "independent-typed-result",
+            "locked-resolving-controller"
+          ],
+          "shared_dependencies": [
+            "choice.affected_player.fixed_discard",
+            "choice.affected_player.fixed_sacrifice",
+            "effect.choice.optional_fixed_mana_payment",
+            "zone.change.destination_replacement"
+          ],
           "shared_grammar": "one complete resolution-time optional fixed cost with an if-you-do typed result, preserving independent mandatory prefix scope and existing cast, activation and normalized-trigger placement through the shared payment-choice and resumable intent owners",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
@@ -6383,7 +6662,12 @@
         },
         {
           "bundle_id": "bundle:fixed-resolution-animation",
-          "member_family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "effect_clause:ordered-effect-composition", "effect_clause:unparsed-until-end-of", "quantity_expression:dynamic-quantity"],
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unparsed-until-end-of",
+            "quantity_expression:dynamic-quantity"
+          ],
           "canonical_owner_ids": [
             "capability:continuous.resolution.fixed_characteristics_until_end_of_turn",
             "capability:continuous.resolution.fixed_source_characteristics_until_end_of_turn",
@@ -6391,9 +6675,23 @@
             "component:quorune.continuous_effect_state.create_resolution_continuous_effect_components",
             "component:quorune.resolution_characteristic_model.FixedResolutionCharacteristicsSpec"
           ],
-          "source_contexts": ["activated", "spell", "triggered"],
-          "normalized_literal_parameters": ["fixed-base-power-toughness", "fixed-colors-and-creature-subtypes", "fixed-public-set-or-single-target", "logical-source-incarnation", "type-retention-and-ability-removal"],
-          "shared_dependencies": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "state_query.permanent.public_state_predicate", "target.revalidate_resolution"],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-base-power-toughness",
+            "fixed-colors-and-creature-subtypes",
+            "fixed-public-set-or-single-target",
+            "logical-source-incarnation",
+            "type-retention-and-ability-removal"
+          ],
+          "shared_dependencies": [
+            "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "state_query.permanent.public_state_predicate",
+            "target.revalidate_resolution"
+          ],
           "shared_grammar": "one complete fixed until-end-of-turn animation or base-characteristic instruction whose type, subtype, color, supported keyword, and all-ability removal components share the existing resolution journal and current target or public-set owner",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
@@ -6410,16 +6708,29 @@
         },
         {
           "bundle_id": "bundle:qualified-zone-event-queries",
-          "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
           "canonical_owner_ids": [
             "capability:trigger.event.qualified_zone_change",
             "component:quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec",
             "component:quorune.trigger_discovery.semantic_event_condition_matches",
             "component:quorune.zone_trigger_events.sealed_public_characteristic_facts"
           ],
-          "source_contexts": ["triggered"],
-          "normalized_literal_parameters": ["closed-public-characteristics", "departure-lki", "single-object-occurrence", "source-union-and-exclusion"],
-          "shared_dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-public-characteristics",
+            "departure-lki",
+            "single-object-occurrence",
+            "source-union-and-exclusion"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
           "shared_grammar": "one closed characteristic-qualified single-object entry, death, graveyard or leave subscription with an independently exact typed body; existing productions retain precedence",
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
@@ -6434,142 +6745,142 @@
           "measurement_probe_id": "qualified-zone-event-query-existing-owner-v1"
         },
         {
-            "bundle_id": "bundle:fixed-control-optional-untap",
-            "member_family_ids": [
-              "activated_effect:gain-control",
-              "continuous_layer:continuous-effect-layers-and-dependencies",
-              "effect_clause:gain-control"
-            ],
-            "canonical_owner_ids": [
-              "capability:continuous.control.fixed_resolution",
-              "capability:untap.step.optional_source",
-              "component:quorune.control_effects.gain_control_of_refs",
-              "component:quorune.optional_untap.complete_optional_untap_choice"
-            ],
-            "source_contexts": [
-              "activated",
-              "spell",
-              "static",
-              "triggered"
-            ],
-            "normalized_literal_parameters": [
-              "fixed-public-permanent-set",
-              "optional-physical-untap-selection",
-              "original-source-incarnation",
-              "resolving-controller",
-              "source-continuity-duration"
-            ],
-            "shared_dependencies": [
-              "permanent.untap.effect",
-              "target.revalidate_resolution",
-              "trigger.placement.apnap"
-            ],
-            "shared_grammar": "Resolution-created control with timestamped retained custody and original-source presence, controller or tapped continuity; one current-controller optional self untap instruction at its physical untap step.",
-            "estimated_implementation_hours": 8,
-            "estimated_probe_hours": 1,
-            "estimated_generation_hours": 1,
-            "expected_downstream_closure": "The same source continuity and untap boundary governs spells, activations and entry/action triggers without a second control or turn registry.",
-            "explicit_exclusions": [
-              "Hidden or unrepresented set queries, indefinite haste and unrelated result linkage",
-              "Phasing play and independently unsupported siblings",
-              "Static Aura control, player/spell control and unresolved broader source guards"
-            ],
-            "measurement_status": "generated_probe",
-            "measurement_probe_id": "fixed-control-optional-untap-existing-owner-v1"
-          },
-          {
-            "bundle_id": "bundle:persistent-entry-designations",
-            "member_family_ids": [
-              "continuous_layer:continuous-effect-layers-and-dependencies",
-              "replacement:replacement-applicability",
-              "replacement:self-replacement-and-prevention-ordering"
-            ],
-            "canonical_owner_ids": [
-              "capability:continuous.characteristics.chosen_designation",
-              "capability:zone.entry.public_designation",
-              "component:quorune.semantic_runtime.continuous_components",
-              "component:quorune.semantic_runtime.zone_replacements"
-            ],
-            "source_contexts": [
-              "static"
-            ],
-            "normalized_literal_parameters": [
-              "color",
-              "creature-type",
-              "fixed-characteristic-result",
-              "intrinsic-entry",
-              "original-pinned-record"
-            ],
-            "shared_dependencies": [],
-            "shared_grammar": "An intrinsic mandatory choice of one color or pinned creature type as this permanent enters, and fixed public creature-set characteristic bonuses that refer to that retained choice.",
-            "estimated_implementation_hours": 8,
-            "estimated_probe_hours": 1,
-            "estimated_generation_hours": 1,
-            "expected_downstream_closure": "Measure full original CardPrograms and strict runtime binding; independently unsupported chosen-value uses and siblings remain residual.",
-            "explicit_exclusions": [
-              "arbitrary chosen-value mana, events, costs, targets and other independent residuals",
-              "compound optional or restricted entry choices",
-              "dynamic characteristic results, copied or granted entry components without prospective support",
-              "entry choices linked to source-type additions",
-              "multiple same-kind designations"
-            ],
-            "measurement_status": "generated_probe",
-            "measurement_probe_id": "persistent-entry-designation-existing-owner-v2"
-          },
-          {
-            "bundle_id": "bundle:fixed-counted-library-searches",
-            "member_family_ids": [
-              "activated_effect:look-reveal",
-              "activated_effect:ordered-effect-composition",
-              "activated_effect:put-onto-battlefield",
-              "activated_effect:search",
-              "effect_clause:look-reveal",
-              "effect_clause:ordered-effect-composition",
-              "effect_clause:put-onto-battlefield",
-              "effect_clause:search",
-              "event_binding:intervening-if-and-reflexive-trigger-grammar",
-              "event_binding:normalized-event-binding"
-            ],
-            "canonical_owner_ids": [
-              "capability:library.search.fixed_counted",
-              "component:quorune.library_search_model.FixedCountedLibrarySearchTemplate",
-              "component:quorune.selection.searching.HiddenSearchOwnerMixin",
-              "component:quorune.zone_transitions.ZoneTransitionOwner"
-            ],
-            "source_contexts": [
-              "activated",
-              "modal",
-              "spell",
-              "triggered"
-            ],
-            "normalized_literal_parameters": [
-              "fixed-count",
-              "fixed-mana-value-filter",
-              "literal-name-query-data",
-              "mandatory-unqualified-count",
-              "printed-reveal",
-              "shuffle-before-top-placement",
-              "simultaneous-hand-results"
-            ],
-            "shared_dependencies": [
-              "library.search.fixed_to_battlefield",
-              "library.search.fixed_type_to_hand"
-            ],
-            "shared_grammar": "Fixed counted self-library searches with a closed characteristic, literal name or fixed mana-value selector, original reveal policy and printed shuffle order; one top/graveyard/permanent result or uniform one-through-ten hand results, composed only through existing exact parent owners.",
-            "estimated_implementation_hours": 8,
-            "estimated_probe_hours": 1,
-            "estimated_generation_hours": 1,
-            "expected_downstream_closure": "Measure full original CardPrograms and strict runtime binding across private choices, per-card commander replacements, counted hand movement and retained found-card knowledge.",
-            "explicit_exclusions": [
-              "X, dynamic, same-name linkage and multiple named alternatives",
-              "another player or another search origin",
-              "arbitrary callbacks, runtime Oracle parsing and card-identity behavior dispatch",
-              "multiple top, graveyard, nonland or untapped battlefield results and split destinations",
-              "search-limiting/replacement effects and independently unsupported siblings"
-            ],
-            "measurement_status": "generated_probe",
-            "measurement_probe_id": "fixed-counted-library-search-existing-owner-v1"
-          },
+          "bundle_id": "bundle:fixed-control-optional-untap",
+          "member_family_ids": [
+            "activated_effect:gain-control",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:gain-control"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.control.fixed_resolution",
+            "capability:untap.step.optional_source",
+            "component:quorune.control_effects.gain_control_of_refs",
+            "component:quorune.optional_untap.complete_optional_untap_choice"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-public-permanent-set",
+            "optional-physical-untap-selection",
+            "original-source-incarnation",
+            "resolving-controller",
+            "source-continuity-duration"
+          ],
+          "shared_dependencies": [
+            "permanent.untap.effect",
+            "target.revalidate_resolution",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "Resolution-created control with timestamped retained custody and original-source presence, controller or tapped continuity; one current-controller optional self untap instruction at its physical untap step.",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "The same source continuity and untap boundary governs spells, activations and entry/action triggers without a second control or turn registry.",
+          "explicit_exclusions": [
+            "Hidden or unrepresented set queries, indefinite haste and unrelated result linkage",
+            "Phasing play and independently unsupported siblings",
+            "Static Aura control, player/spell control and unresolved broader source guards"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-control-optional-untap-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:persistent-entry-designations",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "replacement:replacement-applicability",
+            "replacement:self-replacement-and-prevention-ordering"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.chosen_designation",
+            "capability:zone.entry.public_designation",
+            "component:quorune.semantic_runtime.continuous_components",
+            "component:quorune.semantic_runtime.zone_replacements"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "color",
+            "creature-type",
+            "fixed-characteristic-result",
+            "intrinsic-entry",
+            "original-pinned-record"
+          ],
+          "shared_dependencies": [],
+          "shared_grammar": "An intrinsic mandatory choice of one color or pinned creature type as this permanent enters, and fixed public creature-set characteristic bonuses that refer to that retained choice.",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure full original CardPrograms and strict runtime binding; independently unsupported chosen-value uses and siblings remain residual.",
+          "explicit_exclusions": [
+            "arbitrary chosen-value mana, events, costs, targets and other independent residuals",
+            "compound optional or restricted entry choices",
+            "dynamic characteristic results, copied or granted entry components without prospective support",
+            "entry choices linked to source-type additions",
+            "multiple same-kind designations"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "persistent-entry-designation-existing-owner-v2"
+        },
+        {
+          "bundle_id": "bundle:fixed-counted-library-searches",
+          "member_family_ids": [
+            "activated_effect:look-reveal",
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:put-onto-battlefield",
+            "activated_effect:search",
+            "effect_clause:look-reveal",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:put-onto-battlefield",
+            "effect_clause:search",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:library.search.fixed_counted",
+            "component:quorune.library_search_model.FixedCountedLibrarySearchTemplate",
+            "component:quorune.selection.searching.HiddenSearchOwnerMixin",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-count",
+            "fixed-mana-value-filter",
+            "literal-name-query-data",
+            "mandatory-unqualified-count",
+            "printed-reveal",
+            "shuffle-before-top-placement",
+            "simultaneous-hand-results"
+          ],
+          "shared_dependencies": [
+            "library.search.fixed_to_battlefield",
+            "library.search.fixed_type_to_hand"
+          ],
+          "shared_grammar": "Fixed counted self-library searches with a closed characteristic, literal name or fixed mana-value selector, original reveal policy and printed shuffle order; one top/graveyard/permanent result or uniform one-through-ten hand results, composed only through existing exact parent owners.",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure full original CardPrograms and strict runtime binding across private choices, per-card commander replacements, counted hand movement and retained found-card knowledge.",
+          "explicit_exclusions": [
+            "X, dynamic, same-name linkage and multiple named alternatives",
+            "another player or another search origin",
+            "arbitrary callbacks, runtime Oracle parsing and card-identity behavior dispatch",
+            "multiple top, graveyard, nonland or untapped battlefield results and split destinations",
+            "search-limiting/replacement effects and independently unsupported siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-counted-library-search-existing-owner-v1"
+        },
         {
           "bundle_id": "bundle:typed-layer-six-grant-carriers",
           "member_family_ids": [
@@ -6649,6 +6960,121 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "source-self-reference-closure-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:batched-reusable-card-closure-v488",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates",
+            "activated_effect:deal-damage",
+            "activated_effect:destroy-target",
+            "activated_effect:draw",
+            "activated_effect:life-change",
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:put-counter",
+            "activated_effect:return",
+            "activated_effect:tap-state",
+            "activated_effect:unparsed-creatures-your-opponents",
+            "activated_effect:unparsed-target-creature-gets",
+            "activated_effect:unparsed-target-creature-loses",
+            "activated_effect:unparsed-target-player-mills",
+            "activated_effect:unparsed-this-creature-gains",
+            "activated_effect:unparsed-this-creature-gets",
+            "activated_effect:unparsed-this-creature-loses",
+            "activated_effect:unparsed-until-end-of",
+            "activated_effect:unparsed-up-to-two",
+            "continuous_layer:affected-player-ordering",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "duration:until-end-of-turn",
+            "effect_clause:counter",
+            "effect_clause:deal-damage",
+            "effect_clause:destroy",
+            "effect_clause:discard",
+            "effect_clause:draw",
+            "effect_clause:exile",
+            "effect_clause:life-change",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:put-counter",
+            "effect_clause:return",
+            "effect_clause:scry",
+            "effect_clause:tap-state",
+            "effect_clause:typed-spell-additional-cost-clause",
+            "effect_clause:unparsed-all-creatures-lose",
+            "effect_clause:unparsed-choose-one",
+            "effect_clause:unparsed-converge-creatures-your",
+            "effect_clause:unparsed-nonblack-creatures-get",
+            "effect_clause:unparsed-nongreen-creatures-you",
+            "effect_clause:unparsed-nonwhite-creatures-get",
+            "effect_clause:unparsed-target-creature-gets",
+            "effect_clause:unparsed-target-creature-loses",
+            "effect_clause:unparsed-this-spell-costs",
+            "effect_clause:unparsed-two-target-creatures",
+            "effect_clause:unparsed-up-to-two",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "keyword_dependency:increment",
+            "quantity_expression:dynamic-quantity",
+            "quantity_expression:unbound-or-unsupported-temporary-x-quantity",
+            "reference_binding:linked-result-reference",
+            "replacement:replacement-applicability",
+            "replacement:self-replacement-and-prevention-ordering",
+            "target_or_choice:conditional-effect",
+            "target_or_choice:multiple-damage-recipients",
+            "target_or_choice:multiple-targets",
+            "target_or_choice:target-predicate",
+            "target_or_choice:typed-enchant-restriction"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.mana_cost.announced_x",
+            "capability:activation.mana_cost.static_generic",
+            "capability:activation.selected_counter_removal.fixed",
+            "capability:activation.source_counter_removal.any_kind",
+            "capability:casting.additional_cost.announced_x_graveyard_exile",
+            "capability:casting.additional_cost.announced_x_life",
+            "capability:casting.cost.self_target_generic_reduction",
+            "capability:combat.attack.defender_permission.declaration_numeric",
+            "capability:continuous.resolution.fixed_keyword_removal",
+            "capability:continuous.resolution.source_keyword_choice",
+            "capability:counter.producer.increment",
+            "capability:quantity_expression.multikicker_count",
+            "capability:quantity_expression.public_counter_total",
+            "capability:quantity_expression.spent_mana_color_count",
+            "capability:quantity_expression.target_player_hand_count",
+            "capability:resolution.effect.fixed_same_target_self_replacement",
+            "capability:state_query.permanent.any_counter",
+            "capability:state_query.permanent.negative_color",
+            "capability:target.cardinality.mana_announced_x"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "distinct-pinned-commander-oracle-id",
+            "independently-reviewed-family-boundary",
+            "strict-whole-card-runtime-binding"
+          ],
+          "shared_dependencies": [
+            "counter.placement.quantity_replacement",
+            "target.revalidate_resolution",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "Independently specified and natively witnessed fixed Enchant/query boundaries, announced activation/additional-cost X and target counts, activation pricing/counter resources, compound damage, kicked replacements, hand/Multikicker/spent-color quantities, attached/static/temporary keyword removal and grants, Increment, source-target price reductions and source keyword choices. Complete printed siblings use normal registration and existing gameplay owners.",
+          "estimated_implementation_hours": 80,
+          "estimated_probe_hours": 2,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "At least 200 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
+          "explicit_exclusions": [
+            "Each Oracle ID counts once; support losses subtract from net delivery",
+            "Parser matches and residual reductions do not replace complete-card closure",
+            "Scoped semantic and corpus evidence does not imply universal match readiness",
+            "Unsupported sibling semantics, variable prices, copied and granted face-down methods remain residual"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "batched-card-support-current-census-v2"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -6660,14 +7086,96 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v463-zero-valued-target-set-characteristics",
-      "compiler_version": "oracle-ir-v463",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct canonical resolution of query-derived target-set characteristic modifiers whose evaluated P/T delta is zero. Preserve complete instruction validation, selected incarnation locking, typed layer commits, keyword-only changes, normal target legality, privacy, rollback, pending load and replay. No grammar, capability promotion or card-support harvest is claimed."
+      "transition_id": "oracle-ir-v488-batched-reusable-card-closure",
+      "compiler_version": "oracle-ir-v488",
+      "bundle_id": "bundle:batched-reusable-card-closure-v488",
+      "candidate_ids": [
+        "compiler:batched-reusable-card-closure-v488"
+      ],
+      "family_ids": [
+        "activated_cost:complete-alternate-additional-cost-grammar",
+        "activated_cost:restricted-payment-predicates",
+        "activated_effect:deal-damage",
+        "activated_effect:destroy-target",
+        "activated_effect:draw",
+        "activated_effect:life-change",
+        "activated_effect:ordered-effect-composition",
+        "activated_effect:put-counter",
+        "activated_effect:return",
+        "activated_effect:tap-state",
+        "activated_effect:unparsed-creatures-your-opponents",
+        "activated_effect:unparsed-target-creature-gets",
+        "activated_effect:unparsed-target-creature-loses",
+        "activated_effect:unparsed-target-player-mills",
+        "activated_effect:unparsed-this-creature-gains",
+        "activated_effect:unparsed-this-creature-gets",
+        "activated_effect:unparsed-this-creature-loses",
+        "activated_effect:unparsed-until-end-of",
+        "activated_effect:unparsed-up-to-two",
+        "continuous_layer:affected-player-ordering",
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "duration:until-end-of-turn",
+        "effect_clause:counter",
+        "effect_clause:deal-damage",
+        "effect_clause:destroy",
+        "effect_clause:discard",
+        "effect_clause:draw",
+        "effect_clause:exile",
+        "effect_clause:life-change",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:put-counter",
+        "effect_clause:return",
+        "effect_clause:scry",
+        "effect_clause:tap-state",
+        "effect_clause:typed-spell-additional-cost-clause",
+        "effect_clause:unparsed-all-creatures-lose",
+        "effect_clause:unparsed-choose-one",
+        "effect_clause:unparsed-converge-creatures-your",
+        "effect_clause:unparsed-nonblack-creatures-get",
+        "effect_clause:unparsed-nongreen-creatures-you",
+        "effect_clause:unparsed-nonwhite-creatures-get",
+        "effect_clause:unparsed-target-creature-gets",
+        "effect_clause:unparsed-target-creature-loses",
+        "effect_clause:unparsed-this-spell-costs",
+        "effect_clause:unparsed-two-target-creatures",
+        "effect_clause:unparsed-up-to-two",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "keyword_dependency:increment",
+        "quantity_expression:dynamic-quantity",
+        "quantity_expression:unbound-or-unsupported-temporary-x-quantity",
+        "reference_binding:linked-result-reference",
+        "replacement:replacement-applicability",
+        "replacement:self-replacement-and-prevention-ordering",
+        "target_or_choice:conditional-effect",
+        "target_or_choice:multiple-damage-recipients",
+        "target_or_choice:multiple-targets",
+        "target_or_choice:target-predicate",
+        "target_or_choice:typed-enchant-restriction"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.announced_x",
+        "activation.mana_cost.static_generic",
+        "activation.selected_counter_removal.fixed",
+        "activation.source_counter_removal.any_kind",
+        "casting.additional_cost.announced_x_graveyard_exile",
+        "casting.additional_cost.announced_x_life",
+        "casting.cost.self_target_generic_reduction",
+        "combat.attack.defender_permission.declaration_numeric",
+        "continuous.resolution.fixed_keyword_removal",
+        "continuous.resolution.source_keyword_choice",
+        "counter.producer.increment",
+        "quantity_expression.multikicker_count",
+        "quantity_expression.public_counter_total",
+        "quantity_expression.spent_mana_color_count",
+        "quantity_expression.target_player_hand_count",
+        "resolution.effect.fixed_same_target_self_replacement",
+        "state_query.permanent.any_counter",
+        "state_query.permanent.negative_color",
+        "target.cardinality.mana_announced_x"
+      ],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:batched-reusable-card-closure-v488"
     },
 
     "forecast_corrections": [

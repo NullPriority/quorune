@@ -8,7 +8,7 @@ from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import CREATURE_SUBTYPES
 from .continuous_templates import (
     _attached_modifier, _attached_definition, _grant_attached_abilities,
-    _attached_ability_capabilities,
+    _attached_ability_capabilities,_attached_abilities,
 )
 from .creature_subtypes import canonical_creature_subtype_surface
 from .public_state_queries import fixed_characteristic_battlefield_query_subject, fixed_public_state_parts
@@ -64,6 +64,16 @@ def _setting_part(modifier, part):
             return False
         modifier["remove_all_abilities"] = True
         return True
+    removed=re.fullmatch(r'loses (.+)',part,re.I)
+    if removed:
+        from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+        abilities=_attached_abilities(removed[1])
+        if abilities is None or any(value not in FIXED_CHARACTERISTIC_KEYWORDS for value in abilities):
+            return False
+        if set(abilities).intersection(modifier['remove_abilities']):
+            return False
+        modifier['remove_abilities'].extend(abilities)
+        return True
     abilities = re.fullmatch(r"has (.+)", part, re.I)
     if abilities:
         return _grant_attached_abilities(modifier, abilities[1])
@@ -113,7 +123,7 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
     if re.search(r'"|\b(?:chosen|named|equal|each equal|every|all colors|land types|creature types|until|as long|if|during|goaded)\b', text, re.I):
         return None
     text = re.sub(r'\s+\([^()]*\)\.?$', '', text.strip()).removesuffix(".")
-    match = re.fullmatch(r"(?P<subject>.+?) (?P<body>is .+|are .+|has base .+|have base .+|loses all .+|lose all .+|gets .+|get .+)", text, re.I)
+    match = re.fullmatch(r"(?P<subject>.+?) (?P<body>is .+|are .+|has base .+|have base .+|loses .+|lose .+|gets .+|get .+)", text, re.I)
     if match is None:
         return None
     subject, body = match["subject"], match["body"]
@@ -149,7 +159,7 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
     if not all(_setting_part(modifier, part) for part in parts):
         return None
     if attached is None and not any((modifier['type_operations'], modifier['color_operations'],
-                                     modifier['base_power'] is not None, modifier['remove_all_abilities'])):
+                                     modifier['base_power'] is not None, modifier['remove_all_abilities'],modifier['remove_abilities'])):
         return None
     version = 2 if source or source_condition else 1
     descriptor={"handler_id":'continuous.characteristics.fixed-public-setting.v2' if version == 2 else SETTING_HANDLER,
@@ -163,5 +173,5 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
     except (TypeError,ValueError):
         return None
     return ("static-fixed-characteristic-setting-v2" if descriptor['schema_version'] == 2 else "static-fixed-characteristic-setting-v1",
-        descriptor, tuple(sorted({SETTING_CAPABILITY, *_attached_ability_capabilities(modifier["add_abilities"]),
+        descriptor, tuple(sorted({SETTING_CAPABILITY, *_attached_ability_capabilities((*modifier["add_abilities"],*modifier["remove_abilities"])),
         *(('continuous.characteristics.fixed_public_state',) if version == 2 else ())})))

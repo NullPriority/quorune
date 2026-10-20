@@ -1,0 +1,1349 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Altar of Dementia",
+      "oracle_id": "d64e9152-ef24-4394-aeb0-9c3befc56549",
+      "oracle_text": "Sacrifice a creature: Target player mills cards equal to the sacrificed creature's power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant",
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Avatar Destiny",
+      "oracle_id": "ecb81888-589b-4486-a444-e0c26384854e",
+      "oracle_text": "Enchant creature you control\nEnchanted creature gets +1/+1 for each creature card in your graveyard and is an Avatar in addition to its other types.\nWhen enchanted creature dies, mill cards equal to its power. Return this card to its owner's hand and up to one creature card milled this way to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Folio of Fancies",
+      "oracle_id": "9030d508-5cfe-46ed-954b-21d970bc3b5a",
+      "oracle_text": "Players have no maximum hand size.\n{X}{X}, {T}: Each player draws X cards.\n{2}{U}, {T}: Each opponent mills cards equal to the number of cards in their hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Artifact — Book"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "fixture:public-land-mill-entry",
+      "name": "Generic Public Land Mill",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Creature — Wizard",
+      "oracle_text": "When this creature enters, mill cards equal to the number of lands you control.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Grisly Spectacle",
+      "oracle_id": "8c83d21a-6138-409f-8e00-75dcd14388e2",
+      "oracle_text": "Destroy target nonartifact creature. Its controller mills cards equal to that creature's power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill",
+        "Soulbond"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Imperious Mindbreaker",
+      "oracle_id": "95157a46-6e0a-4800-93d3-46d2842464db",
+      "oracle_text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as Imperious Mindbreaker is paired with another creature, each of those creatures has \"Whenever this creature attacks, each opponent mills cards equal to its toughness.\"",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": "4",
+      "type_line": "Creature — Human Wizard"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Renew",
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Lasyd Prowler",
+      "oracle_id": "f780d6f6-540b-4773-8a48-e56e95c2d39e",
+      "oracle_text": "When this creature enters, you may mill cards equal to the number of lands you control.\nRenew — {1}{G}, Exile this card from your graveyard: Put X +1/+1 counters on target creature, where X is the number of land cards in your graveyard. Activate only as a sorcery.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "5",
+      "type_line": "Creature — Snake Ranger"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Neerdiv, Devious Diver",
+      "oracle_id": "b015ec84-95b9-4010-afef-d9d0cacb98dd",
+      "oracle_text": "Whenever Neerdiv becomes tapped, target player mills cards equal to its power.\nWhenever you cast a spell from your graveyard or activate an ability of a card in your graveyard, draw a card and put a +1/+1 counter on Neerdiv.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Merfolk Rogue"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "saga",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Nightmares and Daydreams",
+      "oracle_id": "0403bfb0-2174-4360-994d-68d8ca96fc55",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III — Until your next turn, whenever you cast an instant or sorcery spell, target player mills cards equal to that spell's mana value.\nIV — Draw a card. If a graveyard has twenty or more cards in it, draw three cards instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Enchantment — Saga"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "saga",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "One Ring to Rule Them All",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — The Ring tempts you, then each player mills cards equal to your Ring-bearer's power.\nII — Destroy all nonlegendary creatures.\nIII — Each opponent loses 1 life for each creature card in that player's graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": null,
+      "type_line": "Enchantment — Saga"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Out of the Tombs",
+      "oracle_id": "473a7998-669d-4181-83fe-f178a2e781f0",
+      "oracle_text": "At the beginning of your upkeep, put two eon counters on this enchantment, then mill cards equal to the number of eon counters on it.\nIf you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield. If you can't, you lose the game.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-10-07",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Pestilent Cauldron",
+          "oracle_text": "{T}, Discard a card: Create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"\n{1}, {T}: Each opponent mills cards equal to the amount of life you gained this turn.\n{4}, {T}: Exile four target cards from a single graveyard. Draw a card.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Artifact"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{G}{G}",
+          "name": "Restorative Burst",
+          "oracle_text": "Return up to two target creature, land, and/or planeswalker cards from your graveyard to your hand. Each player gains 4 life. Exile Restorative Burst.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B} // {3}{G}{G}",
+      "name": "Pestilent Cauldron // Restorative Burst",
+      "oracle_id": "78780f37-f215-4ae1-adce-6255b0146873",
+      "oracle_text": "Pestilent Cauldron: {T}, Discard a card: Create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"\n{1}, {T}: Each opponent mills cards equal to the amount of life you gained this turn.\n{4}, {T}: Exile four target cards from a single graveyard. Draw a card.\n//\nRestorative Burst: Return up to two target creature, land, and/or planeswalker cards from your graveyard to your hand. Each player gains 4 life. Exile Restorative Burst.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Artifact // Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Exhaust",
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Riverchurn Monument",
+      "oracle_id": "71c714a2-baa9-4082-bc8e-ceadbea231e0",
+      "oracle_text": "{1}, {T}: Any number of target players each mill two cards. (Each of them puts the top two cards of their library into their graveyard.)\nExhaust — {2}{U}{U}, {T}: Any number of target players each mill cards equal to the number of cards in their graveyard. (Activate each exhaust ability only once.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{U}",
+      "name": "Space-Time Anomaly",
+      "oracle_id": "241117a0-8305-48bb-9cb9-9b01e86e08f7",
+      "oracle_text": "Target player mills cards equal to your life total.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Descend",
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{B}",
+      "name": "The Ancient One",
+      "oracle_id": "6615f881-960c-4216-a32a-63856bc3afd0",
+      "oracle_text": "Descend 8 — The Ancient One can't attack or block unless there are eight or more permanent cards in your graveyard.\n{2}{U}{B}: Draw a card, then discard a card. When you discard a card this way, target player mills cards equal to its mana value.",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "8",
+      "type_line": "Legendary Creature — Spirit God"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "The Water Crystal",
+      "oracle_id": "f8d2a94f-7be1-4b17-8556-398dde531360",
+      "oracle_text": "Blue spells you cast cost {1} less to cast.\nIf an opponent would mill one or more cards, they mill that many cards plus four instead.\n{4}{U}{U}, {T}: Each opponent mills cards equal to the number of cards in your hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": null,
+      "type_line": "Legendary Artifact"
+    },
+    {
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "name": "Unsummon",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Veteran Ice Climber",
+      "oracle_id": "ccaadf8d-22c0-4139-b734-03ac2fcb4494",
+      "oracle_text": "Vigilance\nThis creature can't be blocked.\nWhenever this creature attacks, up to one target player mills cards equal to this creature's power. (They put that many cards from the top of their library into their graveyard.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "3",
+      "type_line": "Creature — Human Scout"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Wight of Precinct Six",
+      "oracle_id": "6397c046-4c59-4f0b-9b44-2a804eb95edf",
+      "oracle_text": "This creature gets +1/+1 for each creature card in your opponents' graveyards.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "1",
+      "type_line": "Creature — Zombie"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Zuran Orb",
+      "oracle_id": "08cb8a30-9cb4-4517-bee5-8848aa60d1a2",
+      "oracle_text": "Sacrifice a land: You gain 2 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ],
+  "fixture_kind": "pinned_mill_wording_carriers_and_explicit_generic_quantity_controls",
+  "rulings": [
+    {
+      "comment": "If an effect instructs a player to draw multiple cards, each of those cards are drawn independently, and Out of the Tombs's second ability will apply to each one if appropriate.",
+      "oracle_id": "473a7998-669d-4181-83fe-f178a2e781f0",
+      "published_at": "2022-10-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Wight of Precinct Six is dealt lethal damage at the same time as a creature an opponent controls, they’re destroyed at the same time. It won’t get an additional +1/+1 from its ability in time to save it.",
+      "oracle_id": "6397c046-4c59-4f0b-9b44-2a804eb95edf",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "Wight of Precinct Six’s ability applies only while it’s on the battlefield. In all other zones, it’s a 1/1 creature.",
+      "oracle_id": "6397c046-4c59-4f0b-9b44-2a804eb95edf",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "Cards with the ability word \"descend N\" have abilities that care if you have at least N permanent cards in your graveyard.",
+      "oracle_id": "6615f881-960c-4216-a32a-63856bc3afd0",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once The Ancient One has legally attacked or blocked, removing permanent cards from your graveyard so the descend 8 ability no longer applies won't remove The Ancient One from combat.",
+      "oracle_id": "6615f881-960c-4216-a32a-63856bc3afd0",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some descend triggered abilities include intervening \"if\" clauses (i.e. \"if you have [four or eight] permanent cards in your graveyard\" in the middle of the ability). Each of these abilities checks your graveyard at the moment it would trigger to see if it does. If you don't have the required number of permanent cards in your graveyard at that time, the ability doesn't trigger at all. If it does trigger, it will check again as it tries to resolve. If you don't have the required number of permanent cards in your graveyard at that time, the ability won't resolve and none of its effects will happen.",
+      "oracle_id": "6615f881-960c-4216-a32a-63856bc3afd0",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't choose a target for The Ancient One's activated ability at the time you activate it. Rather, a second \"reflexive\" ability triggers when you discard a card this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal.",
+      "oracle_id": "6615f881-960c-4216-a32a-63856bc3afd0",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Exhaust abilities can be activated any time you could normally activate an ability.",
+      "oracle_id": "71c714a2-baa9-4082-bc8e-ceadbea231e0",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an ability triggers whenever you activate an exhaust ability, that ability resolves before the exhaust ability resolves.",
+      "oracle_id": "71c714a2-baa9-4082-bc8e-ceadbea231e0",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exhaust ability of a permanent is activated, and then that permanent leaves the battlefield and returns to the battlefield, it becomes a new object so its exhaust ability can be activated again.",
+      "oracle_id": "71c714a2-baa9-4082-bc8e-ceadbea231e0",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Pestilent Cauldron’s second ability counts the total amount of life gained without considering any life you lost during that turn. For example, if you lost 2 life and gained 2 life earlier in the turn, your opponents will mill two cards.",
+      "oracle_id": "78780f37-f215-4ae1-adce-6255b0146873",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may cast Restorative Burst with no targets. If you do, each player will gain 4 life and you’ll exile Restorative Burst. However, if you choose one or two target cards, and each of those cards is an illegal target as Restorative Burst tries to resolve (usually because something else moved them in response), Restorative Burst won’t resolve and none of its effects will happen. No one will gain life, and Restorative Burst won’t be exiled.",
+      "oracle_id": "78780f37-f215-4ae1-adce-6255b0146873",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must be able to target four cards in a single graveyard in order to activate Pestilent Cauldron’s last ability.",
+      "oracle_id": "78780f37-f215-4ae1-adce-6255b0146873",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature is an illegal target when Grisly Spectacle tries to resolve, it won’t resolve and none of its effects will happen. The creature’s controller won’t put any cards into their graveyard.",
+      "oracle_id": "8c83d21a-6138-409f-8e00-75dcd14388e2",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "Use the creature’s power the last time it was on the battlefield to determine how many cards its controller puts into their graveyard.",
+      "oracle_id": "8c83d21a-6138-409f-8e00-75dcd14388e2",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player has fewer than X cards in their library, that player loses the game after the first ability of Folio of Fancies resolves. If each player loses the game this way, the game is a draw.",
+      "oracle_id": "9030d508-5cfe-46ed-954b-21d970bc3b5a",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "It's not possible to pay {X}{X}{2}{U} and activate both abilities of Folio of Fancies. You'll need to find a way to untap it to activate both abilities during one turn.",
+      "oracle_id": "9030d508-5cfe-46ed-954b-21d970bc3b5a",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "To pay {X}{X}, choose a value for X, and pay twice that much mana.",
+      "oracle_id": "9030d508-5cfe-46ed-954b-21d970bc3b5a",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Neerdiv leaves the battlefield while its first ability is still on the stack, use its power as it last existed on the battlefield to determine how many cards the target player mills.",
+      "oracle_id": "b015ec84-95b9-4010-afef-d9d0cacb98dd",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Neerdiv's last ability resolves before the spell or ability that caused it to trigger. It resolves even if that spell or ability is countered or otherwise leaves the stack without resolving.",
+      "oracle_id": "b015ec84-95b9-4010-afef-d9d0cacb98dd",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "As the Ring tempts you, you get an emblem named The Ring if you don't have one. Then your emblem gains its next ability and you choose a creature you control to become (or remain) your Ring-bearer.",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each player can have only one emblem named The Ring and only one Ring-bearer at a time.",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each time the Ring tempts you, you must choose a creature if you control one.",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature you choose as your Ring-bearer was already your Ring-bearer, that still counts as choosing that creature as your Ring-bearer for the purpose of abilities that trigger \"whenever you choose a creature as your Ring-bearer\" or abilities that care about which creature was chosen as your Ring-bearer.",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some spells and abilities that cause the Ring to tempt you may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. The Ring won't tempt you.",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Ring can tempt you even if you don't control a creature. In this case, abilities that trigger \"whenever the Ring tempts you\" will still trigger.",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Ring gains its abilities in order from top to bottom. Once it gains an ability, it has that ability for the rest of the game.",
+      "oracle_id": "c75add5e-4e9d-4c68-a8ad-b878b1dbc0a4",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target player's library contains fewer cards than the sacrificed creature's power, all of those cards are put into that player's graveyard. That player won't lose the game until they try to draw from the empty library.",
+      "oracle_id": "d64e9152-ef24-4394-aeb0-9c3befc56549",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The number of cards the target player puts into their graveyard is equal to the power of the sacrificed creature as it last existed on the battlefield.",
+      "oracle_id": "d64e9152-ef24-4394-aeb0-9c3befc56549",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with a renew ability is put into your graveyard during your turn, you can activate that ability if it’s legal to do so before any other player can take any actions.",
+      "oracle_id": "f780d6f6-540b-4773-8a48-e56e95c2d39e",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don’t have at least as many cards in your library as lands you control when Lasyd Prowler’s first ability resolves, you can’t choose to mill that many cards.",
+      "oracle_id": "f780d6f6-540b-4773-8a48-e56e95c2d39e",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X is calculated only once, as Lasyd Prowler’s renew ability resolves.",
+      "oracle_id": "f780d6f6-540b-4773-8a48-e56e95c2d39e",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an opponent is instructed to put a card into their graveyard without using the word \"mill,\" The Water Crystal's second ability doesn't apply.",
+      "oracle_id": "f8d2a94f-7be1-4b17-8556-398dde531360",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "In the rare case where you control two of The Water Crystal, each opponent mills eight more cards than originally instructed. If you control three, your opponents mill twelve more, and so on.",
+      "oracle_id": "f8d2a94f-7be1-4b17-8556-398dde531360",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some older cards have received errata to instruct a player to mill cards rather than to put the top cards of their library into their graveyard. Use the Oracle™ card reference at Gatherer.Wizards.com to determine whether a specific card has received such errata. As a rule of thumb, if an effect instructs a player to look at or reveal a card before it's put into its owner's graveyard, it's unlikely to have received errata.",
+      "oracle_id": "f8d2a94f-7be1-4b17-8556-398dde531360",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost reduction applies only to generic mana in the total cost of blue spells you cast.",
+      "oracle_id": "f8d2a94f-7be1-4b17-8556-398dde531360",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as a flashback cost), add any cost increases (such as kicker costs), then apply any cost reductions (such as that of The Water Crystal's first ability). The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was.",
+      "oracle_id": "f8d2a94f-7be1-4b17-8556-398dde531360",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Oracle/rulings wording carriers; existing compact fixture rows reused verbatim where already owned."
+}

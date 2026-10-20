@@ -39,7 +39,7 @@ from .compiler.ability_keyword_fragments import (
     lower_ability_keyword_fragments,
 )
 from .compiler.closed_static_nodes import closed_static_card_node
-from .compiler.public_self_replacement_templates import is_fixed_public_self_replacement
+from .compiler.replacement_residual_nodes import unowned_replacement_node
 from .compiler.public_alternative_cost_nodes import (
     reject_cast_cost_composition,
 )
@@ -171,14 +171,10 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v463"
+ORACLE_COMPILER_VERSION = "oracle-ir-v488"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
-    re.IGNORECASE,
-)
-_REPLACEMENT_MARKERS = re.compile(
-    r"\b(instead|as .+ enters|enters .+ with|skip)\b",
     re.IGNORECASE,
 )
 _ABILITY_WORD = re.compile(
@@ -1234,32 +1230,12 @@ def _compile_face(
             nodes.append(closed_static)
             continue
 
-        if _REPLACEMENT_MARKERS.search(line) and not (spell and is_fixed_public_self_replacement(material_line,face_name or record.name,contextual_effect_template)):
-            residual_id = _residual(
-                residuals,
-                kind="replacement_effect",
-                text=line,
-                span=span,
-                reason="replacement/prevention ordering is not compiled",
-                blockers=(
-                    "replacement applicability",
-                    "affected-player ordering",
-                    "self-replacement and prevention ordering",
-                ),
-            )
-            nodes.append(
-                OracleNode(
-                    node_id=node_id,
-                    kind="replacement_effect",
-                    text=line,
-                    span=span,
-                    active_zone="battlefield" if permanent else "stack",
-                    event="replace",
-                    lowerable=False,
-                    exact=False,
-                    residual_ids=(residual_id,),
-                )
-            )
+        unowned_replacement=unowned_replacement_node(node_id=node_id,line=line,
+            material_line=material_line,span=span,source_name=face_name or record.name,
+            spell=spell,permanent=permanent,has_faces=bool(record.faces),
+            compile_effect=contextual_effect_template,residuals=residuals)
+        if unowned_replacement is not None:
+            nodes.append(unowned_replacement)
             continue
 
         ability_word = _ABILITY_WORD.match(material_line)

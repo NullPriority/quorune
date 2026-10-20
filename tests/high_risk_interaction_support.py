@@ -84,7 +84,8 @@ _WITNESSES = {
     "reanimation-conditional-boundary": _Witness(
         "Generic Conditional Reanimation Boundary Fixture",
         "Sorcery",
-        "This spell costs {2} less to cast if it targets an attacking creature.\n"
+        "This spell costs {2} less to cast if it targets an attacking creature "
+        "that dealt damage this turn.\n"
         "Put target creature card from a graveyard onto the battlefield under "
         "your control.\n"
         "Spell mastery — If there are two or more instant and/or sorcery cards in your "
@@ -267,18 +268,22 @@ _WITNESSES = {
         "{4}",
         ("Gift", "Equip"),
     ),
+    "stoneforge-masterwork": _Witness(
+        "Stoneforge Masterwork",
+        "Artifact — Equipment",
+        "Equipped creature gets +1/+1 for each other creature you control "
+        "that shares a creature type with it.\nEquip {2}",
+        "{1}",
+        ("Equip",),
+    ),
     "restricted-equip-continuous-boundary": _Witness(
         "Generic Restricted Equip Continuous Boundary Fixture",
         "Artifact \N{EM DASH} Equipment",
-        "Gift a tapped Fish (You may promise an opponent a gift as you cast "
-        "this spell. If you do, when it enters, they create a tapped 1/1 blue "
-        "Fish creature token.)\n"
-        "When this Equipment enters, if the gift was promised, attach this "
-        "Equipment to target creature you control.\n"
-        "Equipped creature gets +3/+3 and loses flying.\n"
+        "Equipped creature gets +1/+1 for each other creature you control "
+        "that shares a creature type with it.\n"
         "Equip Human {3}",
         "{4}",
-        ("Gift", "Equip"),
+        ("Equip",),
     ),
     "junk-jet": _Witness(
         "Junk Jet",
@@ -898,7 +903,7 @@ _WITNESSES = {
         "Generic Owner-Zone Target Condition Boundary Fixture",
         "Instant",
         "This spell costs {2} less to cast if it targets an attacking "
-        "creature.\nPut target creature into its owner's library second "
+        "creature that dealt damage this turn.\nPut target creature into its owner's library second "
         "from the top.",
         "{3}{U}",
     ),
@@ -1537,7 +1542,8 @@ _bind(
     "typed-aura-declaration-boundary",
     *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS[3:],
 )
-_bind("starforged-sword", *ATTACHMENT_AND_CONTINUOUS_PAIRS[6:8])
+_bind("starforged-sword", ATTACHMENT_AND_CONTINUOUS_PAIRS[6])
+_bind("stoneforge-masterwork", ATTACHMENT_AND_CONTINUOUS_PAIRS[7])
 _bind("junk-jet", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
 _bind(
     "restricted-equip-continuous-boundary",

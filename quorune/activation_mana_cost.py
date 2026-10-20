@@ -14,6 +14,20 @@ _COLORS = frozenset("WUBRG")
 _MAX_OPTIONS = 128
 
 
+def activation_mana_option_runtime_dependencies(program: Any) -> tuple[str, ...]:
+    """Keep typed activation price alternatives bound to their existing owner."""
+    schema = getattr(program, "cost_schema", None)
+    if not isinstance(schema, Mapping) or not schema.get("mana_cost_options"):
+        return ()
+    rows = schema["mana_cost_options"]
+    if not isinstance(rows, (list, tuple)) or getattr(program, "event", None) != "activate":
+        raise ValueError("Activation mana options require their complete activation cost schema")
+    options = tuple(ActivationManaCostOption.from_dict(row) for row in rows)
+    if len({option.option_id for option in options}) != len(options):
+        raise ValueError("Activation mana option identities must be unique")
+    return ("activation.mana_cost.fixed_complex",)
+
+
 def _requirements(value: Mapping[str, int]) -> dict[str, int]:
     unknown = set(value).difference(_MANA_KEYS)
     if unknown:
@@ -216,7 +230,10 @@ def current_activation_mana_options(
     seat: str,
     ability: Any,
     source: Any | None = None,
+    *, modifiers=(),
 ) -> tuple[ActivationManaCostOption, ...]:
+    if modifiers:
+        return _modified_activation_mana_options(host, seat, source, ability, modifiers)
     reduction = int(
         getattr(ability, "generic_reduction_per_legendary_creature", 0)
     ) * max(0, host._legendary_creatures_controlled(seat))
@@ -230,11 +247,40 @@ def current_activation_mana_options(
     return options
 
 
+def _modified_activation_mana_options(host, seat, source, ability, modifiers):
+    import hashlib
+    from .activation_cost_modifiers import ActivationManaReduction, activation_cost_prices
+    from .util import stable_json
+
+    legendary = int(ability.generic_reduction_per_legendary_creature) * max(
+        0, host._legendary_creatures_controlled(seat))
+    power_up = ()
+    if ability.power_up is not None:
+        from .power_up import current_power_up_reductions
+        power_up = current_power_up_reductions(host, source, ability)
+    variants = {}
+    for option in ability.mana_cost_options:
+        for power_reduction in power_up or (FrozenMap(),):
+            reductions = (ActivationManaReduction(FrozenMap({'GENERIC': legendary})),
+                ActivationManaReduction(power_reduction))
+            for price in activation_cost_prices(option.requirements, modifiers,
+                    own_reductions=reductions, snow_payment=option.snow_payment):
+                identity = {'requirements': dict(price.requirements),
+                    'life': option.life_payment, 'snow': option.snow_payment}
+                digest = hashlib.sha256(stable_json(identity).encode('utf-8')).hexdigest()[:16]
+                variants[digest] = ActivationManaCostOption('modified-'+digest, price.requirements,
+                    life_payment=option.life_payment, snow_payment=option.snow_payment)
+                if len(variants) > _MAX_OPTIONS:
+                    raise ValueError('Modified activation mana choices exceed the closed bound')
+    return tuple(variants[key] for key in sorted(variants))
+
+
 def payable_activation_mana_options(
     host: ActivationManaCostHost,
     seat: str,
     source: Any,
     ability: Any,
+    *, modifiers=(),
 ) -> tuple[ActivationManaCostOption, ...]:
     base_life = int(getattr(ability, "life_payment", 0))
     excluded = (
@@ -252,6 +298,7 @@ def payable_activation_mana_options(
             seat,
             ability,
             source,
+            modifiers=modifiers,
         )
         if host.state.players[seat].life
         >= base_life + option.life_payment
@@ -271,8 +318,9 @@ def select_activation_mana_option(
     source: Any,
     ability: Any,
     requested_id: object,
+    *, modifiers=(),
 ) -> ActivationManaCostOption:
-    payable = payable_activation_mana_options(host, seat, source, ability)
+    payable = payable_activation_mana_options(host, seat, source, ability, modifiers=modifiers)
     requested = str(requested_id or "")
     if not requested:
         if len(payable) == 1:

@@ -176,7 +176,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
             "discard a card at random",
             "discard X land cards",
             "exile two creature cards with different names from your graveyard",
-            "exile X cards from your graveyard",
+            "exile X cards with different names from your graveyard",
             "exile a modified creature you control",
             "return X Swamps you control to their owner's hand",
             "return a tapped creature you control to its owner's hand",
@@ -193,6 +193,10 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
                 ir = self.compile(text)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+        promoted = "As an additional cost to cast this spell, exile X cards from your graveyard.\nDraw two cards."
+        self.assertEqual("exact", self.compile(promoted).status)
+        self.assertIsNone(fixed_zone_change_additional_cost_template(promoted))
 
     def test_unsupported_cost_preserves_independent_result_residuals(self):
         supported_result = (
@@ -217,7 +221,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         )
 
         unsupported_result = (
-            "As an additional cost to cast this spell, pay X life.\n"
+            "As an additional cost to cast this spell, pay X life and discard a card.\n"
             "This spell deals X damage divided as you choose among any number "
             "of target creatures."
         )
@@ -235,7 +239,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         )
         self.assertEqual(
             [
-                "As an additional cost to cast this spell, pay X life.",
+                "As an additional cost to cast this spell, pay X life and discard a card.",
                 (
                     "This spell deals X damage divided as you choose among "
                     "any number of target creatures."

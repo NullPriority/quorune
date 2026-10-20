@@ -1,0 +1,22 @@
+{"cards":[
+    {"cmc":5.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{3}{U}{U}","name":"Gravitational Shift","oracle_id":"0411aead-9f77-435d-a343-635f23221cf7","oracle_text":"Creatures with flying get +2/+0.\nCreatures without flying get -2/-0.","power":null,"produced_mana":[],"released_at":"2010-04-23","toughness":null,"type_line":"Enchantment"},
+    {"cmc":1.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{U}","name":"Jump","oracle_id":"f7518456-45ed-41d4-bd3c-5aacea28eb35","oracle_text":"Target creature gains flying until end of turn.","power":null,"produced_mana":[],"released_at":"2009-07-17","toughness":null,"type_line":"Instant"},
+    {"cmc":2.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{G}","name":"Naturalize","oracle_id":"bdb3ca68-ec1f-4e16-81cc-d23f8f52c728","oracle_text":"Destroy target artifact or enchantment.","power":null,"produced_mana":[],"released_at":"2018-07-13","toughness":null,"type_line":"Instant"},
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000729502",
+      "name": "Generic Grounded Lord",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Creature — Human",
+      "power": "2",
+      "toughness": "2",
+      "oracle_text": "Other creatures you control without flying get +1/+1.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],"fixture_kind":"public_exact-list_card_data","rulings":[{"comment":"To work as an evasion ability, an attacking creature must already have flying when the declare blockers step begins. Once a creature has become blocked, giving it flying won’t change that.","oracle_id":"f7518456-45ed-41d4-bd3c-5aacea28eb35","published_at":"2009-10-01","source":"wotc"}],"schema_version":1,"source":"Scryfall Oracle/rulings subset for offline tests"}

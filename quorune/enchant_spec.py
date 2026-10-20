@@ -6,6 +6,9 @@ import hashlib
 from typing import Any, Mapping, TypeAlias
 
 from .target_forms import TargetCharacteristicForm
+from .target_numeric import (
+    TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison,
+)
 from .util import stable_json
 
 
@@ -200,10 +203,14 @@ class TypedEnchantSpec:
     commander: bool | None = None
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
     schema_version: int = 2
+    numeric_characteristic: TargetNumericCharacteristicSpec | None = None
+    mana_value_max: int | None = None
+    keywords_none: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 2:
+        if type(self.schema_version) is not int or self.schema_version not in {2, 3}:
             raise AuraRuleError("Unsupported typed Enchant schema version")
+        self._validate_fixed_characteristic()
         if not isinstance(self.subject, AuraEnchantSubject):
             raise AuraRuleError("Unsupported typed Enchant subject")
         if not isinstance(self.controller_relation, AuraControllerRelation):
@@ -292,6 +299,30 @@ class TypedEnchantSpec:
                 "Graveyard-card Enchant restrictions do not use controller relation"
             )
 
+    def _validate_fixed_characteristic(self) -> None:
+        fields = (self.numeric_characteristic is not None,
+            self.mana_value_max is not None, bool(self.keywords_none))
+        if self.schema_version == 2:
+            if any(fields) or self.keywords_none != ():
+                raise AuraRuleError('Legacy typed Enchant cannot carry fixed characteristic fields')
+            return
+        if sum(fields) != 1 or self.subject is not AuraEnchantSubject.PERMANENT:
+            raise AuraRuleError('Fixed Enchant requires one permanent characteristic restriction')
+        if (self.types_all != ('creature',) or self.controller_relation is not AuraControllerRelation.ANY
+                or self.player_relation is not AuraControllerRelation.ANY or self.commander is not None
+                or any((self.types_any, self.types_none, self.subtypes_any, self.subtypes_none,
+                    self.supertypes_any, self.colors_any, self.colors_none, self.characteristic_forms_any))):
+            raise AuraRuleError('Fixed Enchant requires the closed creature domain')
+        if self.numeric_characteristic is not None and (
+                not isinstance(self.numeric_characteristic, TargetNumericCharacteristicSpec)
+                or self.numeric_characteristic.characteristic is not TargetNumericCharacteristic.POWER
+                or self.numeric_characteristic.comparison is not TargetNumericComparison.AT_MOST):
+            raise AuraRuleError('Fixed Enchant supports only an existing maximum power predicate')
+        if self.mana_value_max is not None and (type(self.mana_value_max) is not int or self.mana_value_max < 0):
+            raise AuraRuleError('Enchant mana value maximum must be a nonnegative integer')
+        if self.keywords_none not in ((), ('flying',)):
+            raise AuraRuleError('Fixed Enchant keyword exclusion is outside the closed vocabulary')
+
     def linked_target_object_id(self, source: Any) -> str | None:
         del source
         return None
@@ -339,10 +370,17 @@ class TypedEnchantSpec:
             schema["characteristic_forms_any"] = [
                 form.to_dict() for form in self.characteristic_forms_any
             ]
+        if self.schema_version == 3:
+            if self.numeric_characteristic is not None:
+                schema['numeric_characteristic'] = self.numeric_characteristic.to_dict()
+            if self.mana_value_max is not None:
+                schema['mana_value_max'] = self.mana_value_max
+            if self.keywords_none:
+                schema['keywords_none'] = list(self.keywords_none)
         return schema
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "subject": self.subject.value,
             "controller_relation": self.controller_relation.value,
@@ -360,6 +398,11 @@ class TypedEnchantSpec:
                 form.to_dict() for form in self.characteristic_forms_any
             ],
         }
+        if self.schema_version == 3:
+            value.update(numeric_characteristic=(self.numeric_characteristic.to_dict()
+                if self.numeric_characteristic is not None else None),
+                mana_value_max=self.mana_value_max, keywords_none=list(self.keywords_none))
+        return value
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "TypedEnchantSpec":
@@ -379,8 +422,12 @@ class TypedEnchantSpec:
             "commander",
             "characteristic_forms_any",
         }
+        if isinstance(value, Mapping) and value.get('schema_version') == 3:
+            expected |= {'numeric_characteristic', 'mana_value_max', 'keywords_none'}
         if not isinstance(value, Mapping) or set(value) != expected:
             raise AuraRuleError("Typed Enchant values have a closed schema")
+        if value['schema_version'] == 3 and not isinstance(value['keywords_none'], (list, tuple)):
+            raise AuraRuleError('Typed Enchant keyword exclusions must be an array')
         array_fields = (
             "types_any",
             "types_all",
@@ -426,6 +473,10 @@ class TypedEnchantSpec:
             colors_none=tuple(value["colors_none"]),
             commander=value["commander"],
             characteristic_forms_any=forms,
+            numeric_characteristic=(TargetNumericCharacteristicSpec.from_mapping(value['numeric_characteristic'])
+                if value.get('numeric_characteristic') is not None else None),
+            mana_value_max=value.get('mana_value_max'),
+            keywords_none=tuple(value.get('keywords_none', ())),
         )
 
     @property

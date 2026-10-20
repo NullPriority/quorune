@@ -21,6 +21,7 @@ _COMMON_FIELDS = frozenset(
         "maximum_targets",
         "reason",
         "_replacement_selections",
+        "announced_target_count",
     }
 )
 _FIXED_TARGET_SET_CAPABILITY = "resolution.effect.fixed_homogeneous_target_set"
@@ -42,12 +43,15 @@ def _fixed_target_fields(
         raise SemanticNodeError("Fixed target-set operation is unsupported")
     raw_cards = effect.get("cards")
     maximum = effect.get("maximum_targets")
+    variable = effect.get("announced_target_count") is True
+    if "announced_target_count" in effect and not variable:
+        raise SemanticNodeError("Announced target-count selector must be true")
     if (
         not isinstance(raw_cards, (list, tuple))
         or any(type(value) is not str or not value for value in raw_cards)
         or len(raw_cards) != len(set(raw_cards))
         or type(maximum) is not int
-        or not 1 <= maximum <= 6
+        or not (maximum >= 0 if variable else 1 <= maximum <= 6)
         or len(raw_cards) > maximum
     ):
         raise SemanticNodeError(

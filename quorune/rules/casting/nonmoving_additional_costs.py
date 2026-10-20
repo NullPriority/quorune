@@ -3,6 +3,7 @@ from __future__ import annotations
 """Selection for typed additional prices that do not move their cost objects."""
 
 from ..casting_additional_costs import AdditionalCostError
+from ..casting_additional_cost_groups import announced_x_life_additional_cost
 from ..reveal_additional_cost import fixed_reveal_additional_cost
 from ..tap_additional_cost import fixed_tap_additional_cost
 from .reveal_costs import reveal_cost_selection
@@ -11,6 +12,27 @@ from .additional_tap_costs import validate_fixed_tap_payment
 
 def select_fixed_nonmoving_cost(host,seat,source,option,mandatory,response,*,hint,choice_schema,position):
     """None delegates other kinds; a result carries legality and an optional selection."""
+    try:
+        declared_life = announced_x_life_additional_cost(mandatory[position])
+    except AdditionalCostError:
+        return False, None
+    if declared_life is not None:
+        if len(mandatory) != 1:
+            return False, None
+        try:
+            amount = declared_life.amount_for(response.get('x'))
+        except AdditionalCostError:
+            return False, None
+        maximum = min(host.state.players[seat].life,
+            int(choice_schema.get('x', {}).get('maximum', host.state.players[seat].life)))
+        if option.get('x_value_policy') == 'zero':
+            maximum = 0
+        if amount > maximum:
+            return False, None
+        choice_schema['x'] = {'type': 'integer', 'minimum': 0, 'maximum': maximum,
+            'payment': 'life', 'label': 'X (life to pay)'}
+        option['announced_additional_x'] = amount
+        return True, None
     from ...waterbend import fixed_waterbend_cost
     from .waterbend_costs import validate_cast_waterbend
     if fixed_waterbend_cost(mandatory[position]) is not None:

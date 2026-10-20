@@ -122,6 +122,38 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SupportDeliveryPolicyTests(unittest.TestCase):
+    def test_legacy_measurement_upgrade_preserves_every_semantic_identity_field(self):
+        from scripts.harvest_outcome_history import _declaration_upgrades_legacy_measurement
+        identity = {'transition_id': 'fixture-legacy-upgrade', 'bundle_id': 'bundle:fixture-legacy-upgrade',
+            'candidate_ids': ['compiler:fixture'], 'family_ids': ['effect_clause:fixture'],
+            'capability_ids': ['effect.fixture']}
+        legacy = {**identity, 'head_receipt': {'compiler_version': 'oracle-ir-v999'},
+            'expected_complete_card_gain_basis': 'authoritative_source'}
+        measured = {**identity, 'compiler_version': 'oracle-ir-v999', 'outcome_kind': 'harvest',
+            'measurement_id': 'measurement:fixture-legacy-upgrade'}
+        self.assertTrue(_declaration_upgrades_legacy_measurement(measured, legacy))
+        for field in ('transition_id', 'bundle_id', 'compiler_version', 'candidate_ids', 'family_ids', 'capability_ids'):
+            changed = {**measured, field: ['different'] if isinstance(measured[field], list) else 'different'}
+            self.assertFalse(_declaration_upgrades_legacy_measurement(changed, legacy), field)
+        self.assertFalse(_declaration_upgrades_legacy_measurement(
+            {**measured, 'measurement_id': 'measurement:unrelated'}, legacy))
+        self.assertFalse(_declaration_upgrades_legacy_measurement(measured,
+            {**legacy, 'measurement_id': measured['measurement_id']}))
+        self.assertFalse(_declaration_upgrades_legacy_measurement(measured,
+            {**legacy, 'expected_complete_card_gain_basis': 'generated_transition_cohort'}))
+
+    def test_landed_history_never_enters_the_legacy_measurement_upgrade_path(self):
+        import scripts.harvest_outcome_history as owner
+        work = _json('platform/rules-subsystems.json')['work_selection']
+        with mock.patch.object(owner, '_content_transition_is_landed', return_value=True), mock.patch.object(
+                owner, '_declaration_upgrades_legacy_measurement', side_effect=AssertionError('landed entries are immutable')) as upgrade:
+            try:
+                owner.build_harvest_outcome_history(ROOT, work['harvest_provenance'],
+                    work['semantic_transition_declaration'], work.get('forecast_corrections'))
+            except HarvestOutcomeHistoryError as error:
+                self.assertRegex(str(error), 'stale before a content change')
+            upgrade.assert_not_called()
+
     def test_pr_floor_is_separate_from_smaller_component_measurements(self):
         from quorune.work_selection import _validated_coverage_policy
 

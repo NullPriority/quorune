@@ -131,7 +131,7 @@ class EntryCopySpec:
                 or query.exclude_ref is not None or query.state_predicate is not None
                 or query.numeric_characteristic is not None
                 or any((query.excluded_types, query.subtypes_any, query.excluded_subtypes,
-                    query.supertypes_all, query.colors_all, query.colors_any, query.keywords_all,
+                    query.supertypes_all, query.colors_all, query.colors_any, query.colors_none, query.keywords_all,
                     query.keywords_none, query.token is not None, query.tapped is not None,
                     query.commander is not None, query.colorless is not None,
                     query.minimum_color_count is not None))

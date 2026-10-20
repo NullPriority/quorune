@@ -187,7 +187,7 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
             "Target creature gains flying,, trample until end of turn.",
             "Target creature gets +X/+X until end of turn.",
             "{1}: Target creature gets +X/+X until end of turn.",
-            "{X}: Target creature gets +X/+X until end of turn.",
+            "{X}: Target creature gets +X/+X until end of turn. X can't be 0.",
             "When this creature enters, target creature gets +X/+X until end of turn.",
         )
         for text in excluded:
@@ -378,7 +378,7 @@ class TemporaryTargetInteractionRuntimeTests(unittest.TestCase):
         engine.state.pending_decision = None
         engine.state.priority_player = None
         engine.state.priority_passes = []
-        records = tuple(self.db.by_oracle_id(row["oracle_id"]) for row in json.loads(FIXTURE_PATH.read_text())["cards"] if row["oracle_text"])
+        records = tuple(self.db.by_oracle_id(row["oracle_id"]) for row in json.loads(FIXTURE_PATH.read_text(encoding='utf-8'))["cards"] if row["oracle_text"])
         register_generated_programs(
             self.db, engine.semantics, records, trust_level="trusted", capability_registry=self.registry,
             capability_profile="commander_review", promote_exact_runtime_handlers=True,

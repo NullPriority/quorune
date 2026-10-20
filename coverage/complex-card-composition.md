@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "6cc456e67cded6fe78c7fbc7cd0e717aa669d1fc27c897e08af4dc6164787975"
+verified: "9c6e5a3761858225e011babdca2c2ca3239ed1c2f551bf224f9101e8e7a6c622"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -13,7 +13,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 
 | Card | Score | Pieces | Systems | Abilities | Blockers | Rulings | Status |
 |---|---:|---:|---:|---:|---:|---:|---|
-| Valki, God of Lies // Tibalt, Cosmic Impostor | 273 | 36 | 6 | 6 | 17 | 22 | `blocked` |
+| Valki, God of Lies // Tibalt, Cosmic Impostor | 266 | 35 | 6 | 6 | 15 | 22 | `blocked` |
 | Urabrask // The Great Work | 263 | 39 | 8 | 7 | 14 | 4 | `blocked` |
 | Sheoldred // The True Scriptures | 255 | 37 | 8 | 7 | 13 | 4 | `blocked` |
 | Dion, Bahamut's Dominant // Bahamut, Warden of Light | 230 | 26 | 8 | 7 | 11 | 10 | `blocked` |
@@ -38,7 +38,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
 | Twisted Fealty | 208 | 40 | 6 | 5 | 1 | 9 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
-| Tovolar, Dire Overlord // Tovolar, the Midnight Scourge | 206 | 34 | 6 | 6 | 5 | 12 | `blocked` |
 | Ugin, Eye of the Storms | 205 | 41 | 5 | 5 | 11 | 3 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
@@ -50,6 +49,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Gossip's Talent | 197 | 31 | 6 | 8 | 2 | 11 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
+| Tovolar, Dire Overlord // Tovolar, the Midnight Scourge | 194 | 32 | 6 | 6 | 2 | 12 | `blocked` |
 | Hunter's Talent | 193 | 30 | 7 | 8 | 2 | 8 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 192 | 21 | 5 | 5 | 11 | 18 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 191 | 24 | 4 | 7 | 9 | 19 | `blocked` |

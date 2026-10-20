@@ -26,6 +26,8 @@ from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .counted_zone_costs import fixed_counted_zone_change_cost_clause
 from ..rules.reveal_additional_cost import FixedRevealAdditionalCost
 from ..rules.tap_additional_cost import FixedTapAdditionalCost
+from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
+from ..rules.casting_additional_cost_groups import AnnouncedXLifeAdditionalCost
 
 
 _COUNTER_NAME = (
@@ -280,6 +282,45 @@ class FixedZoneChangeAdditionalCostTemplate:
     @property
     def cost_schema(self) -> Mapping[str, Any]:
         return {"additional_costs": [dict(self.descriptor)]}
+
+
+@dataclass(frozen=True, slots=True)
+class AnnouncedXAdditionalCostTemplate:
+    specification: FixedZoneChangeAdditionalCost | AnnouncedXLifeAdditionalCost
+    template_id: str
+
+    def __post_init__(self):
+        if not isinstance(self.specification, (FixedZoneChangeAdditionalCost, AnnouncedXLifeAdditionalCost)):
+            raise ValueError("Announced additional costs require an immutable typed specification")
+
+    @property
+    def descriptor(self):
+        return self.specification.to_descriptor()
+
+    @property
+    def cost_schema(self):
+        return {'additional_costs': [dict(self.descriptor)]}
+
+
+def announced_x_additional_cost_template(text):
+    from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
+    from ..rules.casting_additional_cost_groups import AnnouncedXLifeAdditionalCost
+    normalized = ' '.join(text.strip().split())
+    if re.fullmatch(r'As an additional cost to cast this spell, pay X life\.?', normalized, re.I):
+        return AnnouncedXAdditionalCostTemplate(AnnouncedXLifeAdditionalCost(),
+            'spell-additional-cost-announced-x-life-v1')
+    match = re.fullmatch(r'As an additional cost to cast this spell, exile X (?P<quality>(?:creature |instant |sorcery )?cards) from your graveyard\.?', normalized, re.I)
+    if match is None:
+        return None
+    count = fixed_counted_zone_change_cost_clause(re.sub(r'\bexile X\b', 'exile two', normalized, flags=re.I))
+    if count is None:
+        return None
+    fixed = fixed_zone_change_additional_cost_template(count[0])
+    if fixed is None:
+        return None
+    cost = FixedZoneChangeAdditionalCost(operation=fixed.operation, choice_field='exile_cards',
+        predicate=fixed.predicate, schema_version=3, count=None, count_parameter='x')
+    return AnnouncedXAdditionalCostTemplate(cost, fixed.template_id+'-announced-x-v3')
 
 
 @dataclass(frozen=True, slots=True)

@@ -12,6 +12,7 @@ from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
+from .source_keyword_choice_shapes import source_keyword_choice_capabilities
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
 )
@@ -149,6 +150,7 @@ from .fixed_effect_clause_shapes import (
 )
 from .fixed_homogeneous_target_set_capability_shapes import (
     fixed_homogeneous_target_set_node_capabilities,
+    announced_target_set_node_capabilities,
 )
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
@@ -295,6 +297,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
     'commander-learn': ('keyword_action.learn.commander',),
@@ -317,6 +320,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _CREW_MECHANIC: ("activation.crew.fixed_power",),
     _STATION_MECHANIC: ("counter.producer.station",),
     _EVOLVE_MECHANIC: ("counter.producer.evolve",),
+    'increment':('counter.producer.increment',),
     _PROWESS_MECHANIC: ("trigger.keyword.prowess",),
     _STORM_MECHANIC: ("trigger.keyword.storm",),
     _PERSIST_MECHANIC: ("counter.producer.persist",),
@@ -467,6 +471,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     ),
     "fixed-temporary-defender-permission": ("combat.attack.defender_permission.temporary",),
     "fixed-temporary-block-capacity": ("combat.block.capacity.temporary",),
+    "fixed-temporary-keyword-removal": ("continuous.resolution.fixed_keyword_removal",),
     "temporary-as-unblocked-assignment": ("combat.damage.assignment.as_unblocked",),
     "temporary-toughness-assignment": ("combat.damage.assignment.toughness",),
     _FIXED_CONTROLLER_SEQUENCE_MECHANIC: (
@@ -514,7 +519,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "return-to-owner-hand",
         _FIXED_TARGET_SEQUENCE_MECHANIC,
         _FIXED_SOURCE_SEQUENCE_MECHANIC,
-        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment", "temporary-toughness-assignment", "fixed-temporary-block-capacity",
+        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment", "temporary-toughness-assignment", "fixed-temporary-block-capacity", "fixed-temporary-keyword-removal",
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
@@ -1117,10 +1122,11 @@ def _targeted_effect_capabilities(
         fixed_counter_placement_set_node_capabilities,
         fixed_counter_placement_target_set_node_capabilities,
         fixed_homogeneous_target_set_node_capabilities,
+        announced_target_set_node_capabilities,
         fixed_player_counter_placement_node_capabilities,
         optional_fixed_counter_event_trigger_node_capabilities,
         fixed_target_characteristics_node_capabilities, temporary_target_interaction_node_capabilities,
-        fixed_source_characteristics_node_capabilities,
+        fixed_source_characteristics_node_capabilities, source_keyword_choice_capabilities,
         temporary_declaration_restriction_node_capabilities,
         fixed_target_effect_sequence_node_capabilities,
         fixed_source_effect_sequence_node_capabilities,
@@ -1214,7 +1220,7 @@ def capability_dependencies_for_node(
             mechanics=mechanic_values, cost_schema=cost_schema, modal_resolver=_fixed_modal_capability_dependencies)
 
     all_operations = _nested_effect_operations(effects)
-    if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()
+    if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
     shape_effects, shape_mechanics = shape_context
     dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
     from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
@@ -1356,6 +1362,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
+        "continuous.resolution.source_keyword_choice": "temporary-source-keyword-choice",
         "resolution.effect_program.bound_references": "bound-effect-program",
     }
     return {

@@ -220,6 +220,7 @@ class CardProgramTrustTests(unittest.TestCase):
         )
         self.assertEqual(
             {
+                "activation.cost.modifier.fixed_generic",
                 "ability.activated.catalog",
                 "ability.activated.class-level",
                 "ability.activated.mana.color-set",
@@ -309,6 +310,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.payment.delve",
                 "casting.payment.improvise",
                 "combat.block.self-counter-prohibition",
+                "combat.defender_permission.current_numeric",
                 "continuous.fixed_query_ability_grant",
                 "continuous.fixed_query_characteristic_grant",
                 "continuous.fixed_query_keyword_grant",
@@ -503,6 +505,7 @@ def vars_for_binding(program):
     return {field: getattr(program, field) for field in (
         "ability_id", "key", "effects", "handlers", "capability_dependencies",
         "capability_closure", "trust_level", "provenance", "tests",
+        "coverage", "target_schema", "cost_schema", "event_condition", "event", "active_zone",
     )}
 
 

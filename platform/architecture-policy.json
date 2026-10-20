@@ -380,6 +380,9 @@
       "quorune/untap_selection.py": "typed retained untap-selection choice and continuation owner"
     },
     "read_only_consumers": {
+      "quorune/rules/casting/additional_zone_costs.py": "read-only typed zone-cost candidate and immutable declared-count selection query",
+      "quorune/rules/casting/nonmoving_additional_costs.py": "read-only current life and nonmoving additional payment query delegating commitments to canonical owners",
+      "quorune/rules/defender_declaration.py": "read-only trusted current-face declaration component and completed characteristic condition query",
       "quorune/source_damage_death.py": "read-only exact source/victim incarnation predicate over typed committed current-turn damage history",
       "quorune/rampage.py": "read-only sealed block occurrence derivation and current blocker count",
       "quorune/energy_payment.py": "fixed energy cost coordinator delegates counter mutation to the canonical counter transaction",
@@ -424,6 +427,9 @@
       ,"quorune/rules/casting/proposal.py": "read-only immutable casting proposal query"
       ,"quorune/rules/morph_actions.py": "typed Morph special-action planner delegating payment, object-state mutation, trigger discovery, and priority progression to canonical owners"
       ,"quorune/rules/activation/availability.py": "read-only activation payability query"
+      ,"quorune/rules/activation/x_costs.py": "read-only announced activation X price and affordability query"
+      ,"quorune/rules/activation/cost_modifiers.py": "read-only trusted current-source activation cost modifier applicability"
+      ,"quorune/rules/activation/pricing.py": "read-only shared activation price selection and public payment choices"
       ,"quorune/rules/activation/conditions.py": "read-only closed activation-condition query"
       ,"quorune/rules/activation/proposal.py": "read-only immutable activation proposal query"
       ,"quorune/rules/activation/query.py": "read-only activated-ability compiler query"

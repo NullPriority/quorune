@@ -134,6 +134,9 @@ class CostChoice:
             raise ValueError("cost choice card_type must be null or nonempty")
         if type(self.another) is not bool:
             raise ValueError("cost choice another flag must be boolean")
+        from .rules.selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, validate_selected_counter_choice
+        if self.kind == SELECTED_PLUS_COUNTER_COST_KIND:
+            validate_selected_counter_choice(self)
         if self.predicate is not None:
             if not isinstance(self.predicate, Mapping):
                 raise ValueError("cost choice predicate must be an object")
@@ -310,8 +313,11 @@ class ActivatedAbility:
     mana_spend_restriction: str | None = None
     power_up: PowerUpSpec | None = None
     fixed_mana_result: FixedManaResultSpec | None = None
+    announced_x_symbols: int | None = None
 
     def __post_init__(self) -> None:
+        from .activation_x import validate_activation_x_ability
+        validate_activation_x_ability(self)
         if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
             raise ValueError('Fixed mana result must be typed')
         _validate_ability_identity_and_cost(self)
@@ -384,6 +390,7 @@ class ActivatedAbility:
         if self.fixed_mana_result is not None:result['fixed_mana_result']=self.fixed_mana_result.to_dict()
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
+        if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
         return result
 
     @classmethod
@@ -391,6 +398,7 @@ class ActivatedAbility:
         value = validate_activated_ability_descriptor(value)
         return cls(
             ability_id=value["ability_id"],
+            announced_x_symbols=value.get('announced_x_symbols'),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],
@@ -474,6 +482,7 @@ class ActivatedAbility:
             "i": self.line_index,
         }
         mana = {key: value for key, value in self.mana.items() if value}
+        if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
         if mana:
             result["m"] = mana
         if self.mana_cost_options:
@@ -677,6 +686,10 @@ def _normalize_and_validate_ability_descriptors(
         raise ValueError(
             "source_counter_removal_cost must be a typed cost or null"
         )
+    if ability.source_counter_removal_cost is not None and ability.source_counter_removal_cost.schema_version == 2:
+        if (ability.zones != ('battlefield',) or ability.mana_ability or ability.choices
+                or ability.discard_source or ability.sacrifice_source or ability.exile_source):
+            raise ValueError('Any-kind source counter costs require one ordinary battlefield activation')
 
 
 def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:
@@ -990,6 +1003,14 @@ def _fixed_random_discard_payment(clause: str) -> int | None:
     return count if match['noun'].casefold()==('card' if count==1 else 'cards') else None
 
 
+def _activation_cost_clauses(actual_cost: str, card_name: str) -> list[str]:
+    """Recognize one complete joined cost using the existing source-cost owner."""
+    joined = re.fullmatch(r'(?P<removal>Remove .+?) and sacrifice it', actual_cost.strip(), re.I)
+    if joined is not None and _source_counter_removal_cost(joined['removal'], card_name=card_name) is not None:
+        return [joined['removal'], 'Sacrifice this permanent']
+    return _split_cost_clauses(actual_cost)
+
+
 def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     requirements, raw_complex = mana_cost_to_vector(actual_cost)
     complex_symbols = [value for value in raw_complex if value not in {"T", "Q"}]
@@ -1022,7 +1043,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
             "exile this planeswalker", "exile this token",
         },
     }
-    for clause in _split_cost_clauses(actual_cost):
+    for clause in _activation_cost_clauses(actual_cost, card_name):
         bend=re.fullmatch(r'Waterbend \{(?P<amount>\d+)\}',clause.strip(),re.I)
         if bend is not None:
             if waterbend is not None:uncompiled.append(clause.strip())
@@ -1569,11 +1590,8 @@ def reduced_requirements(
     ability: ActivatedAbility,
     *,
     legendary_creatures: int = 0,
+    announced_x: int = 0,
 ) -> dict[str, int]:
-    result = {"GENERIC": int(ability.mana.get("GENERIC", 0))}
-    for color in "WUBRGC":
-        result[color] = int(ability.mana.get(color, 0))
-    if ability.generic_reduction_per_legendary_creature:
-        reduction = ability.generic_reduction_per_legendary_creature * max(0, legendary_creatures)
-        result["GENERIC"] = max(0, result["GENERIC"] - reduction)
-    return result
+    from .activation_cost_modifiers import base_activation_requirements
+    return base_activation_requirements(ability, legendary_creatures=legendary_creatures,
+        announced_x=announced_x)

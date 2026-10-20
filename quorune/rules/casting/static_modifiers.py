@@ -8,6 +8,7 @@ from ...compiled_cast_costs import compiled_self_spell_cost_reduction_specs
 from ...cast_cost_modifiers import PublicCastCostModifierV2Spec
 from ...semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
 from ...self_cast_reductions import evaluated_self_reduction
+from ...targeted_spell_costs import validate_targeted_spell_cost_fact
 
 
 def fixed_generic_reduction(
@@ -106,6 +107,14 @@ def apply_static_reductions(
         option.setdefault("cost_increases", []).append(
             {"kind": "fixed_query", "increase": applied_increases}
         )
+    target_cost=option.get('targeted_cost')
+    if target_cost is not None:
+        validate_targeted_spell_cost_fact(target_cost)
+        reduction=target_cost.get('generic_reduction',0)
+        if reduction:
+            applied=min(option['requirements']['GENERIC'],reduction)
+            option['requirements']['GENERIC']-=applied
+            option.setdefault('cost_reductions',[]).append({'kind':'self_target','count':applied})
     if fixed_reduction:
         applied = min(
             int(option["requirements"]["GENERIC"]),
