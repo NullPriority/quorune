@@ -3289,6 +3289,48 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
       "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_hybrid_locket_output_pays_sibling_complex_activation",
       "official_rule_ids": ["106.3", "107.4e", "107.4f", "107.4g", "107.4h", "118.3", "118.7", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -3341,6 +3383,48 @@
       "official_rule_ids": ["106.3", "107.4e", "107.4f", "107.4g", "107.4h", "118.3", "118.7", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Route the selected Phyrexian alternative through either the canonical colored-mana spend or life-payment owner without changing the resolved effect."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.mana_cost.fixed_complex",
@@ -3401,6 +3485,48 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
       "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaCompilerTests.test_closed_complex_symbols_compile_to_typed_options",
       "official_rule_ids": ["106.3", "107.4e", "107.4f", "107.4g", "107.4h", "118.3", "118.7", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -3425,10 +3551,94 @@
     {
       "capability_id": "activation.mana_cost.fixed_complex",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
       "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
       "official_rule_ids": ["106.3", "107.4e", "107.4f", "107.4g", "107.4h", "118.3", "118.7", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep the provenance lot journal out of another principal's projection while exposing only ordinary public mana aggregates and legal actions."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.mana_cost.fixed_complex",
@@ -8362,6 +8572,880 @@
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Roll back cost movement, mana, and stack placement before presenting a competing replacement choice for the selected object."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_fresh_loch_witness_kills_omitted_counter_payment",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_fresh_original_admission_kills_omitted_any_kind_source_compiler",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "negative",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_runtime_cannot_omit_any_kind_source_counter_authority",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "negative",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_unknown_amounts_and_mixed_source_costs_remain_residual",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "negative",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterValueTests.test_version_two_distributions_are_complete_exact_and_keep_legacy_named_wire",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_seven_originals_close_with_real_distribution_forms_and_preserved_mana_constraints",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.any_kind",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "activation.source_counter_removal.fixed",
@@ -46584,11 +47668,47 @@
     },
     {
       "capability_id": "combat.block.flying",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "509.1b",
+        "702.9",
+        "702.9a",
+        "702.9b",
+        "702.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "combat.block.flying",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_aerial_blocking.AerialBlockingIntegrationTests.test_current_flying_and_reach_share_offer_and_command_legality",
       "official_rule_ids": ["509.1b", "702.9", "702.9a", "702.9b", "702.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Evaluate the attacked player's blockers independently in a four-player combat."
+    },
+    {
+      "capability_id": "combat.block.flying",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "509.1b",
+        "702.9",
+        "702.9a",
+        "702.9b",
+        "702.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "combat.block.flying",
@@ -46616,6 +47736,24 @@
     },
     {
       "capability_id": "combat.block.flying",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "509.1b",
+        "702.9",
+        "702.9a",
+        "702.9b",
+        "702.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "combat.block.flying",
       "evidence_class": "privacy",
       "test_id": "tests.test_aerial_blocking.AerialBlockingIntegrationTests.test_current_flying_and_reach_share_offer_and_command_legality",
       "official_rule_ids": ["509.1b", "702.9", "702.9a", "702.9b", "702.9c"],
@@ -46624,11 +47762,47 @@
     },
     {
       "capability_id": "combat.block.flying",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "509.1b",
+        "702.9",
+        "702.9a",
+        "702.9b",
+        "702.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "combat.block.flying",
       "evidence_class": "replay",
       "test_id": "tests.test_aerial_blocking.AerialBlockingIntegrationTests.test_current_flying_and_reach_share_offer_and_command_legality",
       "official_rule_ids": ["509.1b", "702.9", "702.9a", "702.9b", "702.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the accepted Reach block from an exact four-player checkpoint."
+    },
+    {
+      "capability_id": "combat.block.flying",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "509.1b",
+        "702.9",
+        "702.9a",
+        "702.9b",
+        "702.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "combat.block.horsemanship",
@@ -50127,6 +51301,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "interaction",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_characteristics_and_requirement_end_with_attachment",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -50206,6 +51399,25 @@
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use one shared declaration query in which current-effective static restrictions obey ability removal and an independent resolved rule does not."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -50339,6 +51551,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "positive",
       "test_id": "tests.test_combat_declaration_costs.CombatDeclarationCostTests.test_prison_tax_is_projected_paid_atomically_and_replays",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -50430,6 +51661,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_condition_runtime.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
       "official_rule_ids": [
         "508.1c",
@@ -50453,6 +51703,25 @@
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose public declaration domains while withholding effect, source, physical, and logical journal identities from every seat packet."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -80884,6 +82153,23 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
       "official_rule_ids": [
         "508.1c",
@@ -80939,6 +82225,23 @@
       "official_rule_ids": ["508.1c", "509.1b", "611.2c", "514.2"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve source-independent duration after source departure and stop applying the rule to a returned target incarnation."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -81122,6 +82425,23 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionCompilerTests.test_spell_triggered_source_and_subtype_contexts_share_owner",
       "official_rule_ids": ["508.1c", "509.1b", "611.2c", "514.2"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -81265,6 +82585,23 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "privacy",
       "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
       "official_rule_ids": [
         "508.1c",
@@ -81321,6 +82658,23 @@
         "commander_review"
       ],
       "applicability_note": "Legacy locked payloads remain readable; version-two live queries round-trip and reject hidden, phased, unbound, mixed-recipient and malformed fields. Both shapes expire in cleanup."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -81425,6 +82779,63 @@
       "applicability_note": "Original Falter resolves with no matching creatures, then affects later Flash entrants. Actual Jump changes one blocker predicate; two original Turn to Frog spells make the attackers ground creatures so Flying cannot mask the prohibition. Real four-seat block offers and commands, pending save/load, private decision projection and pre-cast replay distinguish live membership."
     },
     {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"rollback","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Goblin Tunneler advertises only current power-at-most-two targets and rejects unauthorized activation atomically. Actual Giant Growth before resolution invalidates the target and leaves blocking legal; growth after resolution changes power without removing the locked unblockable rule. Ordinary attack/block commands, principal-private blocker decisions, pending save/load and pre-activation replay distinguish both branches."},
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
@@ -81619,6 +83030,63 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -81919,6 +83387,63 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -82154,6 +83679,63 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -82285,6 +83867,63 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {"capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn", "evidence_class": "replay", "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_mixed_player_and_permanent_roles_apply_to_their_independent_subjects_with_replay", "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual How to Start a Riot gives Menace only to its creature target and the +2/+0 set bonus only to the independent player target creatures; exact replay preserves both subjects."},
     {
@@ -93173,6 +94812,29 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the source-departure placement to the identical authoritative state hash."
     },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
     {"capability_id": "counter.producer.fixed_effect", "evidence_class": "interaction", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation", "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -93319,6 +94981,29 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -93594,6 +95279,29 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementCompilerTests.test_spell_trigger_and_activated_contexts_share_fixed_counter_lowering",
       "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -93756,6 +95464,29 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
       "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -93875,6 +95606,29 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {"capability_id": "counter.producer.fixed_effect", "evidence_class": "replay", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation", "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
@@ -102231,6 +103985,166 @@
     {
       "capability_id": "counter.removal.fixed_effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_removal_effects.FixedCounterRemovalRuntimeTests.test_fixed_counter_removal_preserves_target_revalidation_and_siege_trigger",
       "official_rule_ids": ["101.3", "115.3", "115.6", "122.1", "608.2b", "608.2c", "609.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -102375,6 +104289,166 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "counter.removal.fixed_effect",
@@ -102567,6 +104641,166 @@
     {
       "capability_id": "counter.removal.fixed_effect",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_removal_effects.FixedCounterRemovalCompilerTests.test_fixed_counter_removal_compiles_across_spell_trigger_and_activation",
       "official_rule_ids": ["101.3", "115.3", "115.6", "122.1", "608.2b", "608.2c", "609.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -102723,6 +104957,166 @@
     {
       "capability_id": "counter.removal.fixed_effect",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "privacy",
       "test_id": "tests.test_selected_counter_costs.SelectedCounterCostRuntimeTests.test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
       "official_rule_ids": [
         "101.3",
@@ -102859,6 +105253,166 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.removal.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "101.3",
+        "115.3",
+        "115.6",
+        "122.1",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "counter.removal.fixed_effect",
@@ -133261,6 +135815,21 @@
     {
       "capability_id": "permanent.tap.effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "701.26",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "permanent.tap.effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_selected_counter_costs.SelectedCounterCostRuntimeTests.test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
       "official_rule_ids": [
         "701.26",
@@ -133272,6 +135841,21 @@
         "commander_review"
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "permanent.tap.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "701.26",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "permanent.tap.effect",
@@ -133366,6 +135950,21 @@
     {
       "capability_id": "permanent.tap.effect",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "701.26",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "permanent.tap.effect",
+      "evidence_class": "positive",
       "test_id": "tests.test_selected_counter_costs.SelectedCounterCostRuntimeTests.test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
       "official_rule_ids": [
         "701.26",
@@ -133441,6 +136040,21 @@
     {
       "capability_id": "permanent.tap.effect",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "701.26",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "permanent.tap.effect",
+      "evidence_class": "privacy",
       "test_id": "tests.test_selected_counter_costs.SelectedCounterCostRuntimeTests.test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
       "official_rule_ids": [
         "701.26",
@@ -133467,6 +136081,21 @@
         "commander_review"
       ],
       "applicability_note": "Project only public battlefield permanent references and never player or hidden-zone references for the direct target."
+    },
+    {
+      "capability_id": "permanent.tap.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "701.26",
+        "701.26a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "permanent.tap.effect",
@@ -170965,6 +173594,96 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_target_player_characteristic_set_resolves_and_replays",
       "official_rule_ids": [
         "115.1",
@@ -171289,6 +174008,96 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "115.1",
@@ -171577,6 +174386,96 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "positive",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "115.1",
@@ -171829,6 +174728,96 @@
     {
       "capability_id": "target.revalidate_resolution",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "privacy",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "115.1",
@@ -172077,6 +175066,96 @@
         "traditional"
       ],
       "applicability_note": "Actual admitted Requisition Raid reuses one Artifact Enchantment across both modes: removal makes the later mutation a no-op; a shield leaves the target usable for the second destruction. Kolaghan destruction then damage skips the departed artifact creature. Wrong-domain/missing targets, wrong principal, privacy, pending load/replay and guard omission are covered. Informational and historical references retain their boundaries."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "target.revalidate_resolution",
@@ -201284,6 +204363,87 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_aura_equipment_anthem_temporary_effect_and_draw_compose",
       "official_rule_ids": ["121.1", "121.2", "121.2a", "121.2b", "121.2c", "121.3", "121.3a", "121.4", "121.5", "121.6", "121.6a", "121.6b", "702.52a", "702.52b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -201744,6 +204904,87 @@
         "commander_review"
       ],
       "applicability_note": "Resolve a fixed each-player activated draw through the canonical four-player APNAP batch."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -202477,6 +205718,87 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_draw_replacement_components.DrawInstructionReplacementIntegrationTests.test_two_draw_doublers_modify_instruction_before_individual_draws",
       "official_rule_ids": [
         "121.1",
@@ -203044,6 +206366,87 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_draw_step_rules.DrawStepRuleTests.test_draw_replacement_choice_is_visible_only_to_affected_seat",
       "official_rule_ids": [
         "121.1",
@@ -203445,6 +206848,87 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact activation cost, source departure, stack resolution, and private draw result."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -214257,10 +217741,54 @@
     {
       "capability_id": "zone.reanimate.fixed_target",
       "evidence_class": "interaction",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "110.2a",
+        "115.1",
+        "115.1a",
+        "303.4f",
+        "303.4g",
+        "400.2",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationRuntimeTests.test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
       "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Resolve destination replacement before the new battlefield incarnation and complete any required Aura attachment choice exactly once."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "110.2a",
+        "115.1",
+        "115.1a",
+        "303.4f",
+        "303.4g",
+        "400.2",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.reanimate.fixed_target",
@@ -214289,6 +217817,28 @@
     {
       "capability_id": "zone.reanimate.fixed_target",
       "evidence_class": "positive",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "110.2a",
+        "115.1",
+        "115.1a",
+        "303.4f",
+        "303.4g",
+        "400.2",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationCompilerTests.test_fixed_target_reanimation_compiles_across_spell_trigger_activation_and_modal_contexts",
       "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -214297,10 +217847,54 @@
     {
       "capability_id": "zone.reanimate.fixed_target",
       "evidence_class": "privacy",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "110.2a",
+        "115.1",
+        "115.1a",
+        "303.4f",
+        "303.4g",
+        "400.2",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationRuntimeTests.test_reanimation_four_player_projection_and_apnap_are_stable",
       "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project only public card and permanent references and omit physical identities, continuation internals, and every unrelated hidden-zone card."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "replay",
+      "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+      "official_rule_ids": [
+        "110.2a",
+        "115.1",
+        "115.1a",
+        "303.4f",
+        "303.4g",
+        "400.2",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
     {
       "capability_id": "zone.reanimate.fixed_target",

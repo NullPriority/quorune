@@ -34,7 +34,9 @@ def activated_ability_cost_capabilities(
         additional.append('activation.random_discard.fixed')
     if ability.power_up is not None:additional.append(POWER_UP_CAPABILITY)
     if ability.source_counter_removal_cost is not None:
-        additional.append("activation.source_counter_removal.fixed")
+        from ..rules.activation.source_counter_choices import ANY_SOURCE_COUNTER_COST_CAPABILITY
+        additional.append(ANY_SOURCE_COUNTER_COST_CAPABILITY if ability.source_counter_removal_cost.schema_version == 2
+                          else "activation.source_counter_removal.fixed")
     if ability.loyalty_delta is not None and ability.loyalty_delta > 0:
         additional.append("activation.loyalty.positive_counter_cost")
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:

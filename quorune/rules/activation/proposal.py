@@ -439,6 +439,10 @@ def _activation_choice_schema(
     counter_choice = selected_counter_cost_choice_schema(host, seat, source, ability)
     if counter_choice is not None:
         return counter_choice
+    from .source_counter_choices import source_counter_cost_choice_schema
+    source_counters = source_counter_cost_choice_schema(source, ability)
+    if source_counters is not None:
+        return source_counters
     if ability.mana_ability:
         from ...public_quantity_mana_runtime import public_quantity_mana_choice_schema
         quantity_choice = public_quantity_mana_choice_schema(host, seat, source, ability)

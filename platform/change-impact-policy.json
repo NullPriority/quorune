@@ -6514,6 +6514,26 @@
         "test_quest_counter_sacrifice_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "any-kind-source-counter-costs",
+      "patterns": [
+        "quorune/rules/activation_counter_cost.py",
+        "quorune/rules/activation/source_counter_choices.py",
+        "quorune/rules/activation/counter_costs.py",
+        "quorune/rules/activation/availability.py",
+        "quorune/compiler/activated_counter_costs.py",
+        "quorune/choice_forms.py",
+        "tests/fixtures/any-source-counter-cost-cards.json",
+        "tests/test_any_source_counter_costs.py"
+      ],
+      "test_modules": [
+        "test_any_source_counter_costs",
+        "test_selected_counter_costs",
+        "test_fixed_source_counter_activation_costs",
+        "test_quest_counter_sacrifice_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -111,6 +111,19 @@ def _copy_target_form_field(
     }
 
 
+def _select_value_field(field, value, legal_values, context):
+    """Render server-scoped choices while keeping opaque values out of labels."""
+    field.update({'control': 'select', 'options': _options(list(legal_values), context)})
+    labels = value.get('option_labels')
+    if isinstance(labels, Mapping):
+        for option in field['options']:
+            if str(option['value']) in labels:
+                option['label'] = str(labels[str(option['value'])])
+    if 'default' in value:
+        field['default'] = copy.deepcopy(value['default'])
+    return field
+
+
 def _field(
     name: str,
     descriptor: Any,
@@ -249,15 +262,7 @@ def _field(
     if isinstance(legal_values, Sequence) and not isinstance(
         legal_values, (str, bytes)
     ):
-        field.update(
-            {
-                "control": "select",
-                "options": _options(list(legal_values), context),
-            }
-        )
-        if "default" in value:
-            field["default"] = copy.deepcopy(value["default"])
-        return field
+        return _select_value_field(field, value, legal_values, context)
     return None
 
 

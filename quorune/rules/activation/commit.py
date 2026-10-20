@@ -510,7 +510,7 @@ def _commit_activation_resource_costs(
     mana_option: ActivationManaCostOption | None,
 ) -> None:
     try:
-        commit_source_counter_removal_cost(host, source, ability)
+        commit_source_counter_removal_cost(host, source, ability, response=response)
     except SourceCounterActivationCostError as exc:
         raise ActivationProposalError(
             str(exc),

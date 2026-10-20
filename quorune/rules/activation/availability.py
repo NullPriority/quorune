@@ -101,7 +101,11 @@ def activation_availability(
         cost = ability.source_counter_removal_cost
         if zone != "battlefield":
             return "unavailable", "source_counter_cost_wrong_zone"
-        if int(card.counters.get(cost.counter_name, 0)) < cost.amount:
+        if cost.schema_version == 2:
+            from .source_counter_choices import source_counter_payment_choices
+            if not source_counter_payment_choices(card, cost):
+                return 'unpayable', 'insufficient_source_counters'
+        elif int(card.counters.get(cost.counter_name, 0)) < cost.amount:
             return "unpayable", "insufficient_source_counters"
     station_choice = station_cost_choice(ability)
     if station_choice is not None:

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 411,
+  "registry_version": 412,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4228,23 +4228,116 @@
     {
       "id": "activation.mana_cost.fixed_complex",
       "version": 1,
-      "official_rules": ["106.3", "107.4e", "107.4f", "107.4g", "107.4h", "118.3", "118.7", "602.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile fixed colored-hybrid, two-brid, Phyrexian, and snow symbols on otherwise typed nonmana activated abilities into immutable payment options consumed by the canonical activation offer, commit, mana, life, and provenance owners.",
-        "inputs": ["one source-spanned nonmana activated ability", "fixed ordinary, colored-hybrid, two-brid, Phyrexian, or snow mana symbols", "current payable mana sources and pool", "current life total", "source-pinned typed effect and other cost descriptors"],
-        "outputs": ["one closed set of immutable activation mana-cost options", "principal-visible currently payable option choices", "atomic selected mana, snow-mana, and life payment", "current source ability and option revalidation", "exact replay without raw mana-source identity projection"],
-        "exclusions": ["X, energy, half, infinity, chaos, and other open or nonmana symbols", "selected-object, untyped, random, optional, alternative, repeated, or independently unsupported choice costs", "generic cost reductions combined with complex symbols", "mana abilities whose own activation consumes complex mana", "copied or granted costs outside the compiler-pinned catalog", "dynamic snow-source characteristics and delayed mana whose source identity is unavailable"]
+        "inputs": [
+          "one source-spanned nonmana activated ability",
+          "fixed ordinary, colored-hybrid, two-brid, Phyrexian, or snow mana symbols",
+          "current payable mana sources and pool",
+          "current life total",
+          "source-pinned typed effect and other cost descriptors"
+        ],
+        "outputs": [
+          "one closed set of immutable activation mana-cost options",
+          "principal-visible currently payable option choices",
+          "atomic selected mana, snow-mana, and life payment",
+          "current source ability and option revalidation",
+          "exact replay without raw mana-source identity projection"
+        ],
+        "exclusions": [
+          "X, energy, half, infinity, chaos, and other open or nonmana symbols",
+          "selected-object, untyped, random, optional, alternative, repeated, or independently unsupported choice costs",
+          "generic cost reductions combined with complex symbols",
+          "mana abilities whose own activation consumes complex mana",
+          "copied or granted costs outside the compiler-pinned catalog",
+          "dynamic snow-source characteristics and delayed mana whose source identity is unavailable"
+        ]
       },
-      "dependencies": ["activation.tap_untap_cost.haste", "mana.activated.fixed_output", "mana.activated.restricted_fixed_output", "mana.activated.color_set", "mana.intrinsic.basic_land_type"],
-      "implementation_components": ["quorune.activation_mana_cost.ActivationManaCostOption", "quorune.compiler.activation_mana_costs.fixed_complex_activation_mana_cost", "quorune.rules.activation.availability.activation_availability", "quorune.rules.activation.proposal.build_activation_offer", "quorune.rules.activation.proposal.build_activation_proposal", "quorune.rules.activation.commit._revalidate_activation", "quorune.mana_provenance.ManaProvenanceLot", "quorune.mana_provenance.ManaProvenanceHostMixin", "quorune.mana.auto_plan_payment", "CommanderEngine._pay_for_cost"],
-      "positive_tests": ["test_closed_complex_symbols_compile_to_typed_options", "test_hybrid_offer_commit_and_stale_option_are_atomic", "test_phyrexian_options_share_mana_and_life_owners", "test_snow_payment_uses_current_source_provenance_and_replays", "test_two_brid_offer_and_commit_preserve_the_unspent_color"],
-      "negative_tests": ["test_option_model_and_unsupported_symbols_fail_closed", "test_current_ability_removal_rejects_option_before_mutation", "test_provenance_journal_rejects_a_stale_restriction_summary", "test_snow_allocation_does_not_double_spend_colored_mana", "test_stale_snow_provenance_rolls_back_before_tap"],
-      "interaction_tests": ["test_hybrid_locket_output_pays_sibling_complex_activation", "test_hybrid_offer_commit_and_stale_option_are_atomic", "test_hybrid_payment_and_source_sacrifice_share_one_transaction", "test_hybrid_payment_and_untap_symbol_commit_atomically", "test_hybrid_target_revalidates_after_departure", "test_mixed_option_commits_hybrid_life_and_snow_as_one_cost", "test_phyrexian_options_share_mana_and_life_owners", "test_restricted_snow_overlap_and_projection_preserve_only_aggregates"],
-      "multiplayer_tests": ["test_restricted_snow_overlap_and_projection_preserve_only_aggregates"],
-      "privacy_tests": ["test_restricted_snow_overlap_and_projection_preserve_only_aggregates"],
-      "replay_tests": ["test_snow_payment_uses_current_source_provenance_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "activation.tap_untap_cost.haste",
+        "mana.activated.fixed_output",
+        "mana.activated.restricted_fixed_output",
+        "mana.activated.color_set",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "implementation_components": [
+        "quorune.activation_mana_cost.ActivationManaCostOption",
+        "quorune.compiler.activation_mana_costs.fixed_complex_activation_mana_cost",
+        "quorune.rules.activation.availability.activation_availability",
+        "quorune.rules.activation.proposal.build_activation_offer",
+        "quorune.rules.activation.proposal.build_activation_proposal",
+        "quorune.rules.activation.commit._revalidate_activation",
+        "quorune.mana_provenance.ManaProvenanceLot",
+        "quorune.mana_provenance.ManaProvenanceHostMixin",
+        "quorune.mana.auto_plan_payment",
+        "CommanderEngine._pay_for_cost"
+      ],
+      "positive_tests": [
+        "test_closed_complex_symbols_compile_to_typed_options",
+        "test_hybrid_offer_commit_and_stale_option_are_atomic",
+        "test_phyrexian_options_share_mana_and_life_owners",
+        "test_snow_payment_uses_current_source_provenance_and_replays",
+        "test_two_brid_offer_and_commit_preserve_the_unspent_color",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "negative_tests": [
+        "test_option_model_and_unsupported_symbols_fail_closed",
+        "test_current_ability_removal_rejects_option_before_mutation",
+        "test_provenance_journal_rejects_a_stale_restriction_summary",
+        "test_snow_allocation_does_not_double_spend_colored_mana",
+        "test_stale_snow_provenance_rolls_back_before_tap"
+      ],
+      "interaction_tests": [
+        "test_hybrid_locket_output_pays_sibling_complex_activation",
+        "test_hybrid_offer_commit_and_stale_option_are_atomic",
+        "test_hybrid_payment_and_source_sacrifice_share_one_transaction",
+        "test_hybrid_payment_and_untap_symbol_commit_atomically",
+        "test_hybrid_target_revalidates_after_departure",
+        "test_mixed_option_commits_hybrid_life_and_snow_as_one_cost",
+        "test_phyrexian_options_share_mana_and_life_owners",
+        "test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "multiplayer_tests": [
+        "test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "privacy_tests": [
+        "test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "replay_tests": [
+        "test_snow_payment_uses_current_source_provenance_and_replays",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The focused capability mutation blocks the complex activation-cost capability and proves the source-spanned ability remains inexact.",
       "implementation_mutation_status": "killed",
@@ -7319,7 +7412,10 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw"
       ],
       "negative_tests": [
         "test_changed_library_or_source_fails_before_draw_mutation",
@@ -7360,7 +7456,10 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw"
       ],
       "multiplayer_tests": [
         "test_draw_each_player_uses_apnap_order_and_exact_engine_path",
@@ -7380,7 +7479,10 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw"
       ],
       "privacy_tests": [
         "test_draw_replacement_choice_is_visible_only_to_affected_seat",
@@ -7399,7 +7501,10 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw"
       ],
       "replay_tests": [
         "test_first_turn_profile_modifier_and_exact_replay",
@@ -7423,7 +7528,10 @@
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_countering_the_actual_ior_ability_does_not_refund_either_source_cost",
         "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw"
       ],
       "required_evidence": [
         "positive",
@@ -9370,7 +9478,15 @@
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "negative_tests": [
         "test_unsupported_fixed_counter_removal_variants_remain_residual",
@@ -9385,7 +9501,15 @@
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "multiplayer_tests": [
         "test_fixed_counter_removal_replay_is_exact_in_four_player_game",
@@ -9395,7 +9519,15 @@
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "privacy_tests": [
         "test_actual_shapers_uses_tapped_controlled_payer_and_rolls_back_bad_or_unfunded_selections",
@@ -9404,7 +9536,15 @@
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "replay_tests": [
         "test_fixed_counter_removal_replay_is_exact_in_four_player_game",
@@ -9414,7 +9554,15 @@
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "required_evidence": [
         "positive",
@@ -9680,7 +9828,8 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "negative_tests": [
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
@@ -9698,7 +9847,8 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "multiplayer_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
@@ -9706,7 +9856,8 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "privacy_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
@@ -9714,7 +9865,8 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "replay_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
@@ -9723,7 +9875,8 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "required_evidence": [
         "positive",
@@ -13789,7 +13942,10 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -13823,7 +13979,10 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -13837,7 +13996,10 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -13850,7 +14012,10 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -13863,7 +14028,10 @@
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "required_evidence": [
         "positive",
@@ -14181,7 +14349,8 @@
         "test_public_group_rules_preserve_live_controller_and_keyword_predicates",
         "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
         "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
-        "test_static_this_turn_history_conditions_keep_their_declaration_owner"
+        "test_static_this_turn_history_conditions_keep_their_declaration_owner",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "negative_tests": [
         "test_open_temporary_declaration_restriction_grammar_stays_residual",
@@ -14197,23 +14366,27 @@
         "test_source_departure_preserves_rule_but_target_reentry_does_not",
         "test_all_four_restrictions_change_declaration_behavior_and_expire",
         "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
-        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "multiplayer_tests": [
         "test_four_player_projection_exposes_only_public_declaration_facts",
         "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
-        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "privacy_tests": [
         "test_four_player_projection_exposes_only_public_declaration_facts",
         "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
-        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "replay_tests": [
         "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
         "test_cleanup_expiration_is_exactly_replayable",
         "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
-        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "required_evidence": [
         "positive",
@@ -14287,23 +14460,79 @@
     {
       "id": "combat.block.flying",
       "version": 1,
-      "official_rules": ["509.1b", "702.9", "702.9a", "702.9b", "702.9c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "509.1b",
+        "702.9",
+        "702.9a",
+        "702.9b",
+        "702.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Apply the Flying block restriction to a fully validated proposed blocker-attacker pair using both objects' current represented effective keyword states.",
-        "inputs": ["fully validated proposed blocker-attacker pair", "attacker current represented effective keywords", "blocker current represented effective keywords"],
-        "outputs": ["ground blocker rejected for a flying attacker", "flying or reach blocker permitted past the Flying restriction", "case-insensitive redundant flying result"],
-        "exclusions": ["blocker eligibility unrelated to Flying", "other evasion and blocking restrictions or requirements", "block declaration costs", "unsupported continuous-effect, copy, face-down, and ability-changing producers"]
+        "inputs": [
+          "fully validated proposed blocker-attacker pair",
+          "attacker current represented effective keywords",
+          "blocker current represented effective keywords"
+        ],
+        "outputs": [
+          "ground blocker rejected for a flying attacker",
+          "flying or reach blocker permitted past the Flying restriction",
+          "case-insensitive redundant flying result"
+        ],
+        "exclusions": [
+          "blocker eligibility unrelated to Flying",
+          "other evasion and blocking restrictions or requirements",
+          "block declaration costs",
+          "unsupported continuous-effect, copy, face-down, and ability-changing producers"
+        ]
       },
-      "dependencies": ["combat.block.reach"],
-      "implementation_components": ["quorune.keyword_abilities.normalized_characteristic_keywords", "quorune.aerial_blocking.aerial_block_verdict", "CommanderEngine._can_block"],
-      "positive_tests": ["test_flying_attacker_requires_flying_or_reach_blocker", "test_current_flying_and_reach_share_offer_and_command_legality"],
-      "negative_tests": ["test_ground_attacker_is_outside_aerial_restriction", "test_malformed_keyword_snapshot_fails_closed"],
-      "interaction_tests": ["test_current_keywords_are_case_insensitive_and_redundant", "test_current_flying_and_reach_share_offer_and_command_legality"],
-      "multiplayer_tests": ["test_current_flying_and_reach_share_offer_and_command_legality"],
-      "privacy_tests": ["test_current_flying_and_reach_share_offer_and_command_legality"],
-      "replay_tests": ["test_current_flying_and_reach_share_offer_and_command_legality"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "combat.block.reach"
+      ],
+      "implementation_components": [
+        "quorune.keyword_abilities.normalized_characteristic_keywords",
+        "quorune.aerial_blocking.aerial_block_verdict",
+        "CommanderEngine._can_block"
+      ],
+      "positive_tests": [
+        "test_flying_attacker_requires_flying_or_reach_blocker",
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "negative_tests": [
+        "test_ground_attacker_is_outside_aerial_restriction",
+        "test_malformed_keyword_snapshot_fails_closed"
+      ],
+      "interaction_tests": [
+        "test_current_keywords_are_case_insensitive_and_redundant",
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "multiplayer_tests": [
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "privacy_tests": [
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "replay_tests": [
+        "test_current_flying_and_reach_share_offer_and_command_legality",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Capability-closure tests demote Flying when the coupled reach exception capability is blocked.",
       "implementation_mutation_status": "killed",
@@ -15308,7 +15537,8 @@
         "test_compiled_source_activation_locks_rule_to_source_incarnation",
         "test_static_query_and_attachment_declaration_grants_compile_closed",
         "test_compound_self_restrictions_enforce_every_conjunct",
-        "test_conditional_stats_and_declaration_result_preserve_one_live_condition"
+        "test_conditional_stats_and_declaration_result_preserve_one_live_condition",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "negative_tests": [
         "test_declaration_component_descriptors_reject_malformed_values",
@@ -15328,23 +15558,27 @@
         "test_static_query_restriction_revalidates_and_obeys_ability_removal",
         "test_attached_characteristics_and_requirement_end_with_attachment",
         "test_compound_self_restrictions_enforce_every_conjunct",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "multiplayer_tests": [
         "test_prison_tax_is_projected_paid_atomically_and_replays",
         "test_four_player_projection_exposes_only_public_declaration_facts",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "privacy_tests": [
         "test_four_player_projection_exposes_only_public_declaration_facts",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "replay_tests": [
         "test_prison_tax_is_projected_paid_atomically_and_replays",
         "test_attack_or_block_alone_allows_different_defenders_and_replays",
         "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
         "test_cleanup_expiration_is_exactly_replayable",
-        "test_original_channeler_condition_controls_required_attack_and_replays"
+        "test_original_channeler_condition_controls_required_attack_and_replays",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
       ],
       "required_evidence": [
         "positive",
@@ -17195,7 +17429,8 @@
         "test_fixed_target_reanimation_compiles_across_spell_trigger_activation_and_modal_contexts",
         "test_reanimation_target_domains_controller_and_tapped_state_are_typed",
         "test_reanimation_closed_type_and_power_qualities_are_typed",
-        "test_reanimation_controller_tapped_and_characteristic_variants_resolve"
+        "test_reanimation_controller_tapped_and_characteristic_variants_resolve",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
       ],
       "negative_tests": [
         "test_reanimation_unsupported_and_malformed_shapes_fail_closed",
@@ -17203,17 +17438,21 @@
       ],
       "interaction_tests": [
         "test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
-        "test_reanimation_current_graveyard_characteristics_and_source_control_compose"
+        "test_reanimation_current_graveyard_characteristics_and_source_control_compose",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
       ],
       "multiplayer_tests": [
-        "test_reanimation_four_player_projection_and_apnap_are_stable"
+        "test_reanimation_four_player_projection_and_apnap_are_stable",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
       ],
       "privacy_tests": [
-        "test_reanimation_four_player_projection_and_apnap_are_stable"
+        "test_reanimation_four_player_projection_and_apnap_are_stable",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
       ],
       "replay_tests": [
         "test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
-        "test_reanimation_four_player_projection_and_apnap_are_stable"
+        "test_reanimation_four_player_projection_and_apnap_are_stable",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature"
       ],
       "required_evidence": [
         "positive",
@@ -17523,7 +17762,8 @@
         "test_enchanted_creature_uses_pinned_attachment_and_replays",
         "test_tap_state_handlers_lower_typed_intents_through_read_only_context",
         "test_tap_state_effects_change_only_eligible_state",
-        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "negative_tests": [
         "test_unsupported_tap_state_variants_remain_material_residuals",
@@ -17531,21 +17771,25 @@
         "test_tap_state_validation_fails_before_mutation"
       ],
       "interaction_tests": [
-        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "multiplayer_tests": [
         "test_compiled_tap_activation_is_multiplayer_public_and_replays",
-        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "privacy_tests": [
         "test_compiled_tap_activation_is_multiplayer_public_and_replays",
-        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "replay_tests": [
         "test_compiled_tap_activation_is_multiplayer_public_and_replays",
         "test_enchanted_creature_uses_pinned_attachment_and_replays",
         "test_tap_state_effects_replay_exactly",
-        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results"
+        "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
       ],
       "required_evidence": [
         "positive",
@@ -20905,7 +21149,12 @@
         "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "negative_tests": [
         "test_all_targets_illegal_counters_by_rules",
@@ -20931,7 +21180,12 @@
         "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "multiplayer_tests": [
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
@@ -20944,7 +21198,12 @@
         "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "privacy_tests": [
         "test_hidden_zones_are_rejected_by_target_schema",
@@ -20958,7 +21217,12 @@
         "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "replay_tests": [
         "test_deflecting_swat_free_cost_and_exact_retarget",
@@ -20973,7 +21237,12 @@
         "test_actual_bolrac_source_can_pay_both_its_tap_and_distinct_counter_resource",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
-        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund"
+        "test_paid_payer_last_counter_death_makes_its_target_illegal_without_refund",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
       ],
       "required_evidence": [
         "positive",
@@ -35926,6 +36195,123 @@
       "dependency_fail_closed_rationale": "Malformed choice shapes, unavailable or foreign payers and omitted cost authority must fail closed.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual Shapers payment must distinguish counter removal from a free activation before acceptance.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.source_counter_removal.any_kind",
+      "version": 1,
+      "official_rules": [
+        "118.3",
+        "118.11",
+        "122.1",
+        "122.2",
+        "601.2h",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Pay exactly one or two counters of present kinds from the activated creature source, using a public complete legal distribution.",
+        "inputs": [
+          "version2 unspecified fixed one/two source-counter cost",
+          "current source incarnation and public counter counts",
+          "one server-offered distribution ID"
+        ],
+        "outputs": [
+          "exact canonical source counter removal before resolution",
+          "ordinary P/T and keyword changes after payment",
+          "unchanged named-source version1 wire and normal timing/mana/target behavior"
+        ],
+        "exclusions": [
+          "variable or all counter amounts",
+          "other objects, foreign sources and hidden zones",
+          "mana abilities and unrepresented mixed selectable payment groups"
+        ]
+      },
+      "dependencies": [
+        "counter.removal.fixed_effect"
+      ],
+      "implementation_components": [
+        "quorune.rules.activation_counter_cost.SourceCounterRemovalCost",
+        "quorune.compiler.activated_counter_costs.fixed_any_source_counter_activation",
+        "quorune.rules.activation.source_counter_choices.source_counter_payment_choices",
+        "quorune.rules.activation.source_counter_choices.selected_source_counter_removals",
+        "quorune.rules.activation.source_counter_choices.source_counter_cost_choice_schema",
+        "quorune.rules.activation.source_counter_choices.any_source_counter_runtime_dependencies",
+        "quorune.rules.activation.counter_costs.plan_source_counter_removal_cost"
+      ],
+      "positive_tests": [
+        "test_seven_originals_close_with_real_distribution_forms_and_preserved_mana_constraints",
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+      ],
+      "negative_tests": [
+        "test_version_two_distributions_are_complete_exact_and_keep_legacy_named_wire",
+        "test_runtime_cannot_omit_any_kind_source_counter_authority",
+        "test_unknown_amounts_and_mixed_source_costs_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+      ],
+      "multiplayer_tests": [
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+      ],
+      "privacy_tests": [
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+      ],
+      "replay_tests": [
+        "test_actual_loch_cast_chooses_minus_counter_before_private_draw_and_rejects_bad_selection",
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_burdened_and_gnarlbark_pay_counter_kinds_before_indestructible_or_weakening",
+        "test_actual_reaping_hybrid_payment_returns_only_the_selected_small_graveyard_creature",
+        "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_moonlit_keeps_sorcery_timing_and_its_paid_minus_counter_draw",
+        "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Malformed or stale distributions, missing amount/kind resources, absent cost authority and unknown readers must reject before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual Loch payment must distinguish removal and its current P/T consequence from a free activation before acceptance.",
       "blockers": [],
       "status": "trusted"
     }

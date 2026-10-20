@@ -518,8 +518,8 @@ Exactly one fixed positive named-counter removal from the current battlefield
 source is also part of the pinned catalog. Offer and commit read the same
 public counter state, pin the source incarnation, and pay through the canonical
 exact counter-removal transaction before stack placement or immediate mana
-production. Variable, all, chosen-kind, repeated, another-object,
-nonbattlefield, and granted forms remain fail closed.
+production. Version 1 retains one fixed counter name. Variable, all, repeated,
+nonbattlefield and granted forms remain fail closed in this source-local owner.
 
 Activated-cost parsing can split one complete fixed source-counter removal
 followed by an unambiguous “and sacrifice it” conjunction after validating the
@@ -537,6 +537,16 @@ controlled creature can pay without being sacrificed. The paid object is not
 a target, and later state-based death or illegal targets never refund it.
 Other counter kinds, amounts, selectable payment groups and granted forms
 remain residual until their own contracts are represented.
+
+Version-2 source-counter costs represent exactly one or two counters of any
+present kinds. The source-scoped form lists every legal distribution, including
+two different counter kinds, with human-readable labels and incarnation-bound
+choice IDs. Commit resolves that same current distribution and removes its
+exact total through the existing owner. Removing negative, keyword or stun
+counters updates ordinary characteristics without inventing an untap. Hybrid
+mana and sorcery timing keep their own authority. The version-1 wire remains
+unchanged; variable amounts, all counters and other payment objects are outside
+this source-only grammar.
 
 Fixed complex activation mana costs remain inside that same catalog and action
 path. One typed option records the selected colored-hybrid or two-brid vector,

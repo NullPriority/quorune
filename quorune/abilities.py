@@ -686,6 +686,10 @@ def _normalize_and_validate_ability_descriptors(
         raise ValueError(
             "source_counter_removal_cost must be a typed cost or null"
         )
+    if ability.source_counter_removal_cost is not None and ability.source_counter_removal_cost.schema_version == 2:
+        if (ability.zones != ('battlefield',) or ability.mana_ability or ability.choices
+                or ability.discard_source or ability.sacrifice_source or ability.exile_source):
+            raise ValueError('Any-kind source counter costs require one ordinary battlefield activation')
 
 
 def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:

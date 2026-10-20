@@ -17,10 +17,17 @@ class SourceCounterRemovalCostError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class SourceCounterRemovalCost:
-    counter_name: str
+    counter_name: str | None
     amount: int
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+            raise SourceCounterRemovalCostError('Unsupported source counter-removal cost schema version')
+        if self.schema_version == 2:
+            if self.counter_name is not None or type(self.amount) is not int or self.amount not in {1, 2}:
+                raise SourceCounterRemovalCostError('Any-kind source costs require one or two unspecified counters')
+            return
         try:
             name = normalized_counter_name(self.counter_name)
         except CounterStateError as exc:
@@ -33,7 +40,7 @@ class SourceCounterRemovalCost:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "schema_version": SOURCE_COUNTER_REMOVAL_COST_SCHEMA_VERSION,
+            "schema_version": self.schema_version,
             "counter_name": self.counter_name,
             "amount": self.amount,
         }
@@ -50,13 +57,14 @@ class SourceCounterRemovalCost:
             raise SourceCounterRemovalCostError(
                 "Source counter-removal costs use a closed schema"
             )
-        if value["schema_version"] != SOURCE_COUNTER_REMOVAL_COST_SCHEMA_VERSION:
+        if type(value['schema_version']) is not int or value["schema_version"] not in {1, 2}:
             raise SourceCounterRemovalCostError(
                 "Unsupported source counter-removal cost schema version"
             )
         return cls(
             counter_name=value["counter_name"],
             amount=value["amount"],
+            schema_version=value['schema_version'],
         )
 
 

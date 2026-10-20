@@ -9938,6 +9938,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/activation/source_counter_choices.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/activation/transform_snapshot.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -16901,5 +16915,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "9fa946956cb42802bbe217faa3d561d859c956d59a8f0be1bb0efa82375376b3"
+  "fingerprint": "59015b5dae7eacd1d1da68d65b1dc7897ab867ae1b4e5872f8ce3475a2f2862c"
 }
