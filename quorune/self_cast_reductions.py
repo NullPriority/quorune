@@ -13,6 +13,7 @@ from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .object_query import object_matches_query, object_query_result
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .rules.self_cost_turn_counts import COUNTED_TURN_FACTS, self_cost_turn_count
+from .rules.self_cost_public_counters import public_player_permanent_counter_total
 
 
 class SelfCastReductionError(ValueError):
@@ -30,6 +31,7 @@ class CastReductionQueryScope(str, Enum):
 
 
 class CastReductionMetricKind(str, Enum):
+    PUBLIC_COUNTER_TOTAL = 'public_player_permanent_counter_total'
     PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     FIXED_PUBLIC_THRESHOLD = "fixed_public_threshold"
     OBJECT_COUNT = "object_count"
@@ -169,6 +171,14 @@ class CastReductionMetric:
     aggregate: PublicCharacteristicAggregateSpec | None = None
 
     def _validate_extended_shape(self) -> bool:
+        if self.kind is CastReductionMetricKind.PUBLIC_COUNTER_TOTAL:
+            if (type(self.schema_version) is not int or self.schema_version != 2
+                    or not isinstance(self.queries, tuple) or self.queries
+                    or self.minimum is not None or self.maximum is not None
+                    or self.require_all is not False or self.color is not None or self.turn_fact is not None
+                    or self.counter_name is not None or self.aggregate is not None):
+                raise SelfCastReductionError('Public counter totals require only the version2 scalar kind')
+            return True
         if (isinstance(self.turn_fact, CastReductionTurnFact) and self.turn_fact.value in COUNTED_TURN_FACTS
                 and (self.schema_version != 2 or self.kind is not CastReductionMetricKind.TURN_VALUE)):
             raise SelfCastReductionError('Counted turn facts require the explicit version2 counted form')
@@ -751,6 +761,8 @@ def cast_reduction_multiplier(
 ) -> int:
     """Return the deterministic nonnegative multiplier for one reduction term."""
 
+    if metric.kind is CastReductionMetricKind.PUBLIC_COUNTER_TOTAL:
+        return public_player_permanent_counter_total(host)
     if metric.kind is CastReductionMetricKind.OPPONENT_COUNT:
         return sum(other != seat and player.in_game for other, player in host.state.players.items())
     if metric.kind is CastReductionMetricKind.PUBLIC_AGGREGATE:

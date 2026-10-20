@@ -235,6 +235,7 @@
       "test_unearth_rules"
     ],
     "functional-06": [
+      "test_all_counter_self_costs",
       "test_attack_keyword_compiler",
       "test_card_program_trust",
       "test_cascade_rules",
@@ -614,6 +615,7 @@
       "test_activating_abilities_rules",
       "test_activation_conditions",
       "test_activation_restrictions",
+      "test_all_counter_self_costs",
       "test_basic_land_type_mana",
       "test_bestow_rules",
       "test_casting_activation_metadata",
@@ -695,6 +697,7 @@
     ],
     "compiler-cardprogram": [
       "test_additional_token_compiler",
+      "test_all_counter_self_costs",
       "test_attack_keyword_compiler",
       "test_block_keyword_compiler",
       "test_bloodthirst_rules",

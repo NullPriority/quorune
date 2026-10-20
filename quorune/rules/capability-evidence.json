@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "ef9fbce1fd9369ea3f1050890e8a44815344edab3991bc03258c19512e0e8bb7",
-  "declaration_source_fingerprint": "0ab5fe5cafb3beee023954f4f606b7a37f5b6c5d11479ecaffa0fd48050da363",
+  "registry_fingerprint": "b4545a5b815fabd2669bf0ab3101949dce985a07988cd7ac7ca74fa7383219c4",
+  "declaration_source_fingerprint": "c5c6415b105cb93a98556c31a6f1303be8731642b3641653ccb2ff17923ba283",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -34823,6 +34823,384 @@
         "commander_review"
       ],
       "applicability_note": "Closed unqualified/typed spell ordinals and relative color unions retain exact source-spanned IR, existing type-only history validation and one total-cost modifier. Native original Bell-Ringer, Melek and Anarchomancer casts verify announced requirements and paid consequences, own reducer cast and foreign-caster/type exclusions, multicolor nonduplication, private four-seat projection, unauthorized rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_bounce_removes_departed_permanent_counters_from_current_price",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_counter_bearing_mana_source_departure_cannot_change_locked_price",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_bounce_removes_departed_permanent_counters_from_current_price",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_fresh_original_kills_omitted_counter_price_production",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_fresh_original_kills_omitted_public_counter_total",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_counter_and_base_price_authorities_cannot_be_withdrawn",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_scalar_metric_has_a_closed_version2_shape_and_malformed_readers_fail_closed",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "positive",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "positive",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_original_has_complete_nonempty_admitted_price_program",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_bounce_removes_departed_permanent_counters_from_current_price",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_actual_player_and_permanent_placements_reduce_price_and_source_enters_tapped",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_counter_bearing_mana_source_departure_cannot_change_locked_price",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
+    },
+    {
+      "capability_id": "casting.cost.self_public_counter_total",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_counter_self_costs.AllCounterSelfCostTests.test_current_public_total_excludes_other_zones_and_phasing_and_keeps_colored_floor",
+      "official_rule_ids": [
+        "110.1",
+        "118.7a",
+        "122.1",
+        "122.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.26b"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Count current public player and battlefield counters, retain complete price and results, reject malformed or unauthorized actions, and preserve pending save/load and exact replay within the tested boundary."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
@@ -274358,5 +274736,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c7d65a512e7f5841ff6a1bd14c778a0f071f5369b0f11ac87f993aade2b0e84b"
+  "fingerprint": "ce94591f2100ffe142a9219cb80d09ea0c68bc11b19f6dfc1fba80501afac4a9"
 }
