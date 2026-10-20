@@ -25,6 +25,24 @@ import test_scalar_mill_wording as controls
 
 
 class AnnouncedActivationXCompilerTests(unittest.TestCase):
+    def test_corpus_assurance_requires_the_printed_cost_and_activation_x_authority(self):
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector, TargetEffectAssuranceError
+        registry = load_default_capability_registry()
+        for text in ('{X}, {T}: Target creature gets -X/+X until end of turn.',
+                     '{X}{R}{G}, {T}: Target creature gets +X/+0 and gains trample until end of turn.'):
+            card = record(text, 'Artifact')
+            ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
+            self.assertEqual('exact', ir.status, ir.material_residuals)
+            TargetEffectCorpusCollector().observe(card, ir)
+            node, = ir.faces[0].nodes
+            lost = replace(node, capability_dependencies=tuple(value for value in node.capability_dependencies
+                if value != ANNOUNCED_ACTIVATION_X_CAPABILITY))
+            with self.assertRaisesRegex(TargetEffectAssuranceError, 'lost required capabilities'):
+                TargetEffectCorpusCollector().observe(card, replace(ir, faces=(replace(ir.faces[0], nodes=(lost,)),)))
+            unbound = replace(node, text=node.text.replace('{X}', '{1}'))
+            with self.assertRaisesRegex(TargetEffectAssuranceError, 'outside the exact source grammar'):
+                TargetEffectCorpusCollector().observe(card, replace(ir, faces=(replace(ir.faces[0], nodes=(unbound,)),)))
+
     def test_cost_roundtrip_counts_every_symbol_and_keeps_legacy_absence(self):
         raw,=parse_activated_abilities(card_name='Generic Source',oracle_text='{X}{X}{R}, {T}: You gain X life.',keywords=())
         ability=announced_x_activation_cost(raw)
