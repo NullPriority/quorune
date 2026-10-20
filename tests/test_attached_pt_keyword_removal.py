@@ -156,9 +156,17 @@ class AttachedPtRemovalRuntimeTests(unittest.TestCase):
         self.private_replay(session,private)
 
     def test_losing_combined_modifier_producer_is_killed_by_fresh_original_coils(self):
+        from quorune.compiler.continuous_templates import _attached_compound_modifier
         method='test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying'
-        with patch('quorune.compiler.continuous_templates._attached_compound_modifier',return_value=None):
-            with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+        # Returning None permits a complete alternate lowering. Omit one real
+        # contribution while retaining this producer, so fallback cannot mask it.
+        for field,value in (('power',0),('remove_abilities',[])):
+            def omitted(body):
+                modifier=_attached_compound_modifier(body)
+                return None if modifier is None else {**modifier,field:value}
+            with self.subTest(field=field),patch(
+                    'quorune.compiler.continuous_templates._attached_compound_modifier',side_effect=omitted):
+                with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
 
     def test_original_magebane_retains_noncombat_prevention_and_complete_modifier(self):
         session=self.session(730003)

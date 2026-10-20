@@ -243,7 +243,7 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
 
     def test_unsupported_spell_reduction_grammar_remains_residual(self):
         unsupported = (
-            "This spell costs {2} less to cast if it targets a tapped creature.",
+            "This spell costs {2} less to cast if it targets a creature with power X or greater.",
             "This spell costs {1} less to cast for each card you've drawn this turn.",
             "This spell costs {X} less to cast, where X is the total power of creature cards in your hand.",
             "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
