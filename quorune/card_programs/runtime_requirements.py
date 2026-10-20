@@ -18,10 +18,15 @@ from ..rules.activation.source_counter_choices import any_source_counter_runtime
 from ..activation_mana_cost import activation_mana_option_runtime_dependencies
 from ..rules.source_keyword_choice_shapes import source_keyword_choice_runtime_dependencies
 from ..rules.source_protection_choice_shapes import source_protection_choice_runtime_dependencies
+from ..rules.source_fixed_protection_shapes import source_fixed_protection_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:
+        required.update(source_fixed_protection_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_source_fixed_protection:invalid:{exc}')
     try:
         required.update(source_protection_choice_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:

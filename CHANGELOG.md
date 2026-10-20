@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve fixed-color source protection through the existing typed ability
+  bundle after complete activation costs, retaining printed abilities, exact
+  source identity, ordinary protection consequences and cleanup.
+
 - Enforce represented intrinsic prior-spell and current Snow-land casting
   conditions through shared offers and accepted commands, preserving actual
   caster binding, the legality boundary before payment, and ordinary resolution.

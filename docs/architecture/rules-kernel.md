@@ -570,6 +570,13 @@ to own its unversioned leaves; versioned protection bundles have their own
 complete minimum-dependency validation. Mixed qualities and unsupported
 sibling costs remain residual.
 
+Fixed single-color source protection emits the same typed bundle directly.
+Ordinary mana or server-random discard activation costs precede the stack
+result. The grant adds protection while retaining other printed abilities,
+follows the original zone object across control changes, and does not follow
+a blinked incarnation. Existing protection, Aura stabilization and cleanup
+owners consume the result without introducing a resolution choice.
+
 Fixed source keyword choices compose the existing scalar option choice with
 the source-incarnation characteristic owner. The ability controller chooses
 one printed ordinary keyword during resolution, even if control of its source

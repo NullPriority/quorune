@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 416,
+  "registry_version": 417,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37371,6 +37371,108 @@
       "dependency_fail_closed_rationale": "Registered runtime bindings reject omitted intrinsic-condition and public-state dependencies independently of rebuilt closure metadata; blocked capabilities and omitted compiler producers keep complete sources residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh atomic original-card witnesses kill omitted compiler contribution and omitted shared eligibility guard. No child subtest can swallow the required assertion.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.resolution.source_fixed_protection",
+      "version": 1,
+      "official_rules": [
+        "201.5",
+        "400.7",
+        "602.2b",
+        "608.2c",
+        "611.2a",
+        "701.9a",
+        "701.9b",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed printed color grants typed protection to the exact source creature incarnation at resolution after complete represented activation costs.",
+        "inputs": [
+          "ordinary registered source effect",
+          "current source zone object",
+          "complete typed mana or random-discard costs"
+        ],
+        "outputs": [
+          "existing version7 temporary ability bundle",
+          "ordinary protection target/damage/Aura/block consequences",
+          "private atomic loaded pre-action replay"
+        ],
+        "exclusions": [
+          "variable or chosen fixed protection quality",
+          "noncolor and composite qualities",
+          "unrepresented sibling costs or static Echo-price permissions"
+        ]
+      },
+      "dependencies": [
+        "protection.typed.debt",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "implementation_components": [
+        "quorune.compiler.source_fixed_protection.source_fixed_protection_template",
+        "quorune.rules.source_fixed_protection_shapes.source_fixed_protection_capabilities",
+        "quorune.rules.source_fixed_protection_shapes.source_fixed_protection_runtime_dependencies",
+        "quorune.rules.source_fixed_protection_shapes.is_closed_source_fixed_protection_program",
+        "quorune.effect_runtime.temporary_ability_bundle.apply_temporary_ability_bundle"
+      ],
+      "positive_tests": [
+        "test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+        "test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+        "test_two_originals_have_complete_nonempty_fixed_source_programs"
+      ],
+      "negative_tests": [
+        "test_direct_bundle_shape_is_closed_for_every_fixed_color",
+        "test_fixed_white_protection_does_not_prevent_a_real_red_bolt",
+        "test_minimum_source_protection_and_duration_authority_cannot_be_omitted",
+        "test_unknown_qualities_and_independent_echo_permission_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+        "test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+        "test_fixed_source_grant_tracks_control_change_and_expires_at_cleanup",
+        "test_fixed_source_reference_does_not_follow_a_blinked_incarnation",
+        "test_fixed_white_protection_does_not_prevent_a_real_red_bolt"
+      ],
+      "multiplayer_tests": [
+        "test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+        "test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+        "test_fixed_source_grant_tracks_control_change_and_expires_at_cleanup",
+        "test_fixed_white_protection_does_not_prevent_a_real_red_bolt"
+      ],
+      "privacy_tests": [
+        "test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+        "test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords"
+      ],
+      "replay_tests": [
+        "test_actual_keeper_pays_red_then_counters_a_real_bolt_without_a_color_choice",
+        "test_actual_raider_random_discard_removes_white_aura_and_preserves_printed_keywords",
+        "test_fixed_source_grant_tracks_control_change_and_expires_at_cleanup",
+        "test_fixed_source_reference_does_not_follow_a_blinked_incarnation",
+        "test_fixed_white_protection_does_not_prevent_a_real_red_bolt"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete direct-source color bundle and each source/protection/duration minimum are independently required even after rebuilding closure metadata. Unknown fields, targets, qualities and Echo-price siblings remain unadmitted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh atomic native Keeper cases kill omitted compiler-result production and actual version7 continuous-grant creation. The runtime witness reaches real Bolt invalidation; random discard, Aura removal, ordinary printed keywords and unchosen hand privacy are independently asserted.",
       "blockers": [],
       "status": "trusted"
     }
