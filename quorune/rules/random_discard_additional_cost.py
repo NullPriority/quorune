@@ -39,15 +39,28 @@ def random_spell_cost_dependencies(cost_schema):
     if not isinstance(costs,(list,tuple)):
         raise AdditionalCostError('Additional spell costs require an array')
     if not any(isinstance(cost,Mapping) and cost.get('kind')==RANDOM_SPELL_COST_KIND for cost in costs):return ()
-    if set(cost_schema)!={'additional_costs'} or len(costs)!=1:
+    composed = fixed_life_random_costs(costs)
+    if set(cost_schema)!={'additional_costs'} or (len(costs)!=1 and not composed):
         raise AdditionalCostError('Random spell payment cannot compose other additional prices')
-    FixedRandomDiscardAdditionalCost.from_descriptor(costs[0])
-    return (RANDOM_SPELL_COST_CAPABILITY,'casting.additional_cost.zone_change.fixed_discard','zone.discard.fixed_random')
+    FixedRandomDiscardAdditionalCost.from_descriptor(costs[-1])
+    return (RANDOM_SPELL_COST_CAPABILITY,'casting.additional_cost.zone_change.fixed_discard','zone.discard.fixed_random',
+        *(('casting.additional_cost.fixed_life_random','casting.additional_cost.fixed_life_payment') if composed else ()))
+
+
+def fixed_life_random_costs(costs):
+    """One deterministic life price followed by the existing random hand price."""
+    if not isinstance(costs,(list,tuple)) or len(costs)!=2:return False
+    from .casting_additional_cost_groups import FixedLifePaymentAdditionalCost
+    try:
+        FixedLifePaymentAdditionalCost.from_descriptor(costs[0])
+        FixedRandomDiscardAdditionalCost.from_descriptor(costs[1])
+    except (ValueError,TypeError):return False
+    return True
 
 
 def select_random_spell_cost(host,seat,source,costs,response,*,position,choice_schema):
     FixedRandomDiscardAdditionalCost.from_descriptor(costs[position])
-    if len(costs)!=1 or any(key in response for key in ('cost_cards','cost_objects','discard_cards')):return False,None
+    if (len(costs)!=1 and not fixed_life_random_costs(costs)) or any(key in response for key in ('cost_cards','cost_objects','discard_cards')):return False,None
     if len([oid for oid in host.state.players[seat].zones['hand'] if oid!=source.object_id])<1:return False,None
     return True,{'kind':RANDOM_SPELL_COST_KIND,'cost_position':position}
 
@@ -70,11 +83,14 @@ def random_spell_cost_refs(host,seat,source,response):
 def ordinary_random_spell_cost_selection(host,proposal,response,option,selected):
     costs=option.get('additional_costs',())
     random_spell_cost_dependencies({'additional_costs':costs})
-    if selected!={'kind':RANDOM_SPELL_COST_KIND,'cost_position':0}:
+    position=len(costs)-1
+    if selected!={'kind':RANDOM_SPELL_COST_KIND,'cost_position':position}:
         raise GameRuleError('Random spell payment selection changed')
     source=host.state.cards[proposal.object_id];refs=random_spell_cost_refs(host,proposal.seat,source,response)
     cost=FixedZoneChangeAdditionalCost(operation=DISCARD_ONE_COST,choice_field='discard_cards',
         predicate=ObjectQuerySpec(zones=('hand',),owner='$actor',known_to_actor=True))
+    # The life component has already been paid by the canonical nonmoving owner.
+    # Present only this validated moving leaf to the existing single-zone commit.
     return ({**option,'additional_costs':[cost.to_descriptor()]},
             {'kind':ZONE_CHANGE_COST_KIND,'operation':DISCARD_ONE_COST,'cost_position':0,'card':refs[0]})
 
@@ -83,8 +99,14 @@ def freeze_random_spell_cost_response(host,seat,response):
     ref=response.get('card') or response.get('id')
     source=next((card for card in host.state.cards.values() if card.ref==ref),None)
     if source is None:return response
-    if not any(random_spell_cost_dependencies(program.cost_schema)
-               for program in host.semantics.programs_for_oracle(source.oracle_id)):return response
+    mandatory=any(random_spell_cost_dependencies(program.cost_schema)
+               for program in host.semantics.programs_for_oracle(source.oracle_id))
+    optional=False
+    if response.get('cost_option')=='buyback':
+        from ..compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_specs
+        optional=any(spec.schema_version==5 and any(cost.get('kind')==RANDOM_SPELL_COST_KIND for cost in spec.additional_costs)
+            for spec in compiled_fixed_cast_lifecycle_specs(host,source))
+    if not mandatory and not optional:return response
     return {**response,'_random_discard_cost_refs':list(random_spell_cost_refs(host,seat,source,response))}
 
 

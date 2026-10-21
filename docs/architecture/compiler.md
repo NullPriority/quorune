@@ -2431,6 +2431,17 @@ current-ability revalidation and ordinary destinations remain authoritative.
 Hybrid, variable, snow, Phyrexian and nonmana Mayhem costs remain residual.
 Every prior descriptor retains its original version and serialized shape.
 
+Buyback also has a version-five typed nonmana price. Its compiler recognizes
+fixed selected hand discard, controlled land or basic-land-subtype sacrifice,
+fixed life payment, and fixed life followed by one server-selected random
+discard. Runtime validation reads the immutable price descriptors; Oracle and
+cost text remain display metadata for this variant. The existing optional-cost
+expander retains base additional prices, and the canonical payment owners pay
+the chosen costs before resolution. The paid lifecycle uses the existing
+owner-hand replacement, while countered spells and fresh normal casts keep
+their ordinary destinations. Independent descriptor minima require the new
+Buyback and composed life/random capabilities.
+
 This conservative descriptor
 contract does not grant a new casting permission or bypass current-ability
 validation; unavailable dependencies keep admission fail-closed. Dash contributes

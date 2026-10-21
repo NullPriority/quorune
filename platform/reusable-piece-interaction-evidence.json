@@ -18747,6 +18747,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Pathfinder rejects a colored substitute for its actualC activation cost; a validC payment can target itself without forbidding an ordinary opposing blocker."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rewards_pays_land_before_return_and_normal_recast_does_not_keep_buyback",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real land is sacrificed before Rewards resolves; the paid cast returns to hand while a fresh normal cast resolves to graveyard."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_forbid_discards_two_before_countering_and_returns_to_hand",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_discard",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Forbid pays selected own hand cards before countering a real Bolt and returns only the actual paid source card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_life_random",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_life_random",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Flowstone pays life then server-selected random hand cost, destroys an opposing land, and returns through the existing Buyback owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_targets_illegal_does_not_return_the_paid_buyback_spell",
+      "piece_ids": [
+        "capability.casting.buyback.fixed_nonmana",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "casting.buyback.fixed_nonmana",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real target blink leaves all targets illegal; Slaughter does not resolve or return despite its paid life cost."
     }
   ]
 }

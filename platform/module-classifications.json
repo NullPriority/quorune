@@ -4632,6 +4632,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/nonmana_buyback_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/nonmana_morph_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12299,6 +12314,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/nonmana_buyback_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/nonmana_morph_costs.py",
       "layer": "rules",
       "owning_subsystem": "face_down_cards",
@@ -17959,5 +17988,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "3b6c00261cca08e291017be013721ac387438adf93ae8c0fcc0db51ac9ea9e43"
+  "fingerprint": "8f1eb44e83c06192553010f135fe6e2e08bcbbd4a788e1bfd49fbd0d466eedce"
 }
