@@ -4,6 +4,7 @@ from .soulbond_intent import PairSoulbondIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
+from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
@@ -1624,6 +1625,7 @@ SemanticIntent: TypeAlias = (
     | DiscardWholeHandsIntent
     | RandomDiscardIntent
     | RandomGraveyardReturnIntent
+    | TemporaryCastRestrictionIntent
     | AscendIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]

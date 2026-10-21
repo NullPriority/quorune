@@ -3119,10 +3119,22 @@ chosen-name, enchanted-object, and enchanted-player activation prohibitions.
 The exact enchanted-permanent untap/prohibition compound composes the existing
 untap participation capability with the activation restriction instead of
 inventing a second untap rule. Every emitted node requires the shared current
-layer-6 static-component fragment. Temporary and targeted rules, cost changes,
-free casts, dynamic quantities or comparisons, linked objects, spell-self
-riders, Split second, Epic, grants, copies, text changes, and unsupported
-compound siblings remain source-spanned residuals.
+layer-6 static-component fragment. Cost changes, free casts, dynamic quantities
+or comparisons, linked objects, spell-self riders, Split second, Epic, grants,
+copies, text changes, and unsupported compound siblings remain outside this
+static grammar.
+
+`compiler/temporary_cast_restrictions.py` separately lowers fixed resolution
+instructions that prohibit all, creature, or noncreature spells through end of
+turn for opponents, all players, or one targeted player. The immutable
+`temporary_cast_rule_model.py` descriptor retains the resolving controller and
+target seat in the existing duration journal. Shared proposed-spell legality
+applies the rule to both advertised actions and accepted casts from every
+otherwise permitted origin. Existing stack objects, land plays, and abilities
+remain unaffected. Runtime binding independently validates the descriptor and
+requires its capability; composite target schemas cannot turn an untargeted
+restriction into a targeted one. Other durations, variable predicates,
+latest-spell-color rules, and unowned sibling effects remain residuals.
 
 `compiler/fixed_source_combat_growth.py` owns the narrower source-self combat
 growth body grammar. It accepts only mandatory fixed integer power/toughness

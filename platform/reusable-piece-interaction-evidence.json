@@ -18117,6 +18117,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Viconia and Flaming Fist form a valid two-commander deck, cast normally from command with their printed prices, retain designation/background presence and allow Viconia's four-creature upkeep to return exactly one eligible own creature. Known-hand privacy and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+      "piece_ids": [
+        "capability.casting.prohibition.resolution_until_end_of_turn",
+        "capability.resolution.effect.fixed_cast_fact"
+      ],
+      "capability_ids": [
+        "casting.prohibition.resolution_until_end_of_turn",
+        "resolution.effect.fixed_cast_fact"
+      ],
+      "interaction_order": 2,
+      "assertion": "Paid kicker alone governs the attack prohibition while the targeted casting rule resolves in both modes; actual combat consequences, source departure, rollback and loaded replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+      "piece_ids": [
+        "capability.casting.prohibition.resolution_until_end_of_turn",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "casting.prohibition.resolution_until_end_of_turn",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Calamity exiles all four graveyards then creates an all-player noncreature prohibition and self-exiles; creature casts, land plays and mana abilities remain legal through pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Ranger-Captain preserves optional revealed low-mana creature search and shuffle, pays source sacrifice before responses, and creates its opponent noncreature rule after a response resolves; private projections and loaded replay agree."
     }
   ]
 }

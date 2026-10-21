@@ -283,6 +283,7 @@
     "tests/fixtures/target-restriction-cards.json",
     "tests/fixtures/targeted-owner-library-cards.json",
     "tests/fixtures/targeted-spell-cost-cards.json",
+    "tests/fixtures/temporary-cast-restriction-cards.json",
     "tests/fixtures/temporary-declaration-restriction-cards.json",
     "tests/fixtures/temporary-keyword-removal-cards.json",
     "tests/fixtures/temporary-source-keyword-cards.json",

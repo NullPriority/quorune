@@ -98,6 +98,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/qualified_hexproof.py",
         "quorune/protection_attachment_exceptions.py",
         "quorune/block_capacity_rule_model.py",
+        "quorune/temporary_cast_rule_model.py",
         "quorune/prototype_model.py",
         "quorune/enlist_model.py",
         "quorune/reflexive_trigger_model.py",

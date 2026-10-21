@@ -300,6 +300,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'temporary-cast-prohibition': ('casting.prohibition.resolution_until_end_of_turn',),
     'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
     'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
@@ -498,6 +499,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'temporary-cast-prohibition',
         'random-own-graveyard-return',
         'commander-learn',
         'paid-entry-copy-offspring',
