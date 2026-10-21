@@ -568,7 +568,7 @@ def complete_replacement_order_choice(
         from .conditional_exile_return import resume_conditional_return
         resume_conditional_return(host,restored,selection)
         return
-    if restored.resume_kind == "state_based_destruction":
+    if restored.resume_kind in {"state_based_destruction", "state_based_zone_change"}:
         from .state_based_replacement_coordination import resume_state_based_replacement
         resume_state_based_replacement(host, restored, selection, error_type=error_type)
         return

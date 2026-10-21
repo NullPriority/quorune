@@ -449,6 +449,15 @@ changing Indestructible and shield-counter behavior. An ordinary simultaneous
 shield-counter choice still fails before mutation until the affected-player
 ordering continuation is represented.
 
+State-based graveyard moves preflight the complete zone-replacement batch
+before destruction, damage clearing, companion movement or counter removal
+commits. Competing destinations suspend through the existing authenticated
+replacement-choice owner. The immutable prepared zone plans then reach the
+canonical simultaneous zone owner, retaining replacement sources that leave
+in that same batch. Umbra armor choices and subsequent destination choices
+retain separate selection histories; choosing a destination does not repeat
+or forget the earlier destruction replacement.
+
 The direct-target compiler families share structural builders for their one
 effect, closed target schema, and mechanics tuple, while each family retains
 its own grammar and capability owner. Their runtime handlers likewise share

@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Suspend competing graveyard-destination replacements for state-based damage
+  and zero-toughness moves before mutation, retaining prior Umbra choices,
+  simultaneous source departures, principal privacy and pending replay.
+
 - Bind source-chosen Aura protection to its retained entry color and current
   incarnation, preserving controller-correct entry choices, Flash, paid return,
   private draw and ordinary protection consumers.

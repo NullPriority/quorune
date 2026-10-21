@@ -6902,6 +6902,48 @@
         "test_random_discard_activation_costs",
         "test_spell_random_discard_costs"
       ]
+    },
+    {
+      "id": "state-based-destination-replacement-continuation",
+      "patterns": [
+        "quorune/state_based_execution.py",
+        "quorune/state_based_replacement_coordination.py",
+        "quorune/destruction.py",
+        "quorune/replacement/replay.py",
+        "quorune/replacement_decisions.py",
+        "tests/test_state_based_destination_replacements.py",
+        "tests/fixtures/state-based-destination-cards.json"
+      ],
+      "test_modules": [
+        "test_state_based_destination_replacements",
+        "test_state_based_actions",
+        "test_umbra_armor",
+        "test_destruction_rules",
+        "test_regeneration_rules",
+        "test_rule_generated_counter_removals",
+        "test_replacement_event_ordering",
+        "test_game_record_v3",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "source-aura-state-based-destination-composition",
+      "patterns": [
+        "quorune/state_based_execution.py",
+        "quorune/state_based_replacement_coordination.py",
+        "quorune/replacement/replay.py",
+        "quorune/replacement_decisions.py",
+        "quorune/aura/runtime.py",
+        "quorune/protection_attachment_exceptions.py",
+        "tests/test_attached_protection_exceptions.py"
+      ],
+      "test_modules": [
+        "test_attached_protection_exceptions",
+        "test_chosen_aura_protection",
+        "test_fixed_type_aura_protection",
+        "test_state_based_destination_replacements",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

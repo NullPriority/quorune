@@ -31,6 +31,7 @@ from .ability_fragments import counter_maximum_values
 from .saga_progression import saga_final_chapter_snapshot
 from .zone_trigger_events import ZoneTransitionKind
 from .util import unique_preserving_order
+from .semantic_runtime.zone_replacement_model import PreparedZoneChange
 
 
 def synchronize_state_based_observers(host):
@@ -210,6 +211,7 @@ class StateBasedExecutionPlan:
     saga_sacrifices: tuple[str, ...]
     counter_removals: StateBasedCounterRemovalPlan
     state_changed: bool
+    zone_replacements: tuple[tuple[str, PreparedZoneChange], ...] = ()
 
 
 def _prepare_counter_removals(
@@ -335,6 +337,7 @@ def prepare_state_based_execution(
     host: DestructionHost,
     batch: StateBasedActionBatch,
     *, replacement_selections: Sequence[Any] = (),
+    zone_replacement_selections: Sequence[Any] = (),
 ) -> StateBasedExecutionPlan:
     """Bind one pure SBA snapshot to typed destruction and zone owners."""
 
@@ -395,6 +398,10 @@ def prepare_state_based_execution(
     companions = tuple(
         change for change in simultaneous if change[0] not in destroyed
     )
+    from .state_based_replacement_coordination import prepare_state_based_zone_replacements
+    zone_replacements = prepare_state_based_zone_replacements(
+        host, destruction, companions, saga_ids, zone_replacement_selections
+    )
     counter_removals = _prepare_counter_removals(
         host,
         batch,
@@ -408,6 +415,7 @@ def prepare_state_based_execution(
         destruction_companions=companions,
         saga_sacrifices=saga_ids,
         counter_removals=counter_removals,
+        zone_replacements=zone_replacements,
         state_changed=bool(
             ordinary
             or any(entry.disposition is DestructionDisposition.REGENERATION
@@ -449,6 +457,7 @@ def _commit_state_based_zone_changes(
             object_id: ZoneTransitionKind.SACRIFICE
             for object_id in plan.saga_sacrifices
         },
+        prepared_zone_replacements=dict(plan.zone_replacements),
     )
     log_saga_sacrifices(host, plan.saga_sacrifices)
 
