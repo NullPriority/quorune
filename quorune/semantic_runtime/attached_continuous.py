@@ -197,11 +197,11 @@ def _subject_types(condition: Any) -> tuple[str, ...]:
     raw = condition.get("types_all", [])
     if not isinstance(raw, list) or any(
         type(value) is not str
-        or value.casefold() not in {"creature", "land"}
+        or value.casefold() not in {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
         for value in raw
     ):
         raise SemanticNodeError(
-            "attached characteristic subject types must be creature or land"
+            "attached characteristic subject types must be represented permanent card types"
         )
     result = tuple(sorted(value.casefold() for value in raw))
     if len(result) != len(set(result)):
@@ -357,7 +357,7 @@ class AttachedFixedCharacteristicsHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Runtime handler ID does not match registry")
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )

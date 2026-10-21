@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned standalone attached-object keyword sources and retained controls; canonical existing records are reused.",
+  "cards": [
+    {
+      "oracle_id": "9aaa0a28-e342-48bd-8f59-0cd289491f98",
+      "name": "Indestructibility",
+      "mana_cost": "{3}{W}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant permanent\nEnchanted permanent has indestructible. (Effects that say \"destroy\" don't destroy that permanent. A creature with indestructible can't be destroyed by damage.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "9aaa0a28-e342-48bd-8f59-0cd289491f98",
+          "published_at": "2009-10-01",
+          "source": "wotc",
+          "comment": "If an effect would simultaneously destroy Indestructibility and the creature it’s enchanting, only Indestructibility is destroyed."
+        },
+        {
+          "oracle_id": "9aaa0a28-e342-48bd-8f59-0cd289491f98",
+          "published_at": "2013-07-01",
+          "source": "wotc",
+          "comment": "If a creature enchanted by Indestructibility is dealt lethal damage, the creature isn’t destroyed, but the damage remains marked on the creature. If Indestructibility stops enchanting that creature later in the turn, the creature will no longer have indestructible and will be destroyed."
+        },
+        {
+          "oracle_id": "9aaa0a28-e342-48bd-8f59-0cd289491f98",
+          "published_at": "2013-07-01",
+          "source": "wotc",
+          "comment": "Lethal damage, damage from a source with deathtouch, and effects that say “destroy” won’t cause a permanent with indestructible to be put into the graveyard. However, a permanent with indestructible can be put into the graveyard for a number of reasons. The most likely reasons are if it’s sacrificed, if it’s legendary and another legendary permanent with the same name is controlled by the same player, if it’s a planeswalker and another planeswalker with the same subtype is controlled by the same player, if it’s a creature with toughness 0 or less, or if it’s an Aura that’s either unattached or attached to something illegal."
+        }
+      ]
+    },
+    {
+      "oracle_id": "8054092a-1940-4f4b-991d-81f4d384cdb1",
+      "name": "Hardlight Containment",
+      "mana_cost": "{W}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant artifact you control\nWhen this Aura enters, exile target creature an opponent controls until this Aura leaves the battlefield.\nEnchanted permanent has ward {1}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "rulings": [
+        {
+          "oracle_id": "8054092a-1940-4f4b-991d-81f4d384cdb1",
+          "published_at": "2025-07-25",
+          "source": "wotc",
+          "comment": "If Hardlight Containment leaves the battlefield before its triggered ability resolves, the target creature won’t be exiled."
+        },
+        {
+          "oracle_id": "8054092a-1940-4f4b-991d-81f4d384cdb1",
+          "published_at": "2025-07-25",
+          "source": "wotc",
+          "comment": "If a token is exiled this way, it will cease to exist and won’t return to the battlefield."
+        },
+        {
+          "oracle_id": "8054092a-1940-4f4b-991d-81f4d384cdb1",
+          "published_at": "2025-07-25",
+          "source": "wotc",
+          "comment": "Auras attached to the exiled creature will be put into their owners’ graveyards. Any Equipment will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist. When the card returns to the battlefield, it will be a new object with no connection to the card that was exiled."
+        }
+      ]
+    },
+    {
+      "oracle_id": "289e1a7c-b301-4395-baf8-e9a1c6d38aab",
+      "name": "Revoke Existence",
+      "mana_cost": "{1}{W}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": []
+    }
+  ]
+}

@@ -208,6 +208,7 @@
       "test_typed_untap_step_participation"
     ],
     "functional-05": [
+      "test_attached_object_keywords",
       "test_attack_counter_triggers",
       "test_classic_flash_casts",
       "test_combat_declaration_restrictions",
@@ -735,6 +736,7 @@
       "test_all_colors",
       "test_all_counter_self_costs",
       "test_announced_hand_discard_costs",
+      "test_attached_object_keywords",
       "test_attached_protection_exceptions",
       "test_attack_keyword_compiler",
       "test_block_keyword_compiler",
@@ -841,6 +843,7 @@
       "test_all_colors",
       "test_amass_rules",
       "test_attached_counter_placement",
+      "test_attached_object_keywords",
       "test_attached_protection_exceptions",
       "test_attached_static_characteristics",
       "test_bolster_rules",
@@ -908,6 +911,7 @@
     ],
     "events-replacement-zone": [
       "test_announced_hand_discard_costs",
+      "test_attached_object_keywords",
       "test_chosen_aura_protection",
       "test_classic_flash_casts",
       "test_cost_defined_x",
@@ -987,6 +991,7 @@
     ],
     "multiplayer-commander": [
       "test_ante_rules",
+      "test_attached_object_keywords",
       "test_classic_flash_casts",
       "test_command_zone_rules",
       "test_commander_damage_identity",
@@ -1012,6 +1017,7 @@
       "test_all_colors",
       "test_announced_hand_discard_costs",
       "test_application_protocol",
+      "test_attached_object_keywords",
       "test_attached_protection_exceptions",
       "test_boast_restrictions",
       "test_browser_gameplay_regressions",
@@ -1131,6 +1137,7 @@
     ],
     "windows-compat": [
       "test_application_protocol",
+      "test_attached_object_keywords",
       "test_bulk_data",
       "test_classic_flash_casts",
       "test_gain_and_get_sets",

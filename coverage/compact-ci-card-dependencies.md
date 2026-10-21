@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "7b4622d231b522cf07a19ecfd583dd7d227d5410f73936a8cd63d69c4afa4627"
+verified: "3501953fab8a0a40a254b92cd0fb9406fd0e9a4d45d130267588c5b4b53778b0"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 304 |
-| Cards | 3161 |
+| Fixture files | 305 |
+| Cards | 3164 |
 | Rulings | 7243 |
-| Modules inspected | 588 |
-| Static requirements | 1705 |
+| Modules inspected | 589 |
+| Static requirements | 1707 |
 | Declared dynamic requirements | 46 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -34,16 +34,16 @@ Overall closure: **closed**.
 | --- | ---: | --- |
 | casting-costs-mana | 70 | closed |
 | combat-declarations | 24 | closed |
-| compiler-cardprogram | 89 | closed |
+| compiler-cardprogram | 90 | closed |
 | core-domain | 14 | closed |
-| counter-continuous-effects | 59 | closed |
+| counter-continuous-effects | 60 | closed |
 | deterministic-game-regressions | 6 | closed |
-| events-replacement-zone | 53 | closed |
+| events-replacement-zone | 54 | closed |
 | functional-01 | 30 | closed |
 | functional-02 | 83 | closed |
 | functional-03 | 35 | closed |
 | functional-04 | 35 | closed |
-| functional-05 | 46 | closed |
+| functional-05 | 47 | closed |
 | functional-06 | 56 | closed |
 | functional-07 | 27 | closed |
 | functional-08 | 39 | closed |
@@ -55,13 +55,13 @@ Overall closure: **closed**.
 | main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |
 | merge-core | 9 | closed |
-| multiplayer-commander | 16 | closed |
+| multiplayer-commander | 17 | closed |
 | nightly-property | 3 | closed |
-| server-replay-privacy | 36 | closed |
+| server-replay-privacy | 37 | closed |
 | state-actions-damage | 18 | closed |
 | targets-choices-continuations | 39 | closed |
 | triggers-turns-exact-decks | 20 | closed |
-| windows-compat | 17 | closed |
+| windows-compat | 18 | closed |
 
 The JSON companion contains canonical identities, fixture owners, source
 provenance, unresolved dynamics, and exact missing dependencies.

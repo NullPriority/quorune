@@ -52,6 +52,10 @@ _ATTACHED_FIXED_CHARACTERISTICS = re.compile(
     rf"^(?P<subject>{_ATTACHED_SUBJECT}) (?P<body>.+?)\.?$",
     re.IGNORECASE,
 )
+_ATTACHED_OBJECT_KEYWORD_GRANT = re.compile(
+    r"^(?P<subject>Enchanted (?:artifact|battle|enchantment|land|permanent|planeswalker)) "
+    r"(?P<body>has .+?)\.?$", re.IGNORECASE,
+)
 _ATTACHED_FIXED_PT = re.compile(
     r"^gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
     r"(?: and has (?P<abilities>.+))?$",
@@ -969,6 +973,8 @@ def attached_fixed_characteristics_handler(
     if special is not None:return special
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     match = _ATTACHED_FIXED_CHARACTERISTICS.fullmatch(text)
+    object_keyword = _ATTACHED_OBJECT_KEYWORD_GRANT.fullmatch(text) if match is None else None
+    if object_keyword is not None:match=object_keyword
     if match is None:
         return None
     subject_types_all = (
@@ -976,6 +982,9 @@ def attached_fixed_characteristics_handler(
         if match.group("subject").casefold() == "fortified land"
         else ["creature"]
     )
+    if object_keyword is not None:
+        kind=match.group('subject').casefold().split()[-1]
+        subject_types_all=[] if kind=='permanent' else [kind]
     body = match.group("body")
     modifier = (
         _attached_dynamic_modifier(body, source_name=source_name)
