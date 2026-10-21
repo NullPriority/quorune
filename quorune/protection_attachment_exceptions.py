@@ -7,6 +7,8 @@ from typing import Mapping
 
 CAPABILITY='protection.attachment.source_aura_exception'
 SOURCE_AURA='$source'
+CHOSEN_AURA_PROTECTION_CAPABILITY='protection.attachment.source_chosen_color'
+CHOSEN_AURA_PROTECTION_HANDLER='continuous.attached.source-chosen-color-protection.v1'
 
 
 def validate_protection_attachment_exception(spec):

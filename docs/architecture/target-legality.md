@@ -231,8 +231,17 @@ existing attached handler binds that marker to the current Aura incarnation.
 Current attachment retention may ignore that one instance for that Aura.
 Another protection instance still applies, and targeting, damage and blocking
 receive ordinary protection. The exception does not permit a new attachment
-or ignore the Aura's Enchant restriction. Chosen-color, all-Aura and
-already-attached exceptions remain outside this production.
+or ignore the Aura's Enchant restriction. All-Aura and already-attached
+exceptions remain outside this production.
+
+Source-chosen Aura protection uses a separate closed continuous component. The
+existing entry-designation owner records one public color for the entering
+Aura's controller. The component reads that retained source value and emits
+the same fixed-color schema-v3 grant for the current attached creature. A
+different creature controller does not choose or receive the Aura's entry
+draw. Return ends the grant, and a new entry selects again for the new Aura
+incarnation. Characteristic queries never prompt, mutate the designation or
+interpret Oracle text.
 
 Targeting, blocking, and live attachment legality evaluate that descriptor
 against current effective source characteristics. Damage preparation evaluates

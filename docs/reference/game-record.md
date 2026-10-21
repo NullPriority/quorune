@@ -405,3 +405,9 @@ incarnation before producing the layer-six value. Schemas one and two retain
 their original key sets and omit the new field. Other definition owners,
 resolution effects, stale or unrelated incarnation pins, and incomplete
 version-three payloads fail closed at their respective validation boundary.
+
+Source-chosen Aura components reuse the existing public `chosen_color` entry
+designation and emit that same version-three fixed-color value. No additional
+designation or private-choice state is introduced. Pending entry reload
+reissues the entering Aura controller's capability; return and a later entry
+retain ordinary new-incarnation semantics and a fresh choice.

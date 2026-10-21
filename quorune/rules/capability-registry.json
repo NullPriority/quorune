@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 430,
+  "registry_version": 431,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -39038,6 +39038,92 @@
       "dependency_fail_closed_rationale": "Canonically verified withdrawal of the exception or either existing protection/attachment owner leaves the original Ward residual. Removing the direct exception capability fails runtime minimum binding.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh normal original White Ward commands detect omitted compiler lowering, source-incarnation binding and the actual per-instance attachment-retention filter.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "protection.attachment.source_chosen_color",
+      "version": 1,
+      "official_rules": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "614.12a",
+        "702.16n",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One source-chosen entry color becomes live protection on the attached creature, retaining only the granting Aura through its own instance.",
+        "inputs": [
+          "retained source chosen_color designation",
+          "current source Aura incarnation",
+          "current attached creature"
+        ],
+        "outputs": [
+          "ordinary fixed-color protection value",
+          "per-instance source-Aura retention"
+        ],
+        "exclusions": [
+          "dynamic colors among permanents",
+          "all-Aura or already-attached exceptions",
+          "unrepresented timing or sacrifice siblings"
+        ]
+      },
+      "dependencies": [
+        "protection.attachment.source_aura_exception",
+        "zone.entry.public_designation"
+      ],
+      "implementation_components": [
+        "quorune.semantic_runtime.chosen_aura_protection.SourceChosenAuraProtectionHandler",
+        "quorune.compiler.attached_protection_exceptions.attached_protection_exception_handler"
+      ],
+      "positive_tests": [
+        "test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+        "test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+        "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+        "test_closed_handler_uses_only_the_retained_source_choice_and_current_aura"
+      ],
+      "negative_tests": [
+        "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+        "test_canonically_verified_chosen_and_entry_owner_withdrawals_and_minimum_strip_reject",
+        "test_closed_handler_uses_only_the_retained_source_choice_and_current_aura"
+      ],
+      "interaction_tests": [
+        "test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+        "test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+        "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+        "test_closed_handler_uses_only_the_retained_source_choice_and_current_aura"
+      ],
+      "multiplayer_tests": [
+        "test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+        "test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+        "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private"
+      ],
+      "privacy_tests": [
+        "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private"
+      ],
+      "replay_tests": [
+        "test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+        "test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+        "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonical withdrawal of the chosen grant, source-Aura retention or existing entry-designation owner prevents complete original admission. Stripping the new registered component authority fails runtime binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh normal Pentarch entry, protected attachment and private draw detect omitted chosen-grant compiler lowering and the actual registered layer-six emission.",
       "blockers": [],
       "status": "trusted"
     }

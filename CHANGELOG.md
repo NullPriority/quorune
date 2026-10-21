@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind source-chosen Aura protection to its retained entry color and current
+  incarnation, preserving controller-correct entry choices, Flash, paid return,
+  private draw and ordinary protection consumers.
+
 - Preserve Boast's intrinsic attack prerequisite and once-per-turn usage limit
   during compilation, including when reminder text is absent. Offers and
   accepted commands enforce the same restrictions before costs are paid.

@@ -15,6 +15,13 @@ replacement effects, prevention effects, draw policies, or continuous effects
 from live source descriptors. Components participate in a subsystem-owned
 transaction; they do not commit state.
 
+The source-chosen Aura protection component reads the existing immutable
+`chosen_color` source designation and current attached-object identity. It
+emits ordinary layer-six Protection values with one granting-Aura incarnation
+exception. Entry choice, source control, private draw and zone movement retain
+their existing owners. A live attached source without a represented color or
+incarnation fails closed; an unattached source emits no grant.
+
 Public power/toughness aggregates use the immutable
 `PublicCharacteristicAggregateSpec` and the read-only owner in
 `quorune/public_characteristic_aggregates.py`. Version-3 scalar amounts and
