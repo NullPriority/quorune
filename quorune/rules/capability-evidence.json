@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f8783fb23c9926c6546e3ad7d0709499a5d0261f1004a797fb50c301332f0cb5",
-  "declaration_source_fingerprint": "e6c4d97583bd1fb2011abf23fe8965aafb3bf15b7b58f97fe3376e49b133c5f3",
+  "registry_fingerprint": "afd71d5919bbf8bc78c1129b43bcf262807409cc6183f4a2a44a4148a8ef558e",
+  "declaration_source_fingerprint": "730a9a9f559b9bedb5e80dc86d48fac7cfe2d2999bad4e8254f604b07e34bef4",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -266597,6 +266597,66 @@
     },
     {
       "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_zero_toughness_destination_choice_does_not_require_destruction",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_graveyard_rules.GraveyardRuleTests.test_simultaneous_competing_replacements_follow_four_player_apnap",
       "official_rule_ids": [
@@ -266617,6 +266677,66 @@
     },
     {
       "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
       "evidence_class": "mutation",
       "test_id": "tests.test_graveyard_rules.GraveyardRuleTests.test_zone_replacement_snapshot_mutant_is_killed",
       "official_rule_ids": [
@@ -266634,6 +266754,46 @@
         "commander_review"
       ],
       "applicability_note": "Reject source-order and live-source rediscovery mutants by preparing from canonical immutable source effects after the candidates are reordered and mutated."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_fresh_actual_prior_destruction_selection_omission_is_killed",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_fresh_actual_zone_preflight_omission_is_killed",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
     },
     {
       "capability_id": "zone.change.destination_replacement",
@@ -266698,6 +266858,66 @@
     {
       "capability_id": "zone.change.destination_replacement",
       "evidence_class": "negative",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_zero_single_replacement_and_indestructible_are_distinct_native_results",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "negative",
       "test_id": "tests.test_zone_replacement_compiler.ZoneReplacementCompilerTests.test_unrepresented_destination_variants_remain_residual",
       "official_rule_ids": [
         "400.6",
@@ -266758,6 +266978,106 @@
     {
       "capability_id": "zone.change.destination_replacement",
       "evidence_class": "positive",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_zero_toughness_destination_choice_does_not_require_destruction",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_zero_single_replacement_and_indestructible_are_distinct_native_results",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "positive",
       "test_id": "tests.test_zone_replacement_compiler.ZoneReplacementCompilerTests.test_closed_family_lowers_to_capability_closed_card_program",
       "official_rule_ids": [
         "400.6",
@@ -266794,6 +267114,26 @@
         "commander_review"
       ],
       "applicability_note": "Replace a represented card's proposed zone destination through the affected-object ordering boundary before committing the move."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
     },
     {
       "capability_id": "zone.change.destination_replacement",
@@ -266834,6 +267174,106 @@
         "commander_review"
       ],
       "applicability_note": "Replace a represented card's proposed zone destination through the affected-object ordering boundary before committing the move."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_zero_toughness_destination_choice_does_not_require_destruction",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
+    },
+    {
+      "capability_id": "zone.change.destination_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_zero_single_replacement_and_indestructible_are_distinct_native_results",
+      "official_rule_ids": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Original damage and zero-toughness commands reach affected-controller destination choices before the complete state-based batch commits. Simultaneous source departures, preceding Umbra choices, wrong-principal and stale-frame rollback, private projection, pending load and pre-cast replay retain exact costs and results. Existing reviewed Dauthi controls do not claim strict whole-card Dauthi support."
     },
     {
       "capability_id": "zone.change.self_graveyard_exile",
@@ -285965,5 +286405,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "5e9e7449c5c4879b7bb65880b58da547b43b8372689d611663ddfa52cad3a2c3"
+  "fingerprint": "5ffdf8a60d3f605c4925d7c7d77a0c151dea98e37f589df9072327e33c080ce4"
 }

@@ -17727,6 +17727,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual fully admitted Sonic Burst targets the opponent and deals its original four damage after paying exactly one other private random hand card. Wrong-principal, forged selection and inadequate mana reject before payment; pending load and replay retain both cost and targeted result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+      "piece_ids": [
+        "capability.permanent.destroy.umbra_armor",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "permanent.destroy.umbra_armor",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Flame Slash reaches the affected controller choice between current Aura-owned Umbra protections. The chosen Aura destination then suspends separately for existing reviewed Dauthi effects before damage clearing or movement. Pending load retains the first choice; the body survives with cleared damage, only the selected Aura moves to exile with one void counter, and replay preserves the whole command sequence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_aura_families_finish_independent_protection_destination_choices_before_any_move",
+      "piece_ids": [
+        "capability.protection.attachment.source_aura_exception",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_aura_exception",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal White Ward, Pentarch Ward and Tattoo Ward retain themselves through their own grants. An independent legal colorless Steppe grants white protection; two complete generic destination replacements suspend the Aura SBA before movement. Pending load keeps the live attachment and grant. In the chosen case B controls the creature and plays Steppe on B actual next turn while Aura-owner A chooses its destination. Wrong-principal/unoffered choices roll back; exile adds one replacement counter, ends the Aura grant and preserves private hands/pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_aura_families_finish_independent_protection_destination_choices_before_any_move",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal White Ward, Pentarch Ward and Tattoo Ward retain themselves through their own grants. An independent legal colorless Steppe grants white protection; two complete generic destination replacements suspend the Aura SBA before movement. Pending load keeps the live attachment and grant. In the chosen case B controls the creature and plays Steppe on B actual next turn while Aura-owner A chooses its destination. Wrong-principal/unoffered choices roll back; exile adds one replacement counter, ends the Aura grant and preserves private hands/pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_aura_families_finish_independent_protection_destination_choices_before_any_move",
+      "piece_ids": [
+        "capability.protection.attachment.source_aura_fixed_type",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_aura_fixed_type",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal White Ward, Pentarch Ward and Tattoo Ward retain themselves through their own grants. An independent legal colorless Steppe grants white protection; two complete generic destination replacements suspend the Aura SBA before movement. Pending load keeps the live attachment and grant. In the chosen case B controls the creature and plays Steppe on B actual next turn while Aura-owner A chooses its destination. Wrong-principal/unoffered choices roll back; exile adds one replacement counter, ends the Aura grant and preserves private hands/pre-cast replay."
     }
   ]
 }

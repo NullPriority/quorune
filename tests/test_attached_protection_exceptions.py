@@ -36,7 +36,9 @@ class AttachedProtectionExceptionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'attached-protection.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/attached-protection-cards.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/attached-protection-cards.json',
+            ROOT/'tests/fixtures/chosen-aura-protection-cards.json',ROOT/'tests/fixtures/fixed-type-aura-protection-cards.json',
+            ROOT/'tests/fixtures/fixed-resolution-payment-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Attached protection',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
 
@@ -178,6 +180,61 @@ class AttachedProtectionExceptionTests(unittest.TestCase):
         self.assertEqual('graveyard',session.state.cards[ward.object_id].zone)
         self.assertEqual('battlefield',session.state.cards[body.object_id].zone)
         self.replay(session)
+
+    def test_actual_aura_families_finish_independent_protection_destination_choices_before_any_move(self):
+        for index,(name,cost,chosen,boost) in enumerate((('White Ward',{'W':1},False,0),
+                ('Pentarch Ward',{'W':1,'C':2},True,0),('Tattoo Ward',{'W':1,'C':2},False,1))):
+            with self.subTest(name=name):
+                session=self.session(750340+index);land_seat='B' if chosen else 'A'
+                body=self.add(session.engine,'Grizzly Bears',seat=land_seat)
+                aura=self.add(session.engine,name,zone='hand');steppe=self.add(session.engine,'Sejiri Steppe',seat=land_seat,zone='hand')
+                if chosen:
+                    ordinary=next(oid for oid in session.state.players['A'].zones['hand'] if oid!=aura.object_id)
+                    session.engine.move_card(ordinary,'library',reason='fixture cleanup hand boundary')
+                private=self.add(session.engine,'Generic Bound Growth',seat='C',zone='hand',ref='private-composition-hand')
+                for seat,control in (('B','Generic Payment Destination Replacement'),('C','Generic Payment Competing Replacement')):
+                    source=self.add(session.engine,control,seat=seat)
+                    self.assertTrue(self.binding(session,source)['strict_capability_ready'])
+                for source in (aura,steppe):self.assertTrue(self.binding(session,source)['strict_capability_ready'])
+                self.prepare(session,mana=cost);self.checkpoint(session)
+                self.cast(session,'A',aura,[body.ref],cost)
+                if chosen:
+                    self.assertEqual('replacement.order',self.resolve(session).kind)
+                    option=next(r['id'] for r in session.packet('pilot:A',full=True)['decision']['ctx']['options'] if r['id'].endswith(':W'))
+                    result=session.act('pilot:A',{'action_id':'choose','choices':{'replacement':option}});self.assertTrue(result.ok,result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(('battlefield',body.object_id),(session.state.cards[aura.object_id].zone,session.state.cards[aura.object_id].attached_to))
+                self.assertEqual(2+boost,session.engine._numeric_stat(body.object_id,'power'))
+                if chosen:self.advance(session,lambda s:s.state.active_player=='B' and s.state.phase=='precombat_main')
+                self.priority(session,land_seat)
+                action=next(r for r in session.packet('pilot:'+land_seat,full=True)['decision']['ctx']['legal']['actions'] if r['id']=='play-land:'+steppe.ref)
+                result=session.act('pilot:'+land_seat,{'action_id':action['id']});self.assertTrue(result.ok,result.summary)
+                pending=self.resolve(session)
+                if pending is not None and pending.kind=='semantic.target':
+                    result=session.act('pilot:'+land_seat,{'action_id':'choose','targets':[body.ref]});self.assertTrue(result.ok,result.summary)
+                    pending=self.resolve(session)
+                self.assertIsNotNone(pending);self.assertEqual('semantic.choice',pending.kind)
+                result=session.act('pilot:'+land_seat,{'action_id':'choose','choice':'W'});self.assertTrue(result.ok,result.summary)
+                self.assertEqual('replacement.order',self.resolve(session).kind)
+                self.assertEqual('state_based_zone_change',session.state.pending_decision.continuation['replacement_resume_kind'])
+                self.assertEqual(['pilot:A'],list(session.pending_principals()))
+                self.assertEqual(('battlefield',body.object_id),(session.state.cards[aura.object_id].zone,session.state.cards[aura.object_id].attached_to))
+                self.assertEqual(2+boost,session.engine._numeric_stat(body.object_id,'power'))
+                session=self.replay(session,load=True)
+                option=session.packet('pilot:A',full=True)['decision']['ctx']['options'][0]['id']
+                before=authoritative_state_hash(session.state)
+                self.assertFalse(session.act('pilot:B',{'action_id':'choose','replacement':option}).ok)
+                self.assertEqual(before,authoritative_state_hash(session.state))
+                self.assertFalse(session.act('pilot:A',{'action_id':'choose','replacement':'not-offered'}).ok)
+                self.assertEqual(before,authoritative_state_hash(session.state))
+                result=session.act('pilot:A',{'action_id':'choose','replacement':option});self.assertTrue(result.ok,result.summary)
+                self.assertIsNone(self.resolve(session))
+                current=session.state.cards[aura.object_id]
+                self.assertEqual('exile',current.zone);self.assertIsNone(current.attached_to)
+                self.assertEqual(1,sum(current.counters.values()))
+                self.assertEqual(('battlefield',2),(session.state.cards[body.object_id].zone,session.engine._numeric_stat(body.object_id,'power')))
+                self.assertNotIn(aura.object_id,session.state.cards[body.object_id].attachments)
+                self.private_replay(session,private)
 
     def test_actual_red_ward_blocks_red_targeting_and_prevents_nontargeted_red_damage(self):
         session=self.session(750321);body=self.add(session.engine,'Grizzly Bears')

@@ -21,6 +21,7 @@ from .replacement.immutable import (
     thaw_value,
 )
 from .zone_trigger_events import ZoneTransitionKind
+from .semantic_runtime.zone_replacement_model import PreparedZoneChange
 
 
 class DestructionError(ValueError):
@@ -611,6 +612,7 @@ def commit_destruction_plan(
     *,
     companion_changes: Sequence[tuple[str, str]] = (),
     companion_transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
+    prepared_zone_replacements: Mapping[str, PreparedZoneChange] | None = None,
 ) -> DestructionResult:
     """Commit one preflighted destruction family through canonical owners."""
 
@@ -635,16 +637,22 @@ def commit_destruction_plan(
         tuple((object_id, "graveyard") for object_id in event_order)
         + companions
     )
-    if plan.replacement_selections and companions:
+    if prepared_zone_replacements is None and plan.replacement_selections and companions:
         raise DestructionError(
             "Replacement selections do not support a compound move batch"
         )
+    if prepared_zone_replacements is not None and set(prepared_zone_replacements) != {object_id for object_id,_ in changes}:
+        raise DestructionError('Prepared destruction zone plans do not cover the complete batch')
     if plan.damage_clear_object_ids:
         from .damage_results import clear_permanent_damage
         for object_id in plan.damage_clear_object_ids:
             entry = next(value for value in plan.entries if value.object_id == object_id)
             clear_permanent_damage(host, object_id, logical_object_id=entry.logical_object_id)
-    if changes:
+    if changes and prepared_zone_replacements is not None:
+        from .zone_transitions import ZoneTransitionOwner
+        ZoneTransitionOwner(host).move_cards_simultaneously(changes, reason=plan.reason, log=False,
+            transition_kinds=transition_kinds, prepared_replacements=prepared_zone_replacements)
+    elif changes:
         host._move_cards_simultaneously(
             changes,
             reason=plan.reason,
