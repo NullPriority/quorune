@@ -20,6 +20,7 @@
     "tests/fixtures/as-unblocked-assignment-cards.json",
     "tests/fixtures/ascend-city-blessing-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",
+    "tests/fixtures/attached-object-keyword-cards.json",
     "tests/fixtures/attached-permanent-modifier-cards.json",
     "tests/fixtures/attached-protection-cards.json",
     "tests/fixtures/attached-pt-keyword-removal-cards.json",

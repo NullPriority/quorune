@@ -18222,6 +18222,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Counterspell removes the original Aura while retaining its cast-created delayed ability, which grants cleanup priority and resolves once without moving any card; loaded replay and private projections agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full RelicWard grants shroud to a noncreature artifact while its intrinsic cast-created cleanup consequence later sacrifices only the Aura; the existing grant ends immediately, with private pending load and replay preserved."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.trigger.keyword.ward.fixed_generic"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "trigger.keyword.ward.fixed_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full Hardlight preserves artifact-you-control legality and entry linked exile, grants a real Ward instance to the noncreature artifact, permits targeting, then counters the targeting spell on declined payment; removing the Aura ends the grant and returns the linked creature."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.permanent.indestructible.ordinary"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "permanent.indestructible.ordinary"
+      ],
+      "interaction_order": 2,
+      "assertion": "Whole Indestructibility prevents actual Naturalize destruction of the enchanted artifact while leaving a later exile legal; the linked Aura then leaves through normal state actions, with principal-private loaded replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.target.protection.shroud_permanent"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "target.protection.shroud_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual RelicWard blocks its artifact controller targeting the noncreature artifact, preserves its mana ability, and allows Aura removal to restore targeting before a real bounce; advertised and committed legality, rollback and replay agree."
     }
   ]
 }

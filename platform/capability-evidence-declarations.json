@@ -73202,6 +73202,151 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
       "official_rule_ids": [
         "301.5",
@@ -74043,6 +74188,151 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
       "official_rule_ids": [
         "301.5",
@@ -74391,6 +74681,64 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "mutation",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_canonically_verified_grant_and_keyword_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_full_original_producer_lowerer_and_keyword_requirement_omissions_are_killed",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
       "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_losing_combined_modifier_producer_is_killed_by_fresh_original_coils",
       "official_rule_ids": [
         "301.5",
@@ -74590,6 +74938,93 @@
         "commander_review"
       ],
       "applicability_note": "Ordinary-source quoted children reuse complete standalone trigger binding, preserve strict whole-program closure, reject partial children and missing dependencies, and kill omitted fallback; fixed source-permanent regeneration uses the existing incarnation-pinned shield."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_canonically_verified_grant_and_keyword_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_granted_keyword_owners_are_independent_runtime_requirements",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_subject_descriptors_are_closed_and_legacy_creature_shape_is_retained",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -75112,6 +75547,180 @@
         "traditional"
       ],
       "applicability_note": "Unknown siblings and withdrawn fine Skulk authority prevent exact admission; no partial recognition becomes complete support."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_subject_descriptors_are_closed_and_legacy_creature_shape_is_retained",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -75841,6 +76450,151 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
       "test_id": "tests.test_attached_pt_keyword_removal.AttachedPtRemovalRuntimeTests.test_original_coils_applies_negative_stats_and_removal_but_later_jump_restores_flying",
       "official_rule_ids": [
         "301.5",
@@ -76214,6 +76968,151 @@
         "commander_review"
       ],
       "applicability_note": "One complete fixed additive attached otherwise effect preserves recipient color/type/state, source lifetime and exact layer-7c arithmetic; actual Aura/Frog casting, stabilization, rollback, privacy, pending load and pre-action replay protect both components."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_object_keywords.AttachedObjectKeywordTests.test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c",
+        "613.4c",
+        "109.5",
+        "113.7a",
+        "113.8",
+        "301.5d",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete RelicWard/Indestructibility/Hardlight casts retain enchant restrictions and printed timing/linked-exile siblings. Actual noncreature, land and creature grants preserve shroud/indestructible/typed Ward meanings, source lifetime, mana/target/destroy/exile/zero-toughness contrasts, principal rollback/privacy, pending load and replay. Keyword and attachment minima, verified withdrawals and fresh omissions fail closed."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",

@@ -7161,6 +7161,27 @@
         "test_cascade_rules",
         "test_chosen_aura_protection"
       ]
+    },
+    {
+      "id": "attached-noncreature-standalone-keyword-grants",
+      "patterns": [
+        "quorune/rules/attached_keyword_requirements.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/semantic_runtime/attached_continuous.py",
+        "tests/test_attached_object_keywords.py",
+        "tests/fixtures/attached-object-keyword-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_object_keywords",
+        "test_attached_static_characteristics",
+        "test_attached_permanent_modifiers",
+        "test_card_program_trust",
+        "test_classic_flash_casts",
+        "test_chosen_aura_protection",
+        "test_fixed_type_aura_protection",
+        "test_continuous_effect_components",
+        "test_static_characteristic_settings"
+      ]
     }
   ],
   "symbol_rules": [

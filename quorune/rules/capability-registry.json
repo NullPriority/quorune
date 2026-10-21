@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 442,
+  "registry_version": 443,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13850,7 +13850,7 @@
     },
     {
       "id": "continuous.attached.fixed_characteristics",
-      "version": 15,
+      "version": 16,
       "official_rules": [
         "301.5",
         "303.4",
@@ -13875,12 +13875,12 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime. A quoted terminal list comma is assigned to the independently validated outer conjunction while inner punctuation, source spans and complete child behavior remain intact. Closed ability-plus-additive-type compositions do not require a P/T term.",
+        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime. A quoted terminal list comma is assigned to the independently validated outer conjunction while inner punctuation, source spans and complete child behavior remain intact. Closed ability-plus-additive-type compositions do not require a P/T term. Standalone enchanted-object keyword grants also cover ordinary noncreature permanent types or an unqualified permanent, without changing the older creature, Equipment or Fortification modifier productions. Runtime binding independently derives represented keyword and typed-fragment owner minima from the validated descriptor.",
         "inputs": [
           "active attached source object",
           "reciprocal physical attachment relation",
           "target logical object identity",
-          "current effective creature or land subject type",
+          "current effective ordinary permanent subject type or unqualified permanent",
           "source timestamp",
           "fixed typed characteristic operations",
           "cycle-safe typed public quantity through layer 5",
@@ -13938,7 +13938,8 @@
         "quorune.keyword_abilities.triggered_keyword_grant",
         "quorune.rules.activation.query.activated_abilities",
         "quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
-        "quorune.trigger_discovery._event_programs_for_source"
+        "quorune.trigger_discovery._event_programs_for_source",
+        "quorune.rules.attached_keyword_requirements.attached_keyword_runtime_dependencies"
       ],
       "positive_tests": [
         "test_ability_and_type_without_stats_keeps_the_independent_exact_child",
@@ -13973,7 +13974,13 @@
         "test_spell_cast_grants_use_recipient_controller_and_own_source",
         "test_static_query_and_attachment_declaration_grants_compile_closed",
         "test_thornbite_staff_grants_damage_death_untap_and_shaman_attach",
-        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"
+        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
+        "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+        "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+        "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+        "test_subject_descriptors_are_closed_and_legacy_creature_shape_is_retained",
+        "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
       ],
       "negative_tests": [
         "test_ability_and_type_without_stats_keeps_the_independent_exact_child",
@@ -13998,7 +14005,10 @@
         "test_three_originals_have_complete_preflight_and_bound_attached_authority",
         "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
         "test_unknown_siblings_and_withdrawn_skulk_authority_remain_residual",
-        "test_withdrawn_attached_owner_keeps_combined_original_source_residual"
+        "test_withdrawn_attached_owner_keeps_combined_original_source_residual",
+        "test_granted_keyword_owners_are_independent_runtime_requirements",
+        "test_subject_descriptors_are_closed_and_legacy_creature_shape_is_retained",
+        "test_canonically_verified_grant_and_keyword_withdrawals_keep_originals_residual"
       ],
       "interaction_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14031,7 +14041,12 @@
         "test_shared_static_component_query_owns_removal_and_typed_grant",
         "test_spell_cast_grants_use_recipient_controller_and_own_source",
         "test_target_departure_and_source_departure_end_effect_without_stale_identity",
-        "test_type_and_ability_removal_use_their_canonical_layers"
+        "test_type_and_ability_removal_use_their_canonical_layers",
+        "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+        "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+        "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+        "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
       ],
       "multiplayer_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14046,7 +14061,12 @@
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
         "test_original_magebane_retains_noncombat_prevention_and_complete_modifier",
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
-        "test_spell_cast_grants_use_recipient_controller_and_own_source"
+        "test_spell_cast_grants_use_recipient_controller_and_own_source",
+        "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+        "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+        "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+        "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
       ],
       "privacy_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14059,7 +14079,12 @@
         "test_original_key_cast_equip_control_change_and_departure_preserve_holder_semantics",
         "test_original_magebane_retains_noncombat_prevention_and_complete_modifier",
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
-        "test_projection_hides_relation_identity_and_replay_is_exact"
+        "test_projection_hides_relation_identity_and_replay_is_exact",
+        "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+        "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+        "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+        "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
       ],
       "replay_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14081,7 +14106,12 @@
         "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
         "test_projection_hides_relation_identity_and_replay_is_exact",
         "test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
-        "test_spell_cast_grants_use_recipient_controller_and_own_source"
+        "test_spell_cast_grants_use_recipient_controller_and_own_source",
+        "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+        "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+        "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+        "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
       ],
       "required_evidence": [
         "positive",
@@ -14094,7 +14124,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Dynamic counts use the shared cycle-safe layer-5 quantity boundary, and missing, removed, or untrusted outer or inner semantic component identities fail closed before an attached source contributes effects or executable ability fragments.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_attached_characteristic_relation_mutant_is_killed removes the typed lowering and the exact relation-bound characteristic assertions reject the survivor; focused quoted-grant tests reject lost fragment identity, recipient binding, multiplicity, lifetime, offer/commit parity, or replay. Omitting either the otherwise base or the conditional correction preserves complete admission but changes the actual Aura stat consequence and is killed by its native witness. The canonical grant-plan omission is killed by actual combat with distinct Equipment and recipient controllers, including source removal before the private draw resolves.",
+      "implementation_mutation_rationale": "test_attached_characteristic_relation_mutant_is_killed removes the typed lowering and the exact relation-bound characteristic assertions reject the survivor; focused quoted-grant tests reject lost fragment identity, recipient binding, multiplicity, lifetime, offer/commit parity, or replay. Omitting either the otherwise base or the conditional correction preserves complete admission but changes the actual Aura stat consequence and is killed by its native witness. The canonical grant-plan omission is killed by actual combat with distinct Equipment and recipient controllers, including source removal before the private draw resolves. New full-original noncreature keyword production, current lowering and independent owner-requirement omissions are killed by fresh gameplay/minimum witnesses.",
       "blockers": [],
       "status": "trusted"
     },

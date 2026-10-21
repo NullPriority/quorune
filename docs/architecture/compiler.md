@@ -820,6 +820,22 @@ type, subtype, color, and supported keyword addition or removal; compound
 forms remain one descriptor so canonical layer ordering is preserved. Fixed P/T may combine directly with supported keyword removal without an ability grant. Removals retain layer-6 timestamp order; a later keyword grant may restore the ability, and reattachment or source departure updates the live relation. The same
 descriptor may append one or two already-exact declaration requirement or
 restriction fragments, including beside a fixed attached modifier and keyword.
+
+Standalone keyword grants also accept enchanted artifacts, battles,
+enchantments, lands, planeswalkers, and unqualified permanents. These subject
+forms retain the existing live-relation descriptor and typed Ward or other
+represented keyword fragments. The extension accepts the keyword clause only;
+existing type, base-setting, and additive productions keep their owners and
+serialized shapes. A noncreature may receive Shroud, Indestructible, or Ward
+without an invented creature prerequisite.
+
+`rules/attached_keyword_requirements.py` derives independent runtime minima
+from the validated descriptor, the canonical keyword catalog, and typed
+fragment ownership. Declaring the general attached-modifier capability cannot
+substitute for a granted keyword's owner. Subject schemas reject unknown or
+duplicate types, and unsupported keyword text or sibling clauses remain
+residuals.
+
 Typed quantities reuse `query_characteristic_quantity()` and the cycle-safe
 layer-5 object query. Name and rules-text changes, conditions, declaration
 costs, target-relative attachment or controller facts, chosen values, and
