@@ -38,6 +38,8 @@ def _fixed_zone_change_selection(
         maximum = min(len(candidates), int(choice_schema.get('x', {}).get('maximum', len(candidates))))
         if option.get('x_value_policy') == 'zero':
             maximum = 0
+        from .target_cardinality import target_count_preview_maximum
+        maximum=target_count_preview_maximum(option,maximum)
         if count > maximum:
             return False, None
         choice_schema['x'] = {'type': 'integer', 'minimum': 0, 'maximum': maximum}

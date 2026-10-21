@@ -17832,6 +17832,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual complete originals keep one X across mana, exact owned creature/land discards and distinct original targets. Costs precede resolution; zero, partial/all target loss, countering and rejected selections retain their independent meanings. Sequential destination choices preserve earlier typed discards through transactional rollback, private pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.quantity_expression.declared_effect_amount"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_graveyard_exile",
+        "capability.quantity_expression.declared_effect_amount"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_graveyard_exile",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.target.cardinality.mana_announced_x"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "target.cardinality.mana_announced_x"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "piece_ids": [
+        "capability.casting.cost.targeted_fixed_generic",
+        "capability.target.cardinality.mana_announced_x"
+      ],
+      "capability_ids": [
+        "casting.cost.targeted_fixed_generic",
+        "target.cardinality.mana_announced_x"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
     }
   ]
 }

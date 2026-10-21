@@ -60,6 +60,7 @@
     "tests/fixtures/controller-sacrifice-cards.json",
     "tests/fixtures/copiable-entry-ability-grant-cards.json",
     "tests/fixtures/copied-self-entry-counter-cards.json",
+    "tests/fixtures/cost-defined-x-cards.json",
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
     "tests/fixtures/counted-spell-additional-costs.json",

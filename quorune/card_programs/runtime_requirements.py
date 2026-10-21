@@ -29,10 +29,13 @@ from ..rules.paid_mana_resolution import paid_mana_resolution_dependencies
 from ..rules.provoke_shapes import provoke_program_runtime_dependencies
 from ..qualified_hexproof import qualified_hexproof_runtime_dependencies
 from ..protection_attachment_exceptions import attached_protection_runtime_dependencies
+from ..query_effect_amount_model import cast_x_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(cast_x_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema)))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_cast_x_amount:invalid:{exc}')
     try:required.update(boast_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_boast:invalid:{exc}')
     required.update(qualified_hexproof_runtime_dependencies(program))

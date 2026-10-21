@@ -105,6 +105,13 @@ Trust computation is deterministic metadata work. It is performed at compile,
 preflight, load, and replay boundaries rather than inside characteristic hot
 paths.
 
+The dynamic requirement reader validates typed `cast_x_effect_amount` values
+across effects, handlers, target and cost data. Each requires
+`quantity_expression.declared_effect_amount` independently of its surrounding
+operation. Removing that annotation or supplying a malformed amount cannot
+retain strict runtime trust. The expression still reads the canonical stack
+declaration; it introduces no new expression registry or gameplay state.
+
 Session creation and one synchronous Game Record replay share one validated
 read-only capability registry/evidence snapshot across their nested trust
 checks. This is an invocation boundary: the next call re-reads and validates

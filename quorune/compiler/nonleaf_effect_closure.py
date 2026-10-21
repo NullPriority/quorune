@@ -6,6 +6,8 @@ from ..rules.self_return_capability_shapes import fixed_self_return_node_capabil
 
 
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
+    from .declared_effect_amounts import closed_additional_cost_x_result
+    if closed_additional_cost_x_result(program,recognizers=recognizers):return True
     from .random_discard_spell_costs import closed_random_discard_spell_result
     if closed_random_discard_spell_result(program,recognizers=recognizers):return True
     from .waterbend_costs import closed_waterbend_spell_result

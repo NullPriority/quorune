@@ -1490,10 +1490,11 @@ def build_cast_cost_options(
         _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
         if target_mana_x:
             expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
+    declared_cost_x=bool(announced_additional_cost_dependencies(getattr(program,'cost_schema',None))) if not target_mana_x else False
     result = []
     for option in expanded:
         from .target_cardinality import bind_target_count_option
-        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x)
+        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x)
         if option is None:
             continue
         option_cast_type_line = (
