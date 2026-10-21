@@ -7405,6 +7405,28 @@
         "test_card_program_trust",
         "test_source_block_pair"
       ]
+    },
+    {
+      "id": "typed-nonmana-buyback-costs",
+      "patterns": [
+        "quorune/cast_lifecycles.py",
+        "quorune/compiler/nonmana_buyback_costs.py",
+        "quorune/rules/nonmana_buyback_costs.py",
+        "quorune/compiler/cast_lifecycle_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/rules/casting/option_expansion.py",
+        "quorune/rules/random_discard_additional_cost.py",
+        "quorune/rules/casting/costs.py",
+        "tests/test_nonmana_buyback_costs.py",
+        "tests/fixtures/nonmana-buyback-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_nonmana_buyback_costs",
+        "test_fixed_casting_surface",
+        "test_fixed_zone_cast_lifecycles",
+        "test_spell_random_discard_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

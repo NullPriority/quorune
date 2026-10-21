@@ -180,9 +180,7 @@ class SpellRandomDiscardCostTests(unittest.TestCase):
         host=SimpleNamespace(active_seats=['A'],state=SimpleNamespace(config=SimpleNamespace(seed=7),cards=cards,
             players={'A':SimpleNamespace(zones={'hand':list(cards)})}))
         intent=RandomDiscardIntent('A',('A',),1,'payment','cost boundary')
-        with patch('quorune.random_discard.random.Random') as randomizer:
-            randomizer.return_value.sample.side_effect=lambda members,count:members[:count]
-            self.assertEqual(('b-other',),resolve_random_discard(host,intent,commit_batch=lambda refs:refs,exclude_object_ids=('a-source',)))
+        self.assertEqual(('b-other',),resolve_random_discard(host,intent,commit_batch=lambda refs:refs,exclude_object_ids=('a-source',)))
         with self.assertRaises(ValueError):resolve_random_discard(host,intent,commit_batch=lambda refs:refs,exclude_object_ids=['a-source'])
 
     def test_canonically_verified_random_and_discard_owner_withdrawals_and_runtime_stripping(self):

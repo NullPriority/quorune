@@ -1253,7 +1253,8 @@ def _apply_additional_costs(
         except AdditionalCostError:
             return False
         if life_cost is not None:
-            if len(mandatory_costs) != 1:
+            from ..random_discard_additional_cost import fixed_life_random_costs
+            if len(mandatory_costs) != 1 and not fixed_life_random_costs(mandatory_costs):
                 return False
             if host.state.players[seat].life < life_cost.amount:
                 return False

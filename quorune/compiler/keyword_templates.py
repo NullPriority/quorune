@@ -86,6 +86,8 @@ def keyword_mechanics(
         # Escape's comma separates its alternative mana payment from the
         # fixed other-card exile payment inside one keyword declaration.
         return ("escape",)
+    if 'buyback' in known and re.match(r'Buyback[—–-]', material, re.I):
+        return ('buyback',)
     if (
         "partner with" in known
         and partner_with_spec_for_material_line(material) is not None

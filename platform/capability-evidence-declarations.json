@@ -24645,6 +24645,231 @@
       "applicability_note": "Roll back mana and stack mutations when a fixed life payment becomes stale before commit."
     },
     {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_fresh_producer_price_and_return_omissions_are_killed",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_new_buyback_and_composed_random_owners_are_independent_runtime_minima",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_typed_schema_roundtrip_and_legacy_wire_contract_remain_closed",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_typed_schema_roundtrip_and_legacy_wire_contract_remain_closed",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_life_random",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
       "capability_id": "casting.additional_cost.fixed_random_discard",
       "evidence_class": "interaction",
       "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
@@ -32272,6 +32497,1531 @@
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.103", "702.103a", "702.103b", "702.103c", "702.103d", "702.103e", "702.103f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Pin the alternate-cost selection, target, attachment relation, and characteristic transition into an exact Game Record replay."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_collusion_keeps_search_private_after_selected_discard",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_forbid_discards_two_before_countering_and_returns_to_hand",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_mists_pays_land_and_prevents_real_combat_damage",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_pegasus_pays_land_and_creates_the_complete_flying_token",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_rewards_pays_land_before_return_and_normal_recast_does_not_keep_buyback",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_slaughter_pays_four_life_and_retains_nonblack_destruction",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_walk_sacrifices_three_islands_including_nonbasic_and_adds_targeted_turn",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_all_targets_illegal_does_not_return_the_paid_buyback_spell",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_copy_resolves_without_moving_the_original_card_or_paying_again",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_countered_nonmana_buyback_does_not_return_or_refund_its_cost",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_collusion_keeps_search_private_after_selected_discard",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_forbid_discards_two_before_countering_and_returns_to_hand",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_mists_pays_land_and_prevents_real_combat_damage",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_pegasus_pays_land_and_creates_the_complete_flying_token",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_rewards_pays_land_before_return_and_normal_recast_does_not_keep_buyback",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_slaughter_pays_four_life_and_retains_nonblack_destruction",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_walk_sacrifices_three_islands_including_nonbasic_and_adds_targeted_turn",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_all_targets_illegal_does_not_return_the_paid_buyback_spell",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_copy_resolves_without_moving_the_original_card_or_paying_again",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_countered_nonmana_buyback_does_not_return_or_refund_its_cost",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_fresh_producer_price_and_return_omissions_are_killed",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_all_targets_illegal_does_not_return_the_paid_buyback_spell",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_canonically_verified_nonmana_owner_withdrawal_blocks_all_originals",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_copy_resolves_without_moving_the_original_card_or_paying_again",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_countered_nonmana_buyback_does_not_return_or_refund_its_cost",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_new_buyback_and_composed_random_owners_are_independent_runtime_minima",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_optional_buyback_invalid_or_unpayable_choices_reject_before_any_payment",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_typed_schema_roundtrip_and_legacy_wire_contract_remain_closed",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_collusion_keeps_search_private_after_selected_discard",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_forbid_discards_two_before_countering_and_returns_to_hand",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_mists_pays_land_and_prevents_real_combat_damage",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_pegasus_pays_land_and_creates_the_complete_flying_token",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_rewards_pays_land_before_return_and_normal_recast_does_not_keep_buyback",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_slaughter_pays_four_life_and_retains_nonblack_destruction",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_walk_sacrifices_three_islands_including_nonbasic_and_adds_targeted_turn",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_all_eight_originals_have_complete_normal_admission",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_all_targets_illegal_does_not_return_the_paid_buyback_spell",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_copy_resolves_without_moving_the_original_card_or_paying_again",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_countered_nonmana_buyback_does_not_return_or_refund_its_cost",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_optional_buyback_invalid_or_unpayable_choices_reject_before_any_payment",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_optional_cost_metadata_preserves_existing_base_price",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_typed_schema_roundtrip_and_legacy_wire_contract_remain_closed",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_collusion_keeps_search_private_after_selected_discard",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_forbid_discards_two_before_countering_and_returns_to_hand",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_rewards_pays_land_before_return_and_normal_recast_does_not_keep_buyback",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_collusion_keeps_search_private_after_selected_discard",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_forbid_discards_two_before_countering_and_returns_to_hand",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_mists_pays_land_and_prevents_real_combat_damage",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_pegasus_pays_land_and_creates_the_complete_flying_token",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_rewards_pays_land_before_return_and_normal_recast_does_not_keep_buyback",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_slaughter_pays_four_life_and_retains_nonblack_destruction",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_actual_walk_sacrifices_three_islands_including_nonbasic_and_adds_targeted_turn",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_all_targets_illegal_does_not_return_the_paid_buyback_spell",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_copy_resolves_without_moving_the_original_card_or_paying_again",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_countered_nonmana_buyback_does_not_return_or_refund_its_cost",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
+    },
+    {
+      "capability_id": "casting.buyback.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_nonmana_buyback_costs.NonmanaBuybackCostTests.test_optional_buyback_invalid_or_unpayable_choices_reject_before_any_payment",
+      "official_rule_ids": [
+        "702.27",
+        "702.27a",
+        "118.8",
+        "118.8a",
+        "118.8b",
+        "118.8d",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full pinned nonmana Buyback cards retain real costs and complete counter/search/prevention/token/life/destruction/extra-turn outcomes. Paid return and normal recast, copies/countered/illegal targets, source exclusion, private selection/random cost, pending load/replay, closed descriptors, independent minima and verified withdrawal bound the claim."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
