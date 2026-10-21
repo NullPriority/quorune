@@ -17952,6 +17952,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Full original Dragon Throne is cast and equipped, retaining Defender. Its equipped creature pays the granted tap/mana activation after a real power change; a real opponent bounce removes it before resolution, and its last-known four power gives the other A creature +4/+4 and trample. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.resolution.effect_program.closed_components"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "resolution.effect_program.closed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Bogbeast attacks after actual gain, equal loss and opponent gain. Its first instruction gains two life before the group reads five gained life. Locked current recipients, cleanup, privacy, pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Essence Pulse is cast after actual prior gain/loss and opponent gain. Its own gain precedes a negative-five modifier to creatures on every seat; two die by zero toughness while six-toughness bodies survive as one-toughness objects. Private loaded replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.resolution.effect_program.closed_components"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "resolution.effect_program.closed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Essence Pulse with two complete generic destination replacements suspends simultaneous zero-toughness moves before mutation. Life gain remains exactly once across both choice actors, wrong-principal and unoffered rejection, repeated pending load and pre-cast replay. Synthetic controls are excluded from card gains."
     }
   ]
 }

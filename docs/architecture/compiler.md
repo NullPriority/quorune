@@ -2812,6 +2812,14 @@ Ordinary program registration validates the same scalar projection and the
 unchanged fixed effect and target shape before promoting a spell or activation.
 It requires the quantity capability and the full original dependency closure;
 a scalar descriptor alone cannot grant trust.
+`compiler/query_counter_sequences.py` composes these independently closed
+quantity instructions in printed order, including a fixed life instruction
+followed by a signed public creature-set modifier. Fixed-value probes preserve
+the prior fixed owner before trying the complete closed atomic grammar.
+Each explicit definition keeps its own instruction binding. A later quantity
+reads after earlier instructions and their replacements commit; suspended
+state actions do not repeat the earlier life change. Unknown clauses and
+ambiguous cross-instruction object references remain residual.
 Source attacks, blocks, and becomes-blocked results may use a source pronoun
 with a complete fixed keyword/modifier body or an independently closed public
 characteristic scalar. The child result retains its original source span and

@@ -118,6 +118,19 @@ the program's annotations. The runtime binder decodes each stat amount and
 validates the projected fixed set. Removing an owner, adding an unknown field,
 or supplying an invalid quantity rejects strict admission before mutation.
 
+The persisted `closed-effect-program` kind also requires its ordered-program
+capability independently of the component owners and retains its bounded
+effect count. Removing that capability or leaving a malformed single-effect
+ordered program cannot retain strict runtime admission.
+Typed public-query and scalar result values require their own quantity owner
+throughout effects, handlers, target and cost data. Explicit instruction
+bindings additionally require declared-amount authority. These requirements
+come from decoding the stored value, including its schema and binding identity,
+and do not depend on its surrounding operation or declared capability list.
+Validated public-quantity mana descriptors delegate their nested producer to
+the mana-production owner. Their codec forbids result declaration bindings and
+scalar arithmetic; a similar-looking result value cannot use that delegation.
+
 Session creation and one synchronous Game Record replay share one validated
 read-only capability registry/evidence snapshot across their nested trust
 checks. This is an invocation boundary: the next call re-reads and validates
