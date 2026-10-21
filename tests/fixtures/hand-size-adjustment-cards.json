@@ -1,0 +1,396 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned fixed maximum-hand-size adjustment originals; native proof required before acceptance.",
+  "cards": [
+    {
+      "oracle_id": "9a640695-fc17-4ccc-ac88-ce48b6c6ad53",
+      "name": "Thought Nibbler",
+      "mana_cost": "{U}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Flying\nYour maximum hand size is reduced by two.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "rulings": [
+        {
+          "oracle_id": "9a640695-fc17-4ccc-ac88-ce48b6c6ad53",
+          "published_at": "2009-10-01",
+          "source": "wotc",
+          "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you are affected by Cursed Rack (an artifact that sets a player's maximum hand size to four) and then put Thought Nibbler onto the battlefield, your maximum hand size would be two. However, if those permanents entered in the opposite order, your maximum hand size would be four."
+        }
+      ]
+    },
+    {
+      "oracle_id": "88e18dc9-8b11-4369-9860-a687925cdcb4",
+      "name": "Thought Eater",
+      "mana_cost": "{1}{U}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Flying\nYour maximum hand size is reduced by three.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "88e18dc9-8b11-4369-9860-a687925cdcb4",
+          "published_at": "2009-10-01",
+          "source": "wotc",
+          "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you are affected by Cursed Rack (an artifact that sets a player's maximum hand size to four) and then put Thought Eater onto the battlefield, your maximum hand size would be one. However, if those permanents entered in the opposite order, your maximum hand size would be four."
+        }
+      ]
+    },
+    {
+      "oracle_id": "e5106a2d-caca-4519-a1a1-eabaec4005df",
+      "name": "Thought Devourer",
+      "mana_cost": "{2}{U}{U}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Flying\nYour maximum hand size is reduced by four.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "e5106a2d-caca-4519-a1a1-eabaec4005df",
+          "published_at": "2009-10-01",
+          "source": "wotc",
+          "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you are affected by Cursed Rack (an artifact that sets a player's maximum hand size to four) and then put Thought Devourer onto the battlefield, your maximum hand size would be zero. However, if those permanents entered in the opposite order, your maximum hand size would be four."
+        }
+      ]
+    },
+    {
+      "oracle_id": "cfb5da72-9f00-4ae2-8d59-f997faab451b",
+      "name": "Gnat Miser",
+      "mana_cost": "{B}",
+      "type_line": "Creature — Rat Shaman",
+      "oracle_text": "Each opponent's maximum hand size is reduced by one.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "rulings": [
+        {
+          "oracle_id": "cfb5da72-9f00-4ae2-8d59-f997faab451b",
+          "published_at": "2009-10-01",
+          "source": "wotc",
+          "comment": "If multiple effects modify a player's hand size, apply them in timestamp order. For example, if you put Cursed Rack (an artifact that sets a chosen player's maximum hand size to four) onto the battlefield choosing your opponent and then put Gnat Miser onto the battlefield, your opponent will have a maximum hand size of three. However, if those permanents entered in the opposite order, your opponent's maximum hand size would be four."
+        }
+      ]
+    },
+    {
+      "oracle_id": "75a53a88-51a5-4c76-9f67-ee94c3065b98",
+      "name": "Locust Miser",
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Creature — Rat Shaman",
+      "oracle_text": "Each opponent's maximum hand size is reduced by two.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "75a53a88-51a5-4c76-9f67-ee94c3065b98",
+          "published_at": "2009-10-01",
+          "source": "wotc",
+          "comment": "If multiple effects modify a player's hand size, apply them in timestamp order. For example, if you put Cursed Rack (an artifact that sets a chosen player's maximum hand size to four) onto the battlefield choosing your opponent and then put Locust Miser onto the battlefield, your opponent will have a maximum hand size of two. However, if those permanents entered in the opposite order, your opponent's maximum hand size would be four."
+        }
+      ]
+    },
+    {
+      "oracle_id": "9ad4f876-e923-4a09-8e70-eb826aacf89d",
+      "name": "Minamo Scrollkeeper",
+      "mana_cost": "{1}{U}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Defender\nYour maximum hand size is increased by one.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "9ad4f876-e923-4a09-8e70-eb826aacf89d",
+          "published_at": "2013-04-15",
+          "source": "wotc",
+          "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you put Null Profusion (an enchantment that says your maximum hand size is two) onto the battlefield and then put Minamo Scrollkeeper onto the battlefield, your maximum hand size will be three. However, if those permanents entered the battlefield in the opposite order, your maximum hand size would be two."
+        }
+      ]
+    },
+    {
+      "oracle_id": "83133f51-bfbd-4db5-9be0-f660e3b66435",
+      "name": "Spellbook",
+      "mana_cost": "{0}",
+      "type_line": "Artifact — Book",
+      "oracle_text": "You have no maximum hand size.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0,
+      "rulings": [
+        {
+          "oracle_id": "83133f51-bfbd-4db5-9be0-f660e3b66435",
+          "published_at": "2009-10-01",
+          "source": "wotc",
+          "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you put Null Profusion (an enchantment that says your maximum hand size is two) onto the battlefield and then put Spellbook onto the battlefield, you'll have no maximum hand size. However, if those permanents entered in the opposite order, your maximum hand size would be two."
+        }
+      ]
+    }
+  ]
+}

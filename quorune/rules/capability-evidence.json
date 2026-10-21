@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9146b6b5dd549b6812068ee34268ab3ea04d6c5ebd5848c29c22264119705936",
-  "declaration_source_fingerprint": "7ebfcbf3e1bfd94cad56fb76a5c2e0dfd451625480b870fac9a813ba06c8cb10",
+  "registry_fingerprint": "d32d0bda72808d6c9bc0914927ed3866beb260b2ab18447e40aad0eb8e17d107",
+  "declaration_source_fingerprint": "dd531599fa2a38dcce1d76d080c161c44ec25af2c23276082fe3ebdfd930dd32",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -168323,6 +168323,972 @@
       "applicability_note": "The focused witness asserts its closed descriptor, current native action, private projection, exact result, pending replay or omission boundary; only the behavior asserted by this method is evidence."
     },
     {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_departing_miser_restores_current_limits_before_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_departing_miser_restores_current_limits_before_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_canonically_verified_adjustment_owner_withdrawal_keeps_all_originals_residual",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_full_original_compiler_and_current_adjustment_query_omissions_are_killed",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_canonically_verified_adjustment_owner_withdrawal_keeps_all_originals_residual",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_departing_miser_restores_current_limits_before_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_emitted_adjustment_requires_its_component_capability_and_closed_descriptor",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_fixed_adjustment_model_and_handler_reject_unowned_scope_value_and_version",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_fixed_adjustment_model_and_handler_reject_unowned_scope_value_and_version",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_departing_miser_restores_current_limits_before_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_departing_miser_restores_current_limits_before_cleanup",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
+      "capability_id": "hand.cleanup.fixed_adjustment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_size_adjustments.HandSizeAdjustmentTests.test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+      "official_rule_ids": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole originals retain flying/defender and actual cast/cleanup consequences. Current controller/opponent scope, additive and zero/no-maximum limits, source departure, lost ability and control expiry before/after cleanup discard, malformed construction, verified withdrawal, wrong actor/count rollback, principal-private pending cleanup and pre-action replay are witnessed."
+    },
+    {
       "capability_id": "hand.cleanup.no_maximum",
       "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
@@ -298091,5 +299057,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "f9ec60f3eda38e4a589983dae2139c066c0a90931489ddc656c4ef7c52dfcbc0"
+  "fingerprint": "d4f21ab5b081b0a83dbe308bbfb29fd5b07bad7c244ff0f11cf1be7406482e3e"
 }

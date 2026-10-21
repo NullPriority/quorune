@@ -7118,6 +7118,24 @@
         "test_self_exile_return_spells",
         "test_fixed_library_searches"
       ]
+    },
+    {
+      "id": "fixed-static-maximum-hand-size-adjustments",
+      "patterns": [
+        "quorune/maximum_hand_size.py",
+        "quorune/compiler/maximum_hand_size_nodes.py",
+        "quorune/semantic_runtime/maximum_hand_size.py",
+        "tests/test_hand_size_adjustments.py",
+        "tests/fixtures/hand-size-adjustment-cards.json"
+      ],
+      "test_modules": [
+        "test_hand_size_adjustments",
+        "test_card_program_trust",
+        "test_cleanup_step_rules",
+        "test_class_lifecycle",
+        "test_static_action_rules",
+        "test_game_record_v3"
+      ]
     }
   ],
   "symbol_rules": [
