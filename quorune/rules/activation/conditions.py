@@ -112,6 +112,9 @@ def _typed_condition_status(
     source: Any | None,
 ) -> tuple[str, str | None]:
     kind = condition.kind
+    if kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN:
+        from .source_attack import source_attack_condition_status
+        return source_attack_condition_status(host,source)
     if kind is ActivationConditionKind.SOURCE_ATTACHED_TO_CREATURE:
         target = host.state.cards.get(getattr(source, 'attached_to', None))
         attached = (source is not None and source.zone == 'battlefield'

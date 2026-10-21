@@ -28,6 +28,7 @@ from .activation_condition_model import (
     activation_restriction_spec,
 )
 from .activated_ability_descriptor import validate_activated_ability_descriptor
+from .boast import keyword_activation_restrictions,validate_boast_ability
 from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
 from .creature_subtypes import canonical_creature_subtype
@@ -314,6 +315,7 @@ class ActivatedAbility:
     power_up: PowerUpSpec | None = None
     fixed_mana_result: FixedManaResultSpec | None = None
     announced_x_symbols: int | None = None
+    boast: bool = False
     reconfigure: bool = False
 
     def __post_init__(self) -> None:
@@ -327,6 +329,7 @@ class ActivatedAbility:
         _validate_ability_sequences_and_scalars(self)
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
+        validate_boast_ability(self)
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -394,6 +397,7 @@ class ActivatedAbility:
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
+        if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
         return result
 
@@ -403,6 +407,7 @@ class ActivatedAbility:
         return cls(
             ability_id=value["ability_id"],
             announced_x_symbols=value.get('announced_x_symbols'),
+            boast=value.get('boast',False),
             reconfigure=value.get('reconfigure', False),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
@@ -1496,15 +1501,7 @@ def _parse_activated_line(
     builtin_semantic_key, target_schema = _builtin_effect_descriptor(effect_text)
     if (keyword_override or keyword_prefix or "").casefold() == "equip":
         builtin_semantic_key, target_schema = _equip_effect_descriptor()
-    activation_limit = (
-        ActivationLimit.EXHAUST_ONCE
-        if prefix == "exhaust"
-        else (
-            ActivationLimit.ONCE_PER_TURN
-            if "only once each turn" in effect_lower
-            else None
-        )
-    )
+    activation_limit,conditions,boast=keyword_activation_restrictions(prefix,effect_lower,_activation_conditions(effect_text))
     return (
         ActivatedAbility(
             ability_id=f"ab{line_index + 1}",
@@ -1548,8 +1545,9 @@ def _parse_activated_line(
             builtin_semantic_key=builtin_semantic_key,
             target_schema=target_schema,
             activation_limit=activation_limit,
+            boast=boast,
             library_search_types=_library_search_types(effect_text),
-            activation_conditions=_activation_conditions(effect_text),
+            activation_conditions=conditions,
             dynamic_mana_output=_dynamic_mana_output(effect_text),
             mana_spend_restriction=_mana_spend_restriction(effect_text),
         ),

@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve Boast's intrinsic attack prerequisite and once-per-turn usage limit
+  during compilation, including when reminder text is absent. Offers and
+  accepted commands enforce the same restrictions before costs are paid.
+
 - Resolve printed Provoke through exact defending-player targets, optional
   untapping and combat-bound requirements in the existing declaration solver.
 - Supply the canonical public source predicate for fixed self-prevention of

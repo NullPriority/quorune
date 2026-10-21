@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "95415426d03a6bec995d1e8f1c299ae29cc49c74c10156239b4cb26d32cde6ea"
+verified: "86f5f29489dcaacea43548936a8328177a5ed18f7a7622abb5dc3b5b46d47664"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,12 +17,12 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 3,554
+- Pieces: 3,555
 - Cards indexed: 31,623
 - Material abilities classified: 59,935
 - Unclassified material spans: 0
-- Mapped pinned rules: 1,401 / 3,309
-- Applicable piece pairs: 132,491
+- Mapped pinned rules: 1,403 / 3,309
+- Applicable piece pairs: 132,591
 - Covered piece pairs: 1,605
 
 ## Ontology classes
@@ -42,7 +42,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `object_identity` — Object identity and lifetime | 56 |
 | `one_shot_effects` — One-shot semantic effects | 221 |
 | `players_format` — Players, relationships, and format state | 3 |
-| `proposals` — Casting and activation proposals | 46 |
+| `proposals` — Casting and activation proposals | 47 |
 | `quantities` — Quantity and value expressions | 2 |
 | `references` — References | 1 |
 | `replacement_prevention` — Replacement and prevention | 32 |
@@ -52,7 +52,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | System | Status | Pieces | Blocking pieces |
 |---|---|---:|---:|
-| `action_legality_casting_activation_costs_mana` | `inventoried` | 261 | 6 |
+| `action_legality_casting_activation_costs_mana` | `inventoried` | 262 | 6 |
 | `combat` | `compositional` | 39 | 0 |
 | `derived_characteristics_static_layers` | `inventoried` | 103 | 7 |
 | `generic_triggers_stack_placement` | `inventoried` | 3 | 3 |

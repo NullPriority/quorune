@@ -179,6 +179,17 @@ does not become the recipient set or replace that controller. Current ability
 components gate future discovery, while an already created trigger survives
 its source leaving.
 
+Printed Boast carries an optional strict marker in the existing activation
+catalog. The compiler expands its intrinsic rules into a current-turn attack
+condition for the exact source incarnation and the ordinary once-per-turn
+usage limit. Reminder text is not required for those rules. Offers and commands
+read the same typed attack journal before paying costs; missing history fails
+closed. A tapped attacker may Boast, and source control changes do not erase
+its attack or usage history. Countering an accepted ability does not refund
+usage. Returning to the battlefield creates an incarnation that has not
+attacked. Frequency-changing effects and independently unsupported costs or
+results remain residual.
+
 Fixed random-discard activation costs use an optional typed scalar that is
 omitted from older ability payloads. The activating player must hold the full
 count. The canonical random selector binds a distinct hand subset to the

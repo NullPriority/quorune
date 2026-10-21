@@ -6566,6 +6566,21 @@
       ]
     },
     {
+      "id": "intrinsic-boast-activation-restrictions",
+      "patterns": [
+        "quorune/boast.py",
+        "quorune/rules/activation/source_attack.py",
+        "tests/test_boast_restrictions.py",
+        "tests/fixtures/boast-restriction-cards.json"
+      ],
+      "test_modules": [
+        "test_boast_restrictions",
+        "test_activation_conditions",
+        "test_typed_activated_ability_catalog",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "source-color-protection-choice",
       "patterns": [
         "quorune/compiler/source_protection_choices.py",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 426,
+  "registry_version": 427,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37221,6 +37221,97 @@
       "dependency_fail_closed_rationale": "Withdrawing choice, source-characteristic or keyword authority rejects normal admission and runtime binding.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh normal original admission and real activated result witnesses reject compiler and characteristic-commit omission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.boast.fixed_restrictions",
+      "version": 1,
+      "official_rules": [
+        "702.142a",
+        "702.142b",
+        "602.1b",
+        "602.2",
+        "400.7",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Printed Boast retains an original-incarnation current-turn attack condition and existing once-per-turn activation limit before ordinary cost commitment.",
+        "inputs": [
+          "typed Boast marker",
+          "current source attack journal",
+          "source and ability usage identity",
+          "current principal, target and costs"
+        ],
+        "outputs": [
+          "shared source-attack/usage legality",
+          "ordinary paid activated ability"
+        ],
+        "exclusions": [
+          "Boast frequency modifiers",
+          "unowned source/body/cost grammar"
+        ]
+      },
+      "dependencies": [
+        "activation.usage.once_per_turn",
+        "trigger.event.normalized_self_attack"
+      ],
+      "implementation_components": [
+        "quorune.boast.keyword_activation_restrictions",
+        "quorune.boast.validate_boast_ability",
+        "quorune.rules.activation.source_attack.source_attack_condition_status"
+      ],
+      "positive_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+        "test_actual_white_and_red_boast_originals_create_complete_tokens",
+        "test_implicit_keyword_restrictions_survive_without_reminder_and_have_closed_metadata",
+        "test_source_attack_condition_distinguishes_turn_incarnation_controller_and_missing_history"
+      ],
+      "negative_tests": [
+        "test_actual_duskwielder_rejects_boast_before_attacking_without_any_cost_or_effect",
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+        "test_implicit_keyword_restrictions_survive_without_reminder_and_have_closed_metadata",
+        "test_native_blink_rejects_boast_for_a_returned_incarnation_that_did_not_attack",
+        "test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage",
+        "test_source_attack_condition_distinguishes_turn_incarnation_controller_and_missing_history",
+        "test_verified_boast_withdrawal_and_runtime_minimum_stripping_reject"
+      ],
+      "interaction_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+        "test_actual_white_and_red_boast_originals_create_complete_tokens",
+        "test_native_blink_rejects_boast_for_a_returned_incarnation_that_did_not_attack",
+        "test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage",
+        "test_source_attack_condition_distinguishes_turn_incarnation_controller_and_missing_history"
+      ],
+      "multiplayer_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+        "test_actual_white_and_red_boast_originals_create_complete_tokens",
+        "test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage"
+      ],
+      "privacy_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay"
+      ],
+      "replay_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+        "test_actual_white_and_red_boast_originals_create_complete_tokens",
+        "test_native_blink_rejects_boast_for_a_returned_incarnation_that_did_not_attack",
+        "test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified registry withdrawals of Boast and once-per-turn authority keep the original activation residual; independent runtime minima reject stripped declarations with an explicit missing-dependency reason.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Duskwielder witnesses kill omission of the compiler keyword metadata, actual source attack condition and actual usage commitment. The witnesses verify a legal paid effect, not only metadata shape.",
       "blockers": [],
       "status": "trusted"
     },
