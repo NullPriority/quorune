@@ -17,6 +17,7 @@ from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerR
 from ..declaration_rule_effects import declaration_group_query_is_closed
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from .fixed_blocker_restrictions import FixedBlockerRestrictionTemplate, fixed_blocker_restriction_template
+from .source_block_pairs import SourceBlockPairTemplate, source_block_pair_template
 
 
 _TARGET_TEMPORARY_DECLARATION_RESTRICTION = re.compile(
@@ -218,7 +219,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
 
 def activated_temporary_declaration_restriction_effect_template(
     text: str, *, card_name: str = ""
-) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | None:
+) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | None:
     """Parse one closed activated temporary declaration instruction."""
 
     return temporary_declaration_restriction_effect_template(
@@ -233,10 +234,12 @@ def temporary_declaration_restriction_effect_template(
     *,
     card_name: str,
     allow_source: bool,
-) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | None:
+) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | None:
     """Parse fixed targets, source creatures, or live public creature groups."""
 
     normalized = " ".join(text.strip().split())
+    if source_pair := source_block_pair_template(normalized, allow_source=allow_source):
+        return source_pair
     if fixed_blocker := fixed_blocker_restriction_template(normalized):
         return fixed_blocker
     group = _group_declaration_template(normalized)

@@ -18702,6 +18702,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Firefright pays mana, taps and discards before resolving; artifact or red blockers remain legal and an ordinary white blocker is prohibited."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+      "piece_ids": [
+        "capability.combat.declaration.source_block_pair",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "combat.declaration.source_block_pair",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "A chosen blocker blink before resolution makes all targets illegal; after resolution the new incarnation does not inherit the resolved pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "piece_ids": [
+        "capability.combat.declaration.source_block_pair",
+        "capability.combat.declaration.typed_components"
+      ],
+      "capability_ids": [
+        "combat.declaration.source_block_pair",
+        "combat.declaration.typed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual full-source casts, Expedite and paid activation prohibit exactly the selected source/blocker pair while the same blocker blocks another attacker and an unselected blocker remains eligible."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+      "piece_ids": [
+        "capability.activation.mana_cost.fixed_complex",
+        "capability.combat.declaration.source_block_pair"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.fixed_complex",
+        "combat.declaration.source_block_pair"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pathfinder rejects a colored substitute for its actualC activation cost; a validC payment can target itself without forbidding an ordinary opposing blocker."
     }
   ]
 }

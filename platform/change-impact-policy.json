@@ -7377,6 +7377,34 @@
         "test_card_program_trust",
         "test_typed_ability_fragments"
       ]
+    },
+    {
+      "id": "source-specific-block-pairs",
+      "patterns": [
+        "quorune/source_block_pair_model.py",
+        "quorune/compiler/source_block_pairs.py",
+        "quorune/compiler/temporary_declaration_templates.py",
+        "quorune/rules/source_block_pairs.py",
+        "quorune/rules/block_prohibitions.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/declaration_rule_effects.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/rules/fixed_blocker_restriction_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/effect_runtime/declaration_effects.py",
+        "quorune/engine.py",
+        "tests/test_source_block_pairs.py",
+        "tests/fixtures/source-specific-blocking-cards.json"
+      ],
+      "test_modules": [
+        "test_source_block_pairs",
+        "test_temporary_blocker_restrictions",
+        "test_temporary_declaration_restriction_effects",
+        "test_typed_ability_fragments",
+        "test_provoke_rules",
+        "test_card_program_trust",
+        "test_source_block_pair"
+      ]
     }
   ],
   "symbol_rules": [

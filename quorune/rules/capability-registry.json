@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 451,
+  "registry_version": 452,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -16446,7 +16446,7 @@
     },
     {
       "id": "combat.declaration.typed_components",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "508.1c",
         "508.1d",
@@ -16512,7 +16512,8 @@
         "CommanderEngine._issue_attackers",
         "CommanderEngine._issue_next_blocker",
         "quorune.compiler.declaration_nodes.conditional_characteristic_declaration_grant",
-        "quorune.semantic_runtime.conditional_continuous.ConditionalDeclarationGrantHandler"
+        "quorune.semantic_runtime.conditional_continuous.ConditionalDeclarationGrantHandler",
+        "quorune.rules.block_prohibitions.block_prohibition_verdict"
       ],
       "positive_tests": [
         "test_declaration_components_are_closed_typed_fragments",
@@ -41413,6 +41414,131 @@
         "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
         "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
         "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+      ]
+    },
+    {
+      "id": "combat.declaration.source_block_pair",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve one selected creature cannot block this source this turn as a two-incarnation rule, preserving ordinary blocker eligibility, independent control/abilities, and existing declared blocks.",
+        "inputs": [
+          "one shared revalidated creature target",
+          "sealed physical and logical activation source identity",
+          "one closed source-block-pair descriptor",
+          "current attacker and blocker incarnations"
+        ],
+        "outputs": [
+          "immutable two-role record in the canonical continuous-effect journal",
+          "shared block-offer/commit prohibition verdict",
+          "cleanup expiry and exact journal save/load"
+        ],
+        "exclusions": [
+          "independently selected second creatures",
+          "global cannot-block interpretation",
+          "unbound or missing source identity",
+          "arbitrary pair conditions",
+          "durations other than until end of turn",
+          "removing existing blocks"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.source_block_pair_model.SourceBlockPairSpec",
+        "quorune.source_block_pair_model.ResolvedSourceBlockPair",
+        "quorune.compiler.source_block_pairs.source_block_pair_template",
+        "quorune.rules.source_block_pairs.source_block_pair_node_capabilities",
+        "quorune.rules.source_block_pairs.source_block_pair_runtime_dependencies",
+        "quorune.rules.source_block_pairs.apply_source_block_pair",
+        "quorune.rules.source_block_pairs.source_block_pair_prohibits",
+        "quorune.rules.block_prohibitions.block_prohibition_verdict",
+        "quorune.continuous_effect_state.commit_continuous_effect",
+        "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects",
+        "quorune.rules.capabilities.capability_covered_mechanics"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete-source tests independently strip the new runtime minimum and canonically verify owner withdrawal; malformed descriptors and missing source context reject before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original admission, real pair-combat and source-blink witnesses detect producer, canonical commit and logical-incarnation omissions.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_originals_bind_the_source_specific_pair_program",
+        "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+        "test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+        "test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+        "test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+        "test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+        "test_pair_created_after_blocks_does_not_remove_the_existing_block",
+        "test_pair_descriptor_and_journal_have_closed_immutable_schemas"
+      ],
+      "negative_tests": [
+        "test_runtime_minimum_cannot_be_stripped_and_malformed_pairs_reject",
+        "test_canonically_verified_pair_owner_withdrawal_leaves_all_originals_residual",
+        "test_missing_runtime_source_rejects_before_any_mutation",
+        "test_pair_descriptor_and_journal_have_closed_immutable_schemas",
+        "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+        "test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+        "test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+        "test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+        "test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+        "test_pair_created_after_blocks_does_not_remove_the_existing_block"
+      ],
+      "interaction_tests": [
+        "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+        "test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+        "test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+        "test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+        "test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+        "test_pair_created_after_blocks_does_not_remove_the_existing_block"
+      ],
+      "multiplayer_tests": [
+        "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+        "test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+        "test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+        "test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+        "test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+        "test_pair_created_after_blocks_does_not_remove_the_existing_block"
+      ],
+      "privacy_tests": [
+        "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+        "test_pair_survives_ability_loss_and_blocker_control_changes_then_expires"
+      ],
+      "replay_tests": [
+        "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+        "test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+        "test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+        "test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+        "test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+        "test_pair_created_after_blocks_does_not_remove_the_existing_block"
       ]
     }
   ]

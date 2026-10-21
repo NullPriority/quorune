@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c8c2d979e02e948e5432b09580149df49709d291239dd25d9fd40e07ef7b72fe",
-  "declaration_source_fingerprint": "af0e19aaeb991350496386ec91af9d50700f722ba3cd874a469004c78273d955",
+  "registry_fingerprint": "68e19cac0c43bc2fd67b938a26ddbd8a2b44d90fbcc89f6bb3b52b948391f548",
+  "declaration_source_fingerprint": "475a3d02a4cf2fc1e85cab2cd40a0bdce0ff053d99a79f235bebb8cf64d757dd",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -75440,6 +75440,942 @@
         "commander_review"
       ],
       "applicability_note": "Replay the accepted threshold-gated declaration to the identical authoritative final hash."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_created_after_blocks_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_created_after_blocks_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_fresh_producer_commit_and_logical_incarnation_omissions_are_killed",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_canonically_verified_pair_owner_withdrawal_leaves_all_originals_residual",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_missing_runtime_source_rejects_before_any_mutation",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_created_after_blocks_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_descriptor_and_journal_have_closed_immutable_schemas",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_runtime_minimum_cannot_be_stripped_and_malformed_pairs_reject",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_complete_originals_bind_the_source_specific_pair_program",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_created_after_blocks_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_descriptor_and_journal_have_closed_immutable_schemas",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_created_after_blocks_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pair_survives_ability_loss_and_blocker_control_changes_then_expires",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.source_block_pair",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_block_pairs.SourceBlockPairTests.test_source_blink_before_or_after_resolution_does_not_follow_the_returned_source",
+      "official_rule_ids": [
+        "109.5",
+        "113.7a",
+        "400.7",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "602.2b",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Duct/Pathfinder/Griffin/Engine casts and activations preserve pair-only blocking, ordinary other attackers/blockers, colorless and self-target legality, source and blocker reincarnations before/after resolution, ability loss/control/cleanup, existing blocks, principal rollback, private draws/projection and pending-load replay. Closed codecs, independent minima, verified withdrawal and fresh omissions bound the claim."
     },
     {
       "capability_id": "combat.declaration.temporary_blocker_predicate",
@@ -313469,5 +314405,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "66baa653e15889d16447925531c930a4e9b09a5fe05d8d86da32033657160869"
+  "fingerprint": "b0b2f89d63c2c5dd1c64ea723b6cf49cd37334320dbbe40c120610e94d75307e"
 }
