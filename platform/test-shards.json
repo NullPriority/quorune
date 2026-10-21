@@ -171,6 +171,7 @@
       "test_suspend_rules"
     ],
     "functional-04": [
+      "test_ability_kind_cost_modifiers",
       "test_activated_self_transform",
       "test_attached_counter_placement",
       "test_attached_occurrences",

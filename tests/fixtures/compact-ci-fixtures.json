@@ -2,6 +2,7 @@
   "schema_version": 2,
   "fixture_kind": "compact_ci_card_database_inputs",
   "fixtures": [
+    "tests/fixtures/ability-kind-cost-modifier-cards.json",
     "tests/fixtures/activated-self-transform-cards.json",
     "tests/fixtures/additional-conditional-modifier-cards.json",
     "tests/fixtures/additional-draw-step-cards.json",

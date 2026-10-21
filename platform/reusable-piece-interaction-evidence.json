@@ -18552,6 +18552,66 @@
       ],
       "interaction_order": 2,
       "assertion": "KormusBell observes current Swamp membership fromUrborg, makes the Island black creature, then ends that animation/color whenUrborg is bounced, retaining Island/Snow and private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+      "piece_ids": [
+        "capability.activation.cycling.hand",
+        "capability.activation.mana_cost.static_generic"
+      ],
+      "capability_ids": [
+        "activation.cycling.hand",
+        "activation.mana_cost.static_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Fluctuator makes Cycling2free whilediscard stillpays beforestack and private drawresolves; wrongprincipalrollsback andpendingload/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.activation.typecycling.hand"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "activation.typecycling.hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Typecycling is a Cycling variant: Fluctuator makesAshBarrens mana0 but keepsdiscard/private searchcontinuation, while anotherseatCycling retainsitsfull price."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.attachment.equip.fixed_mana"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "attachment.equip.fixed_mana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Steelshaper givesEquip1zero beforebeing equipped; acceptedEquip thenattachesBonesplitter andturnson itsSoldieranthem, retaining nonmatchingBearstats."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "Headmaster keepsitsEquipmentspellcostdiscount andseparately discountsEquip; actualBonesplittercastandequipbothpayzero generic withoutsharingartifactcreatureactivation discounts."
     }
   ]
 }
