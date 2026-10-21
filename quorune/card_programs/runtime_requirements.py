@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..boast import boast_runtime_dependencies
 
 """Descriptor-owned runtime requirements beyond registered operation minima."""
 
@@ -30,6 +31,8 @@ from ..rules.provoke_shapes import provoke_program_runtime_dependencies
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(boast_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_boast:invalid:{exc}')
     try:
         required.update(provoke_program_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
