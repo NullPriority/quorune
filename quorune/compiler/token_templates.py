@@ -7,6 +7,8 @@ from typing import Any, Mapping
 
 from ..ability_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
+    SpellCastKeywordTriggerKind,
+    SpellCastKeywordTriggerSpec,
     ability_fragment_to_dict,
 )
 from ..fixed_token_production import (
@@ -72,6 +74,7 @@ _CREATURE_TOKEN_KEYWORDS = frozenset(
         "vigilance",
         "forestwalk",
         "changeling",
+        "prowess",
     }
 )
 _FIXED_CREATURE_TOKEN = re.compile(
@@ -348,6 +351,9 @@ def _single_fixed_token_creation_effect_template(
                 AllCreatureTypesCharacteristicDefinitionSpec()
             )
         ]
+    if 'prowess' in keywords:
+        characteristics.setdefault('ability_fragments', []).append(ability_fragment_to_dict(
+            SpellCastKeywordTriggerSpec(kind=SpellCastKeywordTriggerKind.PROWESS)))
     return FixedTokenCreationTemplate(
         template_id="create-fixed-creature-token-v2",
         effect={

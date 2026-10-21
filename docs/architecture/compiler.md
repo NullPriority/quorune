@@ -2241,7 +2241,17 @@ with up to three colors, optional Artifact and Enchantment card types, a
 proper name or Legendary supertype, and capability-backed keywords. Changeling
 and the exact can't-block or can't-be-blocked token sentences lower to the
 shared typed characteristic and declaration fragments rather than executable
-display text. A predefined Blood definition additionally requires
+display text. Fixed creature tokens with Prowess carry exactly one canonical
+`SpellCastKeywordTriggerSpec` beside the keyword label. Definition validation
+and an independent runtime minimum require both the token-definition and
+Prowess capabilities. The existing source-local trigger owner handles each
+later noncreature cast by the token's controller; the creating spell and spell
+copies do not retroactively trigger a new token. The fragment is copiable,
+while its temporary power/toughness bonus is not. Ability loss suppresses new
+triggers without cancelling instances already on the stack. Class self-entry
+wording uses the same source-incarnation binder as other permanent self-entry
+subjects. Independently unsupported creator clauses remain residual.
+A predefined Blood definition additionally requires
 `token.ability.fixed_blood`: its explicit activation profile retains all four
 costs and delegates owned-hand selection, source departure and private draw to
 existing generic owners. The token's name or display text does not select its

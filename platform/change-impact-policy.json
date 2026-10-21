@@ -7427,6 +7427,25 @@
         "test_spell_random_discard_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-prowess-token-definitions",
+      "patterns": [
+        "quorune/compiler/token_templates.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/rules/token_prowess_requirements.py",
+        "tests/test_fixed_prowess_tokens.py",
+        "tests/fixtures/fixed-prowess-token-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_prowess_tokens",
+        "test_prowess_rules",
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_additional_token_compiler",
+        "test_modal_token_programs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -18807,6 +18807,36 @@
       ],
       "interaction_order": 2,
       "assertion": "A real target blink leaves all targets illegal; Slaughter does not resolve or return despite its paid life cost."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "piece_ids": [
+        "capability.token.creation.prowess_definition",
+        "capability.trigger.keyword.prowess"
+      ],
+      "capability_ids": [
+        "token.creation.prowess_definition",
+        "trigger.keyword.prowess"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real Wizardry tokens do not trigger for their creating/opponent/creature spell; one own noncreature cast gives exactly one+1/+1 instance each and cleanup restores base stats."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+      "piece_ids": [
+        "capability.token.creation.prowess_definition",
+        "capability.trigger.keyword.storm"
+      ],
+      "capability_ids": [
+        "token.creation.prowess_definition",
+        "trigger.keyword.storm"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Eruption after a prior cast creates two complete flying Dragon Elementals; copies do not cast and a later real noncreature cast triggers each token once."
     }
   ]
 }

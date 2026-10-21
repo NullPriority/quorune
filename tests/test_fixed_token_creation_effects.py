@@ -407,7 +407,7 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             "Create a token that's a copy of the chosen creature you control.",
             "Create an Unrepresented Role token attached to target creature you control.",
             "Create two 1/1 white Soldier creature tokens that are tapped and attacking.",
-            "Create a 1/1 blue and red Otter creature token with prowess.",
+            "Create a 1/1 blue and red Otter creature token with prowess 2.",
             "Create a 3/3 colorless Golem artifact artifact creature token.",
             "Create 0 1/1 green Saproling creature tokens.",
         )

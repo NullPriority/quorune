@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 453,
+  "registry_version": 454,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -8337,7 +8337,7 @@
     },
     {
       "id": "token.creation.fixed_definition",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "111.2",
         "111.3",
@@ -8356,7 +8356,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Create fixed positive quantities of one compiler-pinned token definition or one unambiguous two- or three-definition simultaneous batch through the canonical replacement-aware token transaction, including bounded named, predefined, and typed-ability definitions.",
+        "summary": "Create fixed positive quantities of one compiler-pinned token definition or one unambiguous two- or three-definition simultaneous batch through the canonical replacement-aware token transaction, including bounded named, predefined, and typed-ability definitions. Fixed Prowess token definitions carry exactly one matching canonical source-local trigger fragment beside their keyword label.",
         "inputs": [
           "resolving controller",
           "one to three closed fixed token definitions",
@@ -8397,7 +8397,8 @@
         "quorune.token_creation.create_token_batch",
         "quorune.standard_token_abilities.standard_token_characteristics",
         "quorune.compiled_activated_abilities.compiled_activated_abilities",
-        "CommanderEngine.create_token"
+        "CommanderEngine.create_token",
+        "quorune.rules.token_prowess_requirements.token_prowess_definition_dependencies"
       ],
       "positive_tests": [
         "test_fixed_token_creation_compiles_shared_spell_trigger_and_activation_grammar",
@@ -41918,6 +41919,117 @@
       ],
       "replay_tests": [
         "test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land"
+      ]
+    },
+    {
+      "id": "token.creation.prowess_definition",
+      "version": 1,
+      "official_rules": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Create fixed creature tokens with exactly one canonical Prowess instance as part of their copiable definition, preserving existing static keywords and ordinary trigger timing.",
+        "inputs": [
+          "fixed token type/color/base P/T/keyword definition",
+          "one canonical SpellCastKeywordTriggerSpec Prowess fragment",
+          "current token controller and cast event"
+        ],
+        "outputs": [
+          "copiable token Prowess definition",
+          "existing source-local noncreature-cast trigger and EOT bonus",
+          "independent descriptor runtime minimum"
+        ],
+        "exclusions": [
+          "unknown or parameterized token keywords",
+          "missing, duplicated or mismatched Prowess instances",
+          "unowned additional creator clauses",
+          "retroactive triggers for the creating spell"
+        ]
+      },
+      "dependencies": [
+        "token.creation.fixed_definition",
+        "trigger.keyword.prowess"
+      ],
+      "implementation_components": [
+        "quorune.compiler.token_templates._single_fixed_token_creation_effect_template",
+        "quorune.rules.token_creation_capability_shapes._fixed_creature_effect_closure",
+        "quorune.rules.token_prowess_requirements.token_prowess_definition_dependencies",
+        "quorune.rules.token_prowess_requirements.token_prowess_runtime_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed definition pairing and independent creation/trigger minima reject malformed or stripped data; canonically verified withdrawal leaves whole creators residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh whole-source and native Wizardry witnesses detect omitted keyword recognition, typed fragment production and the actual granted Prowess trigger owner.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_fixed_prowess_token_creators_have_normal_admission",
+        "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+        "test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+        "test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+        "test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+        "test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+        "test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances",
+        "test_definition_grammar_and_fragment_pairing_are_closed"
+      ],
+      "negative_tests": [
+        "test_created_keyword_and_underlying_trigger_are_independent_runtime_minima",
+        "test_canonically_verified_definition_owner_withdrawal_keeps_complete_creators_residual",
+        "test_definition_grammar_and_fragment_pairing_are_closed",
+        "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+        "test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+        "test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+        "test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+        "test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+        "test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances"
+      ],
+      "interaction_tests": [
+        "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+        "test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+        "test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+        "test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+        "test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+        "test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances"
+      ],
+      "multiplayer_tests": [
+        "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+        "test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+        "test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+        "test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+        "test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+        "test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances"
+      ],
+      "privacy_tests": [
+        "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire"
+      ],
+      "replay_tests": [
+        "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+        "test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+        "test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+        "test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+        "test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+        "test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances"
       ]
     }
   ]

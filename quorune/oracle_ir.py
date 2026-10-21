@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v528"
+ORACLE_COMPILER_VERSION = "oracle-ir-v529"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -826,7 +826,7 @@ def _source_self_zone_trigger_match(
     return re.fullmatch(
         rf"(?:when|whenever) "
         rf"(?P<subject>this (?:artifact|aura|card|creature|"
-        rf"enchantment|equipment|land|permanent)|{source_name}) "
+        rf"enchantment|equipment|land|permanent|class)|{source_name}) "
         rf"(?P<event>enters|dies|leaves the battlefield), "
         rf"(?P<body>.+)",
         material_line,
