@@ -558,6 +558,23 @@ layer 5. Name, control, ownership and supertypes remain. Later ability grants
 still apply. An affected Aura becomes unattached while remaining a land;
 restoring its Aura type lets the ordinary attachment state-based rule act.
 Source removal restores the prior characteristics without a gameplay cache.
+
+Unconditional static land animation uses the existing fixed public setting
+component. A complete fixed P/T sentence may select all lands or one current
+basic land subtype, add Creature while retaining prior types and abilities,
+and set a fixed base P/T in layer 7b. An explicit color word applies in layer 5;
+otherwise the effect preserves colors. Membership remains live for entering
+lands and subtype changes. Counters and ordinary modifiers apply after the
+base setting. Existing control history governs attack and tap-symbol legality,
+and existing World-rule timestamps remain authoritative.
+
+Fixed settings declare their earliest source-participation layer from the
+validated modifier. Type-producing settings participate from layer 4, color
+settings from layer 5, and later-only settings retain the conservative layer-6
+boundary. The existing component registry owns that descriptor query; no
+second layer or component registry is introduced. Conditional animation,
+chosen or variable P/T, unsupported subtypes and unowned result siblings
+remain outside this production.
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.

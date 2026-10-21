@@ -206,6 +206,7 @@
       "test_renown_rules",
       "test_scry_rules",
       "test_spell_history_transformations",
+      "test_static_land_animation",
       "test_tap_controller_information",
       "test_token_creation_replacements",
       "test_token_entry_boundaries",
