@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 431,
+  "registry_version": 432,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -39124,6 +39124,88 @@
       "dependency_fail_closed_rationale": "Canonical withdrawal of the chosen grant, source-Aura retention or existing entry-designation owner prevents complete original admission. Stripping the new registered component authority fails runtime binding.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh normal Pentarch entry, protected attachment and private draw detect omitted chosen-grant compiler lowering and the actual registered layer-six emission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "protection.attachment.source_aura_fixed_type",
+      "version": 1,
+      "official_rules": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed enchantment-type protection instance retains only its granting Aura; ordinary target and cost order stays authoritative.",
+        "inputs": [
+          "fixed enchantment card-type protection",
+          "current source Aura incarnation",
+          "current attached creature"
+        ],
+        "outputs": [
+          "ordinary typed protection with one source-Aura retention exception"
+        ],
+        "exclusions": [
+          "chosen card types",
+          "source predicates",
+          "all-Aura or already-attached exceptions"
+        ]
+      },
+      "dependencies": [
+        "protection.attachment.source_aura_exception"
+      ],
+      "implementation_components": [
+        "quorune.protection_attachment_exceptions.attached_protection_runtime_dependencies",
+        "quorune.protection_attachment_exceptions.validate_protection_attachment_exception",
+        "quorune.compiler.attached_protection_exceptions.attached_protection_exception_handler"
+      ],
+      "positive_tests": [
+        "test_actual_other_aura_is_removed_and_its_retained_return_trigger_resolves",
+        "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+        "test_fixed_type_codec_definition_authority_and_nonmatching_boundaries"
+      ],
+      "negative_tests": [
+        "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+        "test_canonically_verified_fixed_type_owner_withdrawals_and_runtime_minimum_stripping",
+        "test_fixed_type_codec_definition_authority_and_nonmatching_boundaries"
+      ],
+      "interaction_tests": [
+        "test_actual_other_aura_is_removed_and_its_retained_return_trigger_resolves",
+        "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+        "test_fixed_type_codec_definition_authority_and_nonmatching_boundaries"
+      ],
+      "multiplayer_tests": [
+        "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice"
+      ],
+      "privacy_tests": [
+        "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice"
+      ],
+      "replay_tests": [
+        "test_actual_other_aura_is_removed_and_its_retained_return_trigger_resolves",
+        "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonically verified withdrawal of fixed-type, source-Aura, ordinary protection or attached grant owners blocks the complete original. Runtime minimum stripping rejects missing fixed-type and source-Aura authorities.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original Tattoo Ward casting detects omitted compiler production, source incarnation binding and actual attachment retention.",
       "blockers": [],
       "status": "trusted"
     }

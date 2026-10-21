@@ -1856,6 +1856,17 @@ damage. Cast-history, counter-state, modified, chosen, and otherwise open
 qualities remain source-spanned residuals. This grammar adds no separate
 layer-6 ability-presence query and no dynamic characteristic count.
 
+`compiler/attached_protection_exceptions.py` owns the closed source-Aura
+retention sentence. Fixed colors and fixed protection from enchantments lower
+through the existing attached-characteristics handler with a schema-v3 source
+marker. The enchantment-type form may retain a signed power/toughness modifier
+and declares its own additional capability. A separate source-chosen-color
+component reads the existing public entry designation. These productions
+exempt only the granting Aura from its own protection instance during current
+attachment retention; all-Aura, already-attached, and chosen-card-type
+exceptions remain residual. Independently compiled sacrifice abilities keep
+ordinary target legality before cost payment.
+
 `compiler/devoid_characteristics.py` owns the ordinary printed Devoid
 production. One
 exact keyword instance lowers to an all-zone

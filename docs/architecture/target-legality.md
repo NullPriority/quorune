@@ -225,7 +225,8 @@ snow, each color, monocolored, multicolored, and mana value 3 or greater; it
 does not grant authority to cast-history, counter-state, modified, chosen, or
 other open predicates.
 
-Schema v3 adds a fixed-color, per-instance exception for the granting Aura.
+Schema v3 adds a fixed-color or fixed-card-type, per-instance exception for the
+granting Aura.
 Only a live attached definition may carry its unbound source marker; the
 existing attached handler binds that marker to the current Aura incarnation.
 Current attachment retention may ignore that one instance for that Aura.
@@ -233,6 +234,13 @@ Another protection instance still applies, and targeting, damage and blocking
 receive ordinary protection. The exception does not permit a new attachment
 or ignore the Aura's Enchant restriction. All-Aura and already-attached
 exceptions remain outside this production.
+
+The fixed-card-type compiler production admits protection from enchantments,
+optionally alongside a signed power/toughness modifier. Its separate capability
+also participates in the runtime minimum for the existing attached handler.
+The exception changes only current attachment retention. An enchantment-source
+ability still cannot target the protected creature, even when its sacrifice
+cost would remove that protection after target selection.
 
 Source-chosen Aura protection uses a separate closed continuous component. The
 existing entry-designation owner records one public color for the entering

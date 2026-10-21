@@ -398,13 +398,16 @@ Version-five entry-copy selectors add a closed `conditional_exception`; prior
 selector and recipe versions retain their original keys. Physical and token
 entry results share copied-value validation and commit before observers.
 
-Version-three fixed-color Protection fragments add a required
+Version-three fixed-color or fixed-card-type Protection fragments add a required
 `exempt_aura_incarnation` for one granting Aura. CardProgram attached definitions
 carry the closed source marker; live evaluation binds the current source
 incarnation before producing the layer-six value. Schemas one and two retain
 their original key sets and omit the new field. Other definition owners,
 resolution effects, stale or unrelated incarnation pins, and incomplete
 version-three payloads fail closed at their respective validation boundary.
+Fixed card-type source exceptions require their additional capability at
+runtime; the codec and existing attached handler introduce no further record
+field or state. Target selection still precedes sacrifice payment.
 
 Source-chosen Aura components reuse the existing public `chosen_color` entry
 designation and emit that same version-three fixed-color value. No additional
