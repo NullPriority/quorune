@@ -101,6 +101,9 @@ def _setting_part(modifier, part):
 
 
 def fixed_characteristic_setting_handler(text: str, *, source_name: str | None = None):
+    from .static_land_animation import static_land_animation_handler
+    animation=static_land_animation_handler(text)
+    if animation is not None:return animation
     source_condition = None
     if source_name is not None:
         parsed = fixed_public_state_parts(text, source_name=source_name)

@@ -1365,7 +1365,8 @@ class ContinuousEffectComponentRegistry(
         handler = self._handlers.get(str(descriptor.get('handler_id') or ''))
         if handler is None:
             return Layer.ABILITY
-        layer = getattr(handler, 'source_component_layer', Layer.ABILITY)
+        descriptor_layer=getattr(handler,'descriptor_source_component_layer',None)
+        layer=descriptor_layer(descriptor) if descriptor_layer is not None else getattr(handler, 'source_component_layer', Layer.ABILITY)
         if not isinstance(layer, Layer):
             raise SemanticNodeError('Continuous source participation requires a typed layer')
         if layer < Layer.ABILITY:

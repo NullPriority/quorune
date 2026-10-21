@@ -53,6 +53,12 @@ class FixedCharacteristicSettingsHandler:
     rule_references: tuple[str, ...] = ("611.3a", "611.3b", "611.3c", "613.1d", "613.1e", "613.1f", "613.4b", "613.4c", "613.6", "613.7", "613.8")
     capability_dependencies: tuple[str, ...] = (FIXED_SETTING_CAPABILITY,)
 
+    def descriptor_source_component_layer(self,descriptor):
+        _target,_predicate,node=self.validate(descriptor)
+        if node.type_operations:return Layer.TYPE
+        if node.color_operations:return Layer.COLOR
+        return Layer.ABILITY
+
     def validate(self, descriptor: Mapping[str, Any]):
         version = descriptor.get('schema_version')
         fields = {"handler_id", "schema_version", "event", "target", "modifier"}
@@ -81,7 +87,10 @@ class FixedCharacteristicSettingsHandler:
         if not set((*predicate.types_all,*predicate.excluded_types))<=allowed_types:
             raise SemanticNodeError("Fixed setting subjects require actual permanent card types")
         from ..creature_subtypes import canonical_creature_subtype
-        if any(canonical_creature_subtype(value)!=value for value in (*predicate.subtypes_all,*predicate.excluded_subtypes)):
+        from ..basic_land_types import BASIC_LAND_MANA
+        basic_land_query=(predicate.types_all==('land',) and not predicate.excluded_subtypes
+            and bool(predicate.subtypes_all) and set(predicate.subtypes_all)<=set(BASIC_LAND_MANA))
+        if not basic_land_query and any(canonical_creature_subtype(value)!=value for value in (*predicate.subtypes_all,*predicate.excluded_subtypes)):
             raise SemanticNodeError("Fixed setting subtypes require the canonical creature vocabulary")
         if not set(predicate.supertypes_all)<={'legendary','snow','basic'}:
             raise SemanticNodeError("Fixed setting supertypes are outside the reviewed grammar")

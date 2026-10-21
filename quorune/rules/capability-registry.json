@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 447,
+  "registry_version": 448,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13744,7 +13744,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_setting",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "205.1a",
         "205.1b",
@@ -13768,13 +13768,14 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply source-bound constant type, color, keyword and base-stat settings to current public battlefield subjects, including independently closed scalar and public graveyard-count conditions. Pure fixed attached-permanent P/T and keyword modifiers remain meaningful across later creature animation without a type/color/base-stat operation.",
+        "summary": "Apply source-bound constant type, color, keyword and base-stat settings to current public battlefield subjects, including independently closed scalar and public graveyard-count conditions. Pure fixed attached-permanent P/T and keyword modifiers remain meaningful across later creature animation without a type/color/base-stat operation. Unconditional fixed-P/T land animation selects all lands or one canonical basic land subtype, retaining all previous types and abilities, with optional fixed color and layer7bbase. Descriptor-owned earliest-layer metadata preserves source participation for emitted type/color effects.",
         "inputs": [
           "source-spanned closed setting",
           "current public predicate or reciprocal attachment",
           "constant modifier",
           "current source component",
-          "timestamp and logical incarnation"
+          "timestamp and logical incarnation",
+          "live all-land or basic-land-subtype query and fixed land-creature base values"
         ],
         "outputs": [
           "layer4/5/6/7b/7c continuous effects",
@@ -13800,7 +13801,9 @@
         "quorune.semantic_runtime.fixed_characteristic_settings.FixedCharacteristicSettingsHandler",
         "quorune.semantic_runtime.fixed_characteristic_effects.fixed_characteristic_effects",
         "quorune.continuous_effects.evaluate_continuous_effects",
-        "quorune.semantic_runtime.fixed_characteristic_settings.ConditionalCharacteristicSettingsHandler"
+        "quorune.semantic_runtime.fixed_characteristic_settings.ConditionalCharacteristicSettingsHandler",
+        "quorune.compiler.static_land_animation.static_land_animation_handler",
+        "quorune.semantic_runtime.fixed_characteristic_settings.FixedCharacteristicSettingsHandler.descriptor_source_component_layer"
       ],
       "positive_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
@@ -13812,7 +13815,19 @@
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
         "test_pure_fixed_modifiers_declare_shape_and_consumer_without_type_setting",
         "test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
-        "test_static_settings_preserve_exact_types_colors_and_source_spans"
+        "test_static_settings_preserve_exact_types_colors_and_source_spans",
+        "test_complete_living_plane_and_natures_revolt_originals_register_before_actions",
+        "test_complete_living_lands_and_kormus_bell_originals_register_before_actions",
+        "test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+        "test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+        "test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+        "test_actual_living_lands_selects_current_forests_and_preserves_mana",
+        "test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+        "test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+        "test_animation_descriptor_declares_type_layer_participation_and_closed_grammar",
+        "test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+        "test_animation_query_and_descriptor_layers_reject_unsupported_shapes"
       ],
       "negative_tests": [
         "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
@@ -13820,7 +13835,11 @@
         "test_empty_or_unknown_modifier_clauses_remain_residual",
         "test_originals_require_full_static_and_keyword_capabilities_and_complete_preflight",
         "test_static_removal_is_complete_registered_descriptor_and_unknown_removals_fail_closed",
-        "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed"
+        "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed",
+        "test_animation_setting_owner_is_an_independent_runtime_minimum",
+        "test_verified_setting_withdrawal_blocks_all_four_complete_originals",
+        "test_animation_query_and_descriptor_layers_reject_unsupported_shapes",
+        "test_animation_descriptor_declares_type_layer_participation_and_closed_grammar"
       ],
       "interaction_tests": [
         "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
@@ -13829,14 +13848,30 @@
         "test_original_doc_ock_graveyard_count_gates_setting_at_earlier_layers",
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
         "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
-        "test_static_setting_source_removal_and_ability_order_use_current_layers"
+        "test_static_setting_source_removal_and_ability_order_use_current_layers",
+        "test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+        "test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+        "test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+        "test_actual_living_lands_selects_current_forests_and_preserves_mana",
+        "test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+        "test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+        "test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it"
       ],
       "multiplayer_tests": [
         "test_actual_kudo_changes_other_creatures_across_controllers_with_replay",
         "test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
         "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
-        "test_original_sphere_removes_current_flying_and_later_jump_restores_it"
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+        "test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+        "test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+        "test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+        "test_actual_living_lands_selects_current_forests_and_preserves_mana",
+        "test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+        "test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+        "test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it"
       ],
       "privacy_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
@@ -13844,7 +13879,15 @@
         "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
         "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
-        "test_original_sphere_removes_current_flying_and_later_jump_restores_it"
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+        "test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+        "test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+        "test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+        "test_actual_living_lands_selects_current_forests_and_preserves_mana",
+        "test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+        "test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+        "test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it"
       ],
       "replay_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
@@ -13853,7 +13896,15 @@
         "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
         "test_original_decree_removes_two_keywords_and_source_departure_restores_both",
         "test_original_sphere_applies_to_later_wind_drake_entry_and_ends_on_departure",
-        "test_original_sphere_removes_current_flying_and_later_jump_restores_it"
+        "test_original_sphere_removes_current_flying_and_later_jump_restores_it",
+        "test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+        "test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+        "test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+        "test_actual_living_lands_selects_current_forests_and_preserves_mana",
+        "test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+        "test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+        "test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+        "test_song_removes_kormus_printed_animation_and_source_removal_restores_it"
       ],
       "required_evidence": [
         "positive",
@@ -13866,7 +13917,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Removing the setting capability rejects the source-spanned node before runtime admission.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting the layer7b plan violates the actual Kudo action witness.",
+      "implementation_mutation_rationale": "Omitting the layer7b plan violates the actual Kudo action witness. Fresh whole-original animation producer/lowerer and earliest-layer omissions fail actual consequence or typed participation assertions.",
       "blockers": [],
       "status": "trusted"
     },

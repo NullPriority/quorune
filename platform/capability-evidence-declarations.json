@@ -81788,6 +81788,230 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_lands_selects_current_forests_and_preserves_mana",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
       "official_rule_ids": [
@@ -81984,6 +82208,230 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_lands_selects_current_forests_and_preserves_mana",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "mutation",
       "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierCompilerTests.test_pure_fixed_modifiers_declare_shape_and_consumer_without_type_setting",
       "official_rule_ids": [
@@ -82065,6 +82513,34 @@
         "commander_review"
       ],
       "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_compiler_lowerer_and_first_layer_omissions_are_killed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -82289,6 +82765,118 @@
         "commander_review"
       ],
       "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_animation_descriptor_declares_type_layer_participation_and_closed_grammar",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_animation_query_and_descriptor_layers_reject_unsupported_shapes",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_animation_setting_owner_is_an_independent_runtime_minimum",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_verified_setting_withdrawal_blocks_all_four_complete_originals",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -82572,6 +83160,342 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_lands_selects_current_forests_and_preserves_mana",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_animation_descriptor_declares_type_layer_participation_and_closed_grammar",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_animation_query_and_descriptor_layers_reject_unsupported_shapes",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_complete_living_lands_and_kormus_bell_originals_register_before_actions",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_complete_living_plane_and_natures_revolt_originals_register_before_actions",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "privacy",
       "test_id": "tests.test_attached_permanent_modifiers.AttachedPermanentModifierRuntimeTests.test_actual_lightwheel_vehicle_animation_layers_source_departure_and_replay",
       "official_rule_ids": [
@@ -82737,6 +83661,230 @@
         "commander_review"
       ],
       "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_lands_selects_current_forests_and_preserves_mana",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -82961,6 +84109,230 @@
         "commander_review"
       ],
       "applicability_note": "Static fixed-setting descriptors may remove represented fixed keyword strings through the existing live public query and canonical layer6 emitter. Original Sphere/Decree, later Jump, later creature entry, source departure, full admission and capability withdrawal preserve timestamp semantics, privacy, pending load, replay and fresh omission detection. Removal is not prohibition; unknown or triggered-fragment strings stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_kormus_bell_sets_swamps_black_and_leaves_other_lands_unchanged",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_lands_selects_current_forests_and_preserves_mana",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_living_plane_animates_all_seats_retains_land_mana_and_restores",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_living_plane_keeps_world_rule_when_a_new_original_resolves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_land_animation.StaticLandAnimationTests.test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.3",
+        "208.3a",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full LivingPlane/NaturesRevolt/LivingLands/KormusBell casts preserve land/card types, printed mana, live Forest/Swamp membership, optional black color, base/counter layering, continuous-control action legality, World rule and source/type-setting removal. Principal rollback/privacy, pending load/replay, verified withdrawal, independent owner minima and fresh omissions are bounded executable evidence."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",

@@ -7293,6 +7293,28 @@
         "test_source_maintenance",
         "test_attached_static_characteristics"
       ]
+    },
+    {
+      "id": "static-fixed-land-animation",
+      "patterns": [
+        "quorune/compiler/static_land_animation.py",
+        "quorune/compiler/fixed_characteristic_settings.py",
+        "quorune/semantic_runtime/fixed_characteristic_settings.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/test_static_land_animation.py",
+        "tests/fixtures/static-land-animation-cards.json"
+      ],
+      "test_modules": [
+        "test_static_land_animation",
+        "test_static_characteristic_settings",
+        "test_card_program_trust",
+        "test_intrinsic_basic_land_mana",
+        "test_conditional_color_grants",
+        "test_continuous_effect_components",
+        "test_fixed_basic_type_setting",
+        "test_expanded_basic_type_setting",
+        "test_state_based_actions"
+      ]
     }
   ],
   "symbol_rules": [

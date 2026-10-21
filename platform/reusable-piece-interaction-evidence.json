@@ -18492,6 +18492,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Fixed conversion replaces card types/subtypes/colors and printed Trample, preserves legendary/snow/name, derivesForest mana and allows an independent layer6 Flying grant."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Animated old lands retain their actual mana action while a newly played creature land has no legal tap action; forged equivalent action rejects atomically, with private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Song of the Dryads removes KormusBells printed animation by making its source a Forest; animated Swamp becomes only land, and removing Song restores the same continuous source ability."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.counter.producer.fixed_effect"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "counter.producer.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "NaturesRevolt animates all lands to base2/2 while a preexisting +1/+1 counter still modifies its land to3/3 without being copied or removed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_addition",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_addition",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "KormusBell observes current Swamp membership fromUrborg, makes the Island black creature, then ends that animation/color whenUrborg is bounced, retaining Island/Snow and private replay."
     }
   ]
 }
