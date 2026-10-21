@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 446,
+  "registry_version": 447,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -31782,7 +31782,7 @@
     },
     {
       "id": "continuous.basic_land_type.fixed_setting",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "205.3i",
         "305.6",
@@ -31799,24 +31799,28 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Set one or more fixed basic land subtypes in layer4 for nonbasic lands, controller lands, or one current attached land; remove old land subtypes and printed/copiable abilities before deriving intrinsic mana and later ability grants.",
+        "summary": "Set one or more fixed basic land subtypes in layer4 for nonbasic lands, controller lands, or one current attached land; remove old land subtypes and printed/copiable abilities before deriving intrinsic mana and later ability grants. Fixed global basic-subtype predicates and one colorless Forest conversion of an ordinary attached permanent reuse the same setting owner. Per-object pure type applicability dependencies preserve current scopes independently of timestamps.",
         "inputs": [
           "full source-spanned fixed sentence",
           "typed basic-type vector and fixed land scope",
           "current source and reciprocal attachment identity",
           "current Basic supertype exclusion",
-          "prospective battlefield source-component state"
+          "prospective battlefield source-component state",
+          "one current global basic-land subtype predicate",
+          "one ordinary enchanted permanent for bounded colorless Forest conversion"
         ],
         "outputs": [
           "preserved nonland types, supertypes, name, color and stats",
           "only new basic land subtypes and intrinsic mana",
-          "printed ability loss honored by current and prospective consumers"
+          "printed ability loss honored by current and prospective consumers",
+          "only Land/Forest and no colors for the explicit permanent conversion, preserving supertypes/name/control and later granted abilities"
         ],
         "exclusions": [
           "conditional source effects",
-          "card-type setting or land animation",
-          "color changes and independent unsupported siblings",
-          "unrepresented dependency cycles"
+          "general card-type setting or land animation",
+          "color changes outside the explicit colorless Forest conversion",
+          "unrepresented dependency cycles or selectors",
+          "independent unsupported siblings"
         ]
       },
       "dependencies": [
@@ -31830,37 +31834,76 @@
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._prospective_static_component_keys",
         "quorune.object_predicate.ObjectQuerySpec",
-        "quorune.object_query.object_matches_query"
+        "quorune.object_query.object_matches_query",
+        "quorune.continuous_type_dependencies.bind_type_applicability_dependencies"
       ],
       "positive_tests": [
         "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
         "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
         "test_all_setting_originals_require_complete_sibling_admission",
-        "test_setting_removes_only_land_subtypes_and_printed_abilities_before_intrinsic_mana"
+        "test_setting_removes_only_land_subtypes_and_printed_abilities_before_intrinsic_mana",
+        "test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+        "test_complete_conversion_and_glaciers_register_their_upkeep_and_global_type_siblings",
+        "test_basic_subtype_scope_depends_on_an_effect_that_creates_its_applicability",
+        "test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+        "test_extended_setting_codec_and_whole_sentence_grammar_preserve_old_shapes",
+        "test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+        "test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+        "test_song_replaces_printed_types_and_abilities_but_keeps_supertypes_and_later_grants",
+        "test_unrelated_attached_type_setter_creates_no_dependency_for_this_object",
+        "test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+        "test_explicit_type_dependency_cycle_keeps_timestamp_fallback"
       ],
       "negative_tests": [
         "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
         "test_actual_moon_urborg_dependency_is_independent_of_timestamp",
         "test_all_setting_originals_require_complete_sibling_admission",
-        "test_nonbasic_query_is_supertype_based_and_preserves_older_serialization"
+        "test_nonbasic_query_is_supertype_based_and_preserves_older_serialization",
+        "test_extended_setting_codec_and_whole_sentence_grammar_preserve_old_shapes",
+        "test_runtime_setting_owner_is_required_after_full_original_compilation",
+        "test_verified_setting_and_intrinsic_mana_withdrawals_block_all_three_originals",
+        "test_unrelated_attached_type_setter_creates_no_dependency_for_this_object",
+        "test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic"
       ],
       "interaction_tests": [
         "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
         "test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
         "test_actual_moon_urborg_dependency_is_independent_of_timestamp",
-        "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores"
+        "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+        "test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+        "test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+        "test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+        "test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+        "test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+        "test_basic_subtype_scope_depends_on_an_effect_that_creates_its_applicability",
+        "test_explicit_type_dependency_cycle_keeps_timestamp_fallback",
+        "test_song_replaces_printed_types_and_abilities_but_keeps_supertypes_and_later_grants"
       ],
       "multiplayer_tests": [
-        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play"
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+        "test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+        "test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+        "test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+        "test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+        "test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic"
       ],
       "privacy_tests": [
-        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play"
+        "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
+        "test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+        "test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+        "test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+        "test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain"
       ],
       "replay_tests": [
         "test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
         "test_actual_magus_type_setting_survives_later_humble_and_ends_on_departure",
         "test_actual_moon_urborg_dependency_is_independent_of_timestamp",
-        "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores"
+        "test_actual_seas_removes_printed_mana_and_indestructible_and_source_loss_restores",
+        "test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+        "test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+        "test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+        "test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+        "test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic"
       ],
       "required_evidence": [
         "interaction",
@@ -31873,7 +31916,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The new addition capability and intrinsic-mana owner must both close before source admission.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_setting_omission_is_killed_by_actual_blood_moon_entry preserves admission while omitting the live setting, and is detected by the original Vivid Creek entry result.",
+      "implementation_mutation_rationale": "test_setting_omission_is_killed_by_actual_blood_moon_entry preserves admission while omitting the live setting, and is detected by the original Vivid Creek entry result. Fresh whole-original producer, lowerer and type-applicability dependency omissions fail complete admission or exact mana/type/dependency consequences.",
       "blockers": [],
       "status": "trusted"
     },

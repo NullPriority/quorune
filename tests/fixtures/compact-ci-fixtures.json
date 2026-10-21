@@ -95,6 +95,7 @@
     "tests/fixtures/event-card-return.json",
     "tests/fixtures/event-player-subject-cards.json",
     "tests/fixtures/exert-cards.json",
+    "tests/fixtures/expanded-basic-type-setting-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/external-entry-counter-cards.json",
     "tests/fixtures/external-entry-tapped-cards.json",

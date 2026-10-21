@@ -7271,6 +7271,28 @@
         "test_fixed_counter_controller_effect_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "expanded-basic-land-type-setting",
+      "patterns": [
+        "quorune/basic_type_setting_model.py",
+        "quorune/compiler/basic_type_setting_templates.py",
+        "quorune/semantic_runtime/basic_type_setting.py",
+        "quorune/continuous_type_dependencies.py",
+        "quorune/continuous_effects.py",
+        "tests/test_expanded_basic_type_setting.py",
+        "tests/fixtures/expanded-basic-type-setting-cards.json"
+      ],
+      "test_modules": [
+        "test_expanded_basic_type_setting",
+        "test_fixed_basic_type_setting",
+        "test_card_program_trust",
+        "test_continuous_effect_components",
+        "test_continuous_effect_performance",
+        "test_intrinsic_basic_land_mana",
+        "test_source_maintenance",
+        "test_attached_static_characteristics"
+      ]
     }
   ],
   "symbol_rules": [

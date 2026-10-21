@@ -28,13 +28,23 @@ class FixedBasicTypeSettingHandler:
 
     def lower(self,descriptor,context):
         node=self.validate(descriptor);common={}
-        if node.scope=='attached_land':
+        conversion=node.scope=='attached_colorless_forest_permanent'
+        if node.scope=='attached_land' or conversion:
             if context.attached_object is None:return ()
             common={'relation':ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,'related_object':context.attached_object}
-        query=ObjectQuerySpec(zones=('battlefield',),types_all=('land',),
+        subtype={'all_plains':'plains','all_islands':'island','all_swamps':'swamp','all_mountains':'mountain','all_forests':'forest'}.get(node.scope)
+        query=ObjectQuerySpec(zones=('battlefield',),types_all=() if conversion else ('land',),
             controller=context.source_controller if node.scope=='controller_lands' else None,
+            subtypes_any=(subtype,) if subtype else (),
             excluded_supertypes=('basic',) if node.scope=='nonbasic_lands' else ())
-        return (ContinuousEffect(effect_id=f'{context.source_object_id}:{context.component_id}',
+        operations=(*((ContinuousOperation('set_types',['land'],field='card_types'),ContinuousOperation('set_types',[],field='subtypes')) if conversion else ()),
+            ContinuousOperation('set_basic_land_types',list(node.basic_types)))
+        result=(ContinuousEffect(effect_id=f'{context.source_object_id}:{context.component_id}',
             source_id=context.source_object_id,layer=Layer.TYPE,sublayer='4',timestamp=context.source_timestamp,
-            operations=(ContinuousOperation('set_basic_land_types',list(node.basic_types)),),
+            operations=operations,
             origin=ContinuousEffectOrigin.STATIC_ABILITY,applies=query,**common),)
+        if conversion:
+            result+= (ContinuousEffect(effect_id=f'{context.source_object_id}:{context.component_id}:color',source_id=context.source_object_id,
+                layer=Layer.COLOR,sublayer='5',timestamp=context.source_timestamp,
+                operations=(ContinuousOperation('remove_all_colors'),),origin=ContinuousEffectOrigin.STATIC_ABILITY,applies=query,**common),)
+        return result

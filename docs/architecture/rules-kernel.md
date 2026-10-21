@@ -544,6 +544,20 @@ ability grants stay separate, and intrinsic mana derives from the new types
 before layer-6 removal. Negative supertype queries distinguish nonbasic lands
 from lands with a basic subtype. Prospective entry applies this same ability
 presence boundary before printed entry replacements and triggers are collected.
+Fixed global setters may select one current basic land subtype. Their
+applicability uses the characteristics produced by earlier type effects. A
+pure per-object dependency pass orders a type setter before a basic-subtype
+predicate whose applicability it changes, respecting relation and locked-object
+identity. Existing explicit dependencies and cycle timestamp fallback remain
+authoritative; the pass does not create a general Oracle dependency parser.
+
+The bounded enchanted-permanent conversion sets the affected object to a
+colorless Forest land. It replaces old card types and subtypes in layer 4,
+applies the existing basic-type printed-ability rule, and removes colors in
+layer 5. Name, control, ownership and supertypes remain. Later ability grants
+still apply. An affected Aura becomes unattached while remaining a land;
+restoring its Aura type lets the ordinary attachment state-based rule act.
+Source removal restores the prior characteristics without a gameplay cache.
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.

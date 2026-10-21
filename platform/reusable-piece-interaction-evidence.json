@@ -18432,6 +18432,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Psychic Venom deals two damage to currentD while its triggered ability remains controlled byA; prior event controllerB does not become an information recipient."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full Conversion and Glaciers convert current Mountains across controllers to Plains, expose only intrinsic white mana, preserve Snow, leave Island unchanged and retain their complete upkeep payment, pending load and private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.trigger.source.fixed_maintenance"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "trigger.source.fixed_maintenance"
+      ],
+      "interaction_order": 2,
+      "assertion": "Conversion remains after full WW payment; attempting upkeep with onlyW rejects atomically, and declining sacrifices the source and restores Mountain types."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.basic_land_type.fixed_setting"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.basic_land_type.fixed_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Song turns an attached Aura into an unattached Forest land without killing it; removing Song restores the unattached Aura and canonical state actions move it to graveyard, while its former artifact stays present."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_song_replaces_printed_types_and_abilities_but_keeps_supertypes_and_later_grants",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.continuous.basic_land_type.fixed_setting"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "continuous.basic_land_type.fixed_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Fixed conversion replaces card types/subtypes/colors and printed Trample, preserves legendary/snow/name, derivesForest mana and allows an independent layer6 Flying grant."
     }
   ]
 }
