@@ -12,6 +12,8 @@ from ..random_discard import RandomDiscardIntent
 from .random_discard import execute_random_discard
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from .random_graveyard_returns import execute_random_graveyard_return
+from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from .stack_execution import STACK_INTENT_TYPES, execute_stack_intent
 
 from dataclasses import dataclass
@@ -599,8 +601,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, RandomDiscardIntent, RandomGraveyardReturnIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -623,6 +625,9 @@ def _execute_player_intent(
         return intent.actor, execute_random_discard(sink, intent)
     if isinstance(intent, RandomGraveyardReturnIntent):
         return intent.actor, execute_random_graveyard_return(sink,intent)
+    if isinstance(intent, TemporaryCastRestrictionIntent):
+        return intent.actor,apply_temporary_cast_restriction(sink,actor=intent.actor,restriction=intent.restriction,
+            target_player=intent.target_player,source_id=intent.source_id)
     if isinstance(intent, DiscardWholeHandsIntent):
         return intent.actor, execute_whole_hand_discard(sink, intent)
     if isinstance(intent, BecomeMonarchIntent):

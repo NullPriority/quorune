@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 439,
+  "registry_version": 440,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -40139,6 +40139,136 @@
       "dependency_fail_closed_rationale": "This selector reuses canonical query, RNG and zone owners without another capability dependency. DeclaredXauthority remains an independent emitted-program dependency.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original source-producer, selected-subset and canonical simultaneous-commit omissions are killed by full original-card consequences. The runtime descriptor reader omission is also killed; all registered program descriptors retain independent count/subject checks.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.prohibition.resolution_until_end_of_turn",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Create an end-of-turn player casting prohibition during resolution and apply it through shared proposed-spell legality without affecting spells already on the stack, land plays or abilities.",
+        "inputs": [
+          "locked resolving controller",
+          "all players,opponents,or one legally targeted seat",
+          "all,creature,or noncreature proposed spells",
+          "existing duration journal"
+        ],
+        "outputs": [
+          "same prohibited cast availability and acceptance",
+          "source-independent restriction through cleanup",
+          "deterministic journal save/load and replay"
+        ],
+        "exclusions": [
+          "other durations",
+          "latest-spell-color or variable predicates",
+          "activated-ability prohibitions",
+          "unknown player relations",
+          "unowned sibling effects"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.temporary_cast_restrictions.temporary_cast_restriction_template",
+        "quorune.temporary_cast_rule_model.TemporaryCastRestrictionSpec",
+        "quorune.temporary_cast_rule_model.ResolvedCastRestriction",
+        "quorune.rules.temporary_cast_restrictions.apply_temporary_cast_restriction",
+        "quorune.rules.temporary_cast_restrictions.active_temporary_cast_restrictions",
+        "quorune.semantic_runtime.temporary_cast_restrictions.TemporaryCastRestrictionHandler",
+        "quorune.semantic_runtime.static_cast_rules.static_cast_prohibition_reason",
+        "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects",
+        "quorune.rules.temporary_cast_restrictions.temporary_cast_runtime_dependencies"
+      ],
+      "positive_tests": [
+        "test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+        "test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+        "test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+        "test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+        "test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+        "test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+        "test_cast_rule_spec_and_journal_reject_malformed_scope_subject_and_duration"
+      ],
+      "negative_tests": [
+        "test_cast_rule_spec_and_journal_reject_malformed_scope_subject_and_duration",
+        "test_emitted_cast_restriction_requires_its_owner_independently_at_runtime",
+        "test_canonically_verified_restriction_owner_withdrawal_keeps_all_six_originals_residual",
+        "test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+        "test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+        "test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal"
+      ],
+      "interaction_tests": [
+        "test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+        "test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+        "test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+        "test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+        "test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+        "test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+        "test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+        "test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+        "test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves"
+      ],
+      "multiplayer_tests": [
+        "test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+        "test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+        "test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+        "test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+        "test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+        "test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+        "test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+        "test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+        "test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves"
+      ],
+      "privacy_tests": [
+        "test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+        "test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+        "test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+        "test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+        "test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+        "test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+        "test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+        "test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+        "test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves"
+      ],
+      "replay_tests": [
+        "test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+        "test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+        "test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+        "test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+        "test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+        "test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+        "test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+        "test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+        "test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "This duration-bound rule reuses the shared legality and effect journal rather than another capability; target revalidation remains an independent dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete-original compiler, journal commit, shared live legality query, and independent runtime descriptor validation omissions fail their executable assertions. Canonically verified owner withdrawal keeps all six originals residual.",
       "blockers": [],
       "status": "trusted"
     }

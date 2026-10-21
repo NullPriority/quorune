@@ -35,6 +35,7 @@ from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_char
 from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
 from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies
 from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dependencies
+from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
 
 
 def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
@@ -63,6 +64,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(temporary_cast_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_cast_restriction:invalid:{exc}')
     try:required.update(random_graveyard_return_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_random_graveyard_return:invalid:{exc}')
     try:required.update(spell_self_exile_runtime_dependencies(program))

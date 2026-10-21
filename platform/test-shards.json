@@ -250,6 +250,7 @@
       "test_self_exile_return_spells",
       "test_target_characteristic_sets",
       "test_targeting_v070",
+      "test_temporary_cast_restrictions",
       "test_unearth_rules"
     ],
     "functional-06": [
@@ -812,6 +813,7 @@
       "test_targeted_graveyard_return_effect_clauses",
       "test_targeted_return_to_hand_effect_clauses",
       "test_targeted_tap_state_effect_clauses",
+      "test_temporary_cast_restrictions",
       "test_turn_count_self_costs",
       "test_unleash_rules"
     ],
@@ -886,6 +888,7 @@
       "test_station_rules",
       "test_sunburst_rules",
       "test_support_counter_placement",
+      "test_temporary_cast_restrictions",
       "test_typed_dynamic_characteristics",
       "test_typed_query_self_characteristics"
     ],
@@ -945,6 +948,7 @@
       "test_single_object_zone_transition",
       "test_spell_random_discard_costs",
       "test_state_based_destination_replacements",
+      "test_temporary_cast_restrictions",
       "test_token_creation_replacements",
       "test_typed_land_entry_participation",
       "test_zone_replacement_compiler"
@@ -986,7 +990,8 @@
       "test_multiplayer_rules",
       "test_ordered_amount_clauses",
       "test_random_graveyard_returns",
-      "test_self_exile_return_spells"
+      "test_self_exile_return_spells",
+      "test_temporary_cast_restrictions"
     ],
     "nightly-property": [
       "test_counter_placement_replacements",
@@ -1026,7 +1031,8 @@
       "test_server_launcher",
       "test_server_persistence",
       "test_spell_random_discard_costs",
-      "test_state_based_destination_replacements"
+      "test_state_based_destination_replacements",
+      "test_temporary_cast_restrictions"
     ],
     "state-actions-damage": [
       "test_combat_damage_assignment",
@@ -1125,7 +1131,8 @@
       "test_server_app",
       "test_server_data",
       "test_server_launcher",
-      "test_server_persistence"
+      "test_server_persistence",
+      "test_temporary_cast_restrictions"
     ]
   }
 }

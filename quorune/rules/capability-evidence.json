@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "1cf8d991fd2a3b2e6b9241940940badd914e33945414cf9e42861105df4aeaf8",
-  "declaration_source_fingerprint": "5d322915c37def6f29020f4a9186f54901206219d2a3a733e980c85a6475c4d9",
+  "registry_fingerprint": "9146b6b5dd549b6812068ee34268ab3ea04d6c5ebd5848c29c22264119705936",
+  "declaration_source_fingerprint": "7ebfcbf3e1bfd94cad56fb76a5c2e0dfd451625480b870fac9a813ba06c8cb10",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -53938,6 +53938,1254 @@
         "commander_review"
       ],
       "applicability_note": "Replay the current restriction source and accepted cast result exactly."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_silence_kills_producer_and_journal_commit_omissions",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_canonically_verified_restriction_owner_withdrawal_keeps_all_six_originals_residual",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_shared_cast_query_and_descriptor_validator_omissions_are_killed",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_canonically_verified_restriction_owner_withdrawal_keeps_all_six_originals_residual",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_cast_rule_spec_and_journal_reject_malformed_scope_subject_and_duration",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_emitted_cast_restriction_requires_its_owner_independently_at_runtime",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_cast_rule_spec_and_journal_reject_malformed_scope_subject_and_duration",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_cease_fire_blocks_only_target_creatures_and_draws_for_its_controller",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_permission_denied_counters_then_blocks_every_opponent_noncreature",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_all_illegal_target_creates_no_rule_and_later_cast_remains_legal",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_permission_denied_legal_uncounterable_target_still_creates_restriction",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
+    },
+    {
+      "capability_id": "casting.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_cast_restrictions.TemporaryCastRestrictionTests.test_silence_blocks_existing_flashback_and_commander_permissions_without_paying",
+      "official_rule_ids": [
+        "101.2",
+        "117.1a",
+        "601.2",
+        "601.2e",
+        "601.3",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete original spells and sacrifice activation preserve response windows, resolving controller, current proposed spell types, target legality and cleanup expiry. Whole counter/kicker/search/exile siblings, command/graveyard permissions, land/ability contrasts, private projections, pending load, rollback and pre-action replay are witnessed; malformed descriptors and actual owner omissions fail closed."
     },
     {
       "capability_id": "casting.prototype.characteristics",
@@ -296843,5 +298091,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "7208d418dd593e25e905434b737cf71a973d3a4375c36ff64f51a02a00d42e71"
+  "fingerprint": "f9ec60f3eda38e4a589983dae2139c066c0a90931489ddc656c4ef7c52dfcbc0"
 }

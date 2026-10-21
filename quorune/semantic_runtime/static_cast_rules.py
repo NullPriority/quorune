@@ -499,6 +499,8 @@ def static_cast_prohibition_reason(
     face: Mapping[str, Any] | None = None,
 ) -> str | None:
     if split_second_is_active(host):return 'split_second'
+    from ..rules.temporary_cast_restrictions import active_temporary_cast_restrictions,restriction_matches_spell
+    temporary=active_temporary_cast_restrictions(host,player)
     rules = tuple(
         rule
         for rule in active_static_cast_rules(host)
@@ -509,9 +511,10 @@ def static_cast_prohibition_reason(
         and _scope_applies(rule, player)
         and _condition_applies(host, rule)
     )
-    if not rules:
+    if not rules and not temporary:
         return None
     row = spell_query_result(host, card, face=face)
+    if any(restriction_matches_spell(effect,row) for effect in temporary):return 'temporary_cast_prohibition'
     name = str((face or {}).get("name") or row.printed_name)
     for rule in rules:
         if not _rule_matches_spell(rule, row, spell_name=name):

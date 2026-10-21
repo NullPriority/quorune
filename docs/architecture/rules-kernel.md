@@ -417,6 +417,15 @@ restrictions from current effective static abilities through one read-only
 query, so ability removal affects static restrictions without erasing an
 independent rule that already resolved.
 
+Resolution-created casting prohibitions also share that duration journal
+without entering characteristic evaluation. Their typed entries retain the
+resolving controller and optional targeted seat independently of source
+movement. `rules/temporary_cast_restrictions.py` supplies the active player
+rules to the shared proposed-spell legality query, which evaluates the actual
+proposed spell characteristics before offers or payment. The canonical journal
+owner expires them at cleanup and restores them through the ordinary save/load
+codec; no runtime Oracle text or source-presence check supplies their meaning.
+
 Target-set characteristic instructions retain strict compiled validation.
 After an independently owned quantity is evaluated, the resolved P/T delta may
 be zero. The resolution owner still validates the complete instruction and
