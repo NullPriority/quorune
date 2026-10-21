@@ -12,6 +12,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "controller_cycles_another",
         "enchanted_creature_damage_an_opponent",
         "enchanted_creature_dies",
+        "enchanted_permanent_graveyard",
         "equipped_creature_attacks",
         "equipped_creature_combat_damage_a_player",
         "equipped_creature_dies",

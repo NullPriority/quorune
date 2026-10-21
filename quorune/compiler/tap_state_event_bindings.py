@@ -16,7 +16,7 @@ TAP_STATE_EVENT_PLAYER_MECHANIC = "tap-state-event-player-result"
 EVENT_CONTROLLER_REFERENCE = "$context.controller"
 TAP_STATE_EVENT_VARIANTS = frozenset({TAP_STATE_EVENT_VARIANT, "source_" + TAP_STATE_EVENT_VARIANT})
 _TRANSITION = re.compile(
-    r"^Whenever (?P<subject>.+?) becomes (?P<state>tapped|untapped)"
+    r"^(?:When|Whenever) (?P<subject>.+?) becomes (?P<state>tapped|untapped)"
     r"(?P<turn> during your turn)?, (?P<body>.+)$",
     re.IGNORECASE,
 )

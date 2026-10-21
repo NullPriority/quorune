@@ -1977,6 +1977,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/attached_destruction.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/attached_granted_ability_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4603,6 +4618,21 @@
     },
     {
       "file": "quorune/compiler/nonmana_morph_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/occurrence_object_results.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -12170,6 +12200,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/occurrence_object_results.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/optional_counter_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -17776,5 +17820,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "d5be9d2ab756c0793aae39ff3323fa9c119f7d39f156800a2d3231fc38e06156"
+  "fingerprint": "78042258d5eb25d900559ad17654d1a6c6ad3934f3e6efb95602749dfe58222d"
 }

@@ -1,0 +1,493 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned full originals for attached occurrence and result binding; no gains claim before native closure.",
+  "cards": [
+    {
+      "oracle_id": "19066c43-eccd-461b-9695-c3fad95dc1da",
+      "name": "Blight",
+      "mana_cost": "{B}{B}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant land\nWhen enchanted land becomes tapped, destroy it.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-09-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "ae150b53-7c4e-48ce-abcf-cfe1e68bb4d5",
+      "name": "Brink of Disaster",
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature or land\nWhen enchanted permanent becomes tapped, destroy it.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-07-15",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "48dc8f34-8c73-4155-8a3d-b26a35260e6b",
+      "name": "Viridian Harvest",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant artifact\nWhen enchanted artifact is put into a graveyard, you gain 6 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "ddb770c1-a783-49c9-a36d-2434b8580743",
+      "name": "Spirit Shackle",
+      "mana_cost": "{B}{B}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature becomes tapped, put a -0/-2 counter on it.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-09-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "7e6fd429-f925-4ff7-9c6e-34c2c9d15d04",
+      "name": "Relic Putrescence",
+      "mana_cost": "{2}{B}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant artifact\nWhenever enchanted artifact becomes tapped, its controller gets a poison counter.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "4933c2a9-0ef7-4b59-8c55-faa1cb3abbc2",
+      "name": "Pooling Venom",
+      "mana_cost": "{1}{B}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant land\nWhenever enchanted land becomes tapped, its controller loses 2 life.\n{3}{B}: Destroy enchanted land.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-05-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "name": "Naturalize",
+      "mana_cost": "{1}{G}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "name": "Cloudshift",
+      "mana_cost": "{W}",
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "ae150b53-7c4e-48ce-abcf-cfe1e68bb4d5",
+      "published_at": "2010-03-01",
+      "source": "wotc",
+      "comment": "When the enchanted permanent becomes tapped, Brink of Disaster’s ability triggers. That permanent will be destroyed when the ability resolves, even if Brink of Disaster has left the battlefield or is somehow enchanting a different permanent by then."
+    },
+    {
+      "oracle_id": "ae150b53-7c4e-48ce-abcf-cfe1e68bb4d5",
+      "published_at": "2010-03-01",
+      "source": "wotc",
+      "comment": "If the enchanted permanent is tapped as a cost to activate a mana ability, the mana ability resolves immediately, then Brink of Disaster’s ability goes on the stack."
+    },
+    {
+      "oracle_id": "ae150b53-7c4e-48ce-abcf-cfe1e68bb4d5",
+      "published_at": "2010-03-01",
+      "source": "wotc",
+      "comment": "If the enchanted permanent is tapped as a cost to activate an ability that’s not a mana ability, Brink of Disaster’s ability will go on the stack on top of that activated ability. Brink of Disaster’s ability resolves first (destroying that permanent), then the permanent’s activated ability resolves."
+    },
+    {
+      "oracle_id": "ae150b53-7c4e-48ce-abcf-cfe1e68bb4d5",
+      "published_at": "2010-03-01",
+      "source": "wotc",
+      "comment": "Brink of Disaster may target and may enchant a permanent that’s already tapped. It won’t do anything until the enchanted permanent changes from being untapped to being tapped."
+    },
+    {
+      "oracle_id": "48dc8f34-8c73-4155-8a3d-b26a35260e6b",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If the enchanted artifact and Viridian Harvest are put into the graveyard at the same time, you’ll still gain 6 life."
+    },
+    {
+      "oracle_id": "ddb770c1-a783-49c9-a36d-2434b8580743",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "Spirit Shackle's ability triggers only when the enchanted creature changes from untapped to tapped. If Spirit Shackle enters attached to an already tapped creature, it won't do anything (until that creature untaps and becomes tapped again, that is)."
+    },
+    {
+      "oracle_id": "7e6fd429-f925-4ff7-9c6e-34c2c9d15d04",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "Relic Putrescence may target and may enchant an artifact that’s already tapped. It won’t do anything until the enchanted artifact changes from being untapped to being tapped."
+    },
+    {
+      "oracle_id": "7e6fd429-f925-4ff7-9c6e-34c2c9d15d04",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "If the enchanted artifact is tapped as a cost to activate a mana ability, the mana ability resolves immediately, then Relic Putrescence’s ability goes on the stack."
+    },
+    {
+      "oracle_id": "7e6fd429-f925-4ff7-9c6e-34c2c9d15d04",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "When the enchanted artifact becomes tapped, Relic Putrescence’s ability triggers. The player who gets the poison counter is the player who, at the time the ability resolves, controls the artifact that became tapped. If that artifact is no longer on the battlefield, its last existence on the battlefield is checked to determine its controller. It doesn’t matter whether Relic Putrescence is still on the battlefield as the ability resolves, what artifact it’s enchanting at that time, who controlled the artifact at the time it became tapped, or who tapped it."
+    },
+    {
+      "oracle_id": "7e6fd429-f925-4ff7-9c6e-34c2c9d15d04",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "If the enchanted artifact is tapped as a cost to activate an ability that’s not a mana ability, Relic Putrescence’s ability will go on the stack on top of that activated ability and resolve first."
+    },
+    {
+      "oracle_id": "4933c2a9-0ef7-4b59-8c55-faa1cb3abbc2",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "Only Pooling Venom’s controller can activate the activated ability."
+    },
+    {
+      "oracle_id": "4933c2a9-0ef7-4b59-8c55-faa1cb3abbc2",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "The triggered ability triggers whenever the enchanted land becomes tapped, not just when it’s tapped for mana."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it."
+    }
+  ]
+}

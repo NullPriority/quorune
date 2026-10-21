@@ -18312,6 +18312,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Bloodspore cast pays mana, selects and sacrifices two public controlled creatures, enters with two Devour counters and adds that current count to a later creature entry, with pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "piece_ids": [
+        "capability.counter.producer.fixed_effect",
+        "capability.counter.producer.fixed_event_object"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_effect",
+        "counter.producer.fixed_event_object"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Spirit Shackle counter placement addresses the tapped incarnation and applies -0/-2 before canonical zero-toughness state actions; original cast, private projections and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "piece_ids": [
+        "capability.permanent.destroy.effect",
+        "capability.resolution.event_object.fixed_result"
+      ],
+      "capability_ids": [
+        "permanent.destroy.effect",
+        "resolution.event_object.fixed_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Brink trigger survives Aura removal, while Cloudshift creates another incarnation that the old trigger cannot destroy; untargeted results and private replay preserve identity."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "piece_ids": [
+        "capability.resolution.event_object.fixed_result",
+        "capability.resolution.target_controller_information"
+      ],
+      "capability_ids": [
+        "resolution.event_object.fixed_result",
+        "resolution.target_controller_information"
+      ],
+      "interaction_order": 2,
+      "assertion": "Relic Putrescence targets no player and reads current or departure controller D independently from Aura controller A and artifact owner B; stacked pending load and replay preserve the original occurrence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Viridian Harvest and its artifact leave simultaneously; one before-event attachment occurrence retains locked Aura controller A and resolves six life after pending batch load."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pooling Venom preserves its real tap life-loss trigger and pays full3B to destroy its current enchanted land through the ordinary destruction owner; unauthorized commands roll back and replay agrees."
     }
   ]
 }

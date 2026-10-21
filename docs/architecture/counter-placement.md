@@ -21,6 +21,14 @@ An unqualified one-or-more-counters subscription consumes only the first kind
 in that subject's simultaneous placement, so a multi-kind instruction does not
 duplicate its trigger.
 
+Numeric power/toughness counters apply each signed dimension independently
+under CR 122.1a and layer 7c. The canonical numeric characteristic query
+includes zero-valued dimensions such as `-0/-2`, alongside ordinary `+1/+1`
+and `-1/-1` counters. Named counters without numeric dimensions do not modify
+power or toughness. Counter placement commits before state-based checks, so a
+toughness-reducing counter can put the recipient and its now-unattached Aura
+into their owners' graveyards through the existing state-based owner.
+
 Query-scaled ordinary placement lowers to the same `place_counters` instruction
 with a typed public amount. The amount is read at its printed instruction
 boundary, after preceding closed components such as milling finish. A card

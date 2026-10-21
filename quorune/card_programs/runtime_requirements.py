@@ -65,6 +65,9 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    from ..rules.occurrence_object_results import occurrence_object_runtime_dependencies
+    try:required.update(occurrence_object_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_occurrence_object:invalid:{exc}')
     try:required.update(attached_keyword_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_attached_keyword:invalid:{exc}')
     try:required.update(temporary_cast_runtime_dependencies(program))

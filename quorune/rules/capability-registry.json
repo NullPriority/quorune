@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 444,
+  "registry_version": 445,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2632,7 +2632,7 @@
     },
     {
       "id": "counter.producer.fixed_event_object",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "113.7a",
         "400.7",
@@ -2647,7 +2647,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Complete fixed or committed-scalar counter leaf for one sealed entering, individual attacking or qualifying damaging permanent incarnation.",
+        "summary": "Complete fixed or committed-scalar counter leaf for one sealed entering, individual attacking or qualifying damaging permanent incarnation. Sealed singular tap and untap occurrences also address their exact permanent incarnation.",
         "inputs": [
           "oneobjectentry/individualattack/qualifieddamagesourcebinding",
           "sealedpublicoccurrencerefandincarnation",
@@ -2691,29 +2691,39 @@
         "test_entry_event_counter_result_uses_entering_incarnation_without_a_target",
         "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
         "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
-        "test_public_attack_and_damage_counter_recipient_is_the_occurring_object"
+        "test_public_attack_and_damage_counter_recipient_is_the_occurring_object",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity"
       ],
       "negative_tests": [
         "test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient",
         "test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed",
         "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
-        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
       ],
       "interaction_tests": [
         "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
-        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity"
       ],
       "multiplayer_tests": [
         "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
-        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity"
       ],
       "privacy_tests": [
         "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
-        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature"
       ],
       "replay_tests": [
         "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
-        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature"
       ]
     },
     {
@@ -10022,7 +10032,7 @@
     },
     {
       "id": "counter.producer.fixed_effect",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "115.1",
         "608.2b",
@@ -10041,7 +10051,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and resolve one mandatory positive fixed-count counter placement on the source permanent or one direct permanent target through the canonical resumable counter-placement transaction.",
+        "summary": "Compile and resolve one mandatory positive fixed-count counter placement on the source permanent or one direct permanent target through the canonical resumable counter-placement transaction. Numeric P/T counter consequences apply both signed dimensions, including zero, through the canonical exact characteristic query before state-based stabilization.",
         "inputs": [
           "one closed fixed-count Oracle instruction",
           "source or one legal public permanent target",
@@ -10075,7 +10085,9 @@
         "quorune.rules.node_capability_shapes.fixed_counter_placement_node_capabilities",
         "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler",
         "quorune.semantic_runtime.intents.PlaceCountersIntent",
-        "quorune.counter_placement.place_counters_on_refs"
+        "quorune.counter_placement.place_counters_on_refs",
+        "quorune.counter_names.power_toughness_counter_modifier",
+        "quorune.object_query.exact_numeric_characteristic"
       ],
       "positive_tests": [
         "test_fixed_counter_result_does_not_require_source_to_remain",
@@ -10087,7 +10099,9 @@
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature"
       ],
       "negative_tests": [
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
@@ -10096,7 +10110,9 @@
         "test_stale_fixed_counter_target_fails_before_mutation",
         "test_typed_fixed_counter_handler_rejects_malformed_effects",
         "test_unavailable_counter_subject_is_empty_after_complete_shape_validation",
-        "test_unsupported_fixed_counter_variants_remain_material_residuals"
+        "test_unsupported_fixed_counter_variants_remain_material_residuals",
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
       ],
       "interaction_tests": [
         "test_fixed_counter_effect_suspends_for_quantity_replacement",
@@ -10106,7 +10122,9 @@
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature"
       ],
       "multiplayer_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
@@ -10115,7 +10133,9 @@
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature"
       ],
       "privacy_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
@@ -10124,7 +10144,8 @@
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature"
       ],
       "replay_tests": [
         "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
@@ -10134,7 +10155,8 @@
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
         "test_actual_spike_rogue_removal_is_not_multiplied_but_its_result_uses_hardened_scales",
         "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
-        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences"
+        "test_actual_loch_two_distinct_kinds_then_keyword_removal_keep_exact_resource_and_tap_consequences",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature"
       ],
       "required_evidence": [
         "positive",
@@ -17602,24 +17624,108 @@
     },
     {
       "id": "permanent.destroy.effect",
-      "version": 1,
-      "official_rules": ["122.1c", "701.8", "701.8a", "701.8b", "701.8c", "702.12b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile and execute one mandatory direct-target destruction instruction through target revalidation and a typed precommit transaction that distinguishes actual destruction, Indestructible prohibition, and the intrinsic shield-counter replacement.",
-        "inputs": ["closed typed direct-target clause", "revalidated phased-in battlefield permanent", "current represented effective keywords", "current shield-counter count", "physical and logical object identity"],
-        "outputs": ["canonical destruction zone event", "one removed shield counter instead of effect destruction", "one consumed regeneration shield with its alternate result", "Indestructible no-change result", "public typed result journal"],
-        "exclusions": ["regeneration-prohibition riders without permanent.destroy.regeneration_prohibition", "affected-player ordering between regeneration and shield-counter replacements", "optional, modal, relational, qualified, or compound destruction clauses and aggregate or quantified clauses outside the separately capability-closed fixed homogeneous target-set and fixed-set owners", "complete ability-changing, copy, face-down, and dependency interactions", "other unrepresented destruction replacement effects; cards representing those interactions remain material residuals and fail match trust closed"]
+        "summary": "Compile and execute one mandatory direct-target destruction instruction through target revalidation and a typed precommit transaction that distinguishes actual destruction, Indestructible prohibition, and the intrinsic shield-counter replacement. Fixed untargeted tap-occurrence destruction and relation-aware attached destruction reuse the same intent and canonical destruction transaction.",
+        "inputs": [
+          "closed typed direct-target clause",
+          "revalidated phased-in battlefield permanent",
+          "current represented effective keywords",
+          "current shield-counter count",
+          "physical and logical object identity"
+        ],
+        "outputs": [
+          "canonical destruction zone event",
+          "one removed shield counter instead of effect destruction",
+          "one consumed regeneration shield with its alternate result",
+          "Indestructible no-change result",
+          "public typed result journal"
+        ],
+        "exclusions": [
+          "regeneration-prohibition riders without permanent.destroy.regeneration_prohibition",
+          "affected-player ordering between regeneration and shield-counter replacements",
+          "optional, modal, relational, qualified, or compound destruction clauses and aggregate or quantified clauses outside the separately capability-closed fixed homogeneous target-set and fixed-set owners",
+          "complete ability-changing, copy, face-down, and dependency interactions",
+          "other unrepresented destruction replacement effects; cards representing those interactions remain material residuals and fail match trust closed"
+        ]
       },
-      "dependencies": ["target.revalidate_resolution"],
-      "implementation_components": ["quorune.compiler.destruction_templates.TargetedDestructionEffectTemplate", "quorune.rules.node_capability_shapes.targeted_destruction_node_capabilities", "quorune.semantic_runtime.destruction_handlers.DestroyPermanentHandler", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan"],
-      "positive_tests": ["test_spell_trigger_and_activated_contexts_share_targeted_destruction_lowering", "test_effect_destruction_uses_typed_owner_and_replays", "test_state_based_destruction_ignores_shield_counter"],
-      "negative_tests": ["test_unsupported_destruction_variants_remain_material_residuals", "test_targeted_destruction_shape_mutants_fail_closed", "test_indestructible_and_phased_objects_are_not_destroyed", "test_stale_destruction_plan_rolls_back_without_mutation"],
-      "interaction_tests": ["test_effect_destruction_consumes_shield_instead", "test_state_based_destruction_ignores_shield_counter"],
-      "multiplayer_tests": ["test_effect_destruction_uses_typed_owner_and_replays"],
-      "privacy_tests": ["test_effect_destruction_uses_typed_owner_and_replays"],
-      "replay_tests": ["test_effect_destruction_uses_typed_owner_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.destruction_templates.TargetedDestructionEffectTemplate",
+        "quorune.rules.node_capability_shapes.targeted_destruction_node_capabilities",
+        "quorune.semantic_runtime.destruction_handlers.DestroyPermanentHandler",
+        "quorune.destruction.prepare_destructions",
+        "quorune.destruction.commit_destruction_plan"
+      ],
+      "positive_tests": [
+        "test_spell_trigger_and_activated_contexts_share_targeted_destruction_lowering",
+        "test_effect_destruction_uses_typed_owner_and_replays",
+        "test_state_based_destruction_ignores_shield_counter",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation"
+      ],
+      "negative_tests": [
+        "test_unsupported_destruction_variants_remain_material_residuals",
+        "test_targeted_destruction_shape_mutants_fail_closed",
+        "test_indestructible_and_phased_objects_are_not_destroyed",
+        "test_stale_destruction_plan_rolls_back_without_mutation",
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
+      ],
+      "interaction_tests": [
+        "test_effect_destruction_consumes_shield_instead",
+        "test_state_based_destruction_ignores_shield_counter",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_effect_destruction_uses_typed_owner_and_replays",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation"
+      ],
+      "privacy_tests": [
+        "test_effect_destruction_uses_typed_owner_and_replays",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation"
+      ],
+      "replay_tests": [
+        "test_effect_destruction_uses_typed_owner_and_replays",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The exact direct-target compiler shape requires resolution-time target revalidation; blocking that dependency prevents the destruction node and its CardProgram from becoming trusted.",
       "implementation_mutation_status": "killed",
@@ -20267,14 +20373,68 @@
     },
     {
       "id": "trigger.event.normalized_public_action",
-      "version": 7,
-      "official_rules": ["116.2b", "508.1", "508.1m", "508.3c", "508.3d", "509.1", "509.1h", "602.2", "603.2", "603.2e", "603.3", "701.8a", "701.26a", "701.26b", "701.34", "702.29", "702.37e", "702.168b", "701.22a", "701.22b", "701.22d", "701.25a", "701.25c", "701.25d"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 8,
+      "official_rules": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Dispatch immutable public occurrences from completed attack/block declarations, Cycling, turn-face-up, spell-copy creation, tap-state transitions, and completed nonzero Scry/Surveil through the ordinary trigger batch owner. Library action facts omit inspected identities and preserve actor/controller scope.",
-        "inputs": ["validated completed declaration or action", "stable public card reference", "sealed public controller, participant keyword, recipient, action-kind, and attacker-count facts", "current reciprocal attachment relation for the exact equipped-attacker predicate", "sealed blocked-attacker keywords for one block assignment", "pre-action source snapshot when the source moves from hand", "canonical copied spell stack object, types, targets, controller, and source stack reference"],
-        "outputs": ["one occurrence per represented public action", "ordinary APNAP trigger-batch input", "source-self, controller, or controller-another Cycling identity", "one controller-attack occurrence per declaration through trigger-batch aggregation", "strict normalized spell-copy occurrence", "exact replay"],
-        "exclusions": ["attachment predicates beyond closed current attachment relations", "attacked-player, attacked-object, subtype-qualified, chosen, or hidden attack values", "target or counter-placement events", "first-time and once-per-turn tap-state qualifications", "objects entering already tapped or untapped", "objects put onto the battlefield attacking", "nonspell stack copies", "combined event clauses outside exact Magecraft", "intervening-if and reflexive grammar outside their existing typed owners"]
+        "summary": "Dispatch immutable public occurrences from completed attack/block declarations, Cycling, turn-face-up, spell-copy creation, tap-state transitions, and completed nonzero Scry/Surveil through the ordinary trigger batch owner. Library action facts omit inspected identities and preserve actor/controller scope. When and Whenever both introduce closed tap-state subscriptions; sealed occurrence-object results preserve incarnation independently of later attachment changes.",
+        "inputs": [
+          "validated completed declaration or action",
+          "stable public card reference",
+          "sealed public controller, participant keyword, recipient, action-kind, and attacker-count facts",
+          "current reciprocal attachment relation for the exact equipped-attacker predicate",
+          "sealed blocked-attacker keywords for one block assignment",
+          "pre-action source snapshot when the source moves from hand",
+          "canonical copied spell stack object, types, targets, controller, and source stack reference"
+        ],
+        "outputs": [
+          "one occurrence per represented public action",
+          "ordinary APNAP trigger-batch input",
+          "source-self, controller, or controller-another Cycling identity",
+          "one controller-attack occurrence per declaration through trigger-batch aggregation",
+          "strict normalized spell-copy occurrence",
+          "exact replay"
+        ],
+        "exclusions": [
+          "attachment predicates beyond closed current attachment relations",
+          "attacked-player, attacked-object, subtype-qualified, chosen, or hidden attack values",
+          "target or counter-placement events",
+          "first-time and once-per-turn tap-state qualifications",
+          "objects entering already tapped or untapped",
+          "objects put onto the battlefield attacking",
+          "nonspell stack copies",
+          "combined event clauses outside exact Magecraft",
+          "intervening-if and reflexive grammar outside their existing typed owners"
+        ]
       },
       "dependencies": [],
       "implementation_components": [
@@ -20310,7 +20470,10 @@
         "test_magecraft_uses_canonical_ordinary_spell_copy_occurrence",
         "test_magecraft_uses_canonical_storm_spell_copy_occurrence",
         "test_battalion_uses_sealed_three_attacker_transition",
-        "test_original_library_observers_complete_counter_and_temporary_keyword_results"
+        "test_original_library_observers_complete_counter_and_temporary_keyword_results",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change"
       ],
       "negative_tests": [
         "test_public_action_event_suffixes_remain_fail_closed",
@@ -20320,7 +20483,9 @@
         "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_adjacent_event_and_body_grammar_remain_material",
-        "test_library_action_observer_predicates_keep_controller_and_global_scope"
+        "test_library_action_observer_predicates_keep_controller_and_global_scope",
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
       ],
       "interaction_tests": [
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
@@ -20335,7 +20500,10 @@
         "test_magecraft_uses_canonical_ordinary_spell_copy_occurrence",
         "test_magecraft_uses_canonical_storm_spell_copy_occurrence",
         "test_battalion_uses_sealed_three_attacker_transition",
-        "test_actual_library_actions_trigger_only_current_controller_observers_after_completion"
+        "test_actual_library_actions_trigger_only_current_controller_observers_after_completion",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change"
       ],
       "multiplayer_tests": [
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
@@ -20345,7 +20513,10 @@
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
         "test_source_combat_growth_block_bindings_use_sealed_participants",
         "test_targeted_cast_projection_save_load_and_exact_replay",
-        "test_actual_library_actions_trigger_only_current_controller_observers_after_completion"
+        "test_actual_library_actions_trigger_only_current_controller_observers_after_completion",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change"
       ],
       "privacy_tests": [
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
@@ -20354,7 +20525,10 @@
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
         "test_targeted_cast_projection_save_load_and_exact_replay",
         "test_magecraft_uses_canonical_ordinary_spell_copy_occurrence",
-        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay"
+        "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change"
       ],
       "replay_tests": [
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
@@ -20362,7 +20536,10 @@
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
         "test_targeted_cast_projection_save_load_and_exact_replay",
-        "test_original_library_observers_complete_counter_and_temporary_keyword_results"
+        "test_original_library_observers_complete_counter_and_temporary_keyword_results",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change"
       ],
       "required_evidence": [
         "positive",
@@ -20489,7 +20666,7 @@
     },
     {
       "id": "trigger.event.normalized_zone_change",
-      "version": 10,
+      "version": 11,
       "official_rules": [
         "603.2",
         "603.6",
@@ -20508,7 +20685,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Derive represented permanent-enter, permanent-leave, creature-dies, permanent-graveyard, typed discard, typed sacrifice, graveyard-departure, and physical countered-spell occurrences from immutable facts captured around the canonical committed zone change; a simultaneous owner records the complete batch's actual final history before discovering any member's triggers while preserving pre-event source LKI. Physical nontoken cards entering a graveyard from anywhere also produce a distinct after-transition event using destination characteristics, current incarnation and surviving observers.",
+        "summary": "Derive represented permanent-enter, permanent-leave, creature-dies, permanent-graveyard, typed discard, typed sacrifice, graveyard-departure, and physical countered-spell occurrences from immutable facts captured around the canonical committed zone change; a simultaneous owner records the complete batch's actual final history before discovering any member's triggers while preserving pre-event source LKI. Physical nontoken cards entering a graveyard from anywhere also produce a distinct after-transition event using destination characteristics, current incarnation and surviving observers. Enchanted-permanent graveyard subscriptions use before-event attachment and type facts, including simultaneous Aura/permanent departure.",
         "inputs": [
           "committed single transition or complete simultaneous transition batch",
           "previous and current logical identities",
@@ -20566,7 +20743,9 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
@@ -20580,7 +20759,9 @@
         "test_pre_history_characteristic_sealing_mutant_is_killed",
         "test_public_action_event_dependencies_and_parser_mutant_fail_closed",
         "test_public_action_event_suffixes_remain_fail_closed",
-        "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed"
+        "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
       ],
       "interaction_tests": [
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
@@ -20611,7 +20792,9 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
       ],
       "multiplayer_tests": [
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
@@ -20626,7 +20809,9 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
       ],
       "privacy_tests": [
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
@@ -20640,7 +20825,8 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller"
       ],
       "replay_tests": [
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
@@ -20660,7 +20846,9 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
       ],
       "required_evidence": [
         "positive",
@@ -38851,7 +39039,7 @@
     },
     {
       "id": "resolution.target_controller_information",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "400.7",
         "608.2b",
@@ -38864,7 +39052,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Read the current or captured departure controller of an already announced target incarnation for one fixed untargeted player result.",
+        "summary": "Read the current or captured departure controller of an already announced target incarnation for one fixed untargeted player result. A distinct untargeted tap-occurrence reference reuses the same controller-information owner and typed departure record; stacked and queued occurrences read current control or exact-incarnation departure LKI without target announcement.",
         "inputs": [
           "one original target identity and zone-change counter",
           "current effective controller or same-incarnation departure information",
@@ -38886,34 +39074,50 @@
       ],
       "implementation_components": [
         "quorune.target_controller_information.resolve_target_controller_information",
-        "quorune.target_controller_information.pin_target_controller_departures"
+        "quorune.target_controller_information.pin_target_controller_departures",
+        "quorune.target_controller_information.resolve_occurrence_controller_information",
+        "quorune.target_controller_information.pin_occurrence_controller_departures"
       ],
       "positive_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
         "test_controller_information_uses_current_then_lki_and_not_a_returned_incarnation",
-        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot"
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+        "test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement"
       ],
       "negative_tests": [
         "test_condition_reference_result_and_information_codecs_reject_wrong_shapes",
         "test_verified_authority_withdrawals_and_stripped_runtime_dependencies_reject",
-        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw"
+        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw",
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
       ],
       "interaction_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
         "test_controller_information_uses_current_then_lki_and_not_a_returned_incarnation",
-        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot"
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+        "test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement"
       ],
       "multiplayer_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
-        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot"
+        "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
+        "test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement"
       ],
       "privacy_tests": [
-        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster"
+        "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change"
       ],
       "replay_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
         "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
-        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw"
+        "test_whole_spell_fizzles_after_target_departure_without_food_or_draw",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement"
       ],
       "required_evidence": [
         "positive",
@@ -40721,6 +40925,131 @@
       "implementation_mutation_rationale": "Fresh compiler, amount lowerer, native source collector, subtype commit and shared entry-order omissions fail their exact source or gameplay consequence assertions.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "resolution.event_object.fixed_result",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed untargeted tap-state results address the sealed permanent incarnation or its current/departure controller through existing destruction and player-counter owners.",
+        "inputs": [
+          "closed whole destruction instruction on it or a typed occurrence antecedent",
+          "singular tap-state event with sealed public ref and logical identity",
+          "distinct current-or-departure controller reference for one fixed poison result"
+        ],
+        "outputs": [
+          "untargeted destruction of the same current battlefield incarnation",
+          "no mutation when the referenced incarnation has left",
+          "one replacement-aware poison counter on the information-derived player"
+        ],
+        "exclusions": [
+          "other events and aggregate occurrences",
+          "new-object or ambiguous antecedents",
+          "unrepresented result siblings",
+          "targeting semantics or implicit retargeting"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.occurrence_object_results.occurrence_object_result",
+        "quorune.rules.occurrence_object_results.occurrence_object_runtime_dependencies",
+        "quorune.event_counter_reference.event_counter_recipient_context",
+        "quorune.event_counter_reference.resolve_event_counter_recipient",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.semantic_runtime.destruction_handlers.DestroyPermanentHandler",
+        "quorune.target_controller_information.resolve_occurrence_controller_information",
+        "quorune.target_controller_information.pin_occurrence_controller_departures"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "This result binder has no universal effect dependency. The compiler and independent runtime minima require each concrete destruction, player-counter and controller-information owner separately; verified withdrawals and stripped declarations fail closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh full-original compiler and resolved-occurrence omissions fail actual command consequences.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_full_blight_and_brink_register_complete_originals_before_native_actions",
+        "test_full_harvest_shackle_putrescence_and_pooling_register_complete_originals",
+        "test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity",
+        "test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_occurrence_destruction_shape_excludes_targets_other_events_and_siblings",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
+      ],
+      "negative_tests": [
+        "test_occurrence_and_attached_result_runtime_minima_fail_closed_independently",
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
+      ],
+      "interaction_tests": [
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+        "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement"
+      ],
+      "multiplayer_tests": [
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change"
+      ],
+      "privacy_tests": [
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation"
+      ],
+      "replay_tests": [
+        "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+        "test_actual_brink_creature_tap_destroys_the_triggering_object",
+        "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+        "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+        "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+        "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
+      ]
     }
   ]
 }

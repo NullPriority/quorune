@@ -61,8 +61,10 @@ def effect_node_capabilities(
     from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
     from .temporary_cast_restrictions import temporary_cast_node_capabilities
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
+    from .occurrence_object_results import occurrence_object_node_capabilities
     dependencies: set[str] = set()
     for resolver in (
+        occurrence_object_node_capabilities,
         temporary_cast_node_capabilities,
         random_graveyard_return_node_capabilities,
         fixed_stack_spell_copy_node_capabilities,

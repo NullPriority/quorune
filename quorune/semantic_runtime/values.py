@@ -129,6 +129,10 @@ def resolve_semantic_value(
         from ..target_controller_information import resolve_target_controller_information
         try:return resolve_target_controller_information(host,value,item)
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind')=='occurrence_controller_information':
+        from ..target_controller_information import resolve_occurrence_controller_information
+        try:return resolve_occurrence_controller_information(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get('kind') == 'reflexive_trigger_program':
         from ..reflexive_trigger_model import ReflexiveTriggerProgram
         try:
@@ -171,7 +175,7 @@ def resolve_semantic_value(
         ):
             return None
         return source.ref
-    if value in {'$event.entry_object','$event.counter_object'}:
+    if value in {'$event.entry_object','$event.counter_object','$event.permanent_object'}:
         from ..event_counter_reference import resolve_entry_event_counter_recipient,resolve_event_counter_recipient
         try:return (resolve_entry_event_counter_recipient if value=='$event.entry_object' else resolve_event_counter_recipient)(host,item)
         except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
