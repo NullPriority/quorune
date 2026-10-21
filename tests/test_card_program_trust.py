@@ -383,6 +383,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "rule.cast.static",
                 "rule.stack.split_second",
                 "rule.cleanup.no_maximum_hand_size",
+                "rule.cleanup.fixed_hand_size_adjustment",
                 "restriction.activation.chosen_name_nonmana",
                 "restriction.activation.fixed_public",
                 "restriction.draw.maximum_per_turn",

@@ -2148,9 +2148,20 @@ The same context admits the exact source-self "becomes level N" occurrence
 through normalized trigger placement, and the ordinary static compiler exposes
 the reusable no-maximum-hand-size component used by cleanup offer and commit
 validation.
-Variable, hybrid, Phyrexian, snow, nonmana, malformed, granted, text-changed,
-direct level-setting, independently unsupported, and cycle-sensitive dynamic
-characteristic forms remain residual.
+
+Class-level variable, hybrid, Phyrexian, snow, nonmana, malformed, granted,
+text-changed, direct level-setting, independently unsupported, and
+cycle-sensitive dynamic characteristic forms remain residual.
+
+`compiler/maximum_hand_size_nodes.py` also lowers fixed increases and reductions to the current
+controller's or each opponent's maximum hand size. Its closed signed descriptor
+uses the existing maximum-hand-size component registry. `maximum_hand_size.py`
+adds currently effective adjustments to the player's finite base, clamps the
+result at zero, and preserves an existing no-maximum permission. Source control,
+departure, phasing, and ability removal change the live rule. Cleanup determines
+the active player's exact private discard before end-of-turn ability or control
+effects expire. Variable amounts, fixed set-to values, other player relations,
+and temporary hand-size effects remain outside this grammar.
 
 `compiler/day_night_nodes.py` and
 `compiler/spell_history_transform_nodes.py` close one paired-face family.

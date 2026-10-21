@@ -147,6 +147,7 @@
     "tests/fixtures/group-declaration-rules.json",
     "tests/fixtures/half-event-player-result-cards.json",
     "tests/fixtures/hand-entry-expansion-cards.json",
+    "tests/fixtures/hand-size-adjustment-cards.json",
     "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/history-entry-counters.json",
     "tests/fixtures/increment-cards.json",

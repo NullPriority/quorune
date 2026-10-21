@@ -18162,6 +18162,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Ranger-Captain preserves optional revealed low-mana creature search and shuffle, pays source sacrifice before responses, and creates its opponent noncreature rule after a response resolves; private projections and loaded replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+      "piece_ids": [
+        "capability.hand.cleanup.fixed_adjustment",
+        "capability.hand.cleanup.no_maximum"
+      ],
+      "capability_ids": [
+        "hand.cleanup.fixed_adjustment",
+        "hand.cleanup.no_maximum"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual current original components add across controller/opponent scopes, clamp finite limits at zero and discard the full affected hand in canonical cleanup. Spellbooks existing no-maximum permission remains unbounded under all finite reductions through an actual turn, with private projection, pending load and replay."
     }
   ]
 }

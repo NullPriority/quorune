@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 440,
+  "registry_version": 441,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -40269,6 +40269,122 @@
       "dependency_fail_closed_rationale": "This duration-bound rule reuses the shared legality and effect journal rather than another capability; target revalidation remains an independent dependency.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh complete-original compiler, journal commit, shared live legality query, and independent runtime descriptor validation omissions fail their executable assertions. Canonically verified owner withdrawal keeps all six originals residual.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "hand.cleanup.fixed_adjustment",
+      "version": 1,
+      "official_rules": [
+        "107.1b",
+        "402.2",
+        "514.1",
+        "514.2",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.11"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current fixed signed static adjustments to source-controller or opponent maximum hand sizes govern the canonical cleanup selection.",
+        "inputs": [
+          "current effective static component and source controller",
+          "fixed signed integer delta",
+          "existing player maximum and no-maximum permission"
+        ],
+        "outputs": [
+          "additive finite maximum clamped at zero",
+          "unchanged unbounded maximum under finite adjustments",
+          "exact principal-private cleanup selection"
+        ],
+        "exclusions": [
+          "variable quantities",
+          "fixed set-to values",
+          "other player relations",
+          "temporary duration rules",
+          "unowned siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.maximum_hand_size.FixedHandSizeAdjustmentSpec",
+        "quorune.maximum_hand_size.current_hand_size_adjustments",
+        "quorune.maximum_hand_size.effective_maximum_hand_size",
+        "quorune.compiler.maximum_hand_size_nodes.no_maximum_hand_size_node",
+        "quorune.semantic_runtime.maximum_hand_size.FixedHandSizeAdjustmentHandler"
+      ],
+      "positive_tests": [
+        "test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+        "test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+        "test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+        "test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+        "test_fixed_adjustment_model_and_handler_reject_unowned_scope_value_and_version"
+      ],
+      "negative_tests": [
+        "test_fixed_adjustment_model_and_handler_reject_unowned_scope_value_and_version",
+        "test_emitted_adjustment_requires_its_component_capability_and_closed_descriptor",
+        "test_canonically_verified_adjustment_owner_withdrawal_keeps_all_originals_residual",
+        "test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+        "test_departing_miser_restores_current_limits_before_cleanup",
+        "test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+        "test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard"
+      ],
+      "interaction_tests": [
+        "test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+        "test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+        "test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+        "test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+        "test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+        "test_departing_miser_restores_current_limits_before_cleanup",
+        "test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+        "test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard"
+      ],
+      "multiplayer_tests": [
+        "test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+        "test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+        "test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+        "test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+        "test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+        "test_departing_miser_restores_current_limits_before_cleanup",
+        "test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+        "test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard"
+      ],
+      "privacy_tests": [
+        "test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+        "test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+        "test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+        "test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+        "test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+        "test_departing_miser_restores_current_limits_before_cleanup",
+        "test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+        "test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard"
+      ],
+      "replay_tests": [
+        "test_actual_gnat_miser_changes_only_opponents_and_forces_exact_private_cleanup",
+        "test_actual_minamo_scrollkeeper_increases_own_limit_and_preserves_defender",
+        "test_actual_three_thought_creatures_reduce_own_limit_and_retain_flying",
+        "test_actual_locust_miser_reduces_each_opponent_by_two_at_cleanup",
+        "test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+        "test_departing_miser_restores_current_limits_before_cleanup",
+        "test_lost_ability_restores_cleanup_limit_before_end_of_turn_expiry",
+        "test_changed_source_controller_rebinds_opponents_until_control_expires_after_discard"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The registered static component independently requires this capability; it directly reuses the canonical current-component and cleanup owners rather than another capability.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original compiler and current adjustment-query omissions fail complete registration or actual cleanup outcomes; canonically verified owner withdrawal keeps all six originals residual.",
       "blockers": [],
       "status": "trusted"
     }
