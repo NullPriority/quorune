@@ -373,6 +373,12 @@ def _continuous_static_runtime_template(
     source_name: str | None,
     source_is_class: bool,
 ) -> StaticRuntimeTemplate | None:
+    if source_name is not None and not source_is_class:
+        from .all_colors_definitions import all_colors_definition_handler
+        definition=all_colors_definition_handler(text,source_name=source_name)
+        if definition is not None:
+            return StaticRuntimeTemplate(compiled=definition,kind='static_ability',event='continuous',active_zone='all',
+                runtime_coverage=('layer_5_all_colors_characteristic',),dependency_reason='All-colors source definitions require their all-zone typed color owner')
     from .keyword_prohibition_templates import opponent_keyword_prohibition_handler
     prohibition = None if source_is_class else opponent_keyword_prohibition_handler(text)
     if prohibition is not None:

@@ -628,6 +628,16 @@ addition/removal, copy, dynamic counts, Megamorph, other face-down methods,
 variable and nonmana costs, and residual turn-up behavior remain outside
 trust; no family-specific Oracle interpretation supplies them.
 
+An unconditional source-self all-colors definition uses a separate closed
+all-zone fragment. It emits a characteristic-defining layer-5 operation before
+ordinary color effects, including after copying. Later-layer ability removal
+does not undo a color effect that has already applied. Face-down values suppress
+the printed definition. A live all-colors grant to other battlefield permanents
+uses the existing fixed-setting component instead: current controller, nonland
+membership and timestamps determine its affected objects. Its land-type sibling
+retains the existing type and intrinsic-mana owners. Conditional or selected
+definitions and color-identity exceptions remain residual.
+
 `ability.activated.unearth.v1` owns the bounded ordinary fixed-mana Unearth
 activation descriptor, and `generic.unearth.v1` lowers its return and delayed-
 exile results to one typed intent. Runtime admission requires the compiler's

@@ -1356,6 +1356,7 @@ class AbilityFragmentRegistry(
 
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
+    from .all_colors import AllColorsDefinitionHandler
     from .rampage_fragment import RampageFragmentHandler
     from .landwalk_permissions import LandwalkPermissionFragmentHandler
     registry = AbilityFragmentRegistry(
@@ -1381,6 +1382,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DeclarationRestrictionComponentHandler(),
             ConditionalKeywordAbilityFragmentHandler(),
             ColorlessCharacteristicDefinitionAbilityFragmentHandler(),
+            AllColorsDefinitionHandler(),
             DethroneAbilityFragmentHandler(),
             DynamicPowerToughnessAbilityFragmentHandler(),
             QueryCharacteristicModifierAbilityFragmentHandler(),

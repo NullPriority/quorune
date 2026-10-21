@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 428,
+  "registry_version": 429,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -38843,6 +38843,106 @@
       "implementation_mutation_rationale": "Fresh native Knight of Grace witnesses kill omission of the qualified keyword compiler producer and actual source-quality verdict. Source departure and returned-incarnation witnesses protect current/LKI timing separately.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "continuous.characteristics.all_colors_definition",
+      "version": 1,
+      "official_rules": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "An unconditional printed source-self definition sets all five colors through an all-zone typed characteristic-defining fragment, before ordinary layer-five effects.",
+        "inputs": [
+          "one source-spanned unconditional self definition",
+          "the exact source or copied incarnation",
+          "existing layer and copy facts"
+        ],
+        "outputs": [
+          "copiable all-zone definition",
+          "one characteristic-defining layer-five set-colors effect"
+        ],
+        "exclusions": [
+          "conditional or chosen definitions",
+          "other-object definitions",
+          "color-identity exceptions"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.all_colors.AllColorsCharacteristicDefinitionSpec",
+        "quorune.compiler.all_colors_definitions.all_colors_definition_handler",
+        "quorune.characteristic_evaluation.evaluate_card_characteristics"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The fixed definition is a dependency-free value delegated to the existing evaluator. A canonically verified withdrawal prevents complete original admission and stripping the registered component authority fails runtime binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh Courier admission detects omitted compiler definition lowering. A colorless-base all-zone/layer witness kills omission of the actual definition operation; a native Leyline cast kills omitted live layer-five emission.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_actual_ability_loss_does_not_undo_an_earlier_layer_color_definition",
+        "test_actual_clone_copies_the_all_zone_definition_and_color_changes_override_it",
+        "test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+        "test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+        "test_definition_codec_all_zones_and_layer_order_are_independent_of_printed_color_data"
+      ],
+      "negative_tests": [
+        "test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+        "test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+        "test_current_control_and_timestamps_preserve_live_nonland_scope",
+        "test_definition_codec_all_zones_and_layer_order_are_independent_of_printed_color_data",
+        "test_verified_definition_withdrawal_and_stripped_component_minimum_reject"
+      ],
+      "interaction_tests": [
+        "test_actual_ability_loss_does_not_undo_an_earlier_layer_color_definition",
+        "test_actual_clone_copies_the_all_zone_definition_and_color_changes_override_it",
+        "test_actual_later_entrant_receives_live_colors_and_bounce_ends_the_setting",
+        "test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+        "test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn",
+        "test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+        "test_current_control_and_timestamps_preserve_live_nonland_scope",
+        "test_definition_codec_all_zones_and_layer_order_are_independent_of_printed_color_data"
+      ],
+      "multiplayer_tests": [
+        "test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+        "test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+        "test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn",
+        "test_current_control_and_timestamps_preserve_live_nonland_scope"
+      ],
+      "privacy_tests": [
+        "test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+        "test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+        "test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn"
+      ],
+      "replay_tests": [
+        "test_actual_ability_loss_does_not_undo_an_earlier_layer_color_definition",
+        "test_actual_clone_copies_the_all_zone_definition_and_color_changes_override_it",
+        "test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+        "test_actual_later_entrant_receives_live_colors_and_bounce_ends_the_setting",
+        "test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+        "test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn",
+        "test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+        "test_current_control_and_timestamps_preserve_live_nonland_scope"
+      ]
     }
   ]
 }

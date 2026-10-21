@@ -55,6 +55,7 @@ from .static_component_scope import (
     StaticComponentScopeSpec,
 )
 from .util import stable_json
+from .all_colors import AllColorsCharacteristicDefinitionSpec
 
 
 class ProtectionQualityKind(str, Enum):
@@ -725,6 +726,7 @@ StaticAbilityFragment: TypeAlias = (
     | WardSpec
     | AllCreatureTypesCharacteristicDefinitionSpec
     | ColorlessCharacteristicDefinitionSpec
+    | AllColorsCharacteristicDefinitionSpec
     | ConditionalKeywordSpec
     | DynamicPowerToughnessSpec
     | QueryCharacteristicModifierSpec
@@ -783,6 +785,8 @@ def ability_fragment_to_dict(
         kind = "all_creature_types_characteristic_definition"
     elif isinstance(fragment, ColorlessCharacteristicDefinitionSpec):
         kind = "colorless_characteristic_definition"
+    elif isinstance(fragment, AllColorsCharacteristicDefinitionSpec):
+        kind = 'all_colors_characteristic_definition'
     elif isinstance(fragment, ConditionalKeywordSpec):
         kind = "conditional_keyword"
     elif isinstance(fragment, DynamicPowerToughnessSpec):
@@ -884,6 +888,9 @@ def ability_fragment_from_dict(
             )
         except CharacteristicFragmentError as exc:
             raise AbilityFragmentError(str(exc)) from exc
+    if value['kind']=='all_colors_characteristic_definition':
+        try:return AllColorsCharacteristicDefinitionSpec.from_dict(value['value'])
+        except ValueError as exc:raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "conditional_keyword":
         try:
             return ConditionalKeywordSpec.from_dict(value["value"])
@@ -968,6 +975,7 @@ def canonical_ability_fragments(
                 WardSpec,
                 AllCreatureTypesCharacteristicDefinitionSpec,
                 ColorlessCharacteristicDefinitionSpec,
+                AllColorsCharacteristicDefinitionSpec,
                 ConditionalKeywordSpec,
                 DynamicPowerToughnessSpec,
                 QueryCharacteristicModifierSpec,
@@ -1344,6 +1352,7 @@ def counter_maximum_values(
 
 
 __all__ = [
+    "AllColorsCharacteristicDefinitionSpec",
     "AllCreatureTypesCharacteristicDefinitionSpec",
     "AbilityFragmentError",
     "CombatKeywordTriggerKind",

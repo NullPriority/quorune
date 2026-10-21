@@ -52,6 +52,7 @@
       "test_action_proposals",
       "test_activation_restrictions",
       "test_additional_token_compiler",
+      "test_all_colors",
       "test_alternative_activation_mana",
       "test_ante_rules",
       "test_any_source_counter_costs",
@@ -714,6 +715,7 @@
     ],
     "compiler-cardprogram": [
       "test_additional_token_compiler",
+      "test_all_colors",
       "test_all_counter_self_costs",
       "test_attack_keyword_compiler",
       "test_block_keyword_compiler",
@@ -806,6 +808,7 @@
       "test_zone_transition_owner"
     ],
     "counter-continuous-effects": [
+      "test_all_colors",
       "test_amass_rules",
       "test_attached_counter_placement",
       "test_attached_static_characteristics",
@@ -946,6 +949,7 @@
       "test_damage_result_events"
     ],
     "server-replay-privacy": [
+      "test_all_colors",
       "test_application_protocol",
       "test_boast_restrictions",
       "test_browser_gameplay_regressions",

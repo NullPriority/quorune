@@ -31,6 +31,7 @@ from .characteristic_fragments import (
     CharacteristicQuantitySpec,
 )
 from .creature_subtypes import CREATURE_SUBTYPES
+from .all_colors import AllColorsCharacteristicDefinitionSpec,ALL_COLORS
 
 
 _CARD_TYPES = {
@@ -237,6 +238,11 @@ def _has_colorless_characteristic_definition(
     )
 
 
+def _has_all_colors_definition(base,overrides):
+    return any(isinstance(fragment,AllColorsCharacteristicDefinitionSpec) for fragment in
+        canonical_ability_fragments(overrides.get('ability_fragments',base.get('ability_fragments',()))))
+
+
 def _has_all_creature_types_characteristic_definition(
     base: Mapping[str, Any],
     overrides: Mapping[str, Any],
@@ -290,6 +296,7 @@ def _object_continuous_effects(
     *,
     has_all_creature_types_definition: bool,
     has_colorless_definition: bool,
+    has_all_colors_definition: bool,
     ignore_face_down: bool = False,
 ) -> list[ContinuousEffect]:
     effects: list[ContinuousEffect] = []
@@ -311,15 +318,16 @@ def _object_continuous_effects(
                 duration=ContinuousEffectDuration.ZONE_OBJECT,
             )
         )
-    if has_colorless_definition:
+    all_colors_active=has_all_colors_definition and not (card.face_down and not ignore_face_down and face_down_values is not None)
+    if has_colorless_definition or all_colors_active:
         effects.append(
             ContinuousEffect(
-                effect_id=f"{card.object_id}:colorless-definition",
+                effect_id=f"{card.object_id}:"+('all-colors-definition' if all_colors_active else 'colorless-definition'),
                 source_id=card.object_id,
                 layer=Layer.COLOR,
                 sublayer="5",
                 timestamp=0,
-                operations=(ContinuousOperation("remove_all_colors"),),
+                operations=(ContinuousOperation('set_colors',ALL_COLORS) if all_colors_active else ContinuousOperation("remove_all_colors"),),
                 characteristic_defining=True,
                 duration=ContinuousEffectDuration.ZONE_OBJECT,
             )
@@ -625,6 +633,19 @@ def _render_characteristics(
     return result
 
 
+def _normalized_unlayered_characteristics(result):
+    """Normalize an isolated base snapshot when no layer evaluation is needed."""
+    result["executable_oracle_text"] = str(
+        result.get("executable_oracle_text",result.get("oracle_text") or "") or ""
+    )
+    result["keywords"] = unique_preserving_order(list(result.get("keywords") or []))
+    result["ability_fragments"] = [ability_fragment_to_dict(value)
+        for value in canonical_ability_fragments(result.get("ability_fragments",()))]
+    result["activated_abilities"] = [ActivatedAbility.from_dict(value).to_dict()
+        for value in result.get("activated_abilities",())]
+    return result
+
+
 def evaluate_card_characteristics(
     card: CardInstance,
     base: Mapping[str, Any],
@@ -654,6 +675,7 @@ def evaluate_card_characteristics(
         result,
         overrides,
     )
+    has_all_colors_definition = _has_all_colors_definition(result,overrides)
     has_all_creature_types_definition = (
         _has_all_creature_types_characteristic_definition(
             result,
@@ -669,6 +691,7 @@ def evaluate_card_characteristics(
         or card.annotations.get("granted_ability_fragments")
         or card.annotations.get("bestowed")
         or has_colorless_definition
+        or has_all_colors_definition
         or has_all_creature_types_definition
         or (
             card.face_down
@@ -679,27 +702,7 @@ def evaluate_card_characteristics(
         or query_count_resolver is not None
     )
     if not layered:
-        result["executable_oracle_text"] = str(
-            result.get(
-                "executable_oracle_text",
-                result.get("oracle_text") or "",
-            )
-            or ""
-        )
-        result["keywords"] = unique_preserving_order(
-            list(result.get("keywords") or [])
-        )
-        result["ability_fragments"] = [
-            ability_fragment_to_dict(value)
-            for value in canonical_ability_fragments(
-                result.get("ability_fragments", ())
-            )
-        ]
-        result["activated_abilities"] = [
-            ActivatedAbility.from_dict(value).to_dict()
-            for value in result.get("activated_abilities", ())
-        ]
-        return result
+        return _normalized_unlayered_characteristics(result)
 
     state = _base_characteristic_state(card, result)
     effects = _object_continuous_effects(
@@ -711,6 +714,7 @@ def evaluate_card_characteristics(
             has_all_creature_types_definition
         ),
         has_colorless_definition=has_colorless_definition,
+        has_all_colors_definition=has_all_colors_definition,
         ignore_face_down=ignore_face_down,
     )
     effects.extend(runtime_effects)

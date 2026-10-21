@@ -242,6 +242,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.conditional_flash",
                 "ability.static.self_cast_restriction",
                 "ability.static.all_creature_types_characteristic_definition",
+                "ability.static.all_colors_characteristic_definition",
                 "ability.static.ascend",
                 "ability.static.colorless_characteristic_definition",
                 "ability.static.counter_maximum",
