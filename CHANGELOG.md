@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Return untargeted random subsets from the resolving controller's graveyard
+  through shared keyed selection and simultaneous zone transitions, retaining
+  type filters, printed costs, trigger timing, replacements and replay privacy.
+
 - Execute terminal spell-self exile after independently closed spell bodies,
   retaining printed costs, targets, counter and all-illegal exits, copied-spell
   identity, pending commander choices and known-hand privacy.

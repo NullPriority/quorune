@@ -310,6 +310,7 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    'return_random_graveyard_cards',
     "copy_stack_item",
     'create_role_token',
     "gain_control",

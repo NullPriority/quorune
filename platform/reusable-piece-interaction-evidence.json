@@ -18057,6 +18057,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Wildest Dreams and Nostalgic Dreams announceXzero, pay their unchanged printed/known additional prices, select no targets and still resolve to self exile. Wrong-principal and foreign-target rejection, known/private hand projection, pending load and pre-action replay agree; original Seeds of Renewal also resolves with zero optional targets."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "piece_ids": [
+        "capability.zone.exile.resolving_spell",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "zone.exile.resolving_spell",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Reap paysXRG with no targets, returns two distinct current own cards and then self-exiles; normal offers, wrong-principal rollback, known-hand privacy, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "piece_ids": [
+        "capability.quantity_expression.declared_effect_amount",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "quantity_expression.declared_effect_amount",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Reap announcesXtwo and pays its ordinary mana-X amount; the untargeted return count reads that same declaration, preserving current own eligibility and loaded replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Haunted Fengraf pays three mana, taps and sacrifices before its random eligible creature return. Its land card and a noncreature card cannot be selected; wrong actor rollback, known-hand privacy, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep",
+      "piece_ids": [
+        "capability.format.commander.pairing.choose_background",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.choose_background",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Viconia and Flaming Fist form a valid two-commander deck, cast normally from command with their printed prices, retain designation/background presence and allow Viconia's four-creature upkeep to return exactly one eligible own creature. Known-hand privacy and pre-action replay agree."
     }
   ]
 }

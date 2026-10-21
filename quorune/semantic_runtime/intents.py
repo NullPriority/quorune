@@ -3,6 +3,7 @@ from ..city_blessing_model import AscendIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..random_discard import RandomDiscardIntent
+from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
@@ -1622,6 +1623,7 @@ SemanticIntent: TypeAlias = (
     | DomainEffectIntent
     | DiscardWholeHandsIntent
     | RandomDiscardIntent
+    | RandomGraveyardReturnIntent
     | AscendIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]

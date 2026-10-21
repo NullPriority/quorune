@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "4a3421882efa7cde4d0c15df1f620f42fa35d45b78d2322e24bb65b3ff6c22ac",
-  "declaration_source_fingerprint": "94b58960b980d3e69ecbcbe3cbc7b610b9404e65b9cb441ca7ba58d8f71a582c",
+  "registry_fingerprint": "1cf8d991fd2a3b2e6b9241940940badd914e33945414cf9e42861105df4aeaf8",
+  "declaration_source_fingerprint": "5d322915c37def6f29020f4a9186f54901206219d2a3a733e980c85a6475c4d9",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -294208,6 +294208,1554 @@
       "applicability_note": "Actual typed Enchant Swamp cast rejects a non-Swamp, Naturalize destroys the Aura and its exact event incarnation returns once with pre-action replay."
     },
     {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Viconia/Flaming Fist commander pair starts through normal deck/session validation; both original commanders cast from command, remain designated and Viconia returns one current own creature at upkeep. Known-hand privacy and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_upkeep_controller_is_locked_after_actual_source_control_change",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Viconia/Flaming Fist commander pair starts through normal deck/session validation; both original commanders cast from command, remain designated and Viconia returns one current own creature at upkeep. Known-hand privacy and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_upkeep_controller_is_locked_after_actual_source_control_change",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_canonically_verified_random_owner_withdrawal_rejects_full_originals",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_fresh_random_return_producer_sampling_and_commit_omissions_are_killed",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_canonically_verified_random_owner_withdrawal_rejects_full_originals",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_fresh_random_return_producer_sampling_and_commit_omissions_are_killed",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_random_return_subject_and_runtime_descriptors_are_closed_and_capability_bound",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_upkeep_controller_is_locked_after_actual_source_control_change",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Viconia/Flaming Fist commander pair starts through normal deck/session validation; both original commanders cast from command, remain designated and Viconia returns one current own creature at upkeep. Known-hand privacy and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_random_return_subject_and_runtime_descriptors_are_closed_and_capability_bound",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Viconia/Flaming Fist commander pair starts through normal deck/session validation; both original commanders cast from command, remain designated and Viconia returns one current own creature at upkeep. Known-hand privacy and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_upkeep_controller_is_locked_after_actual_source_control_change",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Viconia/Flaming Fist commander pair starts through normal deck/session validation; both original commanders cast from command, remain designated and Viconia returns one current own creature at upkeep. Known-hand privacy and pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_upkeep_controller_is_locked_after_actual_source_control_change",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
+      "capability_id": "zone.return.random_own_graveyard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_graveyard_returns.RandomGraveyardReturnTests.test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+      "official_rule_ids": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original untargeted returns retain current own eligibility, fixed/Xcounts, typed filters, locked trigger controller and keyed distinct sampling. Printed tap/sacrifice/morbid/upkeep/background/cast/rebound siblings, zero/short pools, commander pending choices, rollback, public-known/private hands and pre-action replay are witnessed; actual owner omissions and malformed data reject."
+    },
+    {
       "capability_id": "zone.self_move.activated",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay",
@@ -295295,5 +296843,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "e932ed2b1f658f2580f62a603702fe5ae12030d3a2e4d0c3e7100e00b67190b5"
+  "fingerprint": "7208d418dd593e25e905434b737cf71a973d3a4375c36ff64f51a02a00d42e71"
 }

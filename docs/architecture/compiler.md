@@ -2732,6 +2732,18 @@ an unsupported result. The server excludes the source spell, pays ordinary
 mana first and selects one other current hand card through the canonical random
 owner. Multiple, qualified, optional and compound random prices remain residual.
 
+`compiler/random_graveyard_returns.py` lowers untargeted random returns from
+the resolving controller's own graveyard. Fixed counts and independently
+declared X retain their existing quantity authority; represented card types,
+type unions and one creature subtype remain closed selection data. The rule
+owner queries the current eligible public set when the instruction applies,
+samples distinct physical identities through the shared instruction-keyed
+selector, and delegates movement to the canonical simultaneous zone owner.
+The selector preserves historical random-discard seeding and ordering.
+Known zero, empty and short pools are legal; random cards are not targets or
+player choices. Extra graveyard ordering, different destinations and
+independently unsupported siblings remain residual.
+
 Global fixed characteristic sets accept canonical creature-subtype plurals with
 optional `All` and `Other`. The shared battlefield query carries no controller
 restriction and excludes only the source when `Other` is printed. Both fixed

@@ -1,0 +1,691 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned random graveyard return source leads; no native acceptance or gain claim.",
+  "cards": [
+    {
+      "oracle_id": "888ccda6-896f-40f3-93a1-efc48254af34",
+      "name": "Make a Wish",
+      "mana_cost": "{3}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Return two cards at random from your graveyard to your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "888ccda6-896f-40f3-93a1-efc48254af34",
+          "published_at": "2011-09-22",
+          "source": "wotc",
+          "comment": "If you only have one card in your graveyard when Make a Wish resolves, that card will be returned to your hand."
+        },
+        {
+          "oracle_id": "888ccda6-896f-40f3-93a1-efc48254af34",
+          "published_at": "2011-09-22",
+          "source": "wotc",
+          "comment": "The cards aren’t randomly chosen until Make a Wish resolves."
+        },
+        {
+          "oracle_id": "888ccda6-896f-40f3-93a1-efc48254af34",
+          "published_at": "2011-09-22",
+          "source": "wotc",
+          "comment": "Make a Wish isn’t put into its owner’s graveyard until it is finished resolving, so it can’t be returned by its own effect."
+        }
+      ]
+    },
+    {
+      "oracle_id": "27bc0219-3fc1-4c84-92cc-da2273a5fd16",
+      "name": "Reap the Past",
+      "mana_cost": "{X}{R}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Return X cards at random from your graveyard to your hand. Exile Reap the Past.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "27bc0219-3fc1-4c84-92cc-da2273a5fd16",
+          "published_at": "2019-06-14",
+          "source": "wotc",
+          "comment": "No player may take actions between the time the cards are chosen at random and the time they’re returned to your hand."
+        },
+        {
+          "oracle_id": "27bc0219-3fc1-4c84-92cc-da2273a5fd16",
+          "published_at": "2019-06-14",
+          "source": "wotc",
+          "comment": "If X is greater than or equal to the number of cards in your graveyard, you simply return your entire graveyard to your hand."
+        },
+        {
+          "oracle_id": "27bc0219-3fc1-4c84-92cc-da2273a5fd16",
+          "published_at": "2019-06-14",
+          "source": "wotc",
+          "comment": "All players get to see which cards you chose at random as they’re returned to your hand."
+        },
+        {
+          "oracle_id": "27bc0219-3fc1-4c84-92cc-da2273a5fd16",
+          "published_at": "2019-06-14",
+          "source": "wotc",
+          "comment": "Reap the Past is still on the stack while you return cards to your hand, so it can’t return itself."
+        }
+      ]
+    },
+    {
+      "oracle_id": "614f748b-5d31-440d-a7c0-3ba12dc63c24",
+      "name": "Ghoulraiser",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "When this creature enters, return a Zombie card at random from your graveyard to your hand.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": []
+    },
+    {
+      "oracle_id": "7c6143f3-ad2c-4d7f-9041-aa59f01d8fb7",
+      "name": "Haunted Fengraf",
+      "mana_cost": "",
+      "type_line": "Land",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}, Sacrifice this land: Return a creature card at random from your graveyard to your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0,
+      "rulings": [
+        {
+          "oracle_id": "7c6143f3-ad2c-4d7f-9041-aa59f01d8fb7",
+          "published_at": "2018-03-16",
+          "source": "wotc",
+          "comment": "All players get to see which card you return to your hand."
+        },
+        {
+          "oracle_id": "7c6143f3-ad2c-4d7f-9041-aa59f01d8fb7",
+          "published_at": "2018-03-16",
+          "source": "wotc",
+          "comment": "Because Haunted Fengraf's ability doesn't target any creature card, any creature card put into the graveyard in response to that ability may be returned to your hand."
+        },
+        {
+          "oracle_id": "7c6143f3-ad2c-4d7f-9041-aa59f01d8fb7",
+          "published_at": "2018-03-16",
+          "source": "wotc",
+          "comment": "The creature card returned to your hand is chosen at random as the ability resolves. If any player responds to the ability, that player won't yet know what card will be returned."
+        }
+      ]
+    },
+    {
+      "oracle_id": "8bca5627-27c2-4d10-85c5-2451daa94c5d",
+      "name": "Woodland Sleuth",
+      "mana_cost": "{3}{G}",
+      "type_line": "Creature — Human Scout",
+      "oracle_text": "Morbid — When this creature enters, if a creature died this turn, return a creature card at random from your graveyard to your hand.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Morbid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "8bca5627-27c2-4d10-85c5-2451daa94c5d",
+          "published_at": "2011-09-22",
+          "source": "wotc",
+          "comment": "The creature card isn’t chosen at random until the ability resolves."
+        },
+        {
+          "oracle_id": "8bca5627-27c2-4d10-85c5-2451daa94c5d",
+          "published_at": "2011-09-22",
+          "source": "wotc",
+          "comment": "Woodland Sleuth could die in response to its own morbid ability. If this happens, the ability could return Woodland Sleuth to its owner’s hand."
+        }
+      ]
+    },
+    {
+      "oracle_id": "1b9df437-6988-4ddc-80c4-893e11076067",
+      "name": "Charmbreaker Devils",
+      "mana_cost": "{5}{R}",
+      "type_line": "Creature — Devil",
+      "oracle_text": "At the beginning of your upkeep, return an instant or sorcery card at random from your graveyard to your hand.\nWhenever you cast an instant or sorcery spell, this creature gets +4/+0 until end of turn.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0,
+      "rulings": [
+        {
+          "oracle_id": "1b9df437-6988-4ddc-80c4-893e11076067",
+          "published_at": "2017-11-17",
+          "source": "wotc",
+          "comment": "Because the first ability doesn't target the instant or sorcery card, any instants or sorceries put into your graveyard in response to that ability may be returned to your hand."
+        },
+        {
+          "oracle_id": "1b9df437-6988-4ddc-80c4-893e11076067",
+          "published_at": "2017-11-17",
+          "source": "wotc",
+          "comment": "The instant or sorcery card returned to your hand is chosen at random as Charmbreaker Devils's first ability resolves. If any player responds to the ability, that player won't yet know what card will be returned."
+        },
+        {
+          "oracle_id": "1b9df437-6988-4ddc-80c4-893e11076067",
+          "published_at": "2017-11-17",
+          "source": "wotc",
+          "comment": "All players get to see which card you chose at random as it's returned to your hand."
+        }
+      ]
+    },
+    {
+      "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+      "name": "Viconia, Drow Apostate",
+      "mana_cost": "{2}{B}",
+      "type_line": "Legendary Creature — Elf Cleric",
+      "oracle_text": "At the beginning of your upkeep, if there are four or more creature cards in your graveyard, return a creature card at random from your graveyard to your hand.\nChoose a Background (You can have a Background as a second commander.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Choose a background"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won’t have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won’t usually be a creature anyway)."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "You can choose two commanders that are the same color or colors."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate."
+        },
+        {
+          "oracle_id": "22e36922-a81a-4a0c-b698-51b48bd91ce6",
+          "published_at": "2022-06-10",
+          "source": "wotc",
+          "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders’ combined color identities."
+        }
+      ]
+    },
+    {
+      "oracle_id": "6591a589-deb4-462f-a4f1-f6261f3433c3",
+      "name": "Exalted Flamer of Tzeentch",
+      "mana_cost": "{2}{U}{R}",
+      "type_line": "Creature — Demon",
+      "oracle_text": "Sorcerous Inspiration — At the beginning of your upkeep, return an instant or sorcery card at random from your graveyard to your hand.\nFire of Tzeentch — Whenever you cast an instant or sorcery spell, this creature deals 1 damage to each opponent.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Sorcerous Inspiration",
+        "Fire of Tzeentch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": []
+    },
+    {
+      "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+      "name": "Surreal Memoir",
+      "mana_cost": "{3}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Return an instant card at random from your graveyard to your hand.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Rebound"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-07-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If a spell with rebound that you cast from your hand doesn't resolve for any reason (due being countered by a spell like Cancel, or because all of its targets are illegal), rebound has no effect. The spell is simply put into your graveyard. You won't get to cast it again next turn."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you have only one instant card in your graveyard as Surreal Memoir resolves, that's the one you'll return to your hand."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you cast a spell with rebound from anywhere other than your hand (such as from your graveyard due to Sins of the Past, from your library due to cascade, or from your opponent's hand due to Sen Triplets), rebound won't have any effect. If you do cast it from your hand, rebound will work regardless of whether you paid its mana cost (for example, if you cast it from your hand due to Maelstrom Archangel)."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you cast a spell with rebound from your hand and it resolves, it isn't put into your graveyard. Rather, it's exiled directly from the stack. Effects that care about cards being put into your graveyard won't do anything."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you are unable to cast a card from exile this way, or you choose not to, nothing happens when the delayed triggered ability resolves. The card remains exiled for the rest of the game, and you won't get another chance to cast the card. The same is true if the ability is countered (due to Stifle, perhaps)."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you're playing a format involving cards printed earlier than the _Urza's Saga_ set, you may not reorder your graveyard. In this case, you need to be more careful when selecting an instant card at random, perhaps by using dice, writing the names of the instant cards on slips of paper and choosing one of them randomly, or carefully noting the existing graveyard order so you can reestablish it after performing the method suggested above, for example."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "Rebound will have no effect on copies of spells because you don't cast them from your hand."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you're playing a format involving only cards from the _Urza's Saga_(TM) set and later, you may change the order of your graveyard at any time. That means the easiest way to choose an instant card at random from your graveyard is to take all the instant cards in your graveyard, turn them face down, shuffle them, and pick a card. Then you just put the rest back."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If a replacement effect would cause a spell with rebound that you cast from your hand to be put somewhere else instead of your graveyard (such as Leyline of the Void might), you choose whether to apply the rebound effect or the other effect as the spell resolves."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "At the beginning of your upkeep, all delayed triggered abilities created by rebound effects trigger. You may handle them in any order. If you want to cast a card this way, you do so as part of the resolution of its delayed triggered ability. Timing restrictions based on the card's type (if it's a sorcery) are ignored. Other restrictions are not (such as the one from Rule of Law)."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "All players get to see which card you chose at random."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you cast a card from exile this way, it will go to your graveyard when it resolves, fails to resolve, or is countered. It won't go back to exile."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "Surreal Memoir isn't targeted. You don't choose an instant card at random from your graveyard until it resolves. Once you randomly select a card, it's too late for players to respond."
+        },
+        {
+          "oracle_id": "fa482ded-b24c-4f9e-948e-d0620e907b8b",
+          "published_at": "2010-06-15",
+          "source": "wotc",
+          "comment": "If you have multiple instant cards in your graveyard with the same name, and one of them is being targeted by another spell on the stack or is enchanted (with Spellweaver Volute, for example), you must differentiate them so you know which one (if any) is chosen at random. In that case, it may be better to use dice or another method that allows you to differentiate between the instant cards to choose one at random."
+        }
+      ]
+    }
+  ]
+}
