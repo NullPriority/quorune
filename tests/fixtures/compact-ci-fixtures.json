@@ -210,6 +210,7 @@
     "tests/fixtures/public-static-action-rule-cards.json",
     "tests/fixtures/qualified-declaration-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",
+    "tests/fixtures/qualified-hexproof-cards.json",
     "tests/fixtures/qualified-landwalk-cards.json",
     "tests/fixtures/qualified-regeneration-cards.json",
     "tests/fixtures/quantified-target-keyword-cards.json",

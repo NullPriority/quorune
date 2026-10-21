@@ -13,6 +13,7 @@ from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
+from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS,QUALIFIED_HEXPROOF_CAPABILITY
 from .source_protection_choice_shapes import source_protection_choice_capabilities
 from .source_fixed_protection_shapes import source_fixed_protection_capabilities
 from .affected_player_choice_coverage import (
@@ -403,6 +404,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "activation.tap_untap_cost.haste",
     ),
     _HEXPROOF_MECHANIC: ("target.protection.hexproof_permanent",),
+    **{keyword:(QUALIFIED_HEXPROOF_CAPABILITY,) for keyword in QUALIFIED_HEXPROOF_KEYWORDS},
     _SHROUD_MECHANIC: ("target.protection.shroud_permanent",),
     _REACH_MECHANIC: ("combat.block.reach",),
     _TRAMPLE_MECHANIC: ("combat.damage.assignment.trample",),

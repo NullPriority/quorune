@@ -6769,6 +6769,23 @@
         "test_damage_prevention_creation",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "qualified-hexproof-source-quality",
+      "patterns": [
+        "quorune/qualified_hexproof.py",
+        "quorune/compiler/qualified_hexproof_keywords.py",
+        "quorune/rules/current_face_keywords.py",
+        "tests/test_qualified_hexproof.py",
+        "tests/fixtures/qualified-hexproof-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_hexproof",
+        "test_hexproof_targeting",
+        "test_target_restrictions",
+        "test_static_keyword_removal",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

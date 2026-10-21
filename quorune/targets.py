@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .qualified_hexproof import keyword_type_terms
 
 from dataclasses import dataclass, field
 import re
@@ -542,7 +543,7 @@ class TargetGroup:
     ) -> bool:
         """Evaluate the canonical current keyword predicate."""
 
-        actual = {str(value).casefold() for value in keywords}
+        actual = keyword_type_terms(keywords)
         required = {value.casefold() for value in self.keywords_all}
         excluded = {value.casefold() for value in self.keywords_none}
         return required.issubset(actual) and not actual.intersection(excluded)

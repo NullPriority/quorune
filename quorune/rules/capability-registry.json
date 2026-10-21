@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 427,
+  "registry_version": 428,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -38703,6 +38703,144 @@
       "dependency_fail_closed_rationale": "Typed original attacker, target and defending-player context bind the optional requirement to canonical declaration solving.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh native Goblin Grappler witnesses kill compiler trigger production, actual requirement commitment and canonical target untapping omissions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "target.protection.hexproof_qualified",
+      "version": 1,
+      "official_rules": [
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g",
+        "608.2b",
+        "608.2h",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Qualified Hexproof uses the current protected controller, opposing spell/ability controller and current/LKI source qualities; its variants remain Hexproof for removal and queries.",
+        "inputs": [
+          "trusted printed qualified keyword values",
+          "current protected and acting controller",
+          "typed acting source current/LKI characteristics"
+        ],
+        "outputs": [
+          "shared offered/accepted/resolution target legality",
+          "current keyword query and removal semantics"
+        ],
+        "exclusions": [
+          "unknown qualities",
+          "unowned compound type lists",
+          "unrepresented conditional or chosen qualifiers"
+        ]
+      },
+      "dependencies": [
+        "target.protection.hexproof_permanent",
+        "target.prohibition.fixed_source_quality"
+      ],
+      "implementation_components": [
+        "quorune.qualified_hexproof.qualified_hexproof_prohibits",
+        "quorune.compiler.qualified_hexproof_keywords.qualified_hexproof_keywords",
+        "quorune.rules.current_face_keywords.current_printed_face_keywords"
+      ],
+      "positive_tests": [
+        "test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+        "test_actual_breaker_annihilator_and_colored_blocker_still_follow_combat_rules",
+        "test_actual_breaker_cast_life_counts_colorless_permanents_before_entry",
+        "test_actual_clone_copies_the_qualified_keyword_without_gaining_plain_hexproof",
+        "test_actual_general_triggers_only_multicolored_casts_and_keeps_complete_token",
+        "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+        "test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+        "test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+        "test_actual_qualified_grant_adds_one_variant_and_keeps_nonmatching_red_targeting",
+        "test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast",
+        "test_actual_weaver_allows_red_damage_then_gains_life_and_creates_saproling",
+        "test_both_knights_keep_current_color_condition_and_first_strike_combat",
+        "test_monocolored_hexproof_allows_actual_colorless_ability_and_multicolored_spell",
+        "test_printed_plain_and_qualified_hexproof_coexist_through_normal_registration",
+        "test_six_originals_have_complete_source_spans_and_distinct_qualified_keywords"
+      ],
+      "negative_tests": [
+        "test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+        "test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+        "test_actual_hexproof_prohibition_and_ability_loss_revalidate_an_inflight_target",
+        "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+        "test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+        "test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+        "test_keyword_type_queries_removal_and_current_quality_matrix_are_closed",
+        "test_later_plain_hexproof_grant_invalidates_a_previously_legal_blue_spell",
+        "test_literal_hexproof_removal_removes_qualified_variants",
+        "test_verified_withdrawals_and_runtime_minimum_stripping_reject"
+      ],
+      "interaction_tests": [
+        "test_actual_breaker_annihilator_and_colored_blocker_still_follow_combat_rules",
+        "test_actual_breaker_cast_life_counts_colorless_permanents_before_entry",
+        "test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+        "test_actual_clone_copies_the_qualified_keyword_without_gaining_plain_hexproof",
+        "test_actual_general_triggers_only_multicolored_casts_and_keeps_complete_token",
+        "test_actual_hexproof_prohibition_and_ability_loss_revalidate_an_inflight_target",
+        "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+        "test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+        "test_actual_qualified_grant_adds_one_variant_and_keeps_nonmatching_red_targeting",
+        "test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast",
+        "test_actual_weaver_allows_red_damage_then_gains_life_and_creates_saproling",
+        "test_both_knights_keep_current_color_condition_and_first_strike_combat",
+        "test_keyword_type_queries_removal_and_current_quality_matrix_are_closed",
+        "test_later_plain_hexproof_grant_invalidates_a_previously_legal_blue_spell",
+        "test_literal_hexproof_removal_removes_qualified_variants",
+        "test_qualified_keyword_is_hexproof_for_both_shared_query_owners"
+      ],
+      "multiplayer_tests": [
+        "test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+        "test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+        "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+        "test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+        "test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast"
+      ],
+      "privacy_tests": [
+        "test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+        "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+        "test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants"
+      ],
+      "replay_tests": [
+        "test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+        "test_actual_breaker_annihilator_and_colored_blocker_still_follow_combat_rules",
+        "test_actual_breaker_cast_life_counts_colorless_permanents_before_entry",
+        "test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+        "test_actual_clone_copies_the_qualified_keyword_without_gaining_plain_hexproof",
+        "test_actual_general_triggers_only_multicolored_casts_and_keeps_complete_token",
+        "test_actual_hexproof_prohibition_and_ability_loss_revalidate_an_inflight_target",
+        "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+        "test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+        "test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+        "test_actual_qualified_grant_adds_one_variant_and_keeps_nonmatching_red_targeting",
+        "test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast",
+        "test_actual_weaver_allows_red_damage_then_gains_life_and_creates_saproling",
+        "test_both_knights_keep_current_color_condition_and_first_strike_combat",
+        "test_later_plain_hexproof_grant_invalidates_a_previously_legal_blue_spell",
+        "test_literal_hexproof_removal_removes_qualified_variants",
+        "test_monocolored_hexproof_allows_actual_colorless_ability_and_multicolored_spell"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "A canonically verified registry withdrawal leaves the original qualified-Hexproof card residual, and stripping its runtime capability is rejected for both printed keywords and an actual grant program.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Knight of Grace witnesses kill omission of the qualified keyword compiler producer and actual source-quality verdict. Source departure and returned-incarnation witnesses protect current/LKI timing separately.",
       "blockers": [],
       "status": "trusted"
     }

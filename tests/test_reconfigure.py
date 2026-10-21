@@ -22,6 +22,16 @@ import test_turn_count_self_costs as controls
 
 
 class ReconfigureTests(unittest.TestCase):
+    def test_resolve_components_do_not_require_activation_catalog_fields(self):
+        from test_bound_effect_programs import record
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        source=record('Target creature gets +1/+0 until end of turn. Draw a card.','Instant')
+        program=compile_best_available_card_program(self.db,source,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+
     register_fixture_cards_on_add=True
     session=controls.TurnCountSelfCostTests.session
     add=controls.TurnCountSelfCostTests.add

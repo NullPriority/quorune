@@ -273,12 +273,28 @@ mechanic reusable pieces plus `capability.target.revalidate_resolution` and
 `mechanic.cr-115-targets`.
 
 The compiler recognizes ordinary permanent Hexproof and Shroud
-case-insensitively and composes them with sibling keyword nodes. It also lowers
-the bounded temporary grant "target creature gains shroud until end of turn"
-through the same typed characteristic and target-revalidation path. Player
-Hexproof, player Shroud, Hexproof from a quality, targeting-exception effects,
-multiple or each-quality variants, and rules-text equivalents remain precise
-material residuals. Runtime code does not reinterpret those variants.
+case-insensitively and composes them with sibling keyword nodes. Qualified
+Hexproof retains separate closed keyword values for fixed colors, each color,
+monocolored or multicolored sources and single represented card types. The
+printed-face bridge preserves those values instead of a collapsed bare
+Hexproof index entry. An independently printed or later granted plain Hexproof
+ability still applies to all opposing sources.
+
+The pure target verdict consumes the existing typed acting-source facts. A
+spell's current characteristics, or an ability source's current or immediate
+departure information, supply its qualities. The ability controller supplies
+the opponent relationship even after its source changes controller. A returned
+incarnation cannot replace the original source information. Colorless sources
+are neither monocolored nor multicolored. Matching qualities affect targeting;
+they do not prevent blocking, damage or untargeted effects.
+
+Shared keyword queries treat a qualified variant as Hexproof. Removing or
+prohibiting Hexproof removes every variant; later grants and independent plain
+Hexproof follow the ordinary layer-6 owner. Existing typed grants and removal
+carry these closed values through the same target-revalidation path. Fixed
+player keywords use their separate components described above. Unrepresented
+chosen qualities, compound type lists, targeting exceptions and rules-text
+equivalents remain material residuals. Runtime code consumes compiled values.
 
 ## Replay, privacy, rollback, and performance
 
@@ -293,11 +309,11 @@ current battlefield characteristics and do not expose hidden-zone candidates
 or another seat's decision. The pure verdict is constant in the number of game
 objects; candidate enumeration remains owned by the surrounding target query.
 
-Primary evidence is in `test_hexproof_targeting.py`,
+Primary evidence is in `test_qualified_hexproof.py`, `test_hexproof_targeting.py`,
 `test_shroud_targeting.py`, `test_fixed_mana_value_target_predicates.py`,
 `test_fixed_damage_history_targets.py`,
 `test_fixed_direct_target_predicates.py`, `test_oracle_ir.py`, and
-`test_capability_implementation_mutations.py`. Broader player Hexproof, player
-Shroud, Hexproof-from-quality, effects that ignore either ability, hidden-zone
-targets, and unsupported ability-changing, copying, face-down, or merged-object
+`test_capability_implementation_mutations.py`. Broader player keyword grants,
+effects that ignore either ability, hidden-zone targets, and unsupported
+ability-changing, copying, face-down, or merged-object
 keyword producers remain outside these trusted slices.

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b16510a4429a6dd3a0e5865c5f3f98772d97479e045b21bce71c36bec287a828",
-  "declaration_source_fingerprint": "525d1eda915d00110fe71ef945596faa2ef6a8cd6ba61f2f19c8b3eab332b493",
+  "registry_fingerprint": "19f3e3b9557132d53224461ccb3b3570d91cb555a383b7d9ed08d1a2b955133b",
+  "declaration_source_fingerprint": "70d59c4d4e5d8ca802dd384fe12bc32d1267dab33d5320ca5c7237d281bb6a82",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -225727,6 +225727,1502 @@
       "applicability_note": "Reject an injected opponent Hexproof target without changing the authoritative state hash."
     },
     {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_breaker_annihilator_and_colored_blocker_still_follow_combat_rules",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_breaker_cast_life_counts_colorless_permanents_before_entry",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_clone_copies_the_qualified_keyword_without_gaining_plain_hexproof",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_general_triggers_only_multicolored_casts_and_keeps_complete_token",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_hexproof_prohibition_and_ability_loss_revalidate_an_inflight_target",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_qualified_grant_adds_one_variant_and_keeps_nonmatching_red_targeting",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_weaver_allows_red_damage_then_gains_life_and_creates_saproling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_both_knights_keep_current_color_condition_and_first_strike_combat",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_keyword_type_queries_removal_and_current_quality_matrix_are_closed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_later_plain_hexproof_grant_invalidates_a_previously_legal_blue_spell",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_literal_hexproof_removal_removes_qualified_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_qualified_keyword_is_hexproof_for_both_shared_query_owners",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_fresh_keyword_producer_and_actual_quality_guard_omissions_are_killed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_fresh_lki_capture_query_family_and_actual_removal_omissions_are_killed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_hexproof_prohibition_and_ability_loss_revalidate_an_inflight_target",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_keyword_type_queries_removal_and_current_quality_matrix_are_closed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_later_plain_hexproof_grant_invalidates_a_previously_legal_blue_spell",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_literal_hexproof_removal_removes_qualified_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "negative",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_verified_withdrawals_and_runtime_minimum_stripping_reject",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_breaker_annihilator_and_colored_blocker_still_follow_combat_rules",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_breaker_cast_life_counts_colorless_permanents_before_entry",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_clone_copies_the_qualified_keyword_without_gaining_plain_hexproof",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_general_triggers_only_multicolored_casts_and_keeps_complete_token",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_qualified_grant_adds_one_variant_and_keeps_nonmatching_red_targeting",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_weaver_allows_red_damage_then_gains_life_and_creates_saproling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_both_knights_keep_current_color_condition_and_first_strike_combat",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_monocolored_hexproof_allows_actual_colorless_ability_and_multicolored_spell",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_printed_plain_and_qualified_hexproof_coexist_through_normal_registration",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "positive",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_six_originals_have_complete_source_spans_and_distinct_qualified_keywords",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_black_opponent_spell_is_rejected_while_blue_spell_still_resolves",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_breaker_annihilator_and_colored_blocker_still_follow_combat_rules",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_breaker_cast_life_counts_colorless_permanents_before_entry",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_changed_source_uses_departure_lki_and_not_a_returned_red_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_clone_copies_the_qualified_keyword_without_gaining_plain_hexproof",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_general_triggers_only_multicolored_casts_and_keeps_complete_token",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_hexproof_prohibition_and_ability_loss_revalidate_an_inflight_target",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_own_matching_spell_remains_legal_and_layer_six_loss_removes_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_planeswalker_ability_is_blocked_but_colorless_artifact_ability_is_allowed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_qualified_grant_adds_one_variant_and_keeps_nonmatching_red_targeting",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_valkyrie_retains_flying_lifelink_and_paid_once_after_attack_boast",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_actual_weaver_allows_red_damage_then_gains_life_and_creates_saproling",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_both_knights_keep_current_color_condition_and_first_strike_combat",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_later_plain_hexproof_grant_invalidates_a_previously_legal_blue_spell",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_literal_hexproof_removal_removes_qualified_variants",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
+      "capability_id": "target.protection.hexproof_qualified",
+      "evidence_class": "replay",
+      "test_id": "tests.test_qualified_hexproof.QualifiedHexproofTests.test_monocolored_hexproof_allows_actual_colorless_ability_and_multicolored_spell",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2h",
+        "613.1f",
+        "702.11a",
+        "702.11b",
+        "702.11d",
+        "702.11e",
+        "702.11f",
+        "702.11g"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete printed originals and native commands preserve controller distinctions, current/departure source qualities, returned incarnations, matching versus nonmatching sources, current keyword queries/removal, prohibition, copies, all sibling bodies, rollback, privacy and exact pending/pre-action replay. Verified authority withdrawals and fresh producer/verdict omissions protect trust."
+    },
+    {
       "capability_id": "target.protection.shroud_permanent",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
@@ -282070,5 +283566,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "0e8df607f8e0f8317ea520889c000462b9a25a4312dd3be5f1a349938980e073"
+  "fingerprint": "868218718afa39ec764c0346eb839735ccfaaf362b706a31b8432bc5c8aab0ab"
 }

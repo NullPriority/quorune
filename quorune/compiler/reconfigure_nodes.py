@@ -61,6 +61,7 @@ def reconfigure_nodes(*, record, node_id, line, material_line, span,
 
 
 def is_closed_reconfigure_program(program):
+    if getattr(program,'event',None)!='activate':return False
     from ..card_programs.admission import program_has_complete_card_program_admission
     from ..rules.attachment_action_capability_shapes import reconfigure_node_capabilities
     from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
@@ -73,7 +74,7 @@ def is_closed_reconfigure_program(program):
     conditions = (() if program.effects[0].get('op') == 'attach' else (
         ActivationCondition(ActivationConditionKind.SOURCE_ATTACHED_TO_CREATURE),)) if required else None
     return bool(required and set(required).issubset(program.capability_dependencies)
-        and program.active_zone == 'battlefield' and program.event == 'activate'
+        and program.active_zone == 'battlefield'
         and program_has_complete_card_program_admission(program)
         and ability.reconfigure and ability.sorcery_speed
         and ability.activation_conditions == conditions

@@ -17517,6 +17517,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Searing Barrage damages the creature and adds three only to current controller C, distinct from owner B and caster A, with private pending/pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "piece_ids": [
+        "capability.target.protection.hexproof_qualified",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.protection.hexproof_qualified",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Strict original Knight of Grace rejects opposing black Murder, accepts its own matching black spell, then uses the existing reviewed Dauthi destination-replacement controls. The affected controller selects separately for destruction and spell disposal; both cards reach exile with one void counter each. Wrong-principal rollback, pending load, private projection, exact costs and pre-cast replay retain both choices. This does not claim strict whole-card Dauthi support or a state-based lethal-damage replacement result."
     }
   ]
 }
