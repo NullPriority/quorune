@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 437,
+  "registry_version": 438,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5740,7 +5740,7 @@
         "test_foreign_cast_history_does_not_enable_the_carrying_spells_colored_discount",
         "test_keyword_instances_and_equivalent_text_keep_exact_spans_and_independent_terms",
         "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
-        "test_original_keyword_closes_only_the_three_independently_complete_bodies",
+        "test_original_keyword_preserves_complete_and_unrepresented_result_bodies",
         "test_party_size_uses_maximum_distinct_creature_assignment",
         "test_public_cast_cost_closure_compiles_selected_grammar",
         "test_selected_back_face_cannot_inherit_front_face_self_reduction",
@@ -5903,7 +5903,7 @@
         "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
         "test_keyword_instances_and_equivalent_text_keep_exact_spans_and_independent_terms",
         "test_native_generic_floor_repeated_instances_and_kicker_total_preserve_private_draws",
-        "test_original_keyword_closes_only_the_three_independently_complete_bodies"
+        "test_original_keyword_preserves_complete_and_unrepresented_result_bodies"
       ],
       "negative_tests": [
         "test_actual_curtains_call_advertises_and_accepts_reduced_cost_with_two_targets",
@@ -36299,7 +36299,7 @@
         "test_price_and_owned_result_are_required_separately_at_promotion_and_runtime",
         "test_undefined_ambiguous_and_unrepresented_price_x_remains_residual",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_unrepresented_self_exile_sibling_keeps_original_wildest_dreams_residual"
+        "test_wildest_self_exile_promotes_without_admitting_unrepresented_result_siblings"
       ],
       "interaction_tests": [
         "test_actual_cascade_forces_original_gridlock_to_zero_target_count",
@@ -39818,6 +39818,164 @@
       "dependency_fail_closed_rationale": "Verified withdrawal of the declared hand price, ordinary discard owner or independently required target-count authority blocks the original. Runtime minimum stripping rejects removal of the declared price authority.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual Aether Tide detects omitted compiler production, actual required-count binding forced to one and canonical discard commitment omitted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.exile.resolving_spell",
+      "version": 1,
+      "official_rules": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "After an independently closed ordinary spell body resolves, exile that same physical spell as its terminal source-self instruction. Countering or all-target-illegal rejection prevents the instruction; copies cannot exile the original card.",
+        "inputs": [
+          "complete ordinary resolving-spell source context",
+          "exact source-self terminal clause",
+          "independently closed body, target and price descriptors",
+          "existing physical stack card or cardless spell copy"
+        ],
+        "outputs": [
+          "existing resolution destination set to exile",
+          "normal owner-correct replacement-aware stack departure after prior effects",
+          "ordinary graveyard exit on counter or all-target-illegal rejection",
+          "no original-card move for a cardless copy"
+        ],
+        "exclusions": [
+          "nonterminal self exile",
+          "unknown prefixes or suffixes",
+          "other-object exile",
+          "conditional or optional self exile",
+          "unsupported faces or sibling abilities",
+          "unowned return, target or price bodies"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.spell_self_exile.terminal_self_exile_body",
+        "quorune.compiler.spell_self_exile.spell_self_exile_effect_compiler",
+        "quorune.compiler.spell_self_exile.closed_spell_self_exile_program",
+        "quorune.rules.spell_self_exile.spell_self_exile_node_capabilities",
+        "quorune.rules.spell_self_exile.spell_self_exile_runtime_dependencies",
+        "quorune.stack_resolution.complete_stack_resolution",
+        "quorune.compiler.nonleaf_effect_closure.effect_program_is_closed"
+      ],
+      "positive_tests": [
+        "test_actual_treasured_find_returns_its_card_then_exiles_itself",
+        "test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+        "test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+        "test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+        "test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+        "test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+        "test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+        "test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+        "test_terminal_self_exile_keeps_source_spans_and_rejects_unowned_source_clauses"
+      ],
+      "negative_tests": [
+        "test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+        "test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+        "test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+        "test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+        "test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+        "test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+        "test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards",
+        "test_terminal_self_exile_keeps_source_spans_and_rejects_unowned_source_clauses",
+        "test_verified_exit_withdrawal_and_stored_destination_owner_stripping_reject",
+        "test_fresh_originals_kill_self_exit_producer_destination_and_binding_omissions"
+      ],
+      "interaction_tests": [
+        "test_actual_treasured_find_returns_its_card_then_exiles_itself",
+        "test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+        "test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+        "test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+        "test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+        "test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+        "test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+        "test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+        "test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+        "test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+        "test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+        "test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+        "test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+        "test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+        "test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards"
+      ],
+      "multiplayer_tests": [
+        "test_actual_treasured_find_returns_its_card_then_exiles_itself",
+        "test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+        "test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+        "test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+        "test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+        "test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+        "test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+        "test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+        "test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+        "test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+        "test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+        "test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+        "test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+        "test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+        "test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards"
+      ],
+      "privacy_tests": [
+        "test_actual_treasured_find_returns_its_card_then_exiles_itself",
+        "test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+        "test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+        "test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+        "test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+        "test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+        "test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+        "test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+        "test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+        "test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+        "test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+        "test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+        "test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+        "test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+        "test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards"
+      ],
+      "replay_tests": [
+        "test_actual_treasured_find_returns_its_card_then_exiles_itself",
+        "test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+        "test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+        "test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+        "test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+        "test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+        "test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+        "test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+        "test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+        "test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+        "test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+        "test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+        "test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+        "test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+        "test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The terminal destination reuses the shared stack/zone owner without another capability dependency; every body, target and price capability is retained independently. Canonically verified withdrawal of this owner rejects the complete source.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original-card source-producer and actual completion-destination omissions fail native consequences; omitting stored-destination runtime requirements fails the real emitted-program owner-stripping witness.",
       "blockers": [],
       "status": "trusted"
     }

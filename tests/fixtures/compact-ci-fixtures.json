@@ -244,6 +244,7 @@
     "tests/fixtures/scoped-damage-prevention-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/self-cast-restriction-cards.json",
+    "tests/fixtures/self-exile-return-cards.json",
     "tests/fixtures/self-public-zone-cards.json",
     "tests/fixtures/self-target-reduction-cards.json",
     "tests/fixtures/self-zone-discard-cast-cards.json",
@@ -512,7 +513,7 @@
     },
     {
       "source": "tests/test_undaunted.py",
-      "symbol": "UndauntedCompilerTests.test_original_keyword_closes_only_the_three_independently_complete_bodies",
+      "symbol": "UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies",
       "card_names": [],
       "oracle_ids": [],
       "deck_files": [],

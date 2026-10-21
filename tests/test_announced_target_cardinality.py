@@ -90,9 +90,15 @@ class AnnouncedTargetCardinalityRuntimeTests(unittest.TestCase):
         self.assertTrue(all(session.state.cards[c.object_id].tapped for c in (taxed,other)))
         self.private_replay(session,private)
 
-    def test_unrepresented_self_exile_sibling_keeps_original_wildest_dreams_residual(self):
+    def test_wildest_self_exile_promotes_without_admitting_unrepresented_result_siblings(self):
         session=self.session(729212)
-        for name in ('Wildest Dreams','Divergent Equation','Pest Infestation'):
+        source=self.add(session.engine,'Wildest Dreams',zone='hand')
+        self.assertTrue(self.binding(session,source)['strict_capability_ready'])
+        programs=[p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if p.event=='resolve']
+        self.assertEqual(1,len(programs));self.assertEqual('exile',programs[0].destination)
+        from quorune.compiler.announced_target_sets import announced_target_set_effect_template
+        self.assertIsNone(announced_target_set_effect_template(self.db.lookup('Wildest Dreams').oracle_text))
+        for name in ('Divergent Equation','Pest Infestation'):
             source=self.add(session.engine,name,zone='hand')
             self.assertFalse(self.binding(session,source)['strict_capability_ready'],name)
 

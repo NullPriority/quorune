@@ -87,7 +87,7 @@ class UndauntedCompilerTests(unittest.TestCase):
                 replace(record('Undaunted', 'Sorcery'), keywords=('Undaunted',)),
                 capability_registry=CapabilityRegistry(changed)).status)
 
-    def test_original_keyword_closes_only_the_three_independently_complete_bodies(self):
+    def test_original_keyword_preserves_complete_and_unrepresented_result_bodies(self):
         data = json.loads((ROOT / 'tests/fixtures/undaunted-cards.json').read_text(encoding='utf-8'))
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'cards.sqlite3'
@@ -96,9 +96,11 @@ class UndauntedCompilerTests(unittest.TestCase):
                 for row in data['cards']:
                     card = db.by_oracle_id(row['oracle_id'])
                     ir = compile_oracle_card(card, capability_registry=load_default_capability_registry())
-                    expected = 'partial' if card.name in {'Seeds of Renewal', 'Divergent Transformations'} else 'exact'
+                    expected = 'partial' if card.name == 'Divergent Transformations' else 'exact'
                     with self.subTest(name=card.name):
                         self.assertEqual(expected, ir.status, ir.material_residuals)
+                        if card.name == 'Seeds of Renewal':
+                            self.assertTrue(any('zone.exile.resolving_spell' in node.capability_dependencies for face in ir.faces for node in face.nodes))
 
 
 class UndauntedRuntimeTests(unittest.TestCase):

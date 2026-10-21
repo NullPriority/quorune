@@ -105,6 +105,13 @@ Trust computation is deterministic metadata work. It is performed at compile,
 preflight, load, and replay boundaries rather than inside characteristic hot
 paths.
 
+Terminal spell-self exile retains separate body and destination authority.
+The stored marker, source context, template wrapper and exile destination must
+agree, and the runtime binder independently requires the resolving-spell exit
+capability. Removing its declaration or changing those fields rejects strict
+admission. Existing price owners validate any surrounding additional cost
+before the independently closed body is promoted.
+
 The dynamic requirement reader validates typed `cast_x_effect_amount` values
 across effects, handlers, target and cost data. Each requires
 `quantity_expression.declared_effect_amount` independently of its surrounding

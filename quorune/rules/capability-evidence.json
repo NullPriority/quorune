@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "eb7cf6343383b356aa5e1a45cc33af3604932c279516d59dae8d7922ce9e748a",
-  "declaration_source_fingerprint": "9162152fb0cbbe4c8d731d2411c81daa3138447a86c9e05515da65c9e6662554",
+  "registry_fingerprint": "4a3421882efa7cde4d0c15df1f620f42fa35d45b78d2322e24bb65b3ff6c22ac",
+  "declaration_source_fingerprint": "94b58960b980d3e69ecbcbe3cbc7b610b9404e65b9cb441ca7ba58d8f71a582c",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -40536,7 +40536,7 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
-      "test_id": "tests.test_undaunted.UndauntedCompilerTests.test_original_keyword_closes_only_the_three_independently_complete_bodies",
+      "test_id": "tests.test_undaunted.UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies",
       "official_rule_ids": [
         "109.5",
         "111.1",
@@ -44377,7 +44377,7 @@
     {
       "capability_id": "casting.cost.undaunted",
       "evidence_class": "positive",
-      "test_id": "tests.test_undaunted.UndauntedCompilerTests.test_original_keyword_closes_only_the_three_independently_complete_bodies",
+      "test_id": "tests.test_undaunted.UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies",
       "official_rule_ids": [
         "702.125a",
         "702.125b",
@@ -229075,7 +229075,7 @@
     {
       "capability_id": "target.cardinality.mana_announced_x",
       "evidence_class": "negative",
-      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_unrepresented_self_exile_sibling_keeps_original_wildest_dreams_residual",
+      "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_wildest_self_exile_promotes_without_admitting_unrepresented_result_siblings",
       "official_rule_ids": [
         "107.3a",
         "107.3b",
@@ -288453,6 +288453,1788 @@
       "applicability_note": "Replay an ordinary priority-issued land play through fixed condition evaluation and the canonical zone journal to the same authoritative hash."
     },
     {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_treasured_find_returns_its_card_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_treasured_find_returns_its_card_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_fresh_originals_kill_self_exit_producer_destination_and_binding_omissions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_verified_exit_withdrawal_and_stored_destination_owner_stripping_reject",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_fresh_originals_kill_self_exit_producer_destination_and_binding_omissions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_terminal_self_exile_keeps_source_spans_and_rejects_unowned_source_clauses",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_verified_exit_withdrawal_and_stored_destination_owner_stripping_reject",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_treasured_find_returns_its_card_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_terminal_self_exile_keeps_source_spans_and_rejects_unowned_source_clauses",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_treasured_find_returns_its_card_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_flood_recollection_returns_an_instant_with_its_printed_restriction",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_restock_returns_two_distinct_card_types_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_seeds_renewal_uses_existing_undaunted_price_and_returns_two_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_temporal_trespass_retains_delve_and_creates_the_next_extra_turn",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_treasured_find_returns_its_card_then_exiles_itself",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_vivid_revival_returns_three_distinct_multicolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_actual_wildest_dreams_pays_double_x_for_two_returns_then_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_commander_return_replacement_load_resumes_before_the_terminal_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_countering_prevents_self_exile_and_never_refunds_the_original_price",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_qualified_return_filters_reject_owned_wrong_types_and_monocolored_cards",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_returned_target_incarnation_is_illegal_after_real_exile_and_graveyard_return",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
+      "capability_id": "zone.exile.resolving_spell",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_exile_return_spells.SelfExileReturnSpellTests.test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "707.10",
+        "707.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole original sources preserve body, target, price and exit authority. Normal casts, printed Undaunted/Delve, zero choices, counter/all-illegal exits, partial targets, changed incarnations, copied-spell ownership, commander replacement, rollback, public-known versus hidden hand projection and pending loaded replay bound this terminal-only contract."
+    },
+    {
       "capability_id": "zone.exile_until_source_departure.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_actual_exile_departure_does_not_return_retired_held_object_when_source_leaves",
@@ -293513,5 +295295,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "83e0926b18cde68653acae1fd6d4c4b35471d6e3c4cbd20647b125829d258842"
+  "fingerprint": "e932ed2b1f658f2580f62a603702fe5ae12030d3a2e4d0c3e7100e00b67190b5"
 }

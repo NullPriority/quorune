@@ -187,10 +187,13 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
     available = bool(is_spell and not record.faces and symbols and set(symbols) == {"X"})
     if not available and 'X' not in symbols and is_spell and not record.faces and re.search(r'\bX\b',oracle_text,re.I):
         available=_additional_price_declares_x(oracle_text)
-    return partial(compile_effect,
+    selected = partial(compile_effect,
         cast_x_available=available and re.search(r"\bX (?:is|can't|cannot)\b",oracle_text,re.I) is None,
         forbid_public_x=available,
         kicked_self_replacement_available=bool(is_spell and not record.faces))
+    from .spell_self_exile import spell_self_exile_effect_compiler
+    return spell_self_exile_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
+        ordinary_spell=bool(is_spell and not record.faces))
 
 
 def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:

@@ -534,7 +534,8 @@ def program_from_generated_node_group(
         ),
         effects=effects,
         handlers=[dict(handler) for node in nodes for handler in node.handlers],
-        destination=("battlefield" if "fixed-permanent-additional-cost-declaration" in first.runtime_coverage
+        destination=("exile" if 'spell-resolution-self-exile' in represented_mechanics
+            else "battlefield" if "fixed-permanent-additional-cost-declaration" in first.runtime_coverage
             else "graveyard" if first.kind in {"spell_ability", "spell_variant"} else None),
         requires_arbiter=trust_level != "trusted",
         version=1,

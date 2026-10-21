@@ -17997,6 +17997,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Essence Pulse with two complete generic destination replacements suspends simultaneous zero-toughness moves before mutation. Life gain remains exactly once across both choice actors, wrong-principal and unoffered rejection, repeated pending load and pre-cast replay. Synthetic controls are excluded from card gains."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Nostalgic Dreams pays fixedGG andXhand cards after selecting old own graveyard targets, then returns only those targets and exiles its physical source. Wrong owner/price-card targets and wrong principal roll back; public known returns and unrelated hidden hands, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+      "piece_ids": [
+        "capability.stack.copy.fixed_instant_or_sorcery",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "stack.copy.fixed_instant_or_sorcery",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Twincast preservesX and retargets the original Nostalgic body forB without another hand price. Its transient spell-copy object ceases and cannot move the original source while that source remains on the stack; the original later returnsA targets and self-exiles. Native known/private projection and pending replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual opponent Cremate removes original graveyard targets. A partially legal Restock still returns its legal target and self-exiles; all-illegal Wildest/Nostalgic/Treasured sources instead go to graveyard with every paid price retained. Pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+      "piece_ids": [
+        "capability.target.cardinality.mana_announced_x",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "target.cardinality.mana_announced_x",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Wildest Dreams and Nostalgic Dreams announceXzero, pay their unchanged printed/known additional prices, select no targets and still resolve to self exile. Wrong-principal and foreign-target rejection, known/private hand projection, pending load and pre-action replay agree; original Seeds of Renewal also resolves with zero optional targets."
     }
   ]
 }

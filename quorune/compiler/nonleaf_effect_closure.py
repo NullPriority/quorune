@@ -5,6 +5,24 @@ from __future__ import annotations
 from ..rules.self_return_capability_shapes import fixed_self_return_node_capabilities
 
 
+def effect_program_is_closed(program, *, recognizers, recursive_is_closed, composed_is_closed):
+    """Apply the shared promotion policy to a complete effect program."""
+    from ..rules.spell_self_exile import MECHANIC as SELF_EXILE_MECHANIC
+    from .spell_self_exile import closed_spell_self_exile_program
+    from .declared_effect_amounts import closed_additional_cost_x_result
+    if SELF_EXILE_MECHANIC in program.coverage:
+        return closed_spell_self_exile_program(program,body_is_closed=recursive_is_closed,
+            price_is_closed=closed_additional_cost_x_result)
+    from .permanent_additional_cost_nodes import is_closed_permanent_additional_cost_program
+    if is_closed_permanent_additional_cost_program(program):
+        return True
+    if nonleaf_effect_program_is_closed(program,recognizers=recognizers):
+        return True
+    if composed_is_closed(program,component_recognizers=recognizers):
+        return True
+    return any(recognizer(program) for recognizer in recognizers)
+
+
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     from .declared_effect_amounts import closed_additional_cost_x_result
     if closed_additional_cost_x_result(program,recognizers=recognizers):return True

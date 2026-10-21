@@ -33,6 +33,7 @@ from ..protection_attachment_exceptions import attached_protection_runtime_depen
 from ..query_effect_amount_model import cast_x_runtime_dependencies
 from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
 from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
+from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies
 
 
 def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
@@ -61,6 +62,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(spell_self_exile_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_self_exile:invalid:{exc}')
     try:required.update(typed_result_amount_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_typed_result_amount:invalid:{exc}')
     try:required.update(closed_effect_program_runtime_dependencies(program))

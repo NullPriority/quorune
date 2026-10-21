@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Execute terminal spell-self exile after independently closed spell bodies,
+  retaining printed costs, targets, counter and all-illegal exits, copied-spell
+  identity, pending commander choices and known-hand privacy.
+
 - Compose independently scoped quantity instructions with closed public-set
   results, retaining printed order, life-history timing, pending state actions
   and independent ordered-program runtime authority.
