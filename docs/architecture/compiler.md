@@ -74,6 +74,26 @@ program identities and their complete original source span. Unrepresented
 source-attribute conditions, compound numeric timing conditions and cyclic
 keyword conditions remain residual.
 
+`compiler/classic_flash.py` lowers the closed intrinsic as-though-Flash clause
+with its next-cleanup sacrifice. `rules/classic_flash.py` keeps the selected
+timing permission separate from mana and target choices. The optional casting
+form distinguishes an independent timing permission from this intrinsic one;
+the default uses an independent permission when available. Ordinary sorcery
+timing and scoped casts during resolution do not consume the intrinsic route.
+No Flash keyword is granted.
+
+An intrinsic use creates the delayed ability at accepted cast, retaining the
+cast controller and the canonical cast incarnation. The existing stack-to-
+battlefield identity continuation lets the cleanup instruction find the
+resulting permanent, while countering, recasting or blinking prevents a later
+incarnation from matching. Countering the spell leaves a once-only cleanup
+trigger with no sacrifice result. A permanent copy does not repeat the accepted
+cast action. The canonical cleanup scheduler performs normal cleanup actions
+before placing the delayed ability; the linked zone owner then records a
+sacrifice by the permanent's current controller. Other follow-up durations,
+conditional predicates and independently unowned sibling effects remain
+residuals.
+
 `compiler/cast_cost_modifier_templates.py` lowers fixed ordinary mana bundles
 for a carrying spell's self-reduction, including separate generic and colored
 components. Its public queries cover current land subtypes, fixed own-graveyard

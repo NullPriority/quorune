@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 441,
+  "registry_version": 442,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -40385,6 +40385,153 @@
       "dependency_fail_closed_rationale": "The registered static component independently requires this capability; it directly reuses the canonical current-component and cleanup owners rather than another capability.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original compiler and current adjustment-query omissions fail complete registration or actual cleanup outcomes; canonically verified owner withdrawal keeps all six originals residual.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.permission.classic_flash_cleanup",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Select an intrinsic as-though-Flash permission independently of mana costs and schedule its source-incarnation-bound next-cleanup sacrifice when that permission is used.",
+        "inputs": [
+          "current trusted intrinsic permission on the proposed face",
+          "actual casting route and timing window",
+          "canonical cast and next permanent incarnation",
+          "existing next-cleanup delayed-trigger owner"
+        ],
+        "outputs": [
+          "shared legal offers and accepted permission use",
+          "delayed creation at cast including countered original cases",
+          "current permanent-controller sacrifice through canonical zone transitions"
+        ],
+        "exclusions": [
+          "other Flash predicates or extra-mana conditions",
+          "other follow-up durations or instructions",
+          "unowned siblings",
+          "casting origin or prohibition overrides"
+        ]
+      },
+      "dependencies": [
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.classic_flash.classic_flash_node",
+        "quorune.semantic_runtime.cast_permissions.ClassicFlashPermissionHandler",
+        "quorune.rules.classic_flash.ClassicFlashCastMark",
+        "quorune.rules.classic_flash.classic_flash_proposal_details",
+        "quorune.rules.classic_flash.classic_flash_offer_fields",
+        "quorune.rules.classic_flash.commit_classic_flash_permission",
+        "quorune.trigger_processing.schedule_delayed_trigger",
+        "quorune.effect_runtime.zones_and_attachments._apply_move_if_in_zone"
+      ],
+      "positive_tests": [
+        "test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+        "test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+        "test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+        "test_intrinsic_permission_marker_and_descriptor_reject_malformed_authority"
+      ],
+      "negative_tests": [
+        "test_intrinsic_permission_marker_and_descriptor_reject_malformed_authority",
+        "test_emitted_permission_independently_requires_cleanup_owner_at_binding",
+        "test_canonically_verified_intrinsic_permission_withdrawal_keeps_complete_originals_residual",
+        "test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+        "test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+        "test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+        "test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+        "test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+        "test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+        "test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+        "test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+        "test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule"
+      ],
+      "interaction_tests": [
+        "test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+        "test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+        "test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+        "test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+        "test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+        "test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+        "test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+        "test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+        "test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+        "test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+        "test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+        "test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule"
+      ],
+      "multiplayer_tests": [
+        "test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+        "test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+        "test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+        "test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+        "test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+        "test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+        "test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+        "test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+        "test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+        "test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+        "test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+        "test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule"
+      ],
+      "privacy_tests": [
+        "test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+        "test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+        "test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+        "test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+        "test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+        "test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+        "test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+        "test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+        "test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+        "test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+        "test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+        "test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule"
+      ],
+      "replay_tests": [
+        "test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+        "test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+        "test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+        "test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+        "test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+        "test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+        "test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+        "test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+        "test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+        "test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+        "test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+        "test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonically verified intrinsic-owner and APNAP-owner withdrawals independently keep all eight otherwise complete originals residual; the delayed cleanup ability uses normal placement and ordering.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh full-original compiler and accepted-cast schedule omissions, stale-incarnation guard removal, and an incorrect locked-controller sacrifice filter all fail their actual gameplay assertions.",
       "blockers": [],
       "status": "trusted"
     }

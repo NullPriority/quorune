@@ -40,6 +40,7 @@ def compiled_cast_timing_permissions(
     *,
     face_name: str | None = None,
     actor: str | None = None,
+    exclude_handler_ids: tuple[str,...] = (),
 ) -> tuple[CastTimingPermission, ...]:
     """Return trusted precompiled permissions for exactly one selected face."""
 
@@ -59,6 +60,7 @@ def compiled_cast_timing_permissions(
         if str(program.provenance.get("face_id") or "") != expected_face:
             continue
         for descriptor in program.handlers:
+            if descriptor.get('handler_id') in exclude_handler_ids:continue
             if registry.describe(str(descriptor.get("handler_id") or "")):
                 from .semantic_runtime.conditional_flash import (
                     CONDITIONAL_FLASH_PERMISSION_HANDLER, ConditionalFlashPermissionContext,

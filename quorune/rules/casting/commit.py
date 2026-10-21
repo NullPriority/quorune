@@ -1526,6 +1526,8 @@ def _commit_cast_costs_and_stack(
         proposal.seat,
     )
     host.state.stack.append(item)
+    from ..classic_flash import commit_classic_flash_permission
+    commit_classic_flash_permission(host,proposal,card)
     from ...preparation import consume_prepared_cast
     consume_prepared_cast(host,card)
     if 'waterbend_payment' in selected_option:

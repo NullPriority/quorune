@@ -46126,6 +46126,1748 @@
       "applicability_note": "Normal complete original registration and actual mana payment distinguish2/3/excess/specified color units. Native counters, replacement, copied entry ability, combat and noncast controls preserve identity, private projection and pending/pre-action replay. Typed payment facts retain legacy absence and do not copy. Verified registry withdrawals and runtime minima reject; fresh native producer/reader/capture omissions are killed."
     },
     {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_canonically_verified_intrinsic_permission_withdrawal_keeps_complete_originals_residual",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_cast_incarnation_and_current_controller_guards_have_actual_consequence_mutants",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_full_original_permission_producer_and_accepted_cast_schedule_omissions_are_killed",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_canonically_verified_intrinsic_permission_withdrawal_keeps_complete_originals_residual",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_emitted_permission_independently_requires_cleanup_owner_at_binding",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_intrinsic_permission_marker_and_descriptor_reject_malformed_authority",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "positive",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "positive",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "positive",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_intrinsic_permission_marker_and_descriptor_reject_malformed_authority",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "positive",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_actual_parapet_off_turn_uses_permission_and_preserves_its_controller_anthem",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_copying_the_permanent_copies_anthem_without_copying_its_accepted_cast",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_current_permanent_controller_sacrifices_with_original_delayed_controller_retained",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_independent_flash_and_explicit_intrinsic_routes_preserve_ruling_and_costs",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_normal_main_phase_cast_retains_its_aura_without_a_delayed_sacrifice",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_old_cleanup_reference_does_not_sacrifice_a_returned_and_recast_incarnation",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_resolution_cast_permission_waives_mana_without_using_intrinsic_timing",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
+      "capability_id": "casting.permission.classic_flash_cleanup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_classic_flash_casts.ClassicFlashCastTests.test_unavailable_normal_route_unknown_origin_and_short_payment_reject_without_schedule",
+      "official_rule_ids": [
+        "113.6",
+        "117.1a",
+        "303.4",
+        "400.7",
+        "514.1",
+        "514.2",
+        "514.3a",
+        "601.2",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7g",
+        "609.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Eight complete originals preserve normal costs/targets/static and entry-choice siblings. Intrinsic, independent, normal and resolution-free routes remain distinct; accepted-cast delayed creation survives countering, retains cast incarnation and controller, and sacrifices through the current controller. Six-way cleanup ordering, recast/copy/control/prohibition contrasts, rollback, principal privacy, pending load, replay and actual omission/withdrawal failures are witnessed."
+    },
+    {
       "capability_id": "casting.permission.one_shot_exile_without_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_cascade_rules.CascadeRuntimeTests.test_cascade_cast_revalidates_additional_cost_and_targets",

@@ -18177,6 +18177,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual current original components add across controller/opponent scopes, clamp finite limits at zero and discard the full affected hand in canonical cleanup. Spellbooks existing no-maximum permission remains unbounded under all finite reductions through an actual turn, with private projection, pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Six complete originals create six delayed abilities at accepted casts. Pending entry choice, source departure through illegal enchantment, source-bound modifiers and one APNAP cleanup batch remain correct through save/load, private projections and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Silence removes the intrinsic-timing cast offer and rejects an explicit intrinsic request before any mana, stack or delayed-trigger mutation; pending replay and principal privacy remain exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Counterspell removes the original Aura while retaining its cast-created delayed ability, which grants cleanup priority and resolves once without moving any card; loaded replay and private projections agree."
     }
   ]
 }

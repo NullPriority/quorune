@@ -113,6 +113,14 @@ authoritative logical-object state, not a client-side effect prediction.
 
 ## Actions and choice forms
 
+Casting actions with an intrinsic next-cleanup timing consequence expose
+`timing_permission` through their issued choice form when that choice matters.
+The `intrinsic` value uses the card's timing permission and creates its cleanup
+consequence; `normal` uses an independent permission. The server supplies legal
+values and labels, selects an available independent permission by default, and
+revalidates the choice with the ordinary cost, target, origin and casting
+prohibition checks. This field does not select or replace a mana-cost option.
+
 Legal actions contain stable action IDs and may contain a versioned JSON choice
 form. The same adapter that projects a form defines the accepted choice-field
 names. Forms cover scalar, object, ordering, mode, target, grouped, assignment,
