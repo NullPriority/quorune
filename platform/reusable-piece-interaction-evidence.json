@@ -18612,6 +18612,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Headmaster keepsitsEquipmentspellcostdiscount andseparately discountsEquip; actualBonesplittercastandequipbothpayzero generic withoutsharingartifactcreatureactivation discounts."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+      "piece_ids": [
+        "capability.damage.prevention.static_fixed",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "damage.prevention.static_fixed",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual untargeted red sweeper prevents damage to Oversoul while an ordinary white creature dies through state-based actions."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+      "piece_ids": [
+        "capability.combat.attack.vigilance",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "combat.attack.vigilance",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Elite attacks untapped, rejects Vampire/Werewolf/Zombie blockers, accepts a Human blocker and kills it with first strike without taking combat damage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "piece_ids": [
+        "capability.protection.typed.debt",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "protection.typed.debt",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual all-green hybrid Oversoul cast rejects three matching source colors; a white targeted cantrip resolves its buff and private draw with principal rollback and pending-load replay."
     }
   ]
 }

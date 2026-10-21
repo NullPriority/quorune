@@ -2,7 +2,7 @@
 title: "Target legality and protection"
 status: "current"
 authoritative_source: "quorune/targets.py, quorune/target_characteristics.py, quorune/target_history.py, quorune/target_numeric.py, quorune/object_query.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, quorune/target_source.py, quorune/target_restrictions.py, and CommanderEngine._target_row_matches"
-verified: "2026-10-17"
+verified: "2026-10-21"
 audience: "rules, compiler, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -13,6 +13,14 @@ Quorune uses one server-side target predicate for offer generation, submitted
 command validation, and resolution-time revalidation. A client receives only
 the legal public references in its current action schema and cannot substitute
 an authoritative object identifier or bypass the same predicate at commit.
+
+Printed Protection lists with repeated `from` clauses compile to independent
+typed qualities, including comma-separated color and creature-subtype lists.
+Keyword recognition, fragment lowering, and dependency checks share the same
+printed keyword boundaries. Sibling keywords retain their lowering and capabilities;
+unknown qualities and ambiguous continuations remain residual. Targeting,
+attachments, damage prevention, and blocking consume the existing Protection
+fragments without interpreting the list at runtime.
 
 `selection/target_query.py` resolves an explicit object ID or case-insensitive
 public reference before name lookup. A matching reference keeps its identity

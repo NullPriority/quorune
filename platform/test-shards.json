@@ -203,6 +203,7 @@
       "test_mass_destruction_effect_clauses",
       "test_modular_rules",
       "test_permanent_exile_rules",
+      "test_printed_protection_lists",
       "test_record_lifecycle_v060",
       "test_renown_rules",
       "test_scry_rules",

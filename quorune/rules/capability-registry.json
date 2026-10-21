@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 449,
+  "registry_version": 450,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6992,7 +6992,7 @@
     },
     {
       "id": "protection.typed.debt",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "301.5c",
         "303.4c",
@@ -7004,7 +7004,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -7012,7 +7013,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of compiled fixed Protection qualities using current or last-known source characteristics. The same typed DEBT consumers receive live query grants and temporary closed direct-permanent results.",
+        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of compiled fixed Protection qualities using current or last-known source characteristics. The same typed DEBT consumers receive live query grants and temporary closed direct-permanent results. Explicit repeated from clauses in comma-separated printed keyword lists lower to independent typed Protection instances while sibling keywords retain their boundaries.",
         "inputs": [
           "trusted typed protection fragment",
           "protected permanent characteristics",
@@ -7050,7 +7051,9 @@
         "quorune.engine.CommanderEngine._can_block",
         "quorune.engine.CommanderEngine._attachment_is_legal",
         "quorune.compiler.temporary_target_interactions._fixed_protection_template",
-        "quorune.semantic_runtime.continuous_components.FixedQueryProtectionGrantHandler"
+        "quorune.semantic_runtime.continuous_components.FixedQueryProtectionGrantHandler",
+        "quorune.compiler.keyword_templates.printed_keyword_parts",
+        "quorune.ability_fragments.parse_protection_line"
       ],
       "positive_tests": [
         "test_compiler_closes_fixed_source_quality_predicates",
@@ -7065,11 +7068,28 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_complete_originals_bind_every_quality_and_preserve_sibling_keywords",
+        "test_closed_list_grammar_retains_each_quality_and_rejects_ambiguous_continuations",
+        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+        "test_complete_keyword_line_keeps_siblings_and_rejects_unowned_list_grammar",
+        "test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+        "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+        "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+        "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
       ],
       "negative_tests": [
         "test_untyped_and_unsupported_protection_fail_closed",
-        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable"
+        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+        "test_closed_list_grammar_retains_each_quality_and_rejects_ambiguous_continuations",
+        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+        "test_complete_keyword_line_keeps_siblings_and_rejects_unowned_list_grammar",
+        "test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+        "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+        "test_protection_runtime_minimum_cannot_be_stripped_from_list_programs",
+        "test_verified_protection_owner_withdrawal_leaves_both_originals_residual"
       ],
       "interaction_tests": [
         "test_layer_six_granted_protection_uses_typed_fragment",
@@ -7081,7 +7101,13 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+        "test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+        "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+        "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+        "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
       ],
       "multiplayer_tests": [
         "test_four_player_protection_uses_the_actual_source",
@@ -7092,7 +7118,13 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+        "test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+        "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+        "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+        "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
       ],
       "privacy_tests": [
         "test_aura_entry_choice_projection_and_replay_are_exact",
@@ -7103,7 +7135,8 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw"
       ],
       "replay_tests": [
         "test_aura_entry_choice_projection_and_replay_are_exact",
@@ -7115,7 +7148,13 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+        "test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+        "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+        "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+        "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
       ],
       "required_evidence": [
         "positive",
@@ -7128,7 +7167,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Uncompiled or malformed protection yields an unresolved verdict; target, block, attachment, and damage consumers fail closed, while unsupported compiler grammar remains residual before runtime mutation.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_typed_protection_verdict_mutant_is_killed exercises a fixed subtype, supertype, and mana-value predicate, then replaces the matching-quality verdict with allowed and rejects the survivor.",
+      "implementation_mutation_rationale": "test_typed_protection_verdict_mutant_is_killed exercises a fixed subtype, supertype, and mana-value predicate, then replaces the matching-quality verdict with allowed and rejects the survivor. Fresh complete-original admission and native subtype-blocking witnesses detect omitted list lowering and the actual combat Protection verdict.",
       "blockers": [],
       "status": "trusted"
     },

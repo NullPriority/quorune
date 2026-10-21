@@ -17,6 +17,7 @@ from ..aura import parse_enchant_line
 from ..cast_timing import CastTimingPermission, PRINTED_FLASH_MECHANIC
 from ..renown import RENOWN_MECHANIC_ID, RenownSpec
 from .ability_keyword_fragment_model import AbilityKeywordFragmentLowering
+from .keyword_templates import printed_keyword_parts
 from .ward_cost_templates import fixed_ward_spec
 
 
@@ -324,10 +325,7 @@ def lower_ability_keyword_fragments(
 
 
 def _keyword_parts(material_line: str) -> tuple[str, ...]:
-    return tuple(
-        part.strip()
-        for part in re.split(r"[,;]", material_line.rstrip("."))
-    )
+    return printed_keyword_parts(material_line)
 
 
 def _lower_combat_keyword_fragments(

@@ -169191,6 +169191,156 @@
     {
       "capability_id": "protection.typed.debt",
       "evidence_class": "interaction",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
       "test_id": "tests.test_source_protection_choices.SourceProtectionChoiceTests.test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
       "official_rule_ids": [
         "301.5c",
@@ -169203,7 +169353,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169227,7 +169378,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169251,7 +169403,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169275,7 +169428,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169299,7 +169453,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169323,7 +169478,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169347,7 +169503,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169371,7 +169528,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169395,7 +169553,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169419,7 +169578,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169427,6 +169587,156 @@
         "commander_review"
       ],
       "applicability_note": "Grant an executable fixed subtype Protection predicate through the shared typed layer-6 fragment while retaining rules text only as display provenance."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -169443,7 +169753,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169467,7 +169778,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169491,7 +169803,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169515,7 +169828,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169539,7 +169853,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169563,7 +169878,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169587,7 +169903,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169611,7 +169928,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169635,7 +169953,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169659,7 +169978,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169667,6 +169987,31 @@
         "commander_review"
       ],
       "applicability_note": "Match a fixed subtype, supertype, and mana-value source predicate, then kill a mutant that converts the typed Protection verdict from blocked to allowed."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_whole_original_list_producer_and_combat_protection_omissions_are_killed",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -169683,7 +170028,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169691,6 +170037,206 @@
         "commander_review"
       ],
       "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_closed_list_grammar_retains_each_quality_and_rejects_ambiguous_continuations",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_complete_keyword_line_keeps_siblings_and_rejects_unowned_list_grammar",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_protection_runtime_minimum_cannot_be_stripped_from_list_programs",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_verified_protection_owner_withdrawal_leaves_both_originals_residual",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -169707,7 +170253,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169731,7 +170278,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169755,7 +170303,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169779,7 +170328,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169787,6 +170337,231 @@
         "commander_review"
       ],
       "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_closed_list_grammar_retains_each_quality_and_rejects_ambiguous_continuations",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_complete_keyword_line_keeps_siblings_and_rejects_unowned_list_grammar",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_complete_originals_bind_every_quality_and_preserve_sibling_keywords",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -169803,7 +170578,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169827,7 +170603,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169851,7 +170628,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169875,7 +170653,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169899,7 +170678,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169923,7 +170703,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169947,7 +170728,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169971,7 +170753,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -169995,7 +170778,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170019,7 +170803,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170043,7 +170828,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170067,7 +170853,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170091,7 +170878,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170099,6 +170887,31 @@
         "commander_review"
       ],
       "applicability_note": "Project only legal public Aura attachment refs and exclude a public object protected from the Aura's typed source quality."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -170115,7 +170928,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170139,7 +170953,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170163,7 +170978,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170187,7 +171003,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170211,7 +171028,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170235,7 +171053,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170259,7 +171078,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170283,7 +171103,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170307,7 +171128,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170315,6 +171137,156 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact protected-object filtering and selected legal Aura attachment from a pinned continuation."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_printed_protection_lists.PrintedProtectionListTests.test_actual_white_ability_loss_ends_protection_and_allows_a_blue_bounce",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j",
+        "702.16g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete Oversoul and Elite source programs retain each independent color/subtype protection and sibling keywords. Actual casts, target/command rejection, untargeted damage prevention, matched and ordinary blockers, first strike/vigilance, private projection, pending load/replay, closed grammar, independently stripped runtime minima, verified withdrawal and fresh actual omissions have bounded evidence."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -170331,7 +171303,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170355,7 +171328,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170379,7 +171353,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170403,7 +171378,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170427,7 +171403,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170451,7 +171428,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170475,7 +171453,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170499,7 +171478,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170523,7 +171503,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
@@ -170547,7 +171528,8 @@
         "702.16d",
         "702.16e",
         "702.16f",
-        "702.16j"
+        "702.16j",
+        "702.16g"
       ],
       "supported_profiles": [
         "traditional",
