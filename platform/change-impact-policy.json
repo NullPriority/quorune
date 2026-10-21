@@ -6874,6 +6874,34 @@
         "test_temporary_target_interactions",
         "test_typed_ability_fragments"
       ]
+    },
+    {
+      "id": "fixed-random-spell-cost",
+      "patterns": [
+        "quorune/compiler/random_discard_spell_costs.py",
+        "quorune/rules/random_discard_additional_cost.py",
+        "quorune/compiler/spell_additional_cost_nodes.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/random_discard.py",
+        "quorune/mana_payment_continuations.py",
+        "quorune/replacement/replay.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/additional_zone_costs.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_spell_random_discard_costs.py",
+        "tests/fixtures/spell-random-discard-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_counted_spell_additional_costs",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_game_record_v3",
+        "test_random_discard",
+        "test_random_discard_activation_costs",
+        "test_spell_random_discard_costs"
+      ]
     }
   ],
   "symbol_rules": [

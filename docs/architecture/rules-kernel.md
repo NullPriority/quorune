@@ -713,6 +713,18 @@ when the spell is countered. Optional, random, mixed selected groups, alternativ
 variable prices, and combinations with Convoke, Delve or Improvise remain
 outside this announced-X cost family.
 
+One mandatory random hand-card spell price uses a separate closed descriptor.
+The shared offer and acceptance query requires another hand card and exposes
+no selected-card input. The existing `rules/casting/additional_zone_costs.py`
+owner handles selection for both ordinary selected prices and this automatic
+price. After mana payment, the server's stable payment identity selects the
+random card, excluding the spell itself. That selection is passed
+to the ordinary discard-cost commit owner, including typed discard events and
+destination replacement. A suspended payment seals its selected reference;
+load and resume validate the same reference without repeating payment or
+rerolling the selection. Countering the spell retains the paid cost. Existing
+random activation and resolution forms keep their established vocabulary.
+
 A fixed reveal leaf shares the existing alternative additional-cost algebra.
 Its hand query excludes the casting spell and pins one other qualifying owned
 incarnation. Choosing the fixed mana branch adds that payment before ordinary

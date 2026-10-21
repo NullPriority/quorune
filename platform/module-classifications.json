@@ -5232,6 +5232,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/random_discard_spell_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/reanimation_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12180,6 +12195,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/random_discard_additional_cost.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/reanimation_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -17449,5 +17478,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "942cafcf4959b07ca2d5d071919bc61cbcfa474f5a4e57607ea18e47677f620b"
+  "fingerprint": "61ff89bea678b79de0b7338382f511fff56d9b5c800e908f0f6fc96a9170c3fe"
 }

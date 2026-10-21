@@ -17652,6 +17652,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Normal original Tattoo Ward retains its own Aura, grants +1/+1 and protection from enchantments, rejects both own and opposing enchantment-source targets before sacrifice costs, then pays and resolves the legal original sacrifice ability with pending reload, four-player privacy and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.zone.discard.fixed_random"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "zone.discard.fixed_random"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.damage.result.player_life"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "damage.result.player_life"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.target.public.player_or_damageable_permanent",
+        "capability.zone.discard.fixed_random"
+      ],
+      "capability_ids": [
+        "target.public.player_or_damageable_permanent",
+        "zone.discard.fixed_random"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual fully admitted Sonic Burst targets the opponent and deals its original four damage after paying exactly one other private random hand card. Wrong-principal, forged selection and inadequate mana reject before payment; pending load and replay retain both cost and targeted result."
     }
   ]
 }

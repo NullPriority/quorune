@@ -125,6 +125,15 @@ Delve and mana remainders. Save/load revalidates the original reservation rather
 than replacing it with a new selection. Existing casting options omit this
 frame and retain their serialized form.
 
+Fixed random spell prices use the closed `random_discard` additional-cost
+descriptor with schema one and count one. Suspended payments reuse the private
+`_random_discard_cost_refs` response field and server payment identity. The
+continuation accepts one distinct current payment reference, excluding the
+casting spell, for a hand-to-graveyard discard event. It still validates the
+affected object, event identity and original source cost before resuming. The
+client cannot submit this internal field or choose the random card. Ordinary
+selected costs and older continuations retain their payloads.
+
 Fixed Waterbend activation descriptors omit `waterbend` unless present. A
 `waterbend_payment` records its closed cost and selected physical objects,
 public references and logical incarnations in the proposal or casting option.

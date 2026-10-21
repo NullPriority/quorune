@@ -2692,6 +2692,15 @@ across transactional replay. The continuation decoder admits only distinct
 selected refs with prior canonical event identities; the casting owner still
 revalidates every payer, zone, predicate and selected replacement at commitment.
 
+`compiler/random_discard_spell_costs.py` separately admits one mandatory
+unrestricted random hand-card price. Its closed descriptor requires
+`casting.additional_cost.fixed_random_discard` alongside the existing random
+discard and ordinary discard-cost owners. Promotion validates that price and
+then the independently supported result; recognizing the price does not admit
+an unsupported result. The server excludes the source spell, pays ordinary
+mana first and selects one other current hand card through the canonical random
+owner. Multiple, qualified, optional and compound random prices remain residual.
+
 Global fixed characteristic sets accept canonical creature-subtype plurals with
 optional `All` and `Other`. The shared battlefield query carries no controller
 restriction and excludes only the source when `Other` is printed. Both fixed

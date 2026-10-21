@@ -123,13 +123,16 @@ def random_discard_input_snapshot(host, effect, *, actor):
     }, actor=actor)
 
 
-def resolve_random_discard(host, intent: RandomDiscardIntent, *, commit_batch):
+def resolve_random_discard(host, intent: RandomDiscardIntent, *, commit_batch, exclude_object_ids=()):
+    if (not isinstance(exclude_object_ids,tuple) or any(type(oid) is not str or not oid for oid in exclude_object_ids)
+            or len(set(exclude_object_ids))!=len(exclude_object_ids)):
+        raise ValueError('Random discard exclusions require distinct object identities')
     snapshot = random_discard_input_snapshot(host, {
         "op": RANDOM_DISCARD_OPERATION, "actor": intent.actor, "players": intent.players,
     }, actor=intent.actor)
     selected = []
     for hand in snapshot["hands"]:
-        members = sorted(hand["members"], key=lambda row: row["object_id"])
+        members = sorted((row for row in hand['members'] if row['object_id'] not in exclude_object_ids),key=lambda row:row['object_id'])
         randomizer = random.Random(
             f"{host.state.config.seed}|{intent.randomization_key}|random-discard|{hand['seat']}"
         )

@@ -22,6 +22,7 @@ from .spell_additional_cost_templates import (
 )
 from ..rules.capabilities import CapabilityRegistry
 from .waterbend_costs import fixed_waterbend_additional_cost_template
+from .random_discard_spell_costs import fixed_random_discard_spell_cost_template
 
 
 EffectTemplate = Callable[
@@ -281,7 +282,7 @@ def typed_additional_cost_spell_node(
     if not rows:
         return None
     first_clause = rows[0][1].strip()
-    cost = announced_x_additional_cost_template(first_clause) or fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
+    cost = fixed_random_discard_spell_cost_template(first_clause) or announced_x_additional_cost_template(first_clause) or fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
     cost_mechanics = ()
     if cost is None:
         cost=fixed_counter_additional_cost_template(first_clause)

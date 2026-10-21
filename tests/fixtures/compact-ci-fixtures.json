@@ -257,6 +257,7 @@
     "tests/fixtures/source-reference-closure-cards.json",
     "tests/fixtures/source-self-optional-cards.json",
     "tests/fixtures/spell-history-transformations-cards.json",
+    "tests/fixtures/spell-random-discard-cost-cards.json",
     "tests/fixtures/split-second-cards.json",
     "tests/fixtures/spree-mode-cost-cards.json",
     "tests/fixtures/squad-paid-entry-copy-cards.json",

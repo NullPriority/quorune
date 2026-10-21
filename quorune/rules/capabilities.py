@@ -1229,6 +1229,8 @@ def capability_dependencies_for_node(
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
     shape_effects, shape_mechanics = shape_context
     dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
+    from .random_discard_additional_cost import random_spell_cost_dependencies
+    dependencies.update(random_spell_cost_dependencies(cost_schema))
     from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
     if WATERBEND_COMPOSITION_MECHANIC in mechanics:dependencies.add(WATERBEND_COMPOSITION_CAPABILITY)
     if PAYMENT_COMPOSITION_MECHANIC in mechanics:dependencies.add(PAYMENT_COMPOSITION_CAPABILITY)

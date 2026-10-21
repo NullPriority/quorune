@@ -56,6 +56,9 @@ def issue_mana_payment_replacement_choice(
     if action=='activate':
         from .rules.activation.random_discard_costs import freeze_random_discard_cost_response
         response=freeze_random_discard_cost_response(host,seat,response)
+    if action=='cast':
+        from .rules.random_discard_additional_cost import freeze_random_spell_cost_response
+        response=freeze_random_spell_cost_response(host,seat,response)
     pending = required.pending
     if pending.choice.chooser != seat:
         raise ReplacementEffectError(

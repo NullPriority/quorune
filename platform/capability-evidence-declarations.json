@@ -22901,6 +22901,510 @@
       "applicability_note": "Roll back mana and stack mutations when a fixed life payment becomes stale before commit."
     },
     {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_fresh_actual_random_cost_producer_selector_and_discard_commit_omissions_are_killed",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_canonically_verified_random_and_discard_owner_withdrawals_and_runtime_stripping",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_closed_random_cost_model_rejects_selected_qualified_and_compound_prices",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_closed_random_cost_model_rejects_selected_qualified_and_compound_prices",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_random_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_random_discard_costs.SpellRandomDiscardCostTests.test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered",
+      "official_rule_ids": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal complete source spells pay exactly one server-selected other hand card after mana, preserve each damage body and target restriction, withhold an unpayable source-only hand, retain payment after countering, and keep one sealed subset across competing replacements, pending reload and replay. Four-player privacy/rollback, verified withdrawals, runtime minimum and actual omissions guard this scope."
+    },
+    {
       "capability_id": "casting.additional_cost.fixed_reveal",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_reveal_additional_costs.FixedRevealCostRuntimeTests.test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",

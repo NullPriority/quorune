@@ -380,6 +380,7 @@
       "quorune/untap_selection.py": "typed retained untap-selection choice and continuation owner"
     },
     "read_only_consumers": {
+      "quorune/rules/random_discard_additional_cost.py": "read-only random spell-price selection and sealed continuation validation delegating mutation to canonical discard-cost owners",
       "quorune/rules/casting/additional_zone_costs.py": "read-only typed zone-cost candidate and immutable declared-count selection query",
       "quorune/rules/casting/nonmoving_additional_costs.py": "read-only current life and nonmoving additional payment query delegating commitments to canonical owners",
       "quorune/rules/defender_declaration.py": "read-only trusted current-face declaration component and completed characteristic condition query",

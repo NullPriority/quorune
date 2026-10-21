@@ -173,7 +173,6 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
     def test_fixed_zone_change_cost_grammar_fails_closed(self):
         unsupported = (
             "discard two cards at random",
-            "discard a card at random",
             "discard X land cards",
             "exile two creature cards with different names from your graveyard",
             "exile X cards with different names from your graveyard",
@@ -197,6 +196,9 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         promoted = "As an additional cost to cast this spell, exile X cards from your graveyard.\nDraw two cards."
         self.assertEqual("exact", self.compile(promoted).status)
         self.assertIsNone(fixed_zone_change_additional_cost_template(promoted))
+        random_clause = 'As an additional cost to cast this spell, discard a card at random.'
+        self.assertIsNone(fixed_zone_change_additional_cost_template(random_clause))
+        self.assertEqual('exact',self.compile(random_clause+'\nDraw two cards.').status)
 
     def test_unsupported_cost_preserves_independent_result_residuals(self):
         supported_result = (
