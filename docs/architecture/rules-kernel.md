@@ -707,6 +707,17 @@ colored, colorless and snow obligations count toward the minimum, and an
 already-zero cost stays zero. Distinct legal reduction-order prices remain
 selectable. The paid total locks before payment changes its sources.
 
+Fixed controller modifiers can select Equip or Cycling abilities. Equip uses
+the existing built-in Equip identity. Cycling and Typecycling compare the
+selected activation against a trusted registered Cycling descriptor, with its
+exact bound semantic key; a similar discard-and-draw activation is not enough.
+The selector adds no ability fields and does not inspect live Oracle text.
+Generic reduction may reach zero while colored, colorless, discard and other
+nonmana obligations remain. Other controllers and unrelated activations keep
+their original prices, and current source loss revalidates an offered discount
+before any cost is paid. Target-sensitive discounts remain outside this flat
+selector grammar.
+
 Fixed alternatives retain their life and snow obligations. Power-up supplies
 its existing current-entry reduction facts to the same ordered price model,
 and Waterbend reservations use the reduced generic amount before selecting

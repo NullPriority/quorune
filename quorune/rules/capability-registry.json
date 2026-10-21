@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 448,
+  "registry_version": 449,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -35752,7 +35752,7 @@
     },
     {
       "id": "activation.mana_cost.static_generic",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "107.3a",
         "107.3k",
@@ -35770,11 +35770,12 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply current public fixed generic activation taxes and reductions in legal order through shared authoritative prices, retaining each per-effect minimum and the chosen activation X.",
+        "summary": "Apply current public fixed generic activation taxes and reductions in legal order through shared authoritative prices, retaining each per-effect minimum and the chosen activation X. Fixed controller Equip and Cycling selectors use canonical built-in Equip identity or exact trusted Cycling/Typecycling descriptors; generic reductions retain colored and discard costs and current-source revalidation.",
         "inputs": [
           "trusted complete static cost descriptor and current source/face/layer-six availability",
           "current activator, ability kind and typed public battlefield source predicate",
-          "canonical activation base, additional costs, chosen X and existing source-owned reductions"
+          "canonical activation base, additional costs, chosen X and existing source-owned reductions",
+          "validated canonical Equip or Cycling/Typecycling ability kind"
         ],
         "outputs": [
           "shared offered and accepted mana prices",
@@ -35798,7 +35799,8 @@
         "quorune.mana_source_discovery._mana_plan_cost_is_supported",
         "quorune.rules.activation.cost_modifiers.current_activation_cost_modifiers",
         "quorune.rules.activation.pricing.select_ordinary_activation_price",
-        "quorune.semantic_runtime.activation_costs.FixedActivationCostModifierHandler"
+        "quorune.semantic_runtime.activation_costs.FixedActivationCostModifierHandler",
+        "quorune.rules.activation.ability_kinds.activation_matches_cost_scope"
       ],
       "required_evidence": [
         "positive",
@@ -35811,7 +35813,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Withdrawing the static-cost capability leaves a complete source residual; an undeclared executable-handler dependency fails runtime binding.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "A fresh native original Training Grounds witness kills omission of current static price application.",
+      "implementation_mutation_rationale": "A fresh native original Training Grounds witness kills omission of current static price application. Fresh complete-original producer, typed-kind filtering and current modifier omissions fail native admission/offers/payment consequences.",
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
@@ -35832,14 +35834,30 @@
         "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
         "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
         "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
-        "test_actual_suppression_field_increase_applies_separately_to_both_arms"
+        "test_actual_suppression_field_increase_applies_separately_to_both_arms",
+        "test_complete_fluctuator_registers_before_actual_cycling",
+        "test_complete_headmaster_and_steelshaper_register_their_independent_siblings",
+        "test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+        "test_actual_fluctuator_does_not_remove_colored_cycling_price",
+        "test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+        "test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+        "test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+        "test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices",
+        "test_kind_scope_model_and_whole_sentence_grammar_are_closed",
+        "test_cycling_kind_requires_exact_trusted_descriptor_not_similar_hand_activation",
+        "test_current_source_departure_revalidates_zero_cost_cycling_before_discard"
       ],
       "negative_tests": [
         "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
         "test_executable_modifier_rejects_an_undeclared_cost_capability",
         "test_modifier_grammar_and_handler_do_not_strip_unknown_qualifications",
         "test_original_controller_scope_does_not_reduce_an_opponents_creature",
-        "test_withdrawn_static_cost_capability_keeps_an_otherwise_closed_source_residual"
+        "test_withdrawn_static_cost_capability_keeps_an_otherwise_closed_source_residual",
+        "test_kind_scope_model_and_whole_sentence_grammar_are_closed",
+        "test_static_cost_owner_is_an_independent_runtime_minimum_for_each_original",
+        "test_canonically_verified_cost_owner_withdrawal_blocks_all_three_originals",
+        "test_cycling_kind_requires_exact_trusted_descriptor_not_similar_hand_activation",
+        "test_current_source_departure_revalidates_zero_cost_cycling_before_discard"
       ],
       "interaction_tests": [
         "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
@@ -35858,7 +35876,13 @@
         "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
         "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
         "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
-        "test_actual_suppression_field_increase_applies_separately_to_both_arms"
+        "test_actual_suppression_field_increase_applies_separately_to_both_arms",
+        "test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+        "test_actual_fluctuator_does_not_remove_colored_cycling_price",
+        "test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+        "test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+        "test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+        "test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices"
       ],
       "multiplayer_tests": [
         "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
@@ -35877,7 +35901,13 @@
         "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
         "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
         "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
-        "test_actual_suppression_field_increase_applies_separately_to_both_arms"
+        "test_actual_suppression_field_increase_applies_separately_to_both_arms",
+        "test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+        "test_actual_fluctuator_does_not_remove_colored_cycling_price",
+        "test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+        "test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+        "test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+        "test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices"
       ],
       "privacy_tests": [
         "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
@@ -35896,7 +35926,12 @@
         "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
         "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
         "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
-        "test_actual_suppression_field_increase_applies_separately_to_both_arms"
+        "test_actual_suppression_field_increase_applies_separately_to_both_arms",
+        "test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+        "test_actual_fluctuator_does_not_remove_colored_cycling_price",
+        "test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+        "test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+        "test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat"
       ],
       "replay_tests": [
         "test_both_legal_minimum_orders_are_offered_paid_and_replayed",
@@ -35915,7 +35950,13 @@
         "test_reduced_waterbend_minimum_can_be_paid_with_one_other_tapped_object",
         "test_removing_original_reducer_does_not_reprice_paid_ability_but_changes_next_price",
         "test_snow_obligation_satisfies_the_minimum_but_is_never_reduced",
-        "test_actual_suppression_field_increase_applies_separately_to_both_arms"
+        "test_actual_suppression_field_increase_applies_separately_to_both_arms",
+        "test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+        "test_actual_fluctuator_does_not_remove_colored_cycling_price",
+        "test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+        "test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+        "test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+        "test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices"
       ]
     },
     {

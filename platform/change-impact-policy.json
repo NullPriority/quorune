@@ -7315,6 +7315,27 @@
         "test_expanded_basic_type_setting",
         "test_state_based_actions"
       ]
+    },
+    {
+      "id": "typed-ability-kind-activation-cost-modifiers",
+      "patterns": [
+        "quorune/activation_cost_modifiers.py",
+        "quorune/compiler/activation_cost_modifier_templates.py",
+        "quorune/rules/activation/ability_kinds.py",
+        "quorune/rules/activation/cost_modifiers.py",
+        "tests/test_ability_kind_cost_modifiers.py",
+        "tests/fixtures/ability-kind-cost-modifier-cards.json"
+      ],
+      "test_modules": [
+        "test_ability_kind_cost_modifiers",
+        "test_activation_cost_modifiers",
+        "test_ordinary_cycling",
+        "test_typecycling",
+        "test_fixed_attachment_actions",
+        "test_card_program_trust",
+        "test_reconfigure",
+        "test_fixed_spell_cost_reductions"
+      ]
     }
   ],
   "symbol_rules": [

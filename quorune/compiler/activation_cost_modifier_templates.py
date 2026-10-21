@@ -21,6 +21,8 @@ _COST = re.compile(r"(?P<head>.+?) costs? \{(?P<amount>[1-9][0-9]*)\} "
 
 def _modifier_subject(head):
     lowered = head.casefold()
+    if lowered in {'equip abilities you activate','cycling abilities you activate'}:
+        return 'any','source_controller',lowered.split()[0],ObjectQuerySpec()
     if lowered == 'activated abilities':
         return 'any', 'any', 'all', ObjectQuerySpec()
     if lowered == "abilities you activate that aren't mana abilities":
@@ -52,7 +54,10 @@ def _modifier_subject(head):
 
 
 def static_activation_cost_modifier_handler(text):
-    match = _COST.fullmatch(text.strip().replace('’', "'"))
+    material=text.strip().replace('’', "'")
+    legacy_equip=re.fullmatch(r'Equip costs you pay cost (?P<amount>\{[1-9][0-9]*\}) less\.',material,re.I)
+    if legacy_equip is not None:material=f"Equip abilities you activate cost {legacy_equip['amount']} less to activate."
+    match = _COST.fullmatch(material)
     if match is None:
         return None
     subject = _modifier_subject(match['head'])

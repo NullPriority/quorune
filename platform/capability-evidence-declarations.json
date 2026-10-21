@@ -4775,6 +4775,138 @@
     {
       "capability_id": "activation.mana_cost.static_generic",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_does_not_remove_colored_cycling_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "interaction",
       "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
       "official_rule_ids": [
         "107.3a",
@@ -5145,6 +5277,138 @@
         "commander_review"
       ],
       "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_does_not_remove_colored_cycling_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
@@ -5523,6 +5787,28 @@
     {
       "capability_id": "activation.mana_cost.static_generic",
       "evidence_class": "mutation",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_whole_original_producer_kind_filter_and_current_modifier_omissions_are_killed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "mutation",
       "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_omitting_static_price_application_is_killed_by_fresh_native_original",
       "official_rule_ids": [
         "107.3a",
@@ -5541,6 +5827,116 @@
         "commander_review"
       ],
       "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_canonically_verified_cost_owner_withdrawal_blocks_all_three_originals",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_current_source_departure_revalidates_zero_cost_cycling_before_discard",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_cycling_kind_requires_exact_trusted_descriptor_not_similar_hand_activation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_kind_scope_model_and_whole_sentence_grammar_are_closed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_static_cost_owner_is_an_independent_runtime_minimum_for_each_original",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
@@ -5629,6 +6025,248 @@
         "commander_review"
       ],
       "applicability_note": "Normal original/generic source admission and actual principal-issued commands assert current controller/type/attachment scope, taxes before reductions, distinct legal minima, retained X, complex/Power-up/Waterbend prices, automatic zero-price eligibility, paid-mana undo exclusion, rollback, private projection, pending load and exact pre-action replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_does_not_remove_colored_cycling_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_complete_fluctuator_registers_before_actual_cycling",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_complete_headmaster_and_steelshaper_register_their_independent_siblings",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_current_source_departure_revalidates_zero_cost_cycling_before_discard",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_cycling_kind_requires_exact_trusted_descriptor_not_similar_hand_activation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_kind_scope_model_and_whole_sentence_grammar_are_closed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
@@ -6029,6 +6667,116 @@
     {
       "capability_id": "activation.mana_cost.static_generic",
       "evidence_class": "privacy",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_does_not_remove_colored_cycling_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "privacy",
       "test_id": "tests.test_activation_cost_modifiers.StaticActivationCostRuntimeTests.test_both_legal_minimum_orders_are_offered_paid_and_replayed",
       "official_rule_ids": [
         "107.3a",
@@ -6399,6 +7147,138 @@
         "commander_review"
       ],
       "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_does_not_remove_colored_cycling_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_equip_discount_leaves_unrelated_equipment_and_creature_activation_prices",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
+    },
+    {
+      "capability_id": "activation.mana_cost.static_generic",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3k",
+        "118.7",
+        "118.7a",
+        "601.2f",
+        "601.2h",
+        "602.2b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Fluctuator/Headmaster/Steelshaper casts retain Cycling/Equip selection and independent spell-discount/equipped-anthem siblings. Zero generic, colored/discard, Typecycling/search, other actor/ability exclusions, current source loss, command rollback/privacy, pendingload/replay, closed descriptor kinds, independent runtime minima, verified withdrawal and fresh omissions have bounded native evidence."
     },
     {
       "capability_id": "activation.mana_cost.static_generic",
