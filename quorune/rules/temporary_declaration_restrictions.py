@@ -3,7 +3,7 @@ from __future__ import annotations
 """Typed resolution-created combat declaration rules."""
 
 from dataclasses import dataclass, replace
-from typing import Any, Literal, Protocol
+from typing import Any, Literal, Mapping, Protocol
 
 from ..ability_fragments import (
     StaticAbilityFragment,
@@ -74,10 +74,16 @@ class CurrentDeclarationRestriction:
 
 
 def temporary_declaration_restriction(
-    kind: TemporaryDeclarationRestrictionKind | str,
+    kind: TemporaryDeclarationRestrictionKind | str | Mapping,
 ) -> DeclarationRestrictionTemplate:
-    """Return one of the four closed declaration fragments this owner grants."""
+    """Return a closed scalar prohibition or a fixed blocker predicate."""
 
+    if isinstance(kind, Mapping):
+        from ..fixed_blocker_restrictions import FixedBlockerRestrictionSpec
+        try:
+            return FixedBlockerRestrictionSpec.from_dict(kind).to_restriction()
+        except (TypeError, ValueError) as exc:
+            raise TemporaryDeclarationRestrictionError(str(exc)) from exc
     if kind == "cant_attack":
         return DeclarationRestrictionTemplate(
             template_id="intrinsic-attack-prohibition-v1",
@@ -112,7 +118,7 @@ def commit_temporary_declaration_restriction(
     *,
     card: Any,
     source: ResolutionEffectSource,
-    kind: TemporaryDeclarationRestrictionKind | str,
+    kind: TemporaryDeclarationRestrictionKind | str | Mapping,
 ) -> ResolutionDeclarationRuleEffect:
     """Create one locked declaration rule that lasts until cleanup."""
 

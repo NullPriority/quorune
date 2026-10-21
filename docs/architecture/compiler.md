@@ -266,6 +266,16 @@ locks each surviving target incarnation until cleanup; later characteristic
 changes do not remove its resolved prohibition. A changed predicate before
 resolution prevents creation for that target.
 
+Fixed temporary blocker restrictions use a closed descriptor for a blocker
+subtype, an artifact-or-fixed-color exception, or a fixed maximum blocker power.
+The existing declaration solver reads current blocker characteristics. The
+resolved rule stays on the selected creature incarnation through ability loss
+and source departure, expires in cleanup, and does not undo an existing block.
+The runtime binder independently decodes these descriptors and requires their
+fixed-blocker capability.
+Chosen qualities, player-relative blockers, two-creature relationships, group
+targets and other durations remain outside this production.
+
 Nontargeted creature-group rules instead retain a typed live public battlefield
 query, optionally restricted to the resolving controller or that controller's
 opponents. An initially empty group still creates the rule. Later entrants,

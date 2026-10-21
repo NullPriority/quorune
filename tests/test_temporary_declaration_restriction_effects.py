@@ -285,6 +285,9 @@ class ActivatedTemporaryDeclarationRestrictionCompilerTests(unittest.TestCase):
             "Martyred Rusalka",
             "Thundersong Trumpeter",
             "Amphin Pathmage",
+            "Firefright Mage",
+            "Joven's Tools",
+            "Tower of Coireall",
         ):
             with self.subTest(name=name):
                 ir = compile_oracle_card(
@@ -295,9 +298,6 @@ class ActivatedTemporaryDeclarationRestrictionCompilerTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status)
         for name in (
             "Duct Crawler",
-            "Firefright Mage",
-            "Joven's Tools",
-            "Tower of Coireall",
         ):
             with self.subTest(name=name):
                 ir = compile_oracle_card(

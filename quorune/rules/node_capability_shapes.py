@@ -1090,6 +1090,9 @@ def temporary_declaration_restriction_node_capabilities(
         return ()
     effect = effects[0]
     kind = effect.get("restriction")
+    if isinstance(kind, Mapping):
+        from .fixed_blocker_restriction_shapes import fixed_blocker_restriction_node_capabilities
+        return fixed_blocker_restriction_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     group_target = set(effect) == {"op", "cards", "restriction"} and effect.get("cards") == "$targets"
     live_group = set(effect) == {"op", "set", "restriction"}
     if group_target or live_group:

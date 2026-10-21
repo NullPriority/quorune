@@ -210,6 +210,7 @@
       "test_spell_history_transformations",
       "test_static_land_animation",
       "test_tap_controller_information",
+      "test_temporary_blocker_restrictions",
       "test_token_creation_replacements",
       "test_token_entry_boundaries",
       "test_typed_untap_step_participation"

@@ -95,7 +95,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
                 effect,
                 fallback_card=card,
             ),
-            kind=str(effect.get("restriction") or ""),
+            kind=effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
         )
     except TemporaryDeclarationRestrictionError as exc:
         raise GameRuleError(str(exc)) from exc
@@ -105,7 +105,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
         f"{card.ref} is subject to a combat declaration restriction until end of turn.",
         {
             "object": card.ref,
-            "restriction": str(effect.get("restriction") or ""),
+            "restriction": effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
             "continuous_effect": committed.effect_id,
             "reason": reason,
         },
