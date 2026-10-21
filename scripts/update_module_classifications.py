@@ -71,6 +71,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/cast_cost_modifiers.py",
         "quorune/activation_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
+        "quorune/all_colors.py",
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
         "quorune/counter_snapshot.py",
@@ -566,6 +567,7 @@ def _owner(relative: str, layer: str) -> str:
         return "aura_rules"
     if relative in {
         "quorune/ability_fragment_host.py",
+        "quorune/all_colors.py",
         "quorune/ability_fragments.py",
         "quorune/characteristic_fragments.py",
         "quorune/compiled_ability_fragments.py",

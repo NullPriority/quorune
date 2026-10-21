@@ -81,6 +81,9 @@ def _setting_part(modifier, part):
     if definition:
         addition = bool(re.search(r" in addition to ", part, re.I))
         value = definition[1]
+        if value.casefold()=='all colors':
+            if addition:return False
+            modifier['color_operations'].append({'op':'set_colors','values':['W','U','B','R','G']});return True
         if value.casefold() == "colorless":
             modifier["color_operations"].append({"op": "remove_all_colors"})
             return True
@@ -120,7 +123,7 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
             except (TypeError, ValueError):
                 return None
             text = re.sub(r'^it\b', 'This permanent', text, flags=re.I)
-    if re.search(r'"|\b(?:chosen|named|equal|each equal|every|all colors|land types|creature types|until|as long|if|during|goaded)\b', text, re.I):
+    if re.search(r'"|\b(?:chosen|named|equal|each equal|every|land types|creature types|until|as long|if|during|goaded)\b', text, re.I):
         return None
     text = re.sub(r'\s+\([^()]*\)\.?$', '', text.strip()).removesuffix(".")
     match = re.fullmatch(r"(?P<subject>.+?) (?P<body>is .+|are .+|has base .+|have base .+|loses .+|lose .+|gets .+|get .+)", text, re.I)
@@ -131,6 +134,7 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
     source = source_name is not None and re.fullmatch(
         rf'(?:This (?:creature|artifact|permanent)|{SourceReferenceSpec(source_name).regex_pattern})', subject, re.I
     )
+    if source and re.fullmatch(r'is all colors',body,re.I):return None
     if source:
         target = {'kind': 'source', 'controller': None,
                   'predicate': ObjectQuerySpec(zones=('battlefield',)).to_dict(), 'exclude_source': False}
@@ -139,7 +143,9 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
         predicate = ObjectQuerySpec(zones=("battlefield",), types_all=() if kind == "permanent" else (kind,))
         target = {"kind": "attached", "controller": None, "predicate": predicate.to_dict(), "exclude_source": False}
     else:
-        parsed = fixed_characteristic_battlefield_query_subject(subject)
+        distributive=re.fullmatch(r'Each (?P<quality>nonland )?permanent(?P<controller> you control| your opponents control)?',subject,re.I)
+        query_subject=((distributive['quality'] or '')+'permanents'+(distributive['controller'] or '')) if distributive is not None else subject
+        parsed = fixed_characteristic_battlefield_query_subject(query_subject)
         if parsed is None:
             return None
         relation, predicate, exclude = parsed

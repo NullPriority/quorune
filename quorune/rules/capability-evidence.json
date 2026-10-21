@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "19f3e3b9557132d53224461ccb3b3570d91cb555a383b7d9ed08d1a2b955133b",
-  "declaration_source_fingerprint": "70d59c4d4e5d8ca802dd384fe12bc32d1267dab33d5320ca5c7237d281bb6a82",
+  "registry_fingerprint": "2f84e845e2cbdb3ed4dd7eded68aa1b198d31051b11ae7077c399052e0d2fa7f",
+  "declaration_source_fingerprint": "8e88b6c4620ec32d34a5d97205de066691e0b7b113b229785ae38af1437ad9c1",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -86094,6 +86094,726 @@
         "traditional"
       ],
       "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_ability_loss_does_not_undo_an_earlier_layer_color_definition",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_clone_copies_the_all_zone_definition_and_color_changes_override_it",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_later_entrant_receives_live_colors_and_bounce_ends_the_setting",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_current_control_and_timestamps_preserve_live_nonland_scope",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_definition_codec_all_zones_and_layer_order_are_independent_of_printed_color_data",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_current_control_and_timestamps_preserve_live_nonland_scope",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_fresh_actual_definition_operation_omission_is_killed",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_fresh_actual_live_color_setting_omission_is_killed",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_fresh_definition_compiler_omission_is_killed",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_current_control_and_timestamps_preserve_live_nonland_scope",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_definition_codec_all_zones_and_layer_order_are_independent_of_printed_color_data",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_verified_definition_withdrawal_and_stripped_component_minimum_reject",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_ability_loss_does_not_undo_an_earlier_layer_color_definition",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_clone_copies_the_all_zone_definition_and_color_changes_override_it",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_definition_codec_all_zones_and_layer_order_are_independent_of_printed_color_data",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_ability_loss_does_not_undo_an_earlier_layer_color_definition",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_clone_copies_the_all_zone_definition_and_color_changes_override_it",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_courier_cast_has_complete_admission_and_all_five_colors",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_later_entrant_receives_live_colors_and_bounce_ends_the_setting",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_leyline_cast_colors_only_controlled_nonlands_and_retains_basic_mana",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_opening_leyline_is_optional_private_and_enters_before_the_first_turn",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
+    },
+    {
+      "capability_id": "continuous.characteristics.all_colors_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_all_colors.AllColorsTests.test_current_control_and_timestamps_preserve_live_nonland_scope",
+      "official_rule_ids": [
+        "105.1",
+        "105.2",
+        "604.3",
+        "604.3a",
+        "613.1e",
+        "613.3",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal Courier, Sphinx and Leyline source admission and commands cover fixed definitions versus live settings, full mana/combat/color consequences, entrants, source departure/control, timestamps, copy, ability loss, face-down values, optional opening, privacy, rollback and pending/pre-action replay. Verified withdrawal and fresh actual producer/definition/live-setting omissions protect authority."
     },
     {
       "capability_id": "continuous.characteristics.changeling",
@@ -283566,5 +284286,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "868218718afa39ec764c0346eb839735ccfaaf362b706a31b8432bc5c8aab0ab"
+  "fingerprint": "18562afa7f6001ad9b5ce996462d786b7fbe5369ff56d9bcf38a2651453140c2"
 }

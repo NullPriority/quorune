@@ -6786,6 +6786,23 @@
         "test_static_keyword_removal",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "all-colors-definitions-and-live-settings",
+      "patterns": [
+        "quorune/all_colors.py",
+        "quorune/compiler/all_colors_definitions.py",
+        "quorune/semantic_runtime/all_colors.py",
+        "tests/test_all_colors.py",
+        "tests/fixtures/all-colors-cards.json"
+      ],
+      "test_modules": [
+        "test_all_colors",
+        "test_devoid_characteristics",
+        "test_changeling_characteristics",
+        "test_card_program_trust",
+        "test_scoped_basic_type_addition"
+      ]
     }
   ],
   "symbol_rules": [
