@@ -91,6 +91,11 @@ def closed_static_or_replacement_node(
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
 
+    from .classic_flash import classic_flash_node
+    classic=classic_flash_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if classic is not None:return classic
+
     from .target_restriction_nodes import target_restriction_node
     restriction=target_restriction_node(node_id=node_id,line=line,material_line=material_line,span=span,
         source_name=source_name,card_types=card_types,permanent_card_types=permanent_card_types,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)

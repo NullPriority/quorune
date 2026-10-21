@@ -378,7 +378,9 @@ def _combined_cast_timing_permissions(
     face: Mapping[str, Any] | None,
     face_name: str | None,
     face_down: bool,
+    include_classic: bool=True,
 ) -> tuple[Any, ...]:
+    from ...cast_timing import CLASSIC_FLASH_HANDLER
     printed = (
         ()
         if face_down
@@ -387,6 +389,7 @@ def _combined_cast_timing_permissions(
             card,
             face_name=face_name,
             actor=actor,
+            exclude_handler_ids=() if include_classic else (CLASSIC_FLASH_HANDLER,),
         )
     )
     return (
@@ -424,6 +427,11 @@ def _static_cast_rule_state(
             face_down=face_down,
         ),
     )
+
+
+def _classic_flash_proposal_details(host,request,card,face):
+    from ..classic_flash import classic_flash_proposal_details
+    return classic_flash_proposal_details(host,request,card,face,permission_query=_combined_cast_timing_permissions)
 
 
 def _offered_face_down_method_spec(
@@ -785,6 +793,7 @@ def build_cast_proposal(
         tap_cost_refs=tuple(tap_refs),
         details=freeze_json(
             {
+                **_classic_flash_proposal_details(host,request,card,face),
                 "selected_cost_option": selected_dict,
                 "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
@@ -874,6 +883,8 @@ def _cast_offer_payload(
         "auto_pay": True,
         "cost_options": public_options,
     }
+    from ..classic_flash import classic_flash_offer_fields
+    payload.update(classic_flash_offer_fields(host,seat,card,face,permission_query=_combined_cast_timing_permissions))
     if face is not None:
         payload["face"] = cast_name
     if len(public_options) == 1 and public_options[0].get("target_schema"):

@@ -209,6 +209,7 @@
     ],
     "functional-05": [
       "test_attack_counter_triggers",
+      "test_classic_flash_casts",
       "test_combat_declaration_restrictions",
       "test_combined_tap_activation_costs",
       "test_commander_damage_identity",
@@ -746,6 +747,7 @@
       "test_card_unlock_frontier",
       "test_cascade_rules",
       "test_chosen_aura_protection",
+      "test_classic_flash_casts",
       "test_closed_effect_programs",
       "test_continuous_compiler_hardening",
       "test_cost_defined_x",
@@ -844,6 +846,7 @@
       "test_bolster_rules",
       "test_changeling_characteristics",
       "test_chosen_aura_protection",
+      "test_classic_flash_casts",
       "test_continuous_effect_components",
       "test_continuous_effect_duration",
       "test_counter_placement_replacements",
@@ -906,6 +909,7 @@
     "events-replacement-zone": [
       "test_announced_hand_discard_costs",
       "test_chosen_aura_protection",
+      "test_classic_flash_casts",
       "test_cost_defined_x",
       "test_damage_prevention_aftermath",
       "test_damage_prevention_creation",
@@ -983,6 +987,7 @@
     ],
     "multiplayer-commander": [
       "test_ante_rules",
+      "test_classic_flash_casts",
       "test_command_zone_rules",
       "test_commander_damage_identity",
       "test_commander_pairing",
@@ -1011,6 +1016,7 @@
       "test_boast_restrictions",
       "test_browser_gameplay_regressions",
       "test_chosen_aura_protection",
+      "test_classic_flash_casts",
       "test_codex_cli_runner",
       "test_cost_defined_x",
       "test_fixed_token_production",
@@ -1126,6 +1132,7 @@
     "windows-compat": [
       "test_application_protocol",
       "test_bulk_data",
+      "test_classic_flash_casts",
       "test_gain_and_get_sets",
       "test_game_actor",
       "test_game_record_v3",
