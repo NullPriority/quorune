@@ -56,6 +56,7 @@
       "test_alternative_activation_mana",
       "test_ante_rules",
       "test_any_source_counter_costs",
+      "test_attached_protection_exceptions",
       "test_basic_land_type_mana",
       "test_block_transitions",
       "test_boast_restrictions",
@@ -717,6 +718,7 @@
       "test_additional_token_compiler",
       "test_all_colors",
       "test_all_counter_self_costs",
+      "test_attached_protection_exceptions",
       "test_attack_keyword_compiler",
       "test_block_keyword_compiler",
       "test_bloodthirst_rules",
@@ -811,6 +813,7 @@
       "test_all_colors",
       "test_amass_rules",
       "test_attached_counter_placement",
+      "test_attached_protection_exceptions",
       "test_attached_static_characteristics",
       "test_bolster_rules",
       "test_changeling_characteristics",
@@ -951,6 +954,7 @@
     "server-replay-privacy": [
       "test_all_colors",
       "test_application_protocol",
+      "test_attached_protection_exceptions",
       "test_boast_restrictions",
       "test_browser_gameplay_regressions",
       "test_codex_cli_runner",
@@ -992,6 +996,7 @@
       "test_trample_assignment_integration"
     ],
     "targets-choices-continuations": [
+      "test_attached_protection_exceptions",
       "test_aura_targeting_entry",
       "test_choice_forms",
       "test_counter_target_predicates",

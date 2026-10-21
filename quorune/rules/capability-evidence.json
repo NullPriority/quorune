@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2f84e845e2cbdb3ed4dd7eded68aa1b198d31051b11ae7077c399052e0d2fa7f",
-  "declaration_source_fingerprint": "8e88b6c4620ec32d34a5d97205de066691e0b7b113b229785ae38af1437ad9c1",
+  "registry_fingerprint": "093b5693b4d31466f950ccf9ca1b5bc244d96e19542e3ab42d63b1c119be95e2",
+  "declaration_source_fingerprint": "0ec57a8c8d95ffeb9debed8a57c51d648e97c1e6e205807d8dd143be61f34940",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -185437,6 +185437,526 @@
       "applicability_note": "Actual Split second stack priority blocks casts and nonmana activations, permits existing mana actions, and resolves/replays without weakening source trust or principal-correct commands."
     },
     {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_bounce_and_recast_binds_the_returned_aura_instead_of_its_old_incarnation",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_red_ward_blocks_red_targeting_and_prevents_nontargeted_red_damage",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_red_ward_rejects_a_red_blocker_without_preventing_the_attack",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_fixed_exception_codec_retains_only_its_aura_and_preserves_other_debt_checks",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_fresh_compiler_binder_and_actual_retention_omissions_are_killed",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_fixed_exception_codec_retains_only_its_aura_and_preserves_other_debt_checks",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_verified_exception_and_owner_withdrawals_and_runtime_stripping_reject",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_bounce_and_recast_binds_the_returned_aura_instead_of_its_old_incarnation",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_red_ward_blocks_red_targeting_and_prevents_nontargeted_red_damage",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_red_ward_rejects_a_red_blocker_without_preventing_the_attack",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_five_original_fixed_color_wards_have_complete_cast_and_attachment_results",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_fixed_exception_codec_retains_only_its_aura_and_preserves_other_debt_checks",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_bounce_and_recast_binds_the_returned_aura_instead_of_its_old_incarnation",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_red_ward_blocks_red_targeting_and_prevents_nontargeted_red_damage",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_red_ward_rejects_a_red_blocker_without_preventing_the_attack",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_exception",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_five_original_fixed_color_wards_have_complete_cast_and_attachment_results",
+      "official_rule_ids": [
+        "613.1f",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
+    },
+    {
       "capability_id": "protection.typed.debt",
       "evidence_class": "interaction",
       "test_id": "tests.test_source_protection_choices.SourceProtectionChoiceTests.test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
@@ -284286,5 +284806,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "18562afa7f6001ad9b5ce996462d786b7fbe5369ff56d9bcf38a2651453140c2"
+  "fingerprint": "c764fc97eb2c73de42765221a05a26705720b950585fc1d7db22134d12d9c0ec"
 }

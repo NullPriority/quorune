@@ -163,6 +163,7 @@ def _protection_predicate_verdict(
 def protection_verdict(
     protected_characteristics: Mapping[str, Any],
     source: ProtectionSource | None,
+    *, retaining_aura: str | None = None,
 ) -> ProtectionVerdict:
     """Evaluate represented DEBT protection qualities without Oracle text.
 
@@ -174,7 +175,13 @@ def protection_verdict(
     specs = _typed_protection_specs(protected_characteristics)
     if specs is None:
         return ProtectionVerdict.UNRESOLVED
+    had_specs=bool(specs)
+    if retaining_aura is not None:
+        from .protection_attachment_exceptions import protection_specs_for_retained_aura
+        try:specs=protection_specs_for_retained_aura(specs,retaining_aura)
+        except ValueError:return ProtectionVerdict.UNRESOLVED
     if not specs:
+        if retaining_aura is not None and had_specs:return ProtectionVerdict.ALLOWED
         return (
             ProtectionVerdict.UNRESOLVED
             if _has_untyped_protection_keyword(protected_characteristics)

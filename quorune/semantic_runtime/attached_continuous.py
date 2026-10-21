@@ -381,6 +381,8 @@ class AttachedFixedCharacteristicsHandler:
         node = self.validate(descriptor)
         if context.attached_object is None:
             return ()
+        from ..protection_attachment_exceptions import bind_attached_protection_exceptions
+        node=bind_attached_protection_exceptions(node,context.source_logical_object_id)
         common = {
             "source_id": context.source_object_id,
             "timestamp": context.source_timestamp,

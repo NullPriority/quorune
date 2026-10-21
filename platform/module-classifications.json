@@ -1992,6 +1992,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/attached_protection_exceptions.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/backup_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -9144,6 +9159,18 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/protection_attachment_exceptions.py",
+      "layer": "domain",
+      "owning_subsystem": "ability_fragments",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/protocol.py",
@@ -17407,5 +17434,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "dc3e64004684d09eb09e9fbdc513217acd107d7555ae3b5679577edc66af14fa"
+  "fingerprint": "70c25ad28bde3d3cc56f3763b0bb1a5d117ebb84d8de32e63039352b74aaa53c"
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 429,
+  "registry_version": 430,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -38943,6 +38943,103 @@
         "test_actual_sphinx_retains_flying_and_only_rejects_monocolored_sources",
         "test_current_control_and_timestamps_preserve_live_nonland_scope"
       ]
+    },
+    {
+      "id": "protection.attachment.source_aura_exception",
+      "version": 1,
+      "official_rules": [
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16n",
+        "613.1f",
+        "704.5m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A fixed-color protection grant from an Aura exempts that exact Aura only from its own protection instance during existing attachment retention.",
+        "inputs": [
+          "one fixed color",
+          "current source Aura incarnation",
+          "current attached creature",
+          "separate protection instances"
+        ],
+        "outputs": [
+          "ordinary DEBT protection",
+          "one per-instance Aura retention exception"
+        ],
+        "exclusions": [
+          "chosen colors",
+          "all-Aura or already-attached exceptions",
+          "protection from players",
+          "Equipment or Fortification exceptions"
+        ]
+      },
+      "dependencies": [
+        "protection.typed.debt",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "implementation_components": [
+        "quorune.protection_attachment_exceptions.bind_attached_protection_exceptions",
+        "quorune.protection_attachment_exceptions.protection_specs_for_retained_aura",
+        "quorune.compiler.attached_protection_exceptions.attached_protection_exception_handler"
+      ],
+      "positive_tests": [
+        "test_actual_bounce_and_recast_binds_the_returned_aura_instead_of_its_old_incarnation",
+        "test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+        "test_actual_red_ward_blocks_red_targeting_and_prevents_nontargeted_red_damage",
+        "test_actual_red_ward_rejects_a_red_blocker_without_preventing_the_attack",
+        "test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+        "test_five_original_fixed_color_wards_have_complete_cast_and_attachment_results",
+        "test_fixed_exception_codec_retains_only_its_aura_and_preserves_other_debt_checks"
+      ],
+      "negative_tests": [
+        "test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+        "test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+        "test_fixed_exception_codec_retains_only_its_aura_and_preserves_other_debt_checks",
+        "test_verified_exception_and_owner_withdrawals_and_runtime_stripping_reject"
+      ],
+      "interaction_tests": [
+        "test_actual_bounce_and_recast_binds_the_returned_aura_instead_of_its_old_incarnation",
+        "test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+        "test_actual_red_ward_blocks_red_targeting_and_prevents_nontargeted_red_damage",
+        "test_actual_red_ward_rejects_a_red_blocker_without_preventing_the_attack",
+        "test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+        "test_fixed_exception_codec_retains_only_its_aura_and_preserves_other_debt_checks"
+      ],
+      "multiplayer_tests": [
+        "test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it"
+      ],
+      "privacy_tests": [
+        "test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it"
+      ],
+      "replay_tests": [
+        "test_actual_bounce_and_recast_binds_the_returned_aura_instead_of_its_old_incarnation",
+        "test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+        "test_actual_red_ward_blocks_red_targeting_and_prevents_nontargeted_red_damage",
+        "test_actual_red_ward_rejects_a_red_blocker_without_preventing_the_attack",
+        "test_actual_white_ward_cast_survives_its_own_grant_and_blue_bounce_ends_it",
+        "test_five_original_fixed_color_wards_have_complete_cast_and_attachment_results"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonically verified withdrawal of the exception or either existing protection/attachment owner leaves the original Ward residual. Removing the direct exception capability fails runtime minimum binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh normal original White Ward commands detect omitted compiler lowering, source-incarnation binding and the actual per-instance attachment-retention filter.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }
