@@ -17562,6 +17562,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Blue Boomerang removes original White Ward, ending its live grant. Recasting the same card creates a new Aura incarnation and rebinds only the new grant; the old captured protection instance cannot exempt the returned Aura. Pending load and pre-cast replay retain the distinction."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Pentarch Ward chooses before entry for the Aura controller despite another creature controller, retains its own Aura while granting chosen white protection, draws once privately only for its trigger controller, rejects matching white Humble and allows nonmatching blue Boomerang. Wrong-principal rollback, pending reload and pre-cast replay retain the complete result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Pentarch Ward chooses before entry for the Aura controller despite another creature controller, retains its own Aura while granting chosen white protection, draws once privately only for its trigger controller, rejects matching white Humble and allows nonmatching blue Boomerang. Wrong-principal rollback, pending reload and pre-cast replay retain the complete result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Pentarch Ward chooses before entry for the Aura controller despite another creature controller, retains its own Aura while granting chosen white protection, draws once privately only for its trigger controller, rejects matching white Humble and allows nonmatching blue Boomerang. Wrong-principal rollback, pending reload and pre-cast replay retain the complete result."
     }
   ]
 }

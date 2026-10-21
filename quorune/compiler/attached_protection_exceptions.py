@@ -5,10 +5,14 @@ from __future__ import annotations
 from dataclasses import replace
 import re
 from ..ability_fragments import ability_fragment_from_dict,ability_fragment_to_dict,ProtectionSpec
-from ..protection_attachment_exceptions import CAPABILITY,SOURCE_AURA
+from ..protection_attachment_exceptions import CAPABILITY,SOURCE_AURA,CHOSEN_AURA_PROTECTION_CAPABILITY,CHOSEN_AURA_PROTECTION_HANDLER
 
 
 def attached_protection_exception_handler(line,*,source_name='source'):
+    if line.strip().casefold()=="enchanted creature has protection from the chosen color. this effect doesn't remove this aura.":
+        return ('continuous-attached-source-chosen-color-protection-v1',
+                {'handler_id':CHOSEN_AURA_PROTECTION_HANDLER,'schema_version':1,'event':'characteristics.evaluate',
+                 'subject':'source_attached_creature'},(CHOSEN_AURA_PROTECTION_CAPABILITY,CAPABILITY))
     match=re.fullmatch(r"Enchanted creature has protection from (white|blue|black|red|green)\. "
                       r"This effect doesn't remove this Aura\.",line.strip(),re.IGNORECASE)
     if match is None:return None

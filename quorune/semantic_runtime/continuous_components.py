@@ -1392,6 +1392,7 @@ def default_continuous_effect_component_registry(
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
+    from .chosen_aura_protection import SourceChosenAuraProtectionHandler
     from .soulbond import SoulbondPairedGrantHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
@@ -1440,6 +1441,7 @@ def default_continuous_effect_component_registry(
             GraveyardStaticCharacteristicsHandler(),
             ConditionalTypedKeywordHandler(),
             AttachedFixedCharacteristicsHandler(),
+            SourceChosenAuraProtectionHandler(),
             SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
             ConditionalCharacteristicSettingsHandler(),

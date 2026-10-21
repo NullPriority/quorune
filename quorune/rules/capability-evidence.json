@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "093b5693b4d31466f950ccf9ca1b5bc244d96e19542e3ab42d63b1c119be95e2",
-  "declaration_source_fingerprint": "0ec57a8c8d95ffeb9debed8a57c51d648e97c1e6e205807d8dd143be61f34940",
+  "registry_fingerprint": "d93c959c48866fdabc73136a96476dc3d0fea5aced452b6b05b39c88f2cd61d6",
+  "declaration_source_fingerprint": "289399639f8a0b56c08f1a63c8dc054e62802ae7c3ac0952eb9cde340abd9e21",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -185957,6 +185957,367 @@
       "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
     },
     {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_closed_handler_uses_only_the_retained_source_choice_and_current_aura",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_fresh_actual_chosen_compiler_and_registered_grant_omissions_are_killed",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_canonically_verified_chosen_and_entry_owner_withdrawals_and_minimum_strip_reject",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "negative",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_closed_handler_uses_only_the_retained_source_choice_and_current_aura",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "positive",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_closed_handler_uses_only_the_retained_source_choice_and_current_aura",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_flickering_return_ends_the_grant_and_recast_selects_for_a_new_incarnation",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_chosen_color",
+      "evidence_class": "replay",
+      "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "official_rule_ids": [
+        "105.1",
+        "105.4",
+        "400.7",
+        "613.1f",
+        "614.12a",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal source-controlled entry choice and attached protection retain controller/recipient distinctions, source incarnation, private draw, rollback and exact pending/pre-cast replay. Canonical authority withdrawal, minimum stripping and fresh actual producer/lowerer omissions protect this draft scope."
+    },
+    {
       "capability_id": "protection.typed.debt",
       "evidence_class": "interaction",
       "test_id": "tests.test_source_protection_choices.SourceProtectionChoiceTests.test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
@@ -284806,5 +285167,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c764fc97eb2c73de42765221a05a26705720b950585fc1d7db22134d12d9c0ec"
+  "fingerprint": "49ebaab791deb589c6d46d6dab5ec1c2cafb3543a80c03edaf009ca1c28c46d3"
 }
