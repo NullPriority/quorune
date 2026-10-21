@@ -134,6 +134,14 @@ affected object, event identity and original source cost before resuming. The
 client cannot submit this internal field or choose the random card. Ordinary
 selected costs and older continuations retain their payloads.
 
+Declared-X hand discard reuses the version-three `zone_change` cost descriptor:
+`operation` is `discard_one`, `choice_field` is `discard_cards`, and
+`count_parameter` is `x`. Its closed predicate selects unrestricted, creature or
+land cards in the caster's hand. Graveyard-exile and fixed-count payloads keep
+their original keys and meaning. The current proposal, stack X and dependent
+private selector share one declaration; pending payments retain the original
+selected refs and destination journal without adding a Game Record field.
+
 Fixed Waterbend activation descriptors omit `waterbend` unless present. A
 `waterbend_payment` records its closed cost and selected physical objects,
 public references and logical incarnations in the proposal or casting option.

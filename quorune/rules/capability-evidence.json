@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "afd71d5919bbf8bc78c1129b43bcf262807409cc6183f4a2a44a4148a8ef558e",
-  "declaration_source_fingerprint": "730a9a9f559b9bedb5e80dc86d48fac7cfe2d2999bad4e8254f604b07e34bef4",
+  "registry_fingerprint": "953b9c1f9c5b850dafac3ce46340e76438d18fe8555e5fb7a47d0edfb4d37de9",
+  "declaration_source_fingerprint": "8678242e37e025dd1165fba35d40202f57c3f68a3191361a1d5b47e3d2c1b8d5",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -24187,6 +24187,870 @@
         "commander_review"
       ],
       "applicability_note": "Mandatory announced-X payment: exact native free-cast, zero, no-refund and declared-resource controls. The unpublished family remains blocked on the canonical all-life priority correction and final bounded source audit."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_countering_keeps_the_declared_discards_and_mana_paid",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_fresh_actual_producer_count_binding_and_discard_commit_omissions_are_killed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_closed_discard_parameter_keeps_old_payloads_and_rejects_unowned_shapes",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_verified_declared_discard_and_result_owner_withdrawals_and_runtime_minimum",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_wrong_types_owners_cardinalities_and_malformed_x_reject_before_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_both_original_zero_x_casts_need_neither_cost_cards_nor_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_closed_discard_parameter_keeps_old_payloads_and_rejects_unowned_shapes",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_countering_keeps_the_declared_discards_and_mana_paid",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_wrong_types_owners_cardinalities_and_malformed_x_reject_before_payment",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_both_original_zero_x_casts_need_neither_cost_cards_nor_targets",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_countering_keeps_the_declared_discards_and_mana_paid",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
+    },
+    {
+      "capability_id": "casting.additional_cost.announced_x_hand_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_announced_hand_discard_costs.AnnouncedHandDiscardCostTests.test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Normal original Aether Tide and Scorched Earth link mana, exact qualifying owned-hand discards and distinct original targets to one X. Zero, partial/all target departure, countering, wrong actor/type/owner/cardinality, private cost offers and sequential destination replacement rollback/load/replay distinguish payment from resolution. Canonical withdrawals, minimum stripping and fresh actual omissions protect this scope."
     },
     {
       "capability_id": "casting.additional_cost.announced_x_life",
@@ -286405,5 +287269,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "5ffdf8a60d3f605c4925d7c7d77a0c151dea98e37f589df9072327e33c080ce4"
+  "fingerprint": "e1ef4af95208751ac1d059da6ac1d6f56bc0671ca5b4e3bd0528e23e39d51ffa"
 }

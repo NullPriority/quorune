@@ -6944,6 +6944,31 @@
         "test_state_based_destination_replacements",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "announced-x-owned-hand-discard",
+      "patterns": [
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/compiler/spell_additional_cost_nodes.py",
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/rules/casting/additional_zone_costs.py",
+        "quorune/rules/casting/commit.py",
+        "tests/test_announced_hand_discard_costs.py",
+        "tests/fixtures/announced-hand-discard-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_hand_discard_costs",
+        "test_announced_target_cardinality",
+        "test_announced_x_additional_costs",
+        "test_card_program_trust",
+        "test_counted_spell_additional_costs",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_game_record_v3",
+        "test_spell_random_discard_costs"
+      ]
     }
   ],
   "symbol_rules": [

@@ -336,6 +336,7 @@
     ],
     "functional-08": [
       "test_aggregated_zone_event_triggers",
+      "test_announced_hand_discard_costs",
       "test_announced_target_cardinality",
       "test_announced_x_additional_costs",
       "test_bound_effect_programs",
@@ -631,6 +632,7 @@
       "test_activation_conditions",
       "test_activation_restrictions",
       "test_all_counter_self_costs",
+      "test_announced_hand_discard_costs",
       "test_basic_land_type_mana",
       "test_bestow_rules",
       "test_boast_restrictions",
@@ -723,6 +725,7 @@
       "test_additional_token_compiler",
       "test_all_colors",
       "test_all_counter_self_costs",
+      "test_announced_hand_discard_costs",
       "test_attached_protection_exceptions",
       "test_attack_keyword_compiler",
       "test_block_keyword_compiler",
@@ -880,6 +883,7 @@
       "test_seed_20260730_regression"
     ],
     "events-replacement-zone": [
+      "test_announced_hand_discard_costs",
       "test_chosen_aura_protection",
       "test_damage_prevention_aftermath",
       "test_damage_prevention_creation",
@@ -967,6 +971,7 @@
     ],
     "server-replay-privacy": [
       "test_all_colors",
+      "test_announced_hand_discard_costs",
       "test_application_protocol",
       "test_attached_protection_exceptions",
       "test_boast_restrictions",
@@ -1015,6 +1020,7 @@
       "test_trample_assignment_integration"
     ],
     "targets-choices-continuations": [
+      "test_announced_hand_discard_costs",
       "test_attached_protection_exceptions",
       "test_aura_targeting_entry",
       "test_choice_forms",

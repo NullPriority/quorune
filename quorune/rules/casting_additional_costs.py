@@ -70,6 +70,7 @@ _FIXED_COMBAT_RETURN_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {
 }
 _ANNOUNCED_ZONE_CHANGE_FIELDS = (_FIXED_ZONE_CHANGE_FIELDS - {'count'}) | {'count_parameter'}
 ANNOUNCED_X_EXILE_CAPABILITY = 'casting.additional_cost.announced_x_graveyard_exile'
+ANNOUNCED_X_DISCARD_CAPABILITY = 'casting.additional_cost.announced_x_hand_discard'
 ANNOUNCED_X_LIFE_CAPABILITY = 'casting.additional_cost.announced_x_life'
 
 
@@ -293,6 +294,16 @@ class FixedSacrificeAdditionalCost:
         return replace(self.predicate, controller=actor)
 
 
+def _validate_announced_zone_cost(cost):
+    if (cost.count is not None or cost.count_parameter!='x' or cost.unblocked_attacker
+            or cost.operation not in {EXILE_ONE_FROM_GRAVEYARD_COST,DISCARD_ONE_COST}):
+        raise AdditionalCostError('Declared-X zone costs require one owned graveyard exile or hand discard parameter')
+    if cost.operation==DISCARD_ONE_COST and cost.predicate not in tuple(
+            ObjectQuerySpec(zones=('hand',),owner='$actor',known_to_actor=True,types_all=types)
+            for types in ((),('creature',),('land',))):
+        raise AdditionalCostError('Declared-X hand discard requires unrestricted, creature or land cards')
+
+
 @dataclass(frozen=True, slots=True)
 class FixedZoneChangeAdditionalCost:
     """Move one fixed-size selected set between operation-owned zones."""
@@ -323,9 +334,7 @@ class FixedZoneChangeAdditionalCost:
                 "Zone-change additional-cost operation is unsupported"
             )
         if self.schema_version == 3:
-            if (self.count is not None or self.count_parameter != 'x'
-                    or self.operation != EXILE_ONE_FROM_GRAVEYARD_COST or self.unblocked_attacker):
-                raise AdditionalCostError('Declared-X zone costs require one owned graveyard exile parameter')
+            _validate_announced_zone_cost(self)
         elif self.count_parameter is not None or type(self.count) is not int or not 1 <= self.count <= 99:
             raise AdditionalCostError('Fixed zone-change additional costs require 1-99 objects')
         origin, _, expected_field = FIXED_ZONE_CHANGE_COST_CONTRACTS[
@@ -535,6 +544,14 @@ class FixedZoneChangeAdditionalCost:
         if self.origin_zone == "battlefield":
             return replace(self.predicate, controller=actor)
         return replace(self.predicate, owner=actor)
+
+
+def announced_zone_cost_capabilities(cost):
+    if not isinstance(cost,FixedZoneChangeAdditionalCost):
+        raise AdditionalCostError('Declared zone resource authority requires a typed cost')
+    if cost.count_parameter is None:return ()
+    return ({EXILE_ONE_FROM_GRAVEYARD_COST:ANNOUNCED_X_EXILE_CAPABILITY,
+             DISCARD_ONE_COST:ANNOUNCED_X_DISCARD_CAPABILITY}[cost.operation],)
 
 
 def fixed_counter_additional_cost(

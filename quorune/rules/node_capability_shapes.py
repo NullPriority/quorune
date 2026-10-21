@@ -6,7 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .counter_placement_capability_shapes import fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities
 
 from .casting_additional_costs import (
-    AdditionalCostError, ANNOUNCED_X_EXILE_CAPABILITY,
+    AdditionalCostError, announced_zone_cost_capabilities,
     FixedCounterPlacementAdditionalCost,
     FixedSacrificeAdditionalCost,
     FixedZoneChangeAdditionalCost,
@@ -110,7 +110,7 @@ def fixed_zone_change_additional_cost_node_capabilities(
         cost = FixedZoneChangeAdditionalCost.from_descriptor(raw_costs[0])
     except (AdditionalCostError, TypeError):
         return ()
-    return (fixed_zone_change_additional_cost_capability(cost), *((ANNOUNCED_X_EXILE_CAPABILITY,) if cost.count_parameter else ()))
+    return (fixed_zone_change_additional_cost_capability(cost), *announced_zone_cost_capabilities(cost))
 
 
 _DRAW_TARGET_SCHEMAS: tuple[Mapping[str, Any], ...] = (

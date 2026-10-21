@@ -309,6 +309,13 @@ def announced_x_additional_cost_template(text):
     if re.fullmatch(r'As an additional cost to cast this spell, pay X life\.?', normalized, re.I):
         return AnnouncedXAdditionalCostTemplate(AnnouncedXLifeAdditionalCost(),
             'spell-additional-cost-announced-x-life-v1')
+    discard=re.fullmatch(r'As an additional cost to cast this spell, discard X (?P<quality>creature |land )?cards\.?',normalized,re.I)
+    if discard is not None:
+        fixed=fixed_zone_change_additional_cost_template('As an additional cost to cast this spell, discard a '+(discard['quality'] or '')+'card.')
+        if fixed is None:return None
+        cost=FixedZoneChangeAdditionalCost(operation=fixed.operation,choice_field='discard_cards',predicate=fixed.predicate,
+            schema_version=3,count=None,count_parameter='x')
+        return AnnouncedXAdditionalCostTemplate(cost,fixed.template_id+'-announced-x-v3')
     match = re.fullmatch(r'As an additional cost to cast this spell, exile X (?P<quality>(?:creature |instant |sorcery )?cards) from your graveyard\.?', normalized, re.I)
     if match is None:
         return None

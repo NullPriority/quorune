@@ -698,10 +698,10 @@ the cast event. Historical unversioned discard and sacrifice schemas remain in
 an isolated compatibility query outside `CommanderEngine`. Unsupported cost
 grammar residualizes the entire spell rather than exposing a cost-free result.
 
-Mandatory announced-X life and owned-graveyard exile costs retain one declared
+Mandatory announced-X life, owned-graveyard exile and owned-hand discard costs retain one declared
 nonnegative integer across the cost option, proposal, payment and spell result.
 The life query bounds X by current life. The zone query requires exactly X
-distinct qualifying owned graveyard incarnations, excluding the spell itself;
+distinct qualifying owned incarnations in the declared zone, excluding the spell itself;
 its version-three descriptor carries `count_parameter: "x"` rather than a fixed
 count. Existing fixed descriptors retain their serialized shape. A zero payment
 needs no objects and is legal. The browser's dependent payment field follows
@@ -712,6 +712,11 @@ spell remains chosen and payable. Completed additional payments are not refunded
 when the spell is countered. Optional, random, mixed selected groups, alternative
 variable prices, and combinations with Convoke, Delve or Improvise remain
 outside this announced-X cost family.
+Hand discard admits unrestricted, creature and land cards through the existing
+private selected-card query. It shares X with the original mana and target
+contracts, pays every selected card before resolution, and retains that price
+after countering or partial target departure. Earlier destination choices stay
+in the ordinary payment journal when a later discard suspends the transaction.
 
 One mandatory random hand-card spell price uses a separate closed descriptor.
 The shared offer and acceptance query requires another hand card and exposes
