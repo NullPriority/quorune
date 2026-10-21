@@ -18657,6 +18657,51 @@
       ],
       "interaction_order": 2,
       "assertion": "An actual all-green hybrid Oversoul cast rejects three matching source colors; a white targeted cantrip resolves its buff and private draw with principal rollback and pending-load replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+      "piece_ids": [
+        "capability.combat.declaration.temporary_blocker_predicate",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "combat.declaration.temporary_blocker_predicate",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Guide rejects a foreign target before payment and the resolved rule reads blocker power after a real Giant Growth."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "piece_ids": [
+        "capability.combat.declaration.temporary_blocker_predicate",
+        "capability.continuous.resolution.declaration_rules_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.declaration.temporary_blocker_predicate",
+        "continuous.resolution.declaration_rules_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Accepted Tower activation creates a target-anchored rule; a Wall block rejects atomically while an ordinary blocker is accepted, deals combat damage and dies."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "piece_ids": [
+        "capability.combat.declaration.temporary_blocker_predicate",
+        "capability.combat.declaration.typed_components"
+      ],
+      "capability_ids": [
+        "combat.declaration.temporary_blocker_predicate",
+        "combat.declaration.typed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Firefright pays mana, taps and discards before resolving; artifact or red blockers remain legal and an ordinary white blocker is prohibited."
     }
   ]
 }

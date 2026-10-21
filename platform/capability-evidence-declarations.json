@@ -64448,6 +64448,1018 @@
       "applicability_note": "Replay the accepted threshold-gated declaration to the identical authoritative final hash."
     },
     {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_native_producer_and_commit_omissions_are_killed",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_canonically_verified_owner_withdrawal_leaves_originals_residual",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_fixed_descriptor_and_sentence_boundaries_are_closed",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_runtime_binding_requires_the_new_owner_independently",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_all_four_original_casts_preserve_their_complete_printed_permanents",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_complete_originals_bind_and_keep_nonempty_typed_activated_programs",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_fixed_descriptor_and_sentence_boundaries_are_closed",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_after_block_declaration_does_not_remove_the_existing_block",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_all_four_original_casts_preserve_their_complete_printed_permanents",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Tower/Tools/Firefright/Guide casts and accepted activations retain subtype polarity, artifact-or-red union, current power matching, costs, own-target legality, ordinary block contrasts, principal rollback, private projection and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh producer/commit omissions bound the claim."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
+      "capability_id": "combat.declaration.temporary_blocker_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_blocker_restrictions.TemporaryBlockerRestrictionTests.test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+      "official_rule_ids": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual resolved fixed blocker rules retain target incarnation, source departure, ability-loss independence, cleanup expiry and already-declared blocks, with pending-load/pre-action replay and principal-private projection."
+    },
+    {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "interaction",
       "test_id": "tests.test_any_source_counter_costs.AnySourceCounterRuntimeTests.test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",

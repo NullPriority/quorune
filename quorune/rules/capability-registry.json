@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 450,
+  "registry_version": 451,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -41286,6 +41286,133 @@
         "test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
         "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
         "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
+      ]
+    },
+    {
+      "id": "combat.declaration.temporary_blocker_predicate",
+      "version": 1,
+      "official_rules": [
+        "509.1",
+        "509.1b",
+        "509.2",
+        "611.2a",
+        "611.2c",
+        "514.2",
+        "400.7",
+        "602.2b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve a target-anchored fixed blocker subtype, artifact-or-fixed-color exception, or fixed maximum blocker power rule through the existing declaration solver and end-of-turn journal.",
+        "inputs": [
+          "one shared revalidated creature target",
+          "closed immutable fixed blocker descriptor",
+          "current blocker characteristics",
+          "existing resolving-source identity and target incarnation"
+        ],
+        "outputs": [
+          "typed source-option block prohibition",
+          "ordinary allowed-blocker and current-characteristic contrasts",
+          "existing replay-pinned duration effect and cleanup expiry"
+        ],
+        "exclusions": [
+          "two-object source-relative restrictions",
+          "chosen or dynamic colors, players and qualities",
+          "open blocker predicates",
+          "group targets",
+          "different durations",
+          "changing existing declared blocks"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "continuous.resolution.declaration_rules_until_end_of_turn",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.fixed_blocker_restrictions.FixedBlockerRestrictionSpec",
+        "quorune.compiler.fixed_blocker_restrictions.fixed_blocker_restriction_template",
+        "quorune.rules.fixed_blocker_restriction_shapes.fixed_blocker_restriction_node_capabilities",
+        "quorune.rules.temporary_declaration_restrictions.temporary_declaration_restriction",
+        "quorune.rules.temporary_declaration_restrictions.commit_temporary_declaration_restriction",
+        "quorune.effect_runtime.declaration_effects._apply_grant_declaration_restriction_until_end_of_turn",
+        "quorune.rules.fixed_blocker_restriction_shapes.fixed_blocker_runtime_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The independent runtime descriptor minimum and canonically verified owner withdrawal are covered by the complete-original binding tests.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete-original and actual Tower combat witnesses detect omission of the producer, canonical declaration-rule commit and current blocker predicate matching.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_originals_bind_and_keep_nonempty_typed_activated_programs",
+        "test_all_four_original_casts_preserve_their_complete_printed_permanents",
+        "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+        "test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+        "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+        "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+        "test_fixed_descriptor_and_sentence_boundaries_are_closed",
+        "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+        "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+      ],
+      "negative_tests": [
+        "test_runtime_binding_requires_the_new_owner_independently",
+        "test_canonically_verified_owner_withdrawal_leaves_originals_residual",
+        "test_fixed_descriptor_and_sentence_boundaries_are_closed",
+        "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+        "test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+        "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+        "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+        "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+        "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+      ],
+      "interaction_tests": [
+        "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+        "test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+        "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+        "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+        "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+        "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+      ],
+      "multiplayer_tests": [
+        "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+        "test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+        "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+        "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+        "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+        "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
+      ],
+      "privacy_tests": [
+        "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+        "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+        "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires"
+      ],
+      "replay_tests": [
+        "test_all_four_original_casts_preserve_their_complete_printed_permanents",
+        "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+        "test_actual_tools_pay_four_and_allow_only_the_wall_blocker",
+        "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+        "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+        "test_resolved_predicate_survives_ability_loss_and_source_departure_then_expires",
+        "test_blink_creates_a_new_target_incarnation_without_the_old_blocker_rule",
+        "test_actual_tower_after_block_declaration_does_not_remove_the_existing_block"
       ]
     }
   ]
