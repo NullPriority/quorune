@@ -30,10 +30,13 @@ from ..rules.provoke_shapes import provoke_program_runtime_dependencies
 from ..qualified_hexproof import qualified_hexproof_runtime_dependencies
 from ..protection_attachment_exceptions import attached_protection_runtime_dependencies
 from ..query_effect_amount_model import cast_x_runtime_dependencies
+from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
 
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(fixed_resolution_characteristics_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_resolution_characteristics:invalid:{exc}')
     try:required.update(cast_x_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_cast_x_amount:invalid:{exc}')
     try:required.update(boast_runtime_dependencies(program))

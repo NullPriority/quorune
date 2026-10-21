@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile combined keyword-first and stat-first temporary creature grants
+  through the same resolution owner, preserving quantity timing, source
+  information, fixed recipients, cleanup and independent runtime authority.
+
 - Bind spell results and target counts to represented additional-cost X even
   when the mana cost has no X, retaining free-cast, copy, privacy and exact
   target-price boundaries through the existing owners.

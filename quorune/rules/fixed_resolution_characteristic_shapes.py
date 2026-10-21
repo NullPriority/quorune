@@ -9,6 +9,7 @@ from ..compiler.fixed_resolution_characteristic_queries import (
 )
 from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORDS,
+    FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 
@@ -94,7 +95,57 @@ def fixed_resolution_characteristic_set_node_capabilities(
     return tuple(sorted(dependencies))
 
 
+def _runtime_stat_amount(value):
+    from ..query_effect_amount_model import (
+        CAST_X_AMOUNT_KIND, DECLARED_AMOUNT_CAPABILITY, PUBLIC_QUERY_AMOUNT_KIND,
+        PUBLIC_QUERY_AMOUNT_CAPABILITY, CastXAmountSpec, PublicQueryAmountSpec,
+    )
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND, SCALAR_AMOUNT_CAPABILITY, ScalarEffectAmountSpec
+
+    if type(value) is int:
+        return value, set()
+    if not isinstance(value, Mapping):
+        raise ValueError('Resolution-set stat amount requires an integer or typed quantity')
+    kind = value.get('kind')
+    if kind == CAST_X_AMOUNT_KIND:
+        spec = CastXAmountSpec.from_dict(value)
+        required = {DECLARED_AMOUNT_CAPABILITY}
+    elif kind == PUBLIC_QUERY_AMOUNT_KIND:
+        spec = PublicQueryAmountSpec.from_dict(value)
+        required = {PUBLIC_QUERY_AMOUNT_CAPABILITY}
+    elif kind == SCALAR_AMOUNT_KIND:
+        spec = ScalarEffectAmountSpec.from_dict(value)
+        required = {SCALAR_AMOUNT_CAPABILITY}
+    else:
+        raise ValueError('Resolution-set stat amount has an unknown quantity kind')
+    if getattr(spec, 'binding_id', None) is not None:
+        required.add(DECLARED_AMOUNT_CAPABILITY)
+    return 2 * spec.coefficient, required
+
+
+def fixed_resolution_characteristics_runtime_dependencies(program):
+    """Bind canonical public-set descriptors independently of declared owners."""
+    required = set()
+    for effect in program.effects:
+        if effect.get('op') != 'modify_all_matching_permanents_until_end_of_turn' or 'predicate' not in effect:
+            continue
+        projected = dict(effect)
+        for stat in ('power', 'toughness'):
+            projected[stat], amount_owners = _runtime_stat_amount(effect.get(stat))
+            required.update(amount_owners)
+        owners = fixed_resolution_characteristic_set_node_capabilities(
+            effects=(projected,), target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if not owners:
+            raise ValueError('Resolution-set descriptor lacks complete selection and result closure')
+        required.update(owners)
+        required.update(cap for keyword in projected.get('keywords', ())
+                        for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])
+    return tuple(sorted(required))
+
+
 __all__ = [
     "FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY",
     "fixed_resolution_characteristic_set_node_capabilities",
+    "fixed_resolution_characteristics_runtime_dependencies",
 ]

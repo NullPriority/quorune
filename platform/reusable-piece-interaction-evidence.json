@@ -17892,6 +17892,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Craterhoof enters through its real cast. B returns it before the original A trigger resolves; the two remaining A creatures receive one +2/+2 and trample, while B stays outside the set. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Dragon Throne is cast and equipped, retaining Defender. Its equipped creature pays the granted tap/mana activation after a real power change; a real opponent bounce removes it before resolution, and its last-known four power gives the other A creature +4/+4 and trample. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Dragon Throne is cast and equipped, retaining Defender. Its equipped creature pays the granted tap/mana activation after a real power change; a real opponent bounce removes it before resolution, and its last-known four power gives the other A creature +4/+4 and trample. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Dragon Throne is cast and equipped, retaining Defender. Its equipped creature pays the granted tap/mana activation after a real power change; a real opponent bounce removes it before resolution, and its last-known four power gives the other A creature +4/+4 and trample. Pending load, private hand projection and pre-cast replay agree."
     }
   ]
 }
