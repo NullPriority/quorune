@@ -19,6 +19,10 @@ maintenance: "hand-maintained"
   and zero-toughness moves before mutation, retaining prior Umbra choices,
   simultaneous source departures, principal privacy and pending replay.
 
+- Preserve Boast's intrinsic attack prerequisite and once-per-turn usage limit
+  during compilation, including when reminder text is absent. Offers and
+  accepted commands enforce the same restrictions before costs are paid.
+
 - Extend typed activation prices with announced X, fixed mana alternatives,
   current generic modifiers, selected creature counters and complete source
   counter distributions, preserving shared offer and payment authority.

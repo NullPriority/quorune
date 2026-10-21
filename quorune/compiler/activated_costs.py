@@ -5,6 +5,7 @@ from typing import Any
 from ..abilities import ActivatedAbility, ActivationLimit
 from ..activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
 from ..power_up_model import POWER_UP_CAPABILITY
+from ..boast import BOAST_CAPABILITY
 from ..activation_condition_model import (
     ACTIVATION_PHASE_CONDITION_CAPABILITY,
     ACTIVATION_PUBLIC_QUERY_CAPABILITY,
@@ -19,6 +20,7 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.boast or any(c.kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN for c in ability.activation_conditions):additional.append(BOAST_CAPABILITY)
     from ..rules.selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, SELECTED_COUNTER_COST_CAPABILITY
     if any(choice.kind == SELECTED_PLUS_COUNTER_COST_KIND for choice in ability.choices):
         additional.append(SELECTED_COUNTER_COST_CAPABILITY)
@@ -103,6 +105,7 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
+    if ability.boast:result['boast']=True
     if ability.waterbend is not None:result['waterbend']=ability.waterbend.to_dict()
     if ability.mana_cost_options:
         result["mana_cost_options"] = [

@@ -42,6 +42,13 @@ pending decision.
 
 ## Canonicalization and hashes
 
+Activated-ability payloads omit `boast` unless it is true. A current Boast
+descriptor retains its typed original-source attack condition and existing
+once-per-turn limit. Attack facts remain in the current-turn journal; usage
+remains on the source incarnation through the existing activation owner.
+Pending load preserves both facts. Earlier ability payloads retain their key
+sets and constructor order when the optional marker is absent.
+
 Authoritative JSON uses deterministic serialization and strict schema
 validation. State hashes cover canonical authoritative state, including
 versioned rules-relevant fields and continuations. They exclude presentation
