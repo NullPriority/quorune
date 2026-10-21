@@ -4647,6 +4647,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/nonmana_equip_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/nonmana_morph_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -18002,5 +18017,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "e7fa126084f182ac75d9a8723c15599ed506e5e353093bf43905ca934f3576ff"
+  "fingerprint": "153d58524d430eb02705c039ce185f84efb88fa01683113928793abb0939749b"
 }

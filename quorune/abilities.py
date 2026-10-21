@@ -893,6 +893,7 @@ def _fixed_equip_keyword_ability(
         sorcery_speed=True,
         builtin_semantic_key="builtin:equip",
         target_schema=FrozenMap(spec.target_schema),
+        source_counter_removal_cost=cost.source_counter_removal_cost,
         activation_limit=(
             ActivationLimit.ONCE_PER_TURN if spec.once_per_turn else None
         ),

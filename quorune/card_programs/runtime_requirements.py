@@ -67,8 +67,25 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
     return ()
 
 
+def nonmana_equip_runtime_dependencies(program):
+    from ..semantic_runtime.activated_abilities import (
+        activated_abilities_from_descriptors, is_structural_activated_ability_catalog_program,
+    )
+    if program.event != 'activate' or is_structural_activated_ability_catalog_program(program):return ()
+    from ..rules.attachment_actions import FIXED_NONMANA_EQUIP_CAPABILITY
+    for ability in activated_abilities_from_descriptors(program.handlers):
+        if ability.builtin_semantic_key == 'builtin:equip' and (
+            ability.life_payment or ability.energy_payment or ability.choices
+            or ability.source_counter_removal_cost is not None
+        ):
+            return (FIXED_NONMANA_EQUIP_CAPABILITY,)
+    return ()
+
+
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(nonmana_equip_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_nonmana_equip:invalid:{exc}')
     try:required.update(token_prowess_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_token_prowess:invalid:{exc}')
     try:required.update(nonmana_buyback_runtime_dependencies(program))

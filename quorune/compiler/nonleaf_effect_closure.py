@@ -24,6 +24,8 @@ def effect_program_is_closed(program, *, recognizers, recursive_is_closed, compo
 
 
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
+    from .nonmana_equip_nodes import is_closed_nonmana_equip_program
+    if is_closed_nonmana_equip_program(program):return True
     from ..rules.temporary_cast_restrictions import temporary_cast_node_capabilities
     cast_rule=temporary_cast_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
     if cast_rule and set(cast_rule)<=set(program.capability_dependencies):return True

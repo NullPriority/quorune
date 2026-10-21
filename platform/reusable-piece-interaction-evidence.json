@@ -18837,6 +18837,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Eruption after a prior cast creates two complete flying Dragon Elementals; copies do not cast and a later real noncreature cast triggers each token once."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hauberk_can_pay_its_target_then_leave_the_cost_paid",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Hauberk may sacrifice its target; the cost stays paid and target revalidation leaves the Equipment unattached."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
+      "piece_ids": [
+        "capability.activation.source_counter_removal.fixed",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.source_counter_removal.fixed",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual announced X entry and Equip charge-counter spending preserve dynamic equipped bonus and zero-counter unavailability."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_inventor_pays_entry_energy_to_move_its_attachment",
+      "piece_ids": [
+        "capability.activation.energy.fixed_payment",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.energy.fixed_payment",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual energy entry and initial attach followed by Equip spend both energy before reattaching and leave no unpaid activation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_shredder_excludes_self_and_lands_and_is_once_each_turn",
+      "piece_ids": [
+        "capability.activation.usage.once_per_turn",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.usage.once_per_turn",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Shredder cost excludes self and lands, moves its attachment, and shares its once-per-turn restriction between offers and commit."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_nonmana",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_nonmana",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Job select creates a1/1 Hero attached to Greatsword at4/1; the paid nonmana Equip moves to another controlled creature, whose power becomes5 and whose existing subtypes gain Knight. Once-per-turn payment and pending-load replay preserve the new recipient characteristics."
     }
   ]
 }

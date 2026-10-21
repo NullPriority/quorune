@@ -7446,6 +7446,28 @@
         "test_modal_token_programs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-nonmana-equip-costs",
+      "patterns": [
+        "quorune/abilities.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/activated_costs.py",
+        "quorune/compiler/casting_keyword_nodes.py",
+        "quorune/compiler/dependency_gate.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/compiler/nonmana_equip_nodes.py",
+        "quorune/rules/attachment_actions.py",
+        "tests/fixtures/fixed-nonmana-equip-cards.json",
+        "tests/test_fixed_nonmana_equip.py"
+      ],
+      "test_modules": [
+        "test_fixed_nonmana_equip",
+        "test_fixed_attachment_actions",
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_source_counter_activation_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

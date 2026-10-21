@@ -2005,7 +2005,7 @@ current target before delegating to the existing reciprocal attachment owner;
 the keyword triggers first use the replacement-aware token owner and attach the
 source only to the original Germ, Rebel or 1/1 colorless Hero. Additional replacement-created
 tokens remain unattached. Multiple targets, other attachment source kinds,
-broader Equip costs or restrictions, modified keyword token definitions, and
+broader Equip restrictions, modified keyword token definitions, and
 replacements that multiply or alter the original token remain source-spanned
 residuals.
 Decorative flavor labels on Equip preserve their original source spans. The
@@ -2013,6 +2013,15 @@ complete fixed-mana Equip child is recognized by the shared typed grammar for
 compiler classification and activation catalogs; labels add no payment,
 targeting or timing permissions. Unsupported costs and restrictions retain
 their residuals.
+`compiler/nonmana_equip_nodes.py` lowers closed nonmana Equip through the same
+typed activation catalog and attachment owner. Fixed hand discard, controlled
+creature or artifact sacrifice, another nonland permanent sacrifice, life,
+energy, and one source charge counter are paid before an attachment can
+resolve. Target legality, sorcery timing, source incarnation, and any printed
+once-per-turn limit remain ordinary activation constraints. The cost descriptor
+requires its own runtime capability independently of keyword recognition.
+Alternative and variable prices and unsupported companion abilities remain
+residual.
 
 A syntactically complete but unsupported Enchant line produces one precise
 restriction residual instead of a second generic mechanic blocker. Numeric
