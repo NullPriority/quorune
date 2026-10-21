@@ -83,7 +83,7 @@ def tap_state_event_binding_spec(
 def tap_state_event_player_effect_template(
     body: str, *, compile_effect, card_name: str,
 ):
-    """Bind an explicit occurrence controller without inventing a target."""
+    """Read current/LKI object-controller information without a target."""
 
     reference = r"(?:that (?:permanent|creature|land|artifact)['’]s controller|its controller)"
     if not re.search(reference, body, re.IGNORECASE):
@@ -102,9 +102,9 @@ def tap_state_event_player_effect_template(
         or effect.get(field) != "$target.0"
     ):
         return None
-    effect[field] = EVENT_CONTROLLER_REFERENCE
+    effect[field] = {'kind':'occurrence_controller_information','schema_version':1}
     return (
-        "tap-state-event-player-result-v1", (effect,), None,
+        "tap-state-object-controller-result-v2", (effect,), None,
         tuple(dict.fromkeys((
             *(mechanic for mechanic in mechanics if mechanic != "cr-115-targets"),
             TAP_STATE_EVENT_PLAYER_MECHANIC,

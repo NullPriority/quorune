@@ -7252,6 +7252,25 @@
         "test_card_program_trust",
         "test_destruction_rules"
       ]
+    },
+    {
+      "id": "tap-controller-current-or-departure-information",
+      "patterns": [
+        "quorune/compiler/tap_state_event_bindings.py",
+        "quorune/rules/tap_state_event_capability_shapes.py",
+        "quorune/rules/occurrence_object_results.py",
+        "quorune/rules/fixed_controller_effect_shapes.py",
+        "tests/test_tap_controller_information.py",
+        "tests/fixtures/tap-controller-information-cards.json"
+      ],
+      "test_modules": [
+        "test_tap_controller_information",
+        "test_fixed_counter_event_triggers",
+        "test_attached_occurrences",
+        "test_paid_mana_resolution",
+        "test_fixed_counter_controller_effect_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

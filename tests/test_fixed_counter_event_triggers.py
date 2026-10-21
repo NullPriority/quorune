@@ -450,9 +450,10 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertEqual("exact", ir.status, ir.material_residuals)
         node = ir.faces[0].nodes[0]
         self.assertIsNone(node.target_schema)
-        self.assertEqual("$context.controller", node.effects[0]["player"])
+        self.assertEqual({'kind':'occurrence_controller_information','schema_version':1}, node.effects[0]["player"])
         self.assertIn("zone.mill.fixed", node.capability_dependencies)
-        self.assertNotIn("target.revalidate_resolution", node.capability_dependencies)
+        self.assertIn('resolution.target_controller_information',node.capability_dependencies)
+        self.assertNotIn('cr-115-targets',node.mechanics)
 
     def test_tap_state_target_body_is_accepted_by_corpus_assurance(self):
         text = "Whenever this creature becomes tapped, another target creature you control gets +2/+2 until end of turn."

@@ -553,13 +553,19 @@ incarnation is a different recipient. A fixed attached destruction instruction
 instead reads the existing current attachment relation, with the attachment
 owner's source-departure LKI behavior.
 
-The bounded tap-state poison result uses a distinct occurrence-controller
-information value. It reads current effective control of that incarnation or
+Tap-state life, mill, damage and bounded poison results that name the occurring
+permanent's controller use a distinct occurrence-controller information value.
+It reads current effective control of that incarnation or
 the controller captured at its departure. The existing controller-information
 owner captures that LKI for both stacked abilities and immutable pending
 trigger batches through the canonical zone transaction. Aura controller,
 artifact owner, and affected controller remain separate. Existing target-index
-information codecs and locked occurrence-player results keep their contracts.
+information codecs and genuinely locked occurrence-player results keep their
+contracts. Newly compiled object-controller instructions use the typed
+information value; historical `$context.controller` values retain their
+serialized event-time meaning. A new incarnation never replaces the referenced
+object's departure information. The result adds no player target, and source
+departure does not change the locked trigger controller.
 
 Enchanted-permanent graveyard subscriptions inspect before-event attachment
 and type facts. They still trigger if the Aura and permanent leave together;
