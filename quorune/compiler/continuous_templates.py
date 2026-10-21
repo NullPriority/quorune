@@ -964,6 +964,9 @@ def attached_fixed_characteristics_handler(
     quoted rules text, and unrepresented mechanics remain residual.
     """
 
+    from .attached_protection_exceptions import attached_protection_exception_handler
+    special=attached_protection_exception_handler(oracle_line,source_name=source_name)
+    if special is not None:return special
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     match = _ATTACHED_FIXED_CHARACTERISTICS.fullmatch(text)
     if match is None:

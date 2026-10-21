@@ -15,13 +15,16 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
-- Compile unconditional all-colors source definitions into an all-zone typed
-  layer-5 fragment and live all-colors settings through the existing query owner.
-
 - Preserve Boast's intrinsic attack prerequisite and once-per-turn usage limit
   during compilation, including when reminder text is absent. Offers and
   accepted commands enforce the same restrictions before costs are paid.
 
+- Grant fixed-color Aura protection through the existing attachment owner,
+  retaining the granting Aura per protection instance while preserving other
+  protection instances, DEBT checks and exact source incarnations.
+
+- Compile unconditional all-colors source definitions into an all-zone typed
+  layer-5 fragment and live all-colors settings through the existing query owner.
 
 - Preserve qualified Hexproof keyword values and current source-quality target
   restrictions through ordinary grants, removal, queries, copying and replay.

@@ -225,6 +225,15 @@ snow, each color, monocolored, multicolored, and mana value 3 or greater; it
 does not grant authority to cast-history, counter-state, modified, chosen, or
 other open predicates.
 
+Schema v3 adds a fixed-color, per-instance exception for the granting Aura.
+Only a live attached definition may carry its unbound source marker; the
+existing attached handler binds that marker to the current Aura incarnation.
+Current attachment retention may ignore that one instance for that Aura.
+Another protection instance still applies, and targeting, damage and blocking
+receive ordinary protection. The exception does not permit a new attachment
+or ignore the Aura's Enchant restriction. Chosen-color, all-Aura and
+already-attached exceptions remain outside this production.
+
 Targeting, blocking, and live attachment legality evaluate that descriptor
 against current effective source characteristics. Damage preparation evaluates
 the same descriptor against the canonical immutable source snapshot, which now
