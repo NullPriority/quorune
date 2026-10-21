@@ -6,6 +6,7 @@ from dataclasses import replace
 from typing import Mapping
 
 CAPABILITY='protection.attachment.source_aura_exception'
+FIXED_TYPE_AURA_PROTECTION_CAPABILITY='protection.attachment.source_aura_fixed_type'
 SOURCE_AURA='$source'
 CHOSEN_AURA_PROTECTION_CAPABILITY='protection.attachment.source_chosen_color'
 CHOSEN_AURA_PROTECTION_HANDLER='continuous.attached.source-chosen-color-protection.v1'
@@ -17,9 +18,9 @@ def validate_protection_attachment_exception(spec):
         if spec.exempt_aura_incarnation is not None:
             raise AbilityFragmentError('Legacy protection cannot carry an Aura exception')
         return
-    if (spec.quality_kind is not ProtectionQualityKind.COLOR or spec.source_predicate is not None
+    if (spec.quality_kind not in {ProtectionQualityKind.COLOR,ProtectionQualityKind.CARD_TYPE} or spec.source_predicate is not None
             or type(spec.exempt_aura_incarnation) is not str or not spec.exempt_aura_incarnation):
-        raise AbilityFragmentError('Version-three protection requires a fixed color and one source Aura incarnation')
+        raise AbilityFragmentError('Version-three protection requires a fixed color or card type and one source Aura incarnation')
 
 
 def bind_attached_protection_exceptions(node,source_logical_object_id):
@@ -68,5 +69,6 @@ def attached_protection_runtime_dependencies(program):
             spec=ability_fragment_from_dict(raw)
             if spec.exempt_aura_incarnation!=SOURCE_AURA:
                 raise ValueError('Source-Aura definitions cannot pin an unrelated incarnation')
+            if spec.quality_kind.value=='card_type':required.add(FIXED_TYPE_AURA_PROTECTION_CAPABILITY)
         required.add(CAPABILITY)
     return required

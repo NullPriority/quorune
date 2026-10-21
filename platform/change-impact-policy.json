@@ -6849,6 +6849,31 @@
         "test_entry_designations",
         "test_game_record_v3"
       ]
+    },
+    {
+      "id": "fixed-type-source-aura-protection",
+      "patterns": [
+        "quorune/protection_attachment_exceptions.py",
+        "quorune/compiler/attached_protection_exceptions.py",
+        "quorune/compiler/continuous_templates.py",
+        "tests/test_fixed_type_aura_protection.py",
+        "tests/fixtures/fixed-type-aura-protection-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_protection_exceptions",
+        "test_attached_static_characteristics",
+        "test_aura_targeting_entry",
+        "test_capability_implementation_mutations",
+        "test_card_program_trust",
+        "test_chosen_aura_protection",
+        "test_combat_keyword_rules",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_type_aura_protection",
+        "test_game_record_v3",
+        "test_source_protection_choices",
+        "test_temporary_target_interactions",
+        "test_typed_ability_fragments"
+      ]
     }
   ],
   "symbol_rules": [

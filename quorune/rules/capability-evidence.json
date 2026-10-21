@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d93c959c48866fdabc73136a96476dc3d0fea5aced452b6b05b39c88f2cd61d6",
-  "declaration_source_fingerprint": "289399639f8a0b56c08f1a63c8dc054e62802ae7c3ac0952eb9cde340abd9e21",
+  "registry_fingerprint": "2a7dcd83df840b6a995886edb5fd62a6835c8e3e8df740c16911852255d0d0b6",
+  "declaration_source_fingerprint": "8595aa23ce62c27f0e94b2811caea772677e27de448cf7e27b40c196bf986e41",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -185957,6 +185957,300 @@
       "applicability_note": "Complete original fixed-color Ward casts and per-instance retention distinguish ordinary own/opposing protection, a different or returned Aura, an independent nonexempt instance and untyped protection. Native rollback, private projection and pending/pre-cast replay use normal registration. Fresh actual producer, binding and guard omissions and verified owner withdrawals protect this draft scope."
     },
     {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_other_aura_is_removed_and_its_retained_return_trigger_resolves",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_fixed_type_codec_definition_authority_and_nonmatching_boundaries",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_fresh_actual_fixed_type_producer_binding_and_retention_omissions_are_killed",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_canonically_verified_fixed_type_owner_withdrawals_and_runtime_minimum_stripping",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_fixed_type_codec_definition_authority_and_nonmatching_boundaries",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_other_aura_is_removed_and_its_retained_return_trigger_resolves",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_fixed_type_codec_definition_authority_and_nonmatching_boundaries",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_other_aura_is_removed_and_its_retained_return_trigger_resolves",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
+      "capability_id": "protection.attachment.source_aura_fixed_type",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_type_aura_protection.FixedTypeAuraProtectionTests.test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "official_rule_ids": [
+        "601.2c",
+        "601.2h",
+        "602.2b",
+        "613.1f",
+        "613.4c",
+        "702.16b",
+        "702.16c",
+        "702.16n"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original Tattoo Ward casts retain only their source Aura, remove another matching Aura through the existing owner, reject illegal enchantment-source targets before sacrifice costs, and resolve the legal sacrifice body. Four-player rollback/privacy, pending reload, replay, verified withdrawal, runtime minimum and fresh actual omissions guard this bounded scope."
+    },
+    {
       "capability_id": "protection.attachment.source_chosen_color",
       "evidence_class": "interaction",
       "test_id": "tests.test_chosen_aura_protection.ChosenAuraProtectionTests.test_actual_cho_manno_flash_enters_on_another_turn_and_keeps_the_source_choice",
@@ -285167,5 +285461,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "49ebaab791deb589c6d46d6dab5ec1c2cafb3543a80c03edaf009ca1c28c46d3"
+  "fingerprint": "2faf293810eff35e17d539746c8ae70b7e7c97d4053ceb847ce6e81304175c66"
 }
