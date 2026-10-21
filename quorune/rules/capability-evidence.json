@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "bc4827ecb21aa6966bea2470bf1ffb4afa321c2b0d092e9c002040a05a412cfd",
-  "declaration_source_fingerprint": "7c3e0510dcdcc79aca22ed2b68aec101fbd9e492b885f2a492a8aff6271d5df0",
+  "registry_fingerprint": "3c640fb70173e013fab89dc5f07f284298e90408508d8966225f47ec4c7b780b",
+  "declaration_source_fingerprint": "da108d70d600ecae6bd59cd751fc025715048a7cec0e5754150ce40613e623db",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -19715,6 +19715,1228 @@
         "traditional"
       ],
       "applicability_note": "Original Paladin/Monk Job select uses normal closure, actual casts, a 1/1 colorless Hero and canonical source attachment; decorated Equip preserves four-mana cost and target/timing authority. Pending load, four-seat privacy, foreign rollback, source-departure token creation, replay and real producer omissions are explicit. Unsupported sibling cards remain unadmitted."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_axe_discards_owned_hand_card_before_attach_and_replays_privately",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_hauberk_can_pay_its_target_then_leave_the_cost_paid",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_inventor_pays_entry_energy_to_move_its_attachment",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_lash_pays_three_life_and_keeps_its_swamp_count",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_shredder_excludes_self_and_lands_and_is_once_each_turn",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sledge_entry_attaches_but_sacrificed_source_cannot_attach",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_axe_discards_owned_hand_card_before_attach_and_replays_privately",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_hauberk_can_pay_its_target_then_leave_the_cost_paid",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_inventor_pays_entry_energy_to_move_its_attachment",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_lash_pays_three_life_and_keeps_its_swamp_count",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_shredder_excludes_self_and_lands_and_is_once_each_turn",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sledge_entry_attaches_but_sacrificed_source_cannot_attach",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_fresh_nonmana_lowering_and_life_price_omissions_are_killed",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_axe_discards_owned_hand_card_before_attach_and_replays_privately",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_hauberk_can_pay_its_target_then_leave_the_cost_paid",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_inventor_pays_entry_energy_to_move_its_attachment",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_lash_pays_three_life_and_keeps_its_swamp_count",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_shredder_excludes_self_and_lands_and_is_once_each_turn",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sledge_entry_attaches_but_sacrificed_source_cannot_attach",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_closed_nonmana_equip_grammar_rejects_alternatives_and_variable_prices",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_typed_nonmana_equip_retains_an_independent_runtime_minimum",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_verified_owner_withdrawal_keeps_complete_originals_residual",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_axe_discards_owned_hand_card_before_attach_and_replays_privately",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_hauberk_can_pay_its_target_then_leave_the_cost_paid",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_inventor_pays_entry_energy_to_move_its_attachment",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_lash_pays_three_life_and_keeps_its_swamp_count",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_shredder_excludes_self_and_lands_and_is_once_each_turn",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sledge_entry_attaches_but_sacrificed_source_cannot_attach",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_closed_nonmana_equip_grammar_rejects_alternatives_and_variable_prices",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_complete_nonmana_equip_originals_have_normal_admission",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_axe_discards_owned_hand_card_before_attach_and_replays_privately",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_axe_discards_owned_hand_card_before_attach_and_replays_privately",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_hauberk_can_pay_its_target_then_leave_the_cost_paid",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_inventor_pays_entry_energy_to_move_its_attachment",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_lash_pays_three_life_and_keeps_its_swamp_count",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_shredder_excludes_self_and_lands_and_is_once_each_turn",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonmana_equip.FixedNonmanaEquipTests.test_actual_sledge_entry_attaches_but_sacrificed_source_cannot_attach",
+      "official_rule_ids": [
+        "702.6a",
+        "702.6c",
+        "702.6d",
+        "301.5b",
+        "301.5c",
+        "301.5d",
+        "602.2",
+        "601.2h",
+        "117.3b",
+        "118.3",
+        "118.3b",
+        "118.11",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed nonmana Equip originals pay actual typed costs, preserve full entry and static consequences, reject wrong principals and malformed payments, revalidate targets, retain paid costs, and preserve private projection with pending-load replay. Independent minima, closed boundaries, verified withdrawal and fresh omissions bound trust."
     },
     {
       "capability_id": "attachment.equip.fixed_restricted",
@@ -316969,5 +318191,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "8b66c07526f931f80b59101031cd785f49757fca9559a6bcd40f188e2dc675e7"
+  "fingerprint": "26f32289d741d0cc96fc9ce6f8ce961a07525a879ba738679fcc9cfdfc741050"
 }

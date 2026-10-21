@@ -191,6 +191,7 @@
       "test_fixed_damage_effect_clauses",
       "test_fixed_direct_target_predicates",
       "test_fixed_impulse_access",
+      "test_fixed_nonmana_equip",
       "test_fixed_nonrepeating_modal_programs",
       "test_fixed_overload",
       "test_fixed_prowess_tokens",

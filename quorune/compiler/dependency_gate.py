@@ -329,6 +329,9 @@ def keyword_dependency_gate(
 
     equip = fixed_equip_ability_spec(material_line)
     if mechanics == ("equip",) and equip is not None:
+        if equip.nonmana:
+            return DependencyGate(blockers=('mechanic:equip-nonmana-dedicated-lowering-required',),
+                capabilities=(equip.capability_id,))
         return explicit_capability_gate(
             equip.capability_id,
             capability_registry=capability_registry,

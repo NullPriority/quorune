@@ -20,6 +20,12 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.builtin_semantic_key == 'builtin:equip' and (
+        ability.life_payment or ability.energy_payment or ability.choices
+        or ability.source_counter_removal_cost is not None
+    ):
+        from ..rules.attachment_actions import FIXED_NONMANA_EQUIP_CAPABILITY
+        additional.append(FIXED_NONMANA_EQUIP_CAPABILITY)
     if ability.boast or any(c.kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN for c in ability.activation_conditions):additional.append(BOAST_CAPABILITY)
     from ..rules.selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, SELECTED_COUNTER_COST_CAPABILITY
     if any(choice.kind == SELECTED_PLUS_COUNTER_COST_KIND for choice in ability.choices):
