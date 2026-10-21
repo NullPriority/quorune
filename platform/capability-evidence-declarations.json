@@ -78074,6 +78074,174 @@
     {
       "capability_id": "continuous.basic_land_type.fixed_setting",
       "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_basic_subtype_scope_depends_on_an_effect_that_creates_its_applicability",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_explicit_type_dependency_cycle_keeps_timestamp_fallback",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_song_replaces_printed_types_and_abilities_but_keeps_supertypes_and_later_grants",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
       "official_rule_ids": [
         "205.3i",
@@ -78158,6 +78326,111 @@
     {
       "capability_id": "continuous.basic_land_type.fixed_setting",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
       "official_rule_ids": [
         "205.3i",
@@ -78179,6 +78452,27 @@
     {
       "capability_id": "continuous.basic_land_type.fixed_setting",
       "evidence_class": "mutation",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_compiler_lowerer_and_type_dependency_omissions_are_killed",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_setting_omission_is_killed_by_actual_blood_moon_entry",
       "official_rule_ids": [
         "205.3i",
@@ -78196,6 +78490,111 @@
         "traditional"
       ],
       "applicability_note": "Admission-preserving basic-setting lowerer omission makes actual Vivid Creek retain its removed printed entry replacement under Blood Moon; the original command witness detects it."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_extended_setting_codec_and_whole_sentence_grammar_preserve_old_shapes",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_runtime_setting_owner_is_required_after_full_original_compilation",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_unrelated_attached_type_setter_creates_no_dependency_for_this_object",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_verified_setting_and_intrinsic_mana_withdrawals_block_all_three_originals",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
     },
     {
       "capability_id": "continuous.basic_land_type.fixed_setting",
@@ -78280,6 +78679,237 @@
         "traditional"
       ],
       "applicability_note": "Actual setting source, old printed ability loss, both Urborg timestamps, source-layer participation under Humble, departure restoration and actual destruction consequences use fully admitted originals with pending load/replay. New Blood Moon land play includes wrong-principal rollback and four-seat hand privacy."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_basic_subtype_scope_depends_on_an_effect_that_creates_its_applicability",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_complete_conversion_and_glaciers_register_their_upkeep_and_global_type_siblings",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_explicit_type_dependency_cycle_keeps_timestamp_fallback",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_extended_setting_codec_and_whole_sentence_grammar_preserve_old_shapes",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_song_replaces_printed_types_and_abilities_but_keeps_supertypes_and_later_grants",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_unrelated_attached_type_setter_creates_no_dependency_for_this_object",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
     },
     {
       "capability_id": "continuous.basic_land_type.fixed_setting",
@@ -78368,6 +78998,90 @@
     {
       "capability_id": "continuous.basic_land_type.fixed_setting",
       "evidence_class": "privacy",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_basic_type_setting.FixedBasicTypeSettingRuntimeTests.test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play",
       "official_rule_ids": [
         "205.3i",
@@ -78406,6 +79120,111 @@
         "traditional"
       ],
       "applicability_note": "CR305.7 setting preserves other facts while removing old land types and printed abilities; actual Blood Moon and Vivid Creek land play must bypass removed self tap/counter entry replacements. Basic/snow and prospective source ability facts stay distinct."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_actual_song_converts_foreign_creature_to_only_colorless_forest_and_restores",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_declining_conversion_upkeep_sacrifices_source_and_restores_mountain",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "continuous.basic_land_type.fixed_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_expanded_basic_type_setting.ExpandedBasicTypeSettingTests.test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+      "official_rule_ids": [
+        "205.3i",
+        "305.6",
+        "305.7",
+        "305.8",
+        "400.7",
+        "613.1d",
+        "613.8",
+        "614.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full Song/Conversion/Glaciers originals retain real casts and upkeep siblings. Permanent conversion, current global Mountain selection, intrinsic mana, source removal, Aura detachment/restoration, supertype/name/control preservation, later ability grants, relation-aware dependencies, partial-payment rollback, private pending load/replay, verified withdrawals and fresh omissions have bounded executable witnesses."
     },
     {
       "capability_id": "continuous.basic_land_type.fixed_setting",

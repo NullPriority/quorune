@@ -277,6 +277,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/conspire.py",
         "quorune/self_graveyard_exile_model.py",
         "quorune/continuous_effects.py",
+        "quorune/continuous_type_dependencies.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
         "quorune/zone_object_subtype_grants.py",

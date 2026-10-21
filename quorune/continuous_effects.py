@@ -563,7 +563,8 @@ def evaluate_continuous_effects(
             inapplicable.append(effect.effect_id)
             continue
         present.append(effect)
-    ordered, cycles = order_continuous_effects(present)
+    from .continuous_type_dependencies import bind_type_applicability_dependencies
+    ordered, cycles = order_continuous_effects(bind_type_applicability_dependencies(present,base,context))
     applied: list[str] = []
     intrinsic_ready=False
     for effect in ordered:

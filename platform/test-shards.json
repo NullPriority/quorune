@@ -182,6 +182,7 @@
       "test_commander_characteristic_grants",
       "test_copied_self_entry_counters",
       "test_escaped_entry_counters",
+      "test_expanded_basic_type_setting",
       "test_external_entry_counters",
       "test_external_entry_tapped",
       "test_fixed_counter_keyword_activations",
