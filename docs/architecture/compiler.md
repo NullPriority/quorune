@@ -276,6 +276,13 @@ fixed-blocker capability.
 Chosen qualities, player-relative blockers, two-creature relationships, group
 targets and other durations remain outside this production.
 
+A separate source-specific production lowers "target creature can't block this
+creature this turn". Its typed journal entry locks both the chosen blocker and
+the activation source incarnation. It permits that blocker to block other
+attackers and leaves other blockers eligible against the source. Source context
+comes from the sealed stack identity; controller changes and ability loss do
+not rebind either role, and a returned incarnation does not inherit the rule.
+
 Nontargeted creature-group rules instead retain a typed live public battlefield
 query, optionally restricted to the resolving controller or that controller's
 opponents. An initially empty group still creates the rule. Later entrants,
@@ -285,11 +292,11 @@ This follows the separate game-rule boundary in CR 611.2c rather than the locked
 membership of characteristic grants. Both recipient modes use the existing
 continuous-effect journal and expire in cleanup. The rule remains distinct from
 a granted ability. Ambiguous "other" groups, variable target counts,
-two-object restrictions, unrepresented predicates, and different durations
+independently chosen second-creature relationships, unrepresented predicates, and different durations
 remain residual.
 
-Temporary declaration routing recognizes only the complete unconditional
-"can't attack/block/be blocked this turn" instruction. Static restrictions
+Each temporary declaration production recognizes its complete unconditional
+instruction. Static restrictions
 whose public condition refers to activity this turn retain their ordinary
 declaration owner and condition evaluation.
 

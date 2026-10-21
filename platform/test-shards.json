@@ -207,6 +207,7 @@
       "test_record_lifecycle_v060",
       "test_renown_rules",
       "test_scry_rules",
+      "test_source_block_pairs",
       "test_spell_history_transformations",
       "test_static_land_animation",
       "test_tap_controller_information",

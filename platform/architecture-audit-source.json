@@ -452,7 +452,10 @@
         "quorune/declaration_restrictions.py",
         "quorune/damage.py",
         "quorune/semantic_runtime/block_restrictions.py",
-        "quorune/engine.py"
+        "quorune/engine.py",
+        "quorune/rules/block_prohibitions.py",
+        "quorune/rules/source_block_pairs.py",
+        "quorune/source_block_pair_model.py"
       ],
       "missing_dedicated_owner": false
     },

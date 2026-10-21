@@ -46,6 +46,10 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
         )
     if sum(key in effect for key in ("card", "cards", "set")) != 1:
         raise GameRuleError("Declaration rule requires exactly one recipient mode")
+    from ..source_block_pair_model import SOURCE_BLOCK_PAIR_KIND
+    if isinstance(effect.get('restriction'), Mapping) and effect['restriction'].get('kind') == SOURCE_BLOCK_PAIR_KIND:
+        from ..rules.source_block_pairs import apply_source_block_pair
+        return apply_source_block_pair(host, effect, actor=actor, reason=reason)
     if "cards" in effect or "set" in effect:
         query = None
         try:

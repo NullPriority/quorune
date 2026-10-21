@@ -417,6 +417,12 @@ restrictions from current effective static abilities through one read-only
 query, so ability removal affects static restrictions without erasing an
 independent rule that already resolved.
 
+`rules/block_prohibitions.py` owns the shared read-only block-prohibition
+verdict. It evaluates ordinary typed restrictions in their existing order, then
+source-specific blocker pairs. Those pair records lock both incarnations in
+the same duration journal, remain independent of abilities and controllers,
+and expire at cleanup. They do not remove a block that was already declared.
+
 Resolution-created casting prohibitions also share that duration journal
 without entering characteristic evaluation. Their typed entries retain the
 resolving controller and optional targeted seat independently of source

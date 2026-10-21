@@ -38,6 +38,7 @@ from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dep
 from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
 from ..rules.attached_keyword_requirements import attached_keyword_runtime_dependencies
 from ..rules.fixed_blocker_restriction_shapes import fixed_blocker_runtime_dependencies
+from ..rules.source_block_pairs import source_block_pair_runtime_dependencies
 
 
 def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
@@ -66,6 +67,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(source_block_pair_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_source_block_pair:invalid:{exc}')
     try:required.update(fixed_blocker_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_fixed_blocker:invalid:{exc}')
     from ..rules.occurrence_object_results import occurrence_object_runtime_dependencies

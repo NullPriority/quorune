@@ -5712,6 +5712,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/source_block_pairs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/source_counter_anthems.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10702,6 +10717,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/block_prohibitions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/blocking_requirements.py",
       "layer": "rules",
       "owning_subsystem": "combat_declaration",
@@ -12789,6 +12818,20 @@
     },
     {
       "file": "quorune/rules/soulbond_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/source_block_pairs.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -16686,6 +16729,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/source_block_pair_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/source_continuity.py",
       "layer": "domain",
       "owning_subsystem": "continuous_effects",
@@ -17904,5 +17959,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "0c2f5e38da726bf3b6edea509226df81f765a86b4a4c8712c3ec0b76caf7456c"
+  "fingerprint": "3b6c00261cca08e291017be013721ac387438adf93ae8c0fcc0db51ac9ea9e43"
 }
