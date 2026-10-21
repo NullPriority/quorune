@@ -17,9 +17,14 @@ def occurrence_object_runtime_dependencies(program):
         if isinstance(value,Mapping):return any(contains(v) for v in value.values())
         if isinstance(value,(list,tuple)):return any(contains(v) for v in value)
         return value=='$event.permanent_object'
-    controller=any(isinstance(e.get('target'),Mapping) and e['target'].get('kind')=='occurrence_controller_information' for e in program.effects)
+    controller=any(isinstance(e.get(field),Mapping) and e[field].get('kind')=='occurrence_controller_information'
+        for e in program.effects for field in ('target','player'))
     if controller:
-        required=occurrence_object_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=('cr-122-counters',))
+        if len(program.effects)==1 and program.effects[0].get('op') in {'life','lose_life','mill','damage'}:
+            from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
+            required=tap_state_event_player_node_capabilities(effects=program.effects,target_schema=program.target_schema,
+                mechanic_ids=program.coverage)
+        else:required=occurrence_object_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=('cr-122-counters',))
         if program.event not in {'permanent.tap','permanent.untap'} or not required:
             raise ValueError('Occurrence controller result requires a closed untargeted tap-state instruction')
         return required

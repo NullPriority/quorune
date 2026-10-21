@@ -57,7 +57,7 @@ def fixed_life_node_capabilities(
         player = effect.get("player")
         valid = (
             set(effect) == {"op", "player", "delta"}
-            and player in {"$controller", "$target.0"}
+            and isinstance(player,str) and player in {"$controller", "$target.0"}
             and _positive_int(effect.get("delta"))
             and (
                 player == "$controller"
@@ -78,7 +78,7 @@ def fixed_life_node_capabilities(
         )
         valid = all_players or (
             set(effect) == {"op", "player", "amount"}
-            and player in {"$controller", "$target.0"}
+            and isinstance(player,str) and player in {"$controller", "$target.0"}
             and _positive_int(effect.get("amount"))
             and (
                 player == "$controller"

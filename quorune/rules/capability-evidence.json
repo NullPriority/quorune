@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "33dfb34f3cedc91bccf98c9a29778b9ee3f6b516efac5c18bbfa8c267071a353",
-  "declaration_source_fingerprint": "59dbb0f948e2956c0a453174810a1ab6f63120529fb63f37ee18b144d608ae5e",
+  "registry_fingerprint": "24ba35a0dab49634cb2871641e9a09eb1c705ad7c589225e43ea787beab6e6ab",
+  "declaration_source_fingerprint": "421cea9514571bb2916b73c4d1aca4492919653646b3cc872e1aceb5b074d07a",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -226679,6 +226679,91 @@
     },
     {
       "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
       "official_rule_ids": [
@@ -226764,6 +226849,91 @@
     },
     {
       "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
       "evidence_class": "mutation",
       "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
       "official_rule_ids": [
@@ -226829,6 +226999,23 @@
         "traditional"
       ],
       "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_legacy_compiler_binding_and_missing_runtime_minimum_mutants_are_killed",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
     },
     {
       "capability_id": "resolution.target_controller_information",
@@ -226914,6 +227101,57 @@
         "traditional"
       ],
       "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_controller_information_owner_is_required_independently_at_runtime",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_verified_controller_information_withdrawal_blocks_corrected_originals",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
     },
     {
       "capability_id": "resolution.target_controller_information",
@@ -227019,6 +227257,108 @@
     },
     {
       "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
       "evidence_class": "privacy",
       "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
       "official_rule_ids": [
@@ -227050,6 +227390,91 @@
         "traditional"
       ],
       "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
     },
     {
       "capability_id": "resolution.target_controller_information",
@@ -227135,6 +227560,91 @@
         "traditional"
       ],
       "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
     },
     {
       "capability_id": "stack.copy.fixed_instant_or_sorcery",
@@ -263323,6 +263833,191 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
       "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_actual_library_actions_trigger_only_current_controller_observers_after_completion",
       "official_rule_ids": [
         "116.2b",
@@ -263541,6 +264236,191 @@
         "commander_review"
       ],
       "applicability_note": "Place the source-self occurrence through ordinary four-player trigger and priority handling."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -263766,6 +264646,43 @@
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_legacy_compiler_binding_and_missing_runtime_minimum_mutants_are_killed",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "negative",
       "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
       "official_rule_ids": [
@@ -263985,6 +264902,117 @@
         "commander_review"
       ],
       "applicability_note": "Require an exact source-self turned-face-up declaration and immutable source-reference predicate."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_controller_information_owner_is_required_independently_at_runtime",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_verified_controller_information_withdrawal_blocks_corrected_originals",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -264359,6 +265387,228 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
       "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_library_observers_complete_counter_and_temporary_keyword_results",
       "official_rule_ids": [
         "116.2b",
@@ -264692,6 +265942,191 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
       "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
       "official_rule_ids": [
         "116.2b",
@@ -264984,6 +266419,191 @@
         "commander_review"
       ],
       "applicability_note": "Replay the committed source-pinned occurrence, trigger placement, effect resolution, and final authoritative hash."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_tap_controller_information.TapControllerInformationTests.test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete existing Corrupted Roots, Chronic Flooding and Psychic Venom casts create a lockedA untargeted trigger from event controllerB; currentD or same-incarnation departureD receives life loss, mill or damage. ReturnedB incarnation, source departure, private pending load/replay, malformed/missing information, independent minima, verified withdrawal and deliberate event-time/minimum omissions are bounded evidence."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -306784,5 +308404,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "0ec70ff69df20199a6b3f6ead8b1ba4d3ab73a2497f27088966942efaa00c2f4"
+  "fingerprint": "8101510d93c24108ab08491ff996330862dc7c952e96b5f4aa0b0bfc65728566"
 }

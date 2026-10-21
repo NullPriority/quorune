@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed nontargeted results for the sealed tap-state event controller."""
+"""Closed untargeted tap-controller results and historical locked tokens."""
 
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -23,8 +23,12 @@ def tap_state_event_player_node_capabilities(
     if operation not in layouts:
         return ()
     reference, amount, fields, capabilities = layouts[operation]
-    if set(effect) != fields or effect.get(reference) != "$context.controller" or type(effect.get(amount)) is not int or effect[amount] <= 0:
+    value=effect.get(reference)
+    information=(isinstance(value,Mapping) and set(value)=={'kind','schema_version'}
+        and value.get('kind')=='occurrence_controller_information' and type(value.get('schema_version')) is int and value['schema_version']==1)
+    if set(effect) != fields or (value != "$context.controller" and not information) or type(effect.get(amount)) is not int or effect[amount] <= 0:
         return ()
     if operation == "damage" and effect.get("source") != "$source":
         return ()
-    return (*capabilities, "trigger.event.normalized_public_action")
+    return (*capabilities, "trigger.event.normalized_public_action",
+        *(('resolution.target_controller_information',) if information else ()))
