@@ -227756,6 +227756,820 @@
       "applicability_note": "Original Cursed Courtier or Redtooth Genealogist casts through advertised/accepted authority. Complete Role definition enters legally attached, Anointed Procession expands the event before principalcorrect exact ordering; latest samecontrollerRole survives statebasedaction, rejectedtarget/foreignprincipal/duplicateorder retainstate. Pending save/load/fullreplay cover completecharacteristics."
     },
     {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_fresh_keyword_fragment_and_actual_trigger_omissions_are_killed",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_canonically_verified_definition_owner_withdrawal_keeps_complete_creators_residual",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_created_keyword_and_underlying_trigger_are_independent_runtime_minima",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_definition_grammar_and_fragment_pairing_are_closed",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_complete_fixed_prowess_token_creators_have_normal_admission",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_definition_grammar_and_fragment_pairing_are_closed",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_copy_token_inherits_prowess_without_copying_temporary_bonus",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_mentor_triggers_existing_sources_but_not_the_newly_created_token",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_talent_entry_and_levels_keep_token_and_trigger_timing",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete token creator admission and native Wizardry/Mentor/Storm sequencing preserve full token characteristics, one trigger per own noncreature cast, no opponent/creature/copy/retroactive trigger, cleanup, rollback/private projection and pending-load replay. Closed pairing, independent runtime minima and verified withdrawal bound the definition claim."
+    },
+    {
+      "capability_id": "token.creation.prowess_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_prowess_tokens.FixedProwessTokenTests.test_token_ability_loss_stops_future_triggers_but_not_already_locked_instances",
+      "official_rule_ids": [
+        "111.3",
+        "111.4",
+        "603.2",
+        "603.3",
+        "702.108a",
+        "702.108b",
+        "611.2a",
+        "707.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Class level transitions, token copying and ability loss preserve source-local cast timing, copiable base characteristics, independent queued triggers, private projection and exact pending-load replay."
+    },
+    {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_myriad_token_multiplier_expands_per_copy_destination_choices",

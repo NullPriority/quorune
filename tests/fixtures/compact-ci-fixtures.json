@@ -125,6 +125,7 @@
     "tests/fixtures/fixed-mana-result-cards.json",
     "tests/fixtures/fixed-next-turn-draw-cards.json",
     "tests/fixtures/fixed-overload-cards.json",
+    "tests/fixtures/fixed-prowess-token-cards.json",
     "tests/fixtures/fixed-query-keyword-grant-cards.json",
     "tests/fixtures/fixed-replicate-cards.json",
     "tests/fixtures/fixed-resolution-mana-cards.json",

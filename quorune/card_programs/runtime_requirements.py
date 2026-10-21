@@ -40,6 +40,7 @@ from ..rules.attached_keyword_requirements import attached_keyword_runtime_depen
 from ..rules.fixed_blocker_restriction_shapes import fixed_blocker_runtime_dependencies
 from ..rules.source_block_pairs import source_block_pair_runtime_dependencies
 from ..rules.nonmana_buyback_costs import nonmana_buyback_runtime_dependencies
+from ..rules.token_prowess_requirements import token_prowess_runtime_dependencies
 
 
 def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
@@ -68,6 +69,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    try:required.update(token_prowess_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_token_prowess:invalid:{exc}')
     try:required.update(nonmana_buyback_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_nonmana_buyback:invalid:{exc}')
     try:required.update(source_block_pair_runtime_dependencies(program))
