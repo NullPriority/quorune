@@ -168,6 +168,9 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .random_graveyard_returns import random_graveyard_return_template
+    random_return=random_graveyard_return_template(text)
+    if random_return is not None:return random_return
     from .manifest_templates import manifest_effect_template
     manifest = manifest_effect_template(text)
     if manifest is not None:

@@ -32,6 +32,7 @@ _LIBRARY_DEFINITION = re.compile(
 )
 _X = re.compile(r"\bX\b")
 _RESULT_FIELDS = {
+    'return_random_graveyard_cards': ('count',),
     "damage": ("amount",), "damage_fixed_set": ("amount",),
     "draw": ("count",), "draw_each_player": ("count",),
     "mill": ("count",), "scry": ("count",),

@@ -134,6 +134,14 @@ affected object, event identity and original source cost before resuming. The
 client cannot submit this internal field or choose the random card. Ordinary
 selected costs and older continuations retain their payloads.
 
+Random own-graveyard return instructions serialize a version-one closed subject
+descriptor and fixed or declared-X count. They use the existing seed, stack
+reference and instruction-pointer identity with a separate random-return
+namespace. The simultaneous replacement continuation keeps the original
+public candidate event until choices finish; it adds no mutable RNG stream or
+optimization cache. Historical random-discard identities and selected-order
+behavior remain unchanged.
+
 Declared-X hand discard reuses the version-three `zone_change` cost descriptor:
 `operation` is `discard_one`, `choice_field` is `discard_cards`, and
 `count_parameter` is `x`. Its closed predicate selects unrestricted, creature or

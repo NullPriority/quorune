@@ -7065,6 +7065,34 @@
         "test_announced_target_cardinality",
         "test_self_exile_return_spells"
       ]
+    },
+    {
+      "id": "untargeted-random-own-graveyard-returns",
+      "patterns": [
+        "quorune/compiler/random_graveyard_returns.py",
+        "quorune/rules/random_graveyard_returns.py",
+        "quorune/rules/random_selection.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/random_discard.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/semantic_runtime/random_graveyard_returns.py",
+        "tests/test_random_graveyard_returns.py",
+        "tests/fixtures/random-graveyard-return-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_random_graveyard_returns",
+        "test_random_discard",
+        "test_random_discard_activation_costs",
+        "test_spell_random_discard_costs",
+        "test_fixed_zone_cast_lifecycles",
+        "test_scheduled_player_triggers",
+        "test_game_record_v3",
+        "test_self_exile_return_spells"
+      ]
     }
   ],
   "symbol_rules": [

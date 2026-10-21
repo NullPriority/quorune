@@ -24,6 +24,9 @@ def effect_program_is_closed(program, *, recognizers, recursive_is_closed, compo
 
 
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
+    from ..rules.random_graveyard_returns import random_graveyard_return_node_capabilities
+    random_return=random_graveyard_return_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
+    if random_return and set(random_return)<=set(program.capability_dependencies):return True
     from .declared_effect_amounts import closed_additional_cost_x_result
     if closed_additional_cost_x_result(program,recognizers=recognizers):return True
     from .random_discard_spell_costs import closed_random_discard_spell_result

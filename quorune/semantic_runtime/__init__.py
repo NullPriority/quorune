@@ -358,6 +358,7 @@ from .token_replacements import (
 from .tap_state_handlers import TAP_STATE_HANDLERS
 from .whole_hand_discard import WholeHandDiscardHandler
 from .random_discard import RandomDiscardHandler
+from .random_graveyard_returns import RandomGraveyardReturnHandler
 from .station_handlers import STATION_HANDLERS, StationCounterPlacementHandler
 from .zone_object_keyword_handlers import (
     GrantZoneObjectKeywordHandler,
@@ -396,6 +397,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             AscendSpellHandler(),
             WholeHandDiscardHandler(),
             RandomDiscardHandler(),
+            RandomGraveyardReturnHandler(),
             *TAP_STATE_HANDLERS,
             *DESTRUCTION_HANDLERS,
             *REGENERATION_HANDLERS,

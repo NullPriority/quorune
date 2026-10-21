@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 438,
+  "registry_version": 439,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -39976,6 +39976,169 @@
       "dependency_fail_closed_rationale": "The terminal destination reuses the shared stack/zone owner without another capability dependency; every body, target and price capability is retained independently. Canonically verified withdrawal of this owner rejects the complete source.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original-card source-producer and actual completion-destination omissions fail native consequences; omitting stored-destination runtime requirements fails the real emitted-program owner-stripping witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.return.random_own_graveyard",
+      "version": 1,
+      "official_rules": [
+        "101.3",
+        "113.8",
+        "400.7",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Select an instruction-keyed uniform random subset without replacement from the resolving controller's current eligible own graveyard and return the selected cards through canonical simultaneous zone moves.",
+        "inputs": [
+          "locked resolving controller and stack instruction identity",
+          "current own physical graveyard cards",
+          "fixed or independently declared nonnegativeXcount",
+          "closed card/type/subtype predicate",
+          "existing replacement selections"
+        ],
+        "outputs": [
+          "up-to-available distinct random selected identities",
+          "canonical simultaneous owner-hand transitions",
+          "publicly known returned hand cards",
+          "stable replay and pending replacement selection"
+        ],
+        "exclusions": [
+          "targets or player-chosen returned identities",
+          "opponent graveyards",
+          "battlefield destination",
+          "graveyard reordering",
+          "unowned type/quantity predicates",
+          "unrepresented sibling abilities"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.random_graveyard_returns.random_graveyard_return_template",
+        "quorune.rules.random_graveyard_returns.RandomGraveyardReturnSpec",
+        "quorune.rules.random_graveyard_returns.random_graveyard_return_node_capabilities",
+        "quorune.semantic_runtime.random_graveyard_returns.RandomGraveyardReturnHandler",
+        "quorune.semantic_runtime.random_graveyard_returns.execute_random_graveyard_return",
+        "quorune.rules.random_selection.sample_identity_rows",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent",
+        "quorune.rules.random_graveyard_returns.resolve_random_graveyard_return",
+        "quorune.rules.random_graveyard_returns.random_graveyard_return_runtime_dependencies",
+        "quorune.rules.effect_node_capabilities.effect_node_capabilities"
+      ],
+      "positive_tests": [
+        "test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+        "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+        "test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+        "test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+        "test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+        "test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+        "test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+        "test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+        "test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+        "test_random_return_subject_and_runtime_descriptors_are_closed_and_capability_bound",
+        "test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep"
+      ],
+      "negative_tests": [
+        "test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+        "test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+        "test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+        "test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+        "test_upkeep_controller_is_locked_after_actual_source_control_change",
+        "test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+        "test_canonically_verified_random_owner_withdrawal_rejects_full_originals",
+        "test_random_return_subject_and_runtime_descriptors_are_closed_and_capability_bound",
+        "test_fresh_random_return_producer_sampling_and_commit_omissions_are_killed"
+      ],
+      "interaction_tests": [
+        "test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+        "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+        "test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+        "test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+        "test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+        "test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+        "test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+        "test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+        "test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+        "test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+        "test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+        "test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+        "test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+        "test_upkeep_controller_is_locked_after_actual_source_control_change",
+        "test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+        "test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep"
+      ],
+      "multiplayer_tests": [
+        "test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+        "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+        "test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+        "test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+        "test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+        "test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+        "test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+        "test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+        "test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+        "test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+        "test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+        "test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+        "test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+        "test_upkeep_controller_is_locked_after_actual_source_control_change",
+        "test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+        "test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep"
+      ],
+      "privacy_tests": [
+        "test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+        "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+        "test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+        "test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+        "test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+        "test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+        "test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+        "test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+        "test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+        "test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+        "test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+        "test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+        "test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+        "test_upkeep_controller_is_locked_after_actual_source_control_change",
+        "test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+        "test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep"
+      ],
+      "replay_tests": [
+        "test_actual_make_a_wish_returns_two_distinct_random_own_cards_without_targets",
+        "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+        "test_actual_ghoulraiser_cast_returns_only_a_current_own_zombie",
+        "test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+        "test_actual_woodland_sleuth_uses_a_real_foreign_death_but_own_creature_pool",
+        "test_actual_charmbreaker_upkeep_filters_spells_and_retains_its_cast_bonus",
+        "test_actual_viconia_upkeep_requires_four_creatures_and_retains_background",
+        "test_actual_exalted_flamer_upkeep_filters_spells_and_retains_opponent_damage",
+        "test_actual_surreal_memoir_returns_again_on_rebound_without_a_second_price",
+        "test_zero_empty_and_undersized_pools_are_legal_and_do_not_take_foreign_cards",
+        "test_current_pool_is_read_after_a_real_instant_enters_graveyard_before_resolution",
+        "test_random_selection_is_untargeted_and_commander_replacement_does_not_reroll",
+        "test_intervening_conditions_do_not_create_returns_before_morbid_or_four_creatures",
+        "test_upkeep_controller_is_locked_after_actual_source_control_change",
+        "test_countering_keeps_reap_price_paid_and_prevents_random_return_and_self_exile",
+        "test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "This selector reuses canonical query, RNG and zone owners without another capability dependency. DeclaredXauthority remains an independent emitted-program dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original source-producer, selected-subset and canonical simultaneous-commit omissions are killed by full original-card consequences. The runtime descriptor reader omission is also killed; all registered program descriptors retain independent count/subject checks.",
       "blockers": [],
       "status": "trusted"
     }

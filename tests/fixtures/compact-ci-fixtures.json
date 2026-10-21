@@ -229,6 +229,7 @@
     "tests/fixtures/rampage-cards.json",
     "tests/fixtures/random-discard-activation-cards.json",
     "tests/fixtures/random-discard-cards.json",
+    "tests/fixtures/random-graveyard-return-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
     "tests/fixtures/reconfigure-cards.json",
     "tests/fixtures/reflexive-payment-cards.json",

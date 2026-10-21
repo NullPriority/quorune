@@ -605,6 +605,14 @@ follows the original zone object across control changes, and does not follow
 a blinked incarnation. Existing protection, Aura stabilization and cleanup
 owners consume the result without introducing a resolution choice.
 
+Random own-graveyard returns reuse public object-query facts and the canonical
+simultaneous zone-transition port. Their immutable intent retains the resolving
+controller, closed eligibility predicate, count and stack instruction identity.
+The keyed selector belongs to the rules layer; semantic handlers only validate
+and lower the instruction. All replacement choices finish before movement, so
+reload or rejected choices cannot select a different subset. Returned public
+cards remain known in hand, while unrelated hidden cards retain their projection.
+
 Fixed source keyword choices compose the existing scalar option choice with
 the source-incarnation characteristic owner. The ability controller chooses
 one printed ordinary keyword during resolution, even if control of its source
