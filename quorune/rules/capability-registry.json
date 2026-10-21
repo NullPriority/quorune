@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 435,
+  "registry_version": 436,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12849,7 +12849,7 @@
     },
     {
       "id": "quantity_expression.scalar_effect_amount",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "107.1b",
         "107.2",
@@ -12917,7 +12917,11 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
       ],
       "negative_tests": [
         "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
@@ -12928,7 +12932,11 @@
         "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
         "test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
-        "test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins"
+        "test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+        "test_verified_owner_withdrawals_reject_combined_group_results"
       ],
       "interaction_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12954,7 +12962,10 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "multiplayer_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12973,7 +12984,10 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "privacy_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12992,7 +13006,10 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "replay_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -13017,7 +13034,10 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
-        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard"
+        "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "required_evidence": [
         "positive",
@@ -13028,15 +13048,15 @@
         "replay"
       ],
       "dependency_fail_closed_status": "not_applicable",
-      "dependency_fail_closed_rationale": "No unconditional result owner exists for the primitive; emitted nodes retain every target, characteristic, event, history and actual result dependency.",
+      "dependency_fail_closed_rationale": "No unconditional result owner exists for the primitive; emitted nodes retain every target, characteristic, event, history and actual result dependency. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer.",
+      "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "quantity_expression.declared_effect_amount",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "107.3a",
         "107.3b",
@@ -13119,7 +13139,14 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
       ],
       "negative_tests": [
         "test_amount_versions_and_cast_values_reject_malformed_inputs",
@@ -13134,7 +13161,11 @@
         "test_undefined_ambiguous_and_unrepresented_price_x_remains_residual",
         "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_unknown_quantity_antecedents_and_material_tails_remain_residual"
+        "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+        "test_verified_owner_withdrawals_reject_combined_group_results"
       ],
       "interaction_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13160,7 +13191,13 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "multiplayer_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13186,7 +13223,13 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "privacy_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13212,7 +13255,13 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "replay_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13241,7 +13290,13 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "required_evidence": [
         "positive",
@@ -13252,15 +13307,15 @@
         "replay"
       ],
       "dependency_fail_closed_status": "not_applicable",
-      "dependency_fail_closed_rationale": "This primitive has no unconditional dependency; each emitted node separately requires its actual cost, query, target, and result owners.",
+      "dependency_fail_closed_rationale": "This primitive has no unconditional dependency; each emitted node separately requires its actual cost, query, target, and result owners. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Existing evidence retained. Fresh original casts kill omitted represented-price X context, runtime target binding, actual result promotion, typed-X minimum dependency and per-signature exact target bound.",
+      "implementation_mutation_rationale": "Existing evidence retained. Fresh original casts kill omitted represented-price X context, runtime target binding, actual result promotion, typed-X minimum dependency and per-signature exact target bound. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 12,
+      "version": 13,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -13344,7 +13399,11 @@
         "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
         "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
-        "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result"
+        "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
       ],
       "negative_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13359,7 +13418,11 @@
         "test_source_scalar_adaptation_consumes_all_fixed_components",
         "test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
-        "test_zero_public_count_creates_no_choice_or_scry_surveil_event"
+        "test_zero_public_count_creates_no_choice_or_scry_surveil_event",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+        "test_verified_owner_withdrawals_reject_combined_group_results"
       ],
       "interaction_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13377,7 +13440,10 @@
         "test_query_scaled_characteristics_use_resolution_state_and_cleanup",
         "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
-        "test_zero_query_amount_and_stale_target_use_existing_target_owner"
+        "test_zero_query_amount_and_stale_target_use_existing_target_owner",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
       ],
       "multiplayer_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13386,7 +13452,10 @@
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
       ],
       "privacy_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13394,7 +13463,10 @@
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
       ],
       "replay_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13405,7 +13477,10 @@
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
       ],
       "required_evidence": [
         "positive",
@@ -13416,9 +13491,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Every admitted node declares the amount capability in addition to its existing effect and target dependencies; blocking the shared quantity owner leaves the complete CardProgram unresolved before stack execution.",
+      "dependency_fail_closed_rationale": "Every admitted node declares the amount capability in addition to its existing effect and target dependencies; blocking the shared quantity owner leaves the complete CardProgram unresolved before stack execution. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient, subject, controller relation, target revalidation, or layer-5 query; exact compiler, runtime characteristic, copy-controller, multiplayer, projection, cleanup, and replay assertions reject each survivor. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh native witnesses also kill omission of the shared negative-supertype producer.",
+      "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient, subject, controller relation, target revalidation, or layer-5 query; exact compiler, runtime characteristic, copy-controller, multiplayer, projection, cleanup, and replay assertions reject each survivor. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh native witnesses also kill omission of the shared negative-supertype producer. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "blockers": [],
       "status": "trusted"
     },
@@ -14211,7 +14286,7 @@
     },
     {
       "id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "611.2a",
         "611.2c",
@@ -14236,7 +14311,8 @@
           "fixed characteristic, supported keyword, or ability-fragment operations",
           "optional fixed signed PublicQueryAmountSpec for a source-self or direct-target layer-7c modifier",
           "until-end-of-turn duration",
-          "complete current creature power or toughness for one fixed numeric resolution membership predicate"
+          "complete current creature power or toughness for one fixed numeric resolution membership predicate",
+          "fully consumed keyword-before-stat or stat-before-keyword set wording over the same recipient predicate"
         ],
         "outputs": [
           "immutable replay-pinned continuous-effect journal entry",
@@ -14275,7 +14351,8 @@
         "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects",
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.effect_runtime.objects_stack_and_tokens._commit_temporary_characteristic_effect",
-        "quorune.effect_runtime.zones_and_attachments._apply_modify_all_matching_permanents_until_end_of_turn"
+        "quorune.effect_runtime.zones_and_attachments._apply_modify_all_matching_permanents_until_end_of_turn",
+        "quorune.rules.fixed_resolution_characteristic_shapes.fixed_resolution_characteristics_runtime_dependencies"
       ],
       "positive_tests": [
         "test_activated_fixed_characteristic_effects_are_capability_closed",
@@ -14316,7 +14393,14 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -14329,7 +14413,11 @@
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_open_qualified_target_variants_remain_material_residuals",
         "test_resolution_public_stat_filter_uses_one_fixed_numeric_owner",
-        "test_nested_subtype_body_casing_preserves_the_complete_public_query"
+        "test_nested_subtype_body_casing_preserves_the_complete_public_query",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+        "test_verified_owner_withdrawals_reject_combined_group_results"
       ],
       "interaction_tests": [
         "test_resolution_set_is_locked_to_logical_objects",
@@ -14370,7 +14458,13 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -14404,7 +14498,13 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -14437,7 +14537,13 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -14470,7 +14576,13 @@
         "test_actual_kami_spirit_and_arcane_casts_choose_for_the_observer_without_foreign_cast_triggers",
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
-        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white"
+        "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
       ],
       "required_evidence": [
         "positive",
@@ -14481,9 +14593,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-set duration nodes from becoming exact; every represented keyword node also separately declares and closes its exact combat, damage, destruction, activation, or targeting consumer capabilities.",
+      "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-set duration nodes from becoming exact; every represented keyword node also separately declares and closes its exact combat, damage, destruction, activation, or targeting consumer capabilities. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_activated_characteristic_dependency_gate_mutant_is_killed, test_fixed_public_creature_set_compiler_mutant_is_killed, test_qualified_target_characteristic_compiler_mutant_is_killed, and test_fixed_resolution_keyword_shape_requires_exact_consumers reject missing typed closure, test_resolution_continuous_effect_commit_mutant_is_killed rejects a suppressed journal commit, and test_resolution_and_static_ability_changes_share_layer_six_ordering rejects bypassing the shared ability evaluator.",
+      "implementation_mutation_rationale": "test_activated_characteristic_dependency_gate_mutant_is_killed, test_fixed_public_creature_set_compiler_mutant_is_killed, test_qualified_target_characteristic_compiler_mutant_is_killed, and test_fixed_resolution_keyword_shape_requires_exact_consumers reject missing typed closure, test_resolution_continuous_effect_commit_mutant_is_killed rejects a suppressed journal commit, and test_resolution_and_static_ability_changes_share_layer_six_ordering rejects bypassing the shared ability evaluator. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "blockers": [],
       "status": "trusted"
     },

@@ -6996,6 +6996,26 @@
         "test_public_query_effect_amounts",
         "test_targeted_spell_costs"
       ]
+    },
+    {
+      "id": "combined-keyword-and-stat-resolution-sets",
+      "patterns": [
+        "quorune/compiler/fixed_public_characteristic_sets.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/rules/fixed_resolution_characteristic_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_gain_and_get_sets.py",
+        "tests/fixtures/gain-and-get-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_continuous_effect_duration",
+        "test_declared_effect_amounts",
+        "test_fixed_query_keyword_grants",
+        "test_gain_and_get_sets",
+        "test_game_record_v3",
+        "test_public_query_effect_amounts"
+      ]
     }
   ],
   "symbol_rules": [

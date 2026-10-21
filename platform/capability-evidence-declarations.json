@@ -94135,6 +94135,120 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "611.2a",
@@ -94669,6 +94783,120 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "611.2a",
@@ -95061,6 +95289,44 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_verified_owner_withdrawals_reject_combined_group_results",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "negative",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_malformed_fixed_characteristic_keywords_roll_back",
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
@@ -95168,6 +95434,44 @@
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep historic, attachment-relative, chosen-protection, and otherwise open target/result forms residual."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -95422,6 +95726,139 @@
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose qualified temporary characteristic targets across spell, trigger, activation, quoted-ability, and modal contexts."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -95937,6 +96374,120 @@
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep the private action decision scoped to the acting seat while exposing only public qualified target references."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -96472,6 +97023,120 @@
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay from the checkpoint before the real activation through payment, target commitment, and the full fixed characteristic result."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -159261,6 +159926,120 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
       "official_rule_ids": [
         "107.3a",
@@ -159706,6 +160485,120 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
       "official_rule_ids": [
         "107.3a",
@@ -159767,6 +160660,44 @@
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Executable owner mutations omit declaration persistence or signed cost-X multiplication; semantic assertions kill both."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_verified_owner_withdrawals_reject_combined_group_results",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -159921,6 +160852,44 @@
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve the independent amount codec and reject malformed versions, Boolean coefficients, and noninteger announced values."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -160401,6 +161370,139 @@
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "A closed public definition supplies several result slots in one instruction without changing target semantics."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -160907,6 +162009,120 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
       "official_rule_ids": [
         "107.3a",
@@ -161364,6 +162580,120 @@
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "A genuine synthetic command record first replays under archived v233 source, then the current real replay path explicitly rejects superseded exact-runtime provenance without reinterpretation."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -163721,6 +165051,90 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
       "official_rule_ids": [
         "109.2",
@@ -164042,6 +165456,90 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityActionTests.test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
       "official_rule_ids": [
         "109.2",
@@ -164231,6 +165729,62 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_verified_owner_withdrawals_reject_combined_group_results",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
       "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_negative_supertype_producer_omission_is_killed_by_fresh_native_cases",
       "official_rule_ids": [
         "109.2",
@@ -164342,6 +165896,62 @@
     },
     {"capability_id":"quantity_expression.public_query_effect_amount","evidence_class":"mutation","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one","official_rule_ids":["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c", "205.4a", "205.4b", "205.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reintroducing the implied Creature card-type restriction breaks the independently expected original Soulless One quantities."},
     {"capability_id": "quantity_expression.public_query_effect_amount", "evidence_class": "mutation", "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed", "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c", "205.4a", "205.4b", "205.4c"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."},
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
@@ -164734,6 +166344,118 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_live_battlefield_quantities.LiveBattlefieldQuantityCompilerTests.test_counted_token_definition_retains_trailing_keywords",
       "official_rule_ids": [
         "109.2",
@@ -165100,6 +166822,90 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
       "official_rule_ids": [
         "109.2",
@@ -165264,6 +167070,90 @@
       "official_rule_ids": ["109.2", "109.2a", "205.3m", "608.2h", "611.2c", "613.1d", "613.1e", "613.4c", "701.22a", "701.22b", "701.25a", "701.25c", "205.4a", "205.4b", "205.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the current granted-ability offer, payment, query-scaled layer-7c result, and final authoritative state from the pre-activation checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -165518,6 +167408,66 @@
         "commander_review"
       ],
       "applicability_note": "Original Ugin’s Insight resolves greatest controlled permanent mana value before private Scry, then draws three through trusted offered casting, pending save/load and exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -165962,6 +167912,66 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "107.1b",
@@ -166302,6 +168312,46 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_verified_owner_withdrawals_reject_combined_group_results",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
       "official_rule_ids": [
         "107.1b",
@@ -166398,6 +168448,46 @@
         "commander_review"
       ],
       "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -166578,6 +168668,86 @@
         "commander_review"
       ],
       "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -167042,6 +169212,66 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_mana_spent_amounts.ManaSpentAmountRuntimeTests.test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
       "official_rule_ids": [
         "107.1b",
@@ -167378,6 +169608,66 @@
         "commander_review"
       ],
       "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_gain_and_get_sets.GainAndGetSetTests.test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",

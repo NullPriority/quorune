@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned combined keyword-then-stat public set effects; source leads are not accepted gains.",
+  "cards": [
+    {
+      "oracle_id": "8c52bd39-0586-48ca-b263-17210cf9feb6",
+      "name": "Craterhoof Behemoth",
+      "mana_cost": "{5}{G}{G}{G}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Haste\nWhen this creature enters, creatures you control gain trample and get +X/+X until end of turn, where X is the number of creatures you control.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 8.0,
+      "card_faces": [],
+      "rulings": [
+        {
+          "oracle_id": "8c52bd39-0586-48ca-b263-17210cf9feb6",
+          "published_at": "2025-04-04",
+          "source": "wotc",
+          "comment": "The value of X is calculated only once, as Craterhoof Behemoth’s last ability resolves."
+        },
+        {
+          "oracle_id": "8c52bd39-0586-48ca-b263-17210cf9feb6",
+          "published_at": "2025-04-04",
+          "source": "wotc",
+          "comment": "Craterhoof Behemoth’s triggered ability affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won’t gain trample and get +X/+X."
+        }
+      ]
+    },
+    {
+      "oracle_id": "b3f16f34-d78c-4b61-821b-05fc6bd0da37",
+      "name": "Moonshaker Cavalry",
+      "mana_cost": "{5}{W}{W}{W}",
+      "type_line": "Creature — Spirit Knight",
+      "oracle_text": "Flying\nWhen this creature enters, creatures you control gain flying and get +X/+X until end of turn, where X is the number of creatures you control.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 8.0,
+      "card_faces": [],
+      "rulings": [
+        {
+          "oracle_id": "b3f16f34-d78c-4b61-821b-05fc6bd0da37",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "The value of X is determined only as Moonshaker Cavalry's triggered ability resolves, potentially including Moonshaker Cavalry itself. It won't change later in the turn if the number of creatures you control changes."
+        },
+        {
+          "oracle_id": "b3f16f34-d78c-4b61-821b-05fc6bd0da37",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "Moonshaker Cavalry's triggered ability affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won't be affected."
+        }
+      ]
+    },
+    {
+      "oracle_id": "7e52e91b-70e6-4f26-a5d4-b8e33d1debbf",
+      "name": "Pathbreaker Ibex",
+      "mana_cost": "{4}{G}{G}",
+      "type_line": "Creature — Goat",
+      "oracle_text": "Whenever this creature attacks, creatures you control gain trample and get +X/+X until end of turn, where X is the greatest power among creatures you control.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0,
+      "card_faces": [],
+      "rulings": [
+        {
+          "oracle_id": "7e52e91b-70e6-4f26-a5d4-b8e33d1debbf",
+          "published_at": "2017-07-14",
+          "source": "wotc",
+          "comment": "If this creature's power is negative as its ability resolves, X is considered to be 0."
+        },
+        {
+          "oracle_id": "7e52e91b-70e6-4f26-a5d4-b8e33d1debbf",
+          "published_at": "2025-02-07",
+          "source": "wotc",
+          "comment": "If the greatest power among creatures you control is negative as this creature’s ability resolves, X is considered to be 0."
+        }
+      ]
+    },
+    {
+      "oracle_id": "93e40d56-18fd-42e1-a598-636aab79b836",
+      "name": "Dragon Throne of Tarkir",
+      "mana_cost": "{4}",
+      "type_line": "Legendary Artifact — Equipment",
+      "oracle_text": "Equipped creature has defender and \"{2}, {T}: Other creatures you control gain trample and get +X/+X until end of turn, where X is this creature's power.\"\nEquip {3}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "card_faces": [],
+      "rulings": [
+        {
+          "oracle_id": "93e40d56-18fd-42e1-a598-636aab79b836",
+          "published_at": "2014-09-20",
+          "source": "wotc",
+          "comment": "The value of X is determined as the activated ability resolves. If the equipped creature isn't on the battlefield at that time, use its power the last time it was on the battlefield to determine the value of X."
+        },
+        {
+          "oracle_id": "93e40d56-18fd-42e1-a598-636aab79b836",
+          "published_at": "2017-07-14",
+          "source": "wotc",
+          "comment": "If the equipped creature's power is negative while resolving the activated ability it gains, X is considered to be 0."
+        }
+      ]
+    }
+  ]
+}

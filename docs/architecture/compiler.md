@@ -637,8 +637,12 @@ live grants and direct temporary Protection retain their typed fragments.
 `compiler/fixed_public_characteristic_sets.py` extends the same
 resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking
-creatures. Both grammars feed one closed query validator. Resolution evaluates
-only cycle-safe current type, subtype, color, supertype, token, controller, and
+creatures. Both grammars feed one closed query validator and accept the
+complete combined keyword and signed power/toughness result in either
+printed order. The existing declared-amount composition also accepts that
+result with a typed public count or scalar quantity; promotion independently
+validates the projected fixed result and every required quantity owner.
+Resolution evaluates only cycle-safe current type, subtype, color, supertype, token, controller, and
 public combat-state facts, then locks the matching logical objects. Bare
 subtype resolution sets include noncreature Kindred members. A fixed power or
 toughness bound on a creature recipient reads exact current effective stats
