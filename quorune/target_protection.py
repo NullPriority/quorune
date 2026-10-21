@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .target_source import TargetingSource
+from .qualified_hexproof import qualified_hexproof_prohibits
 
 from .protection import ProtectionVerdict
 
@@ -56,8 +60,12 @@ class TargetProtectionSnapshot:
     controller_hexproof_colors: frozenset[str] = frozenset()
     player_protection_from_everything: bool = False
     protection_verdict: ProtectionVerdict = ProtectionVerdict.ALLOWED
+    source_qualities: TargetingSource | None = None
 
     def __post_init__(self) -> None:
+        if self.source_qualities is not None:
+            from .target_source import TargetingSource
+            if not isinstance(self.source_qualities,TargetingSource):raise TargetProtectionError('Target source qualities must be typed')
         if not isinstance(self.acting_controller, str) or not self.acting_controller:
             raise TargetProtectionError("acting_controller must be nonempty")
         if (
@@ -113,7 +121,7 @@ def target_protection_verdict(
     if "shroud" in snapshot.target_keywords:
         return TargetProtectionVerdict.SHROUD
     if (
-        "hexproof" in snapshot.target_keywords
+        ("hexproof" in snapshot.target_keywords or qualified_hexproof_prohibits(snapshot.target_keywords,snapshot.source_qualities))
         and snapshot.acting_controller != snapshot.protected_controller
     ):
         return TargetProtectionVerdict.HEXPROOF

@@ -276,6 +276,14 @@ The setting handler and the existing attached-characteristic handler share
 one pure layer emission owner. It produces the represented layer 4, 5, 6, 7b
 and 7c operations for the existing evaluator. Ability removal precedes the
 same setting's keyword additions; base settings precede modifiers and counters.
+
+Closed Hexproof variants use the same keyword grant and removal operations.
+Qualified values retain their source-quality distinction for targeting while
+shared keyword predicates recognize their Hexproof type. Removing or
+prohibiting Hexproof affects all qualified variants. Independent ordinary
+Hexproof and later grants remain separate current values; no additional
+duration journal or runtime component registry is introduced. The
+[target legality reference](target-legality.md) owns source information timing.
 The ordinary timestamp and component-presence owners determine current source
 participation. Source departure or phasing ends a static effect, and reciprocal
 attachment identities prevent it from following a different incarnation.

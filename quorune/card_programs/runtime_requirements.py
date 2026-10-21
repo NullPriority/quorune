@@ -4,6 +4,7 @@ from ..boast import boast_runtime_dependencies
 """Descriptor-owned runtime requirements beyond registered operation minima."""
 
 from ..object_predicate import object_query_capabilities
+from ..qualified_hexproof import qualified_hexproof_runtime_dependencies
 from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
 from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
 from ..rules.resolution_condition_shapes import same_target_self_replacement_runtime_dependencies
@@ -31,6 +32,7 @@ from ..rules.provoke_shapes import provoke_program_runtime_dependencies
 
 def program_dynamic_runtime_requirements(program):
     required=set();blockers=set()
+    required.update(qualified_hexproof_runtime_dependencies(program))
     try:required.update(boast_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_boast:invalid:{exc}')
     try:

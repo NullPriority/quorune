@@ -5,6 +5,7 @@ from typing import Sequence
 
 from ..commander_pairing import partner_with_spec_for_material_line
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
+from .qualified_hexproof_keywords import qualified_hexproof_keywords
 from ..rules.attachment_actions import fixed_equip_ability_spec
 
 
@@ -89,6 +90,10 @@ def keyword_mechanics(
     mechanics: list[str] = []
     for part in parts:
         lower = part.casefold()
+        if lower.startswith('hexproof from ') and 'hexproof' in known:
+            qualified=qualified_hexproof_keywords(part)
+            if qualified is None:return None
+            mechanics.extend(qualified);continue
         if lower == "proliferate":
             # Proliferate is a keyword action whose imperative instruction
             # executes during resolution, not a keyword ability carried by

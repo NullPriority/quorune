@@ -19,6 +19,12 @@ maintenance: "hand-maintained"
   during compilation, including when reminder text is absent. Offers and
   accepted commands enforce the same restrictions before costs are paid.
 
+
+- Preserve qualified Hexproof keyword values and current source-quality target
+  restrictions through ordinary grants, removal, queries, copying and replay.
+- Reject nonactivation inputs before reading Reconfigure catalog fields, so
+  ordinary composed spell components retain their own closure recognizers.
+
 - Resolve printed Provoke through exact defending-player targets, optional
   untapping and combat-bound requirements in the existing declaration solver.
 - Supply the canonical public source predicate for fixed self-prevention of

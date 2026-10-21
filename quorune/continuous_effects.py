@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .qualified_hexproof import keyword_is_removed,keyword_type_terms
 
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Sequence
@@ -165,7 +166,8 @@ def _ability_presence_dependency_ids(
             operation.op == "remove_all_abilities"
             or (
                 operation.op in {"add_ability", "remove_ability", "prohibit_ability"}
-                and str(operation.value).casefold() in required
+                and bool(keyword_type_terms((operation.value,))&required
+                    or operation.op!='add_ability' and any(keyword_is_removed(wanted,operation.value) for wanted in required))
             )
             for operation in candidate.operations
         )
@@ -347,18 +349,18 @@ def _apply_ability_operation(
     value = operation.value
     if op == "add_ability":
         ability = str(value)
-        if ability.casefold() not in state.prohibited_keywords and ability.casefold() not in {
+        if not any(keyword_is_removed(ability,term) for term in state.prohibited_keywords) and ability.casefold() not in {
             item.casefold() for item in state.abilities
         }:
             state.abilities.append(ability)
     elif op == 'prohibit_ability':
         state.prohibited_keywords.add(str(value).casefold())
-        state.abilities = [ability for ability in state.abilities if ability.casefold() != str(value).casefold()]
+        state.abilities = [ability for ability in state.abilities if not keyword_is_removed(ability,value)]
     elif op == "remove_ability":
         state.abilities = [
             ability
             for ability in state.abilities
-            if ability.casefold() != str(value).casefold()
+            if not keyword_is_removed(ability,value)
         ]
     elif op == "add_rules_text":
         line = str(value).strip()

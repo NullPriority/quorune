@@ -94,6 +94,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/landwalk_permission_model.py",
         "quorune/external_entry_state_model.py",
         "quorune/landwalk_vocabulary.py",
+        "quorune/qualified_hexproof.py",
         "quorune/block_capacity_rule_model.py",
         "quorune/prototype_model.py",
         "quorune/enlist_model.py",
@@ -861,6 +862,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/target_numeric.py",
         "quorune/target_predicates.py",
         "quorune/targets.py",
+        "quorune/qualified_hexproof.py",
     }:
         return "targeting"
     if relative == "quorune/replacement_decisions.py":
