@@ -1188,12 +1188,12 @@ def _protection_quality_spec(quality: str) -> ProtectionSpec | None:
 def parse_protection_line(line: str) -> tuple[ProtectionSpec, ...] | None:
     """Compile one closed printed protection keyword line.
 
-    Compound qualities are deliberately residual until their Oracle grammar is
-    represented explicitly; runtime code never reparses the printed line.
+    Explicit repeated "from" clauses become independent typed qualities;
+    runtime code never reparses the printed line.
     """
 
     match = re.fullmatch(
-        r"protection from (?P<quality>[^.,]+)\.?",
+        r"protection from (?P<quality>[^.;]+)\.?",
         " ".join(str(line).strip().split()),
         re.IGNORECASE,
     )
@@ -1202,10 +1202,9 @@ def parse_protection_line(line: str) -> tuple[ProtectionSpec, ...] | None:
     quality = match.group("quality").casefold().strip()
     qualities = tuple(
         value.strip()
-        for value in re.split(r"\s+and from\s+", quality)
-        if value.strip()
+        for value in re.split(r",\s*(?:and\s+)?from\s+|\s+and from\s+", quality)
     )
-    if not qualities or any(" and " in value for value in qualities):
+    if not qualities or any(not value or ',' in value or " and " in value for value in qualities):
         return None
     specs = tuple(_protection_quality_spec(value) for value in qualities)
     if any(spec is None for spec in specs):

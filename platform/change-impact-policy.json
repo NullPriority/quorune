@@ -7336,6 +7336,27 @@
         "test_reconfigure",
         "test_fixed_spell_cost_reductions"
       ]
+    },
+    {
+      "id": "printed-protection-lists",
+      "patterns": [
+        "quorune/ability_fragments.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/compiler/ability_keyword_fragments.py",
+        "quorune/compiler/dependency_gate.py",
+        "tests/test_printed_protection_lists.py",
+        "tests/fixtures/protection-list-cards.json"
+      ],
+      "test_modules": [
+        "test_printed_protection_lists",
+        "test_typed_ability_fragments",
+        "test_source_fixed_protection",
+        "test_qualified_hexproof",
+        "test_card_program_trust",
+        "test_hexproof_targeting",
+        "test_fixed_type_aura_protection",
+        "test_trigger_processing_owner"
+      ]
     }
   ],
   "symbol_rules": [

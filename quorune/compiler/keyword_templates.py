@@ -32,6 +32,13 @@ _TYPECYCLING = re.compile(
 )
 
 
+def printed_keyword_parts(material_line: str) -> tuple[str, ...]:
+    """Retain explicit Protection continuations within one printed ability."""
+
+    return tuple(part.strip() for part in re.split(
+        r";|,(?!\s*(?:and\s+)?from\b)", material_line.rstrip("."), flags=re.I))
+
+
 def keyword_mechanics(
     text: str,
     card_keywords: Sequence[str],
@@ -84,7 +91,7 @@ def keyword_mechanics(
         and partner_with_spec_for_material_line(material) is not None
     ):
         return ("partner with",)
-    parts = [part.strip() for part in re.split(r"[,;]", material)]
+    parts = printed_keyword_parts(material)
     if not parts:
         return None
     mechanics: list[str] = []
