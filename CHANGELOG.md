@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind spell results and target counts to represented additional-cost X even
+  when the mana cost has no X, retaining free-cast, copy, privacy and exact
+  target-price boundaries through the existing owners.
+
 - Pay mandatory announced-X hand-discard spell prices through the existing
   discard owner, retaining linked target counts, zero casts, private selectors
   and pending destination choices.

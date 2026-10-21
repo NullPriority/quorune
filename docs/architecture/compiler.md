@@ -2609,6 +2609,14 @@ original placement subject, counter kind and target schema; the canonical
 placement owner receives the concrete execution-time integer. Unrepresented
 activation costs still block an otherwise recognized result.
 The casting and activation owners choose and pay their respective cost X.
+One represented mandatory additional life, owned-graveyard exile or hand-discard
+price also supplies spell X when the printed mana cost has no X. The compiler
+retains the existing typed stack-X expression and target-count descriptor.
+Promotion checks the entire price and then the independently owned result;
+it does not remove an unrepresented sibling. Ordinary mana-X restrictions,
+unsupported nonordinary X mana, ambiguous definitions and multiple unowned
+price contexts retain their rejection boundaries. Fixed mana stays fixed;
+waiving it does not waive the additional price or force that price's X to zero.
 `compiler/activation_x_costs.py` admits ordinary unrestricted battlefield
 activation mana costs with one or more X symbols, optionally a source tap.
 The closed catalog retains the symbol count, while the existing declared

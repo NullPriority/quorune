@@ -65,23 +65,24 @@ def _announced_tax_assignments(host,seat,card,schema,sources):
                 if union==applied:continue
                 witness=(*chosen,ref)
                 if union not in states or len(witness)<len(states[union]):states[union]=witness
-        for chosen in states.values():
+        for applied,chosen in states.items():
             grouped={group.group_id:list(chosen)}
             try:targets=validate_grouped_target_assignment(host,plan,grouped,candidates)
             except (ValueError,GameRuleError):continue
-            yield tuple(targets),grouped
+            compatible=sum(signature<=applied for signature in signatures.values())
+            yield tuple(targets),grouped,compatible
 
 
 def _announced_tax_variants(host,seat,card,schema,sources,option,modes):
     """Price each signature once, retaining its separate target witnesses."""
     signatures={}
-    for targets,grouped in _announced_tax_assignments(host,seat,card,schema,sources):
+    for targets,grouped,limit in _announced_tax_assignments(host,seat,card,schema,sources):
         fact=target_cost_fact(sources,targets)
         key=tuple(row['component_id'] for row in fact['sources'])
-        signatures.setdefault(key,(fact,[]))[1].append({'targets':grouped,'modes':list(modes)})
-    for fact,witnesses in signatures.values():
+        signatures.setdefault(key,(fact,[],limit))[1].append({'targets':grouped,'modes':list(modes)})
+    for fact,witnesses,limit in signatures.values():
         smallest=min(witnesses,key=lambda w:sum(len(refs) for refs in w['targets'].values()))
-        yield {**option,'targeted_cost':fact,'target_cost_witness':smallest,
+        yield {**option,'targeted_cost':fact,'target_cost_witness':smallest,'target_count_preview_limit':limit,
             'target_cost_witnesses':witnesses}
 
 

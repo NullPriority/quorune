@@ -141,6 +141,11 @@ land cards in the caster's hand. Graveyard-exile and fixed-count payloads keep
 their original keys and meaning. The current proposal, stack X and dependent
 private selector share one declaration; pending payments retain the original
 selected refs and destination journal without adding a Game Record field.
+The same stack X may originate from one represented additional price on a
+fixed-mana spell. Copies retain it without paying again. The historical
+`target.cardinality.mana_announced_x` capability identifier remains stable;
+its existing count descriptor carries the same `x` parameter for these price
+sources. No alternate target binder or additional persisted X field is added.
 
 Fixed Waterbend activation descriptors omit `waterbend` unless present. A
 `waterbend_payment` records its closed cost and selected physical objects,

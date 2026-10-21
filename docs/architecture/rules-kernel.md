@@ -782,6 +782,10 @@ legal target is too expensive. Optional and modal target choices include a
 server-authored price table; choosing several qualifying targets still charges
 each source once. The client displays that table and the server recomputes the
 actual submitted target set through the same cost and legality owners.
+An exact-X quote counts only targets compatible with that paid source
+signature. An unaffordable taxed target cannot inflate an untaxed quote's
+cardinality. Up-to-X selections retain their independently paid X even when
+fewer compatible targets are available.
 
 Preparation cards have normal permanent characteristics and separate copiable
 prepare-spell characteristics. The physical card casts only with its normal

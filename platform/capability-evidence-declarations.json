@@ -159001,6 +159001,234 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_declared_amount_survives_draw_choice_checkpoint_without_repeating_effects",
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -159242,6 +159470,234 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -159288,6 +159744,25 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "mutation",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_fresh_actual_context_binder_bound_and_result_owner_omissions_are_killed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "mutation",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountValueTests.test_instruction_freezing_and_signed_cast_amount_mutants_are_killed",
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -159311,6 +159786,101 @@
         "commander_review"
       ],
       "applicability_note": "Fresh native TestCase witnesses directly under parent assertRaises detect omitted referenced-characteristic and public-count producers before claimed gameplay support."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_canonically_verified_price_amount_and_target_owner_withdrawals_reject",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_price_and_owned_result_are_required_separately_at_promotion_and_runtime",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_undefined_ambiguous_and_unrepresented_price_x_remains_residual",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -159579,6 +160149,234 @@
         "commander_review"
       ],
       "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -159873,6 +160671,234 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h", "107.3k", "602.2b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -160086,6 +161112,234 @@
         "commander_review"
       ],
       "applicability_note": "Ordinary battlefield activation X uses existing complete-card admission, authenticated choice, canonical payment and persisted stack X. Native witnesses retain fixed target domains and independent result owners, with rejection, private projection, pending load and pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "107.3k",
+        "601.2b",
+        "602.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -188123,6 +189377,174 @@
     },
     {
       "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
       "official_rule_ids": [
@@ -188480,6 +189902,174 @@
     },
     {
       "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
       "evidence_class": "mutation",
       "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_restored_fixed_six_handler_bound_is_killed_by_a_fresh_original_by_force",
       "official_rule_ids": [
@@ -188540,6 +190130,27 @@
         "commander_review"
       ],
       "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_fresh_actual_context_binder_bound_and_result_owner_omissions_are_killed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
     },
     {
       "capability_id": "target.cardinality.mana_announced_x",
@@ -188624,6 +190235,111 @@
         "commander_review"
       ],
       "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_canonically_verified_price_amount_and_target_owner_withdrawals_reject",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_price_and_owned_result_are_required_separately_at_promotion_and_runtime",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_undefined_ambiguous_and_unrepresented_price_x_remains_residual",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
     },
     {
       "capability_id": "target.cardinality.mana_announced_x",
@@ -189026,6 +190742,174 @@
     },
     {
       "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
       "evidence_class": "privacy",
       "test_id": "tests.test_announced_target_cardinality.AnnouncedTargetCardinalityRuntimeTests.test_actual_cascade_forces_original_gridlock_to_zero_target_count",
       "official_rule_ids": [
@@ -189359,6 +191243,174 @@
         "commander_review"
       ],
       "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
     },
     {
       "capability_id": "target.cardinality.mana_announced_x",
@@ -189716,6 +191768,174 @@
         "commander_review"
       ],
       "applicability_note": "Typed spell/activation mana-X binds exact or up-to homogeneous public targets before shared legality and payment; the same persisted X reaches the repeated effect. Native zero, above-six, free-cast, current predicate, targeted tax, partial/all-illegal, independent result, privacy, pending load and replay controls retain the existing target, cost, stack and result owners. Unowned self-exile or linked-result siblings remain residual."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
+    },
+    {
+      "capability_id": "target.cardinality.mana_announced_x",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cost_defined_x.CostDefinedXTests.test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "115.3",
+        "115.6",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability_note": "Complete original additional-price X persists without charging X as mana. Normal nonland return, simultaneous damage, graveyard exile/damage, original graveyard retrieval and actual out-of-turn attacking-target exile retain their source restrictions. Zero, free casts, copies, target taxes, partial/countered results, private/public known-hand distinctions, rollback/load/replay, canonical withdrawals, codec minima and fresh actual omissions protect the represented price and independently closed result."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",

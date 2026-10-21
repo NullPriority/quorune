@@ -6969,6 +6969,33 @@
         "test_game_record_v3",
         "test_spell_random_discard_costs"
       ]
+    },
+    {
+      "id": "represented-additional-price-x-context",
+      "patterns": [
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/query_effect_amount_model.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/target_cardinality.py",
+        "quorune/rules/casting/additional_zone_costs.py",
+        "quorune/rules/casting/targeted_costs.py",
+        "tests/test_cost_defined_x.py",
+        "tests/fixtures/cost-defined-x-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_hand_discard_costs",
+        "test_announced_target_cardinality",
+        "test_announced_x_additional_costs",
+        "test_card_program_trust",
+        "test_cost_defined_x",
+        "test_declared_effect_amounts",
+        "test_fixed_stack_spell_copy",
+        "test_game_record_v3",
+        "test_public_query_effect_amounts",
+        "test_targeted_spell_costs"
+      ]
     }
   ],
   "symbol_rules": [

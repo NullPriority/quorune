@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "e061fc748ea40505b7fae0b22db58442e11082965efa2dd76e420010702c0688"
+verified: "e79b7a62ef4ac6dbe8f77770284cdb4f8df789fdf389846a1324ac0e7b412cc1"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 296 |
-| Cards | 3107 |
+| Fixture files | 297 |
+| Cards | 3114 |
 | Rulings | 7243 |
-| Modules inspected | 580 |
-| Static requirements | 1689 |
+| Modules inspected | 581 |
+| Static requirements | 1691 |
 | Declared dynamic requirements | 46 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -32,18 +32,18 @@ Overall closure: **closed**.
 
 | Shard | Modules | Status |
 | --- | ---: | --- |
-| casting-costs-mana | 69 | closed |
+| casting-costs-mana | 70 | closed |
 | combat-declarations | 24 | closed |
-| compiler-cardprogram | 81 | closed |
+| compiler-cardprogram | 82 | closed |
 | core-domain | 14 | closed |
 | counter-continuous-effects | 52 | closed |
 | deterministic-game-regressions | 6 | closed |
-| events-replacement-zone | 45 | closed |
+| events-replacement-zone | 46 | closed |
 | functional-01 | 30 | closed |
 | functional-02 | 83 | closed |
 | functional-03 | 35 | closed |
 | functional-04 | 35 | closed |
-| functional-05 | 38 | closed |
+| functional-05 | 39 | closed |
 | functional-06 | 56 | closed |
 | functional-07 | 27 | closed |
 | functional-08 | 39 | closed |
@@ -57,9 +57,9 @@ Overall closure: **closed**.
 | merge-core | 9 | closed |
 | multiplayer-commander | 9 | closed |
 | nightly-property | 3 | closed |
-| server-replay-privacy | 28 | closed |
+| server-replay-privacy | 29 | closed |
 | state-actions-damage | 18 | closed |
-| targets-choices-continuations | 38 | closed |
+| targets-choices-continuations | 39 | closed |
 | triggers-turns-exact-decks | 20 | closed |
 | windows-compat | 10 | closed |
 
