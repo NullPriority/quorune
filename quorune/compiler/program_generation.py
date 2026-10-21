@@ -36,7 +36,7 @@ from ..rules.fixed_resolution_mana_shapes import is_closed_fixed_resolution_mana
 from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_program
 from ..rules.stack_controller_payment_shapes import is_closed_stack_controller_payment_program
 from .declared_effect_amounts import is_closed_declared_amount_program
-from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE, is_closed_permanent_additional_cost_program
+from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE
 from .public_query_effect_amounts import (
     AMOUNT_MECHANIC_CAPABILITIES,
     public_query_amount_program_is_closed,
@@ -1370,18 +1370,9 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
-
-    if is_closed_permanent_additional_cost_program(program):
-        return True
-    from .nonleaf_effect_closure import nonleaf_effect_program_is_closed
-    if nonleaf_effect_program_is_closed(program,recognizers=_closed_effect_recognizers()):return True
-    if is_closed_composed_spell_effect_program(
-        program,
-        component_recognizers=_closed_effect_recognizers(),
-    ):
-        return True
-    recognizers = _closed_effect_recognizers()
-    return any(recognizer(program) for recognizer in recognizers)
+    from .nonleaf_effect_closure import effect_program_is_closed
+    return effect_program_is_closed(program,recognizers=_closed_effect_recognizers(),
+        recursive_is_closed=_is_closed_effect_program,composed_is_closed=is_closed_composed_spell_effect_program)
 
 
 def generated_programs(

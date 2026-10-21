@@ -336,6 +336,9 @@ flowchart LR
 `compiler/program_generation.py` owns lowering exact nodes into registry
 programs. `card_programs/adapters.py` combines abilities, face identity,
 source hashes, residuals, and capability closure into the canonical artifact.
+The complete effect-program promotion policy delegates to
+`compiler/nonleaf_effect_closure.py`; the lowering facade retains its existing
+entry point and recognizer ownership.
 For one CardProgram compilation, the adapter passes its locally compiled IR to
 the existing program-generation lowering owner. Lowering still validates trust
 and constructs fresh semantic programs; it does not parse the same record a
@@ -348,6 +351,17 @@ the counted-discard and fixed controller-sequence leaf templates reject that
 instruction. Integration tests assert the promoted effect order and player
 selector; leaf tests retain their narrower grammar boundaries. The whole-hand
 impact rule includes those existing consumer expectations.
+
+`compiler/spell_self_exile.py` recognizes a terminal source-self exile clause
+only at the end of an ordinary single-face spell's complete source. Its body
+must compile independently with unchanged targets and prices. The resulting
+typed marker uses the existing replacement-aware resolution destination;
+countering and all-target-illegal rejection retain their ordinary graveyard
+exit. Partial target resolution and zero target choices still finish the body
+and self-exile. Transient spell-copy objects cannot move the original card.
+Unknown siblings, another object's name, nonterminal and conditional self
+exile remain residual. No runtime Oracle parsing or new movement operation is
+introduced.
 
 The frontier owner passes the same original IR used for its node inventory to
 CardProgram lowering, retaining independent trust and construction-failure

@@ -246,6 +246,7 @@
       "test_public_state_optional_result_actions",
       "test_public_state_predefined_token_actions",
       "test_public_state_quantity_actions",
+      "test_self_exile_return_spells",
       "test_target_characteristic_sets",
       "test_targeting_v070",
       "test_unearth_rules"
@@ -794,6 +795,7 @@
       "test_rule_capabilities",
       "test_self_cast_restrictions",
       "test_self_counter_keyword_actions",
+      "test_self_exile_return_spells",
       "test_self_zone_discard_casts",
       "test_source_fixed_protection",
       "test_source_references",
@@ -876,6 +878,7 @@
       "test_qualified_hexproof",
       "test_query_power_toughness_definitions",
       "test_saga_counter_progression",
+      "test_self_exile_return_spells",
       "test_source_fixed_protection",
       "test_station_rules",
       "test_sunburst_rules",
@@ -934,6 +937,7 @@
       "test_replacement_event_tree",
       "test_replacement_model_hardening",
       "test_return_to_hand_rules",
+      "test_self_exile_return_spells",
       "test_single_object_zone_transition",
       "test_spell_random_discard_costs",
       "test_state_based_destination_replacements",
@@ -976,7 +980,8 @@
       "test_monarch_rules",
       "test_mulligan_and_turns",
       "test_multiplayer_rules",
-      "test_ordered_amount_clauses"
+      "test_ordered_amount_clauses",
+      "test_self_exile_return_spells"
     ],
     "nightly-property": [
       "test_counter_placement_replacements",
@@ -1008,6 +1013,7 @@
       "test_public_fixtures",
       "test_qualified_hexproof",
       "test_record_lifecycle_v060",
+      "test_self_exile_return_spells",
       "test_server_app",
       "test_server_architecture",
       "test_server_data",
@@ -1108,6 +1114,7 @@
       "test_native_v3_slice",
       "test_ordered_amount_clauses",
       "test_record_lifecycle_v060",
+      "test_self_exile_return_spells",
       "test_server_app",
       "test_server_data",
       "test_server_launcher",

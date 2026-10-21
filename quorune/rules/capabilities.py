@@ -300,6 +300,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
