@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 415,
+  "registry_version": 416,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -8988,23 +8988,114 @@
     {
       "id": "zone.change.destination_replacement",
       "version": 2,
-      "official_rules": ["400.6", "614.1", "614.1a", "614.5", "616.1", "616.1f", "616.2"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "400.6",
+        "614.1",
+        "614.1a",
+        "614.5",
+        "616.1",
+        "616.1f",
+        "616.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Replace represented single or simultaneous card destinations from one immutable pre-move source and affected-object snapshot, with contradictory choices collected in multiplayer APNAP order before committing any move.",
-        "inputs": ["immutable represented source effects", "affected card owner/controller and logical identity", "origin", "proposed destination", "complete APNAP order", "reviewed replacement destination and counter intents"],
-        "outputs": ["transformed destinations", "affected-object ordered applied-effect journal", "replacement-aware post-move counter intents", "public replacement events"],
-        "exclusions": ["optional zone descriptors", "self-inspection by the moving object", "destination-specific inspection by players", "entry-zone choices", "commander command-zone replacement", "unregistered destination predicates"]
+        "inputs": [
+          "immutable represented source effects",
+          "affected card owner/controller and logical identity",
+          "origin",
+          "proposed destination",
+          "complete APNAP order",
+          "reviewed replacement destination and counter intents"
+        ],
+        "outputs": [
+          "transformed destinations",
+          "affected-object ordered applied-effect journal",
+          "replacement-aware post-move counter intents",
+          "public replacement events"
+        ],
+        "exclusions": [
+          "optional zone descriptors",
+          "self-inspection by the moving object",
+          "destination-specific inspection by players",
+          "entry-zone choices",
+          "commander command-zone replacement",
+          "unregistered destination predicates"
+        ]
       },
       "dependencies": [],
-    "implementation_components": ["quorune.compiler.zone_templates.static_zone_destination_replacement_handler", "quorune.semantic_runtime.zone_replacement_model.ZoneChangeReplacementSnapshot", "quorune.semantic_runtime.zone_replacements.ZoneDestinationReplacementHandler", "quorune.semantic_runtime.zone_replacements.prepare_zone_change_replacement_snapshot", "quorune.replacement.operations.CreateAffectedObjectCounter", "quorune.replacement.ordering.advance_replacement_batch", "CommanderEngine.move_card", "CommanderEngine._move_cards_simultaneously"],
-    "positive_tests": ["test_closed_family_lowers_to_capability_closed_card_program", "test_dauthi_replaces_graveyard_moves_and_casts_opponent_card_for_free", "test_zone_replacement_snapshot_mutant_is_killed"],
-    "negative_tests": ["test_dauthi_does_not_replace_tokens_or_its_controllers_cards", "test_unrepresented_destination_variants_remain_residual", "test_zone_replacement_descriptor_rejects_unknown_destinations", "test_zone_replacement_preflight_rejects_malformed_and_stale_moves"],
-      "interaction_tests": ["test_graveyard_replacement_is_decided_before_the_move", "test_competing_zone_replacements_suspend_resume_and_replay_exactly", "test_simultaneous_replacement_uses_the_sources_pre_move_controller", "test_stack_object_controller_chooses_zone_replacement_order", "test_complete_legacy_registry_uses_pinned_zone_compatibility", "test_simultaneous_competing_replacements_follow_four_player_apnap", "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay"],
-      "multiplayer_tests": ["test_simultaneous_competing_replacements_follow_four_player_apnap"],
-      "privacy_tests": ["test_competing_zone_replacements_suspend_resume_and_replay_exactly"],
-      "replay_tests": ["test_dauthi_replacement_replays_without_oracle_id_dispatch", "test_competing_zone_replacements_suspend_resume_and_replay_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.zone_templates.static_zone_destination_replacement_handler",
+        "quorune.semantic_runtime.zone_replacement_model.ZoneChangeReplacementSnapshot",
+        "quorune.semantic_runtime.zone_replacements.ZoneDestinationReplacementHandler",
+        "quorune.semantic_runtime.zone_replacements.prepare_zone_change_replacement_snapshot",
+        "quorune.replacement.operations.CreateAffectedObjectCounter",
+        "quorune.replacement.ordering.advance_replacement_batch",
+        "CommanderEngine.move_card",
+        "CommanderEngine._move_cards_simultaneously"
+      ],
+      "positive_tests": [
+        "test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+        "test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+        "test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+        "test_actual_zero_toughness_destination_choice_does_not_require_destruction",
+        "test_closed_family_lowers_to_capability_closed_card_program",
+        "test_dauthi_replaces_graveyard_moves_and_casts_opponent_card_for_free",
+        "test_zero_single_replacement_and_indestructible_are_distinct_native_results",
+        "test_zone_replacement_snapshot_mutant_is_killed"
+      ],
+      "negative_tests": [
+        "test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+        "test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+        "test_dauthi_does_not_replace_tokens_or_its_controllers_cards",
+        "test_unrepresented_destination_variants_remain_residual",
+        "test_zero_single_replacement_and_indestructible_are_distinct_native_results",
+        "test_zone_replacement_descriptor_rejects_unknown_destinations",
+        "test_zone_replacement_preflight_rejects_malformed_and_stale_moves"
+      ],
+      "interaction_tests": [
+        "test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+        "test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+        "test_actual_zero_toughness_destination_choice_does_not_require_destruction",
+        "test_competing_zone_replacements_suspend_resume_and_replay_exactly",
+        "test_complete_legacy_registry_uses_pinned_zone_compatibility",
+        "test_graveyard_replacement_is_decided_before_the_move",
+        "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
+        "test_simultaneous_competing_replacements_follow_four_player_apnap",
+        "test_simultaneous_replacement_uses_the_sources_pre_move_controller",
+        "test_stack_object_controller_chooses_zone_replacement_order"
+      ],
+      "multiplayer_tests": [
+        "test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+        "test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+        "test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+        "test_simultaneous_competing_replacements_follow_four_player_apnap"
+      ],
+      "privacy_tests": [
+        "test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+        "test_competing_zone_replacements_suspend_resume_and_replay_exactly"
+      ],
+      "replay_tests": [
+        "test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast",
+        "test_actual_simultaneous_damage_retains_replacements_from_sources_that_also_leave",
+        "test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
+        "test_actual_zero_toughness_destination_choice_does_not_require_destruction",
+        "test_competing_zone_replacements_suspend_resume_and_replay_exactly",
+        "test_dauthi_replacement_replays_without_oracle_id_dispatch",
+        "test_zero_single_replacement_and_indestructible_are_distinct_native_results"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded descriptor has no capability dependencies beyond the shared replacement subsystem.",
       "implementation_mutation_status": "killed",

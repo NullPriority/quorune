@@ -150,6 +150,7 @@
       "test_return_to_hand_rules",
       "test_semantic_choice_characterization",
       "test_state_based_actions",
+      "test_state_based_destination_replacements",
       "test_static_action_permissions",
       "test_static_action_rules",
       "test_static_attached_control",
@@ -863,6 +864,7 @@
       "test_replacement_model_hardening",
       "test_return_to_hand_rules",
       "test_single_object_zone_transition",
+      "test_state_based_destination_replacements",
       "test_token_creation_replacements",
       "test_typed_land_entry_participation",
       "test_zone_replacement_compiler"
@@ -924,7 +926,8 @@
       "test_server_architecture",
       "test_server_data",
       "test_server_launcher",
-      "test_server_persistence"
+      "test_server_persistence",
+      "test_state_based_destination_replacements"
     ],
     "state-actions-damage": [
       "test_combat_damage_assignment",
@@ -943,6 +946,7 @@
       "test_renown_rules",
       "test_rule_generated_counter_removals",
       "test_state_based_actions",
+      "test_state_based_destination_replacements",
       "test_trample_assignment_integration"
     ],
     "targets-choices-continuations": [
@@ -973,6 +977,7 @@
       "test_semantic_searches",
       "test_shroud_targeting",
       "test_stack_counter_rules",
+      "test_state_based_destination_replacements",
       "test_surveil_rules",
       "test_targeting_v070",
       "test_trigger_targeting",

@@ -7086,14 +7086,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v502-intrinsic-boast-restrictions",
-      "compiler_version": "oracle-ir-v502",
+      "transition_id": "oracle-ir-v504-state-based-destination-choices",
+      "compiler_version": "oracle-ir-v504",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct already admitted Boast activations that lost the intrinsic source-attack prerequisite and once-per-turn limit during reminder-text normalization; no new card support is claimed."
+      "non_harvest_reason": "Correct existing state-based graveyard moves that raised competing destination choices during commit instead of presenting them. Preserve prior destruction decisions and immutable simultaneous zone plans; no card-support gain is claimed."
     },
 
     "forecast_corrections": [

@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Suspend competing graveyard-destination replacements for state-based damage
+  and zero-toughness moves before mutation, retaining prior Umbra choices,
+  simultaneous source departures, principal privacy and pending replay.
+
 - Preserve Boast's intrinsic attack prerequisite and once-per-turn usage limit
   during compilation, including when reminder text is absent. Offers and
   accepted commands enforce the same restrictions before costs are paid.

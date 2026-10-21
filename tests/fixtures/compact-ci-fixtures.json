@@ -245,6 +245,7 @@
     "tests/fixtures/split-second-cards.json",
     "tests/fixtures/spree-mode-cost-cards.json",
     "tests/fixtures/squad-paid-entry-copy-cards.json",
+    "tests/fixtures/state-based-destination-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
     "tests/fixtures/static-activation-cost-cards.json",
     "tests/fixtures/static-attached-control.json",

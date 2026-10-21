@@ -6579,6 +6579,29 @@
         "test_typed_activated_ability_catalog",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "state-based-destination-replacement-continuation",
+      "patterns": [
+        "quorune/state_based_execution.py",
+        "quorune/state_based_replacement_coordination.py",
+        "quorune/destruction.py",
+        "quorune/replacement/replay.py",
+        "quorune/replacement_decisions.py",
+        "tests/test_state_based_destination_replacements.py",
+        "tests/fixtures/state-based-destination-cards.json"
+      ],
+      "test_modules": [
+        "test_state_based_destination_replacements",
+        "test_state_based_actions",
+        "test_umbra_armor",
+        "test_destruction_rules",
+        "test_regeneration_rules",
+        "test_rule_generated_counter_removals",
+        "test_replacement_event_ordering",
+        "test_game_record_v3",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
