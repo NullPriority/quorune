@@ -118,6 +118,8 @@ def program_dynamic_runtime_requirements(program):
         blockers.add(f'runtime_query:invalid:{exc}')
     try:
         required.update(announced_additional_cost_dependencies(program.cost_schema))
+        from ..rules.random_discard_additional_cost import random_spell_cost_dependencies
+        required.update(random_spell_cost_dependencies(program.cost_schema))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_cast_cost:invalid:{exc}')
     try:

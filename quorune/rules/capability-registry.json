@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 432,
+  "registry_version": 433,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -39206,6 +39206,101 @@
       "dependency_fail_closed_rationale": "Canonically verified withdrawal of fixed-type, source-Aura, ordinary protection or attached grant owners blocks the complete original. Runtime minimum stripping rejects missing fixed-type and source-Aura authorities.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original Tattoo Ward casting detects omitted compiler production, source incarnation binding and actual attachment retention.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.fixed_random_discard",
+      "version": 3,
+      "official_rules": [
+        "601.2a",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Exactly one mandatory unrestricted random hand-card payment for an ordinary spell, before its independently represented result.",
+        "inputs": [
+          "one current private hand excluding source spell",
+          "server payment identity",
+          "ordinary discard replacement choices"
+        ],
+        "outputs": [
+          "one deterministic server-selected discard cost",
+          "unchanged independently represented spell result"
+        ],
+        "exclusions": [
+          "multiple random cards",
+          "qualified subsets",
+          "optional or compound additional costs"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "zone.discard.fixed_random"
+      ],
+      "implementation_components": [
+        "quorune.rules.random_discard_additional_cost.FixedRandomDiscardAdditionalCost",
+        "quorune.rules.random_discard_additional_cost.random_spell_cost_refs",
+        "quorune.rules.random_discard_additional_cost.select_random_spell_cost",
+        "quorune.compiler.random_discard_spell_costs.fixed_random_discard_spell_cost_template"
+      ],
+      "positive_tests": [
+        "test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+        "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+        "test_closed_random_cost_model_rejects_selected_qualified_and_compound_prices",
+        "test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+        "test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered"
+      ],
+      "negative_tests": [
+        "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+        "test_canonically_verified_random_and_discard_owner_withdrawals_and_runtime_stripping",
+        "test_closed_random_cost_model_rejects_selected_qualified_and_compound_prices",
+        "test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered"
+      ],
+      "interaction_tests": [
+        "test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+        "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+        "test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+        "test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered"
+      ],
+      "multiplayer_tests": [
+        "test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+        "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+        "test_other_original_spells_keep_their_complete_damage_and_target_restrictions"
+      ],
+      "privacy_tests": [
+        "test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+        "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+        "test_other_original_spells_keep_their_complete_damage_and_target_restrictions"
+      ],
+      "replay_tests": [
+        "test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+        "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+        "test_other_original_spells_keep_their_complete_damage_and_target_restrictions",
+        "test_source_alone_is_unpayable_and_one_other_card_pays_even_when_spell_is_countered"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal of the random-price, random-subset or ordinary discard-cost owner blocks the complete spell. Stripping the new price authority prevents runtime binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual Sonic Burst casts detect omitted source production, server random subset selection and canonical discard payment commit.",
       "blockers": [],
       "status": "trusted"
     }

@@ -697,6 +697,10 @@ def _commit_additional_costs(
     changes = []
     for selected in selections:
         kind = str(selected["kind"])
+        from ..random_discard_additional_cost import RANDOM_SPELL_COST_KIND,ordinary_random_spell_cost_selection
+        if kind==RANDOM_SPELL_COST_KIND:
+            normalized,selection=ordinary_random_spell_cost_selection(host,proposal,response,selected_option,selected)
+            changes.extend(_fixed_zone_change_commit_entries(host,proposal,response,normalized,selection));continue
         if kind==REVEAL_ADDITIONAL_COST_KIND:continue
         if kind == "counter_placement":
             result.paid_refs.append(

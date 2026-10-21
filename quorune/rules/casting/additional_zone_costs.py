@@ -6,7 +6,7 @@ from typing import Any, Mapping
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from ..casting_additional_costs import (
     AdditionalCostError, AdditionalCostQueryHost, FixedZoneChangeAdditionalCost,
-    fixed_zone_change_cost_candidates,
+    fixed_zone_change_cost_candidates,fixed_zone_change_additional_cost,
 )
 
 
@@ -77,3 +77,16 @@ def _fixed_zone_change_selection(
         values[0] if count == 1 else values
     )
     return True, selected
+
+
+def select_zone_change_additional_cost(host,seat,source,option,costs,response,*,position,hint,choice_schema):
+    """Select a closed price without paying it or choosing a random subset."""
+    from ..random_discard_additional_cost import RANDOM_SPELL_COST_KIND,select_random_spell_cost
+    if costs[position].get('kind')==RANDOM_SPELL_COST_KIND:
+        return select_random_spell_cost(host,seat,source,costs,response,position=position,choice_schema=choice_schema)
+    try:cost=fixed_zone_change_additional_cost(costs[position])
+    except AdditionalCostError:return False,None
+    if cost is None:return None
+    if len(costs)!=1:return False,None
+    return _fixed_zone_change_selection(host,seat=seat,source_object_id=source.object_id,cost=cost,
+        cost_position=position,response=response,hint=hint,choice_schema=choice_schema,option=option)

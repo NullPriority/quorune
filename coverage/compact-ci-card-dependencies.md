@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "f68f60b09c28a63a2ae811485b7b0518a0d126d80cf9a2278fc47ea0f34e997c"
+verified: "9930475f54376706a1fa29ea02a4f31107b98dc7ca26914e1ad5a69b013a86c0"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 293 |
-| Cards | 3100 |
+| Fixture files | 294 |
+| Cards | 3103 |
 | Rulings | 7216 |
-| Modules inspected | 577 |
-| Static requirements | 1683 |
+| Modules inspected | 578 |
+| Static requirements | 1685 |
 | Declared dynamic requirements | 46 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -32,13 +32,13 @@ Overall closure: **closed**.
 
 | Shard | Modules | Status |
 | --- | ---: | --- |
-| casting-costs-mana | 67 | closed |
+| casting-costs-mana | 68 | closed |
 | combat-declarations | 24 | closed |
-| compiler-cardprogram | 79 | closed |
+| compiler-cardprogram | 80 | closed |
 | core-domain | 14 | closed |
 | counter-continuous-effects | 52 | closed |
 | deterministic-game-regressions | 6 | closed |
-| events-replacement-zone | 42 | closed |
+| events-replacement-zone | 43 | closed |
 | functional-01 | 30 | closed |
 | functional-02 | 83 | closed |
 | functional-03 | 34 | closed |
@@ -48,7 +48,7 @@ Overall closure: **closed**.
 | functional-07 | 27 | closed |
 | functional-08 | 38 | closed |
 | functional-09 | 46 | closed |
-| functional-10 | 36 | closed |
+| functional-10 | 37 | closed |
 | functional-11 | 63 | closed |
 | functional-12 | 59 | closed |
 | generated-validation | 32 | closed |
@@ -57,9 +57,9 @@ Overall closure: **closed**.
 | merge-core | 9 | closed |
 | multiplayer-commander | 9 | closed |
 | nightly-property | 3 | closed |
-| server-replay-privacy | 25 | closed |
+| server-replay-privacy | 26 | closed |
 | state-actions-damage | 17 | closed |
-| targets-choices-continuations | 35 | closed |
+| targets-choices-continuations | 36 | closed |
 | triggers-turns-exact-decks | 20 | closed |
 | windows-compat | 10 | closed |
 

@@ -6,7 +6,7 @@ from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
-from .additional_zone_costs import _fixed_zone_change_selection
+from .additional_zone_costs import select_zone_change_additional_cost
 from ...casting_payment_keywords import (
     AffinitySpec,
     CastingPaymentKeywordError,
@@ -48,7 +48,6 @@ from ..casting_additional_costs import (
     AdditionalCostError,
     fixed_counter_additional_cost,
     fixed_counter_cost_candidates,
-    fixed_zone_change_additional_cost,
     legacy_additional_cost_candidates,
 )
 from ..casting_additional_cost_groups import (
@@ -1240,24 +1239,10 @@ def _apply_additional_costs(
                 }
             )
             continue
-        try:
-            zone_change_cost = fixed_zone_change_additional_cost(additional)
-        except AdditionalCostError:
-            return False
-        if zone_change_cost is not None:
-            if len(mandatory_costs) != 1:
-                return False
-            valid, selected = _fixed_zone_change_selection(
-                host,
-                seat=seat,
-                source_object_id=card.object_id,
-                cost=zone_change_cost,
-                cost_position=index,
-                response=response,
-                hint=hint,
-                choice_schema=choice_schema,
-                option=option,
-            )
+        zone_selection=select_zone_change_additional_cost(host,seat,card,option,mandatory_costs,response,
+            position=index,hint=hint,choice_schema=choice_schema)
+        if zone_selection is not None:
+            valid,selected=zone_selection
             if not valid:
                 return False
             if selected is not None:
