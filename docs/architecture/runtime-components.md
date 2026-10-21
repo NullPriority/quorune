@@ -545,6 +545,28 @@ never follows a returned incarnation. Initial target invalidity still prevents
 the whole spell from resolving. [ADR 0122](../adr/0122-paid-mana-resolution-and-target-information.md)
 records the ordered program and information-reference boundaries.
 
+Attached tap and graveyard occurrences retain their ordinary event owners.
+Both `When` and `Whenever` introduce a tap-state trigger. Fixed destruction
+and counter results on `it` use the event's sealed public incarnation;
+removing or moving the Aura does not redirect that result, and a returned
+incarnation is a different recipient. A fixed attached destruction instruction
+instead reads the existing current attachment relation, with the attachment
+owner's source-departure LKI behavior.
+
+The bounded tap-state poison result uses a distinct occurrence-controller
+information value. It reads current effective control of that incarnation or
+the controller captured at its departure. The existing controller-information
+owner captures that LKI for both stacked abilities and immutable pending
+trigger batches through the canonical zone transaction. Aura controller,
+artifact owner, and affected controller remain separate. Existing target-index
+information codecs and locked occurrence-player results keep their contracts.
+
+Enchanted-permanent graveyard subscriptions inspect before-event attachment
+and type facts. They still trigger if the Aura and permanent leave together;
+the locked Aura trigger controller receives its represented result. Unknown
+antecedents, aggregate occurrences, unsupported player-counter results and
+unowned linked reattachment or return instructions remain residual.
+
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
 source-controller, source-opponent, or global battlefield queries into

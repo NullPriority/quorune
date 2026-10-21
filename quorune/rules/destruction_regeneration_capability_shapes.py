@@ -39,6 +39,13 @@ def targeted_destruction_node_capabilities(
     """Return capabilities only for the closed direct destruction grammar."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if target_schema is None and len(effects)==1 and set(effects[0])=={'op','card'} and effects[0].get('op')=='destroy' and 'destroy' in mechanics and 'cr-115-targets' not in mechanics and isinstance(effects[0].get('card'),Mapping):
+        try:AttachmentReferenceSpec.from_dict(effects[0]['card'])
+        except (TypeError,ValueError):return ()
+        return ('permanent.destroy.effect','attachment.reference.current_or_lki')
+    if (target_schema is None and len(effects)==1 and effects[0]=={'op':'destroy','card':'$event.permanent_object'}
+            and 'destroy' in mechanics and 'cr-115-targets' not in mechanics):
+        return ('permanent.destroy.effect','resolution.event_object.fixed_result')
     if (
         not {"destroy", "cr-115-targets"}.issubset(mechanics)
         or len(effects) != 1

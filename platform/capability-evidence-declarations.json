@@ -117857,6 +117857,52 @@
       ],
       "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
     },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
     {"capability_id": "counter.producer.fixed_effect", "evidence_class": "interaction", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation", "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -118030,6 +118076,52 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
       "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -118150,6 +118242,52 @@
       ],
       "applicability_note": "Selected controlled-creature counter payments preserve exact public eligibility, source tap as a distinct resource, current ownership/control, result order, last-counter payer death, ordinary targets, private results, rollback and loaded exact replay."
     },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_counter_lki_and_attached_destruction_omissions_are_killed",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
     {"capability_id": "counter.producer.fixed_effect", "evidence_class": "mutation", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_self_counter_reference_alias_mutant_is_killed_by_actual_blink", "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -118181,6 +118319,52 @@
         "commander_review"
       ],
       "applicability_note": "Source-damageself orreceivesdamagepredicate bindsfullfixedcounteronit throughsameexisting source.zone_object leaf. Publicdamagedcreatureambiguity excluded; omittednormalizer makessupportedsourceclause residual."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -118320,6 +118504,52 @@
         "commander_review"
       ],
       "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -118509,6 +118739,29 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
       "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -118651,6 +118904,29 @@
         "commander_review"
       ],
       "applicability_note": "Fixed one/two unspecified source-counter costs preserve complete exact distributions, chosen counter-kind consequences, ordinary hybrid mana and sorcery timing, source departure, private results, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {"capability_id": "counter.producer.fixed_effect", "evidence_class": "replay", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation", "official_rule_ids": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
@@ -118802,6 +119078,44 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
@@ -118840,6 +119154,44 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
@@ -118878,6 +119230,44 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_counter_lki_and_attached_destruction_omissions_are_killed",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "mutation",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient",
       "official_rule_ids": [
         "113.7a",
@@ -118912,6 +119302,44 @@
         "commander_review"
       ],
       "applicability_note": "Closedentryeventfixedcounterleaf usessealedincarnation; missingidentity/unsupporteddeath/multievent/partialtail andwithdrawndependenciesreject, old/newincarnationsdistinguished andcompileromissionkilled."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -118988,6 +119416,44 @@
         "commander_review"
       ],
       "applicability_note": "Closedentryeventfixedcounterleaf usessealedincarnation; missingidentity/unsupporteddeath/multievent/partialtail andwithdrawndependenciesreject, old/newincarnationsdistinguished andcompileromissionkilled."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -119068,6 +119534,25 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_counter_actions.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
       "official_rule_ids": [
         "113.7a",
@@ -119102,6 +119587,25 @@
         "commander_review"
       ],
       "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -159137,6 +159641,82 @@
     {
       "capability_id": "permanent.destroy.effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_destruction_rules.DestructionRuleTests.test_effect_destruction_consumes_shield_instead",
       "official_rule_ids": ["122.1c", "701.8", "701.8a", "701.8b", "701.8c", "702.12b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -159169,10 +159749,124 @@
     {
       "capability_id": "permanent.destroy.effect",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_destruction_rules.DestructionRuleTests.test_effect_destruction_uses_typed_owner_and_replays",
       "official_rule_ids": ["122.1c", "701.8", "701.8a", "701.8b", "701.8c", "702.12b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Advertise, submit, and resolve the same public direct-target destruction action in a four-seat game."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_counter_lki_and_attached_destruction_omissions_are_killed",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "permanent.destroy.effect",
@@ -159189,6 +159883,44 @@
       "official_rule_ids": ["122.1c", "701.8", "701.8a", "701.8b", "701.8c", "702.12b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill removal of the shared direct-permanent target parser from targeted destruction lowering."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "permanent.destroy.effect",
@@ -159225,6 +159957,82 @@
     {
       "capability_id": "permanent.destroy.effect",
       "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "positive",
       "test_id": "tests.test_destruction_rules.DestructionRuleTests.test_effect_destruction_uses_typed_owner_and_replays",
       "official_rule_ids": ["122.1c", "701.8", "701.8a", "701.8b", "701.8c", "702.12b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -159249,10 +160057,162 @@
     {
       "capability_id": "permanent.destroy.effect",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "privacy",
       "test_id": "tests.test_destruction_rules.DestructionRuleTests.test_effect_destruction_uses_typed_owner_and_replays",
       "official_rule_ids": ["122.1c", "701.8", "701.8a", "701.8b", "701.8c", "702.12b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project only public battlefield permanent references and never player or hidden-zone references for the direct target."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "permanent.destroy.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "122.1c",
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "permanent.destroy.effect",
@@ -189046,6 +190006,1098 @@
       "applicability_note": "Fail a stale logical target continuation before the replacement-aware counter and later persistent keyword result can partially mutate state."
     },
     {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_counter_lki_and_attached_destruction_omissions_are_killed",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_occurrence_and_attached_result_runtime_minima_fail_closed_independently",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_full_blight_and_brink_register_complete_originals_before_native_actions",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_full_harvest_shackle_putrescence_and_pooling_register_complete_originals",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_occurrence_destruction_shape_excludes_targets_other_events_and_siblings",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_power_toughness_counters_use_both_dimensions_including_zero",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_tap_counter_result_seals_the_occurrence_incarnation_and_rejects_missing_identity",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_brink_creature_tap_destroys_the_triggering_object",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.event_object.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+      "official_rule_ids": [
+        "113.7a",
+        "303.4b",
+        "400.7",
+        "603.2",
+        "603.3",
+        "608.2b",
+        "608.2h",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "interaction",
       "test_id": "tests.test_half_event_player_results.HalfEventPlayerResultRuntimeTests.test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
@@ -190523,6 +192575,57 @@
     {
       "capability_id": "resolution.target_controller_information",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "interaction",
       "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
       "official_rule_ids": [
         "400.7",
@@ -190574,6 +192677,57 @@
     {
       "capability_id": "resolution.target_controller_information",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
       "official_rule_ids": [
         "400.7",
@@ -190608,6 +192762,40 @@
     {
       "capability_id": "resolution.target_controller_information",
       "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_counter_lki_and_attached_destruction_omissions_are_killed",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "mutation",
       "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_fresh_target_controller_information_reader_omission_is_killed",
       "official_rule_ids": [
         "400.7",
@@ -190638,6 +192826,40 @@
         "traditional"
       ],
       "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "resolution.target_controller_information",
@@ -190693,6 +192915,57 @@
     {
       "capability_id": "resolution.target_controller_information",
       "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_occurrence_controller_reads_current_information_then_exact_departure_lki",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "positive",
       "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
       "official_rule_ids": [
         "400.7",
@@ -190744,6 +193017,23 @@
     {
       "capability_id": "resolution.target_controller_information",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "privacy",
       "test_id": "tests.test_paid_mana_resolution.PaidManaResolutionTests.test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
       "official_rule_ids": [
         "400.7",
@@ -190757,6 +193047,40 @@
         "traditional"
       ],
       "applicability_note": "Complete source-pinned paid-mana programs preserve mandatory prefixes, added versus replacement results, after-prefix quantity timing, target legality, copied unpaid outcomes, current/departure controller information, private choices and exact pending/pre-action replay. Verified capability and fresh actual compiler/reader/departure omissions fail."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "resolution.target_controller_information",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_queued_putrescence_occurrence_retains_departure_controller_before_stack_placement",
+      "official_rule_ids": [
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "resolution.target_controller_information",
@@ -223466,6 +225790,117 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
       "official_rule_ids": ["116.2b", "508.1", "508.1m", "508.3c", "508.3d", "509.1", "509.1h", "602.2", "603.2", "603.2e", "603.3", "701.8a", "701.26a", "701.26b", "701.34", "702.29", "702.37e", "702.168b", "701.22a", "701.22b", "701.22d", "701.25a", "701.25c", "701.25d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -223515,6 +225950,117 @@
         "commander_review"
       ],
       "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -223580,6 +226126,80 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_counter_lki_and_attached_destruction_omissions_are_killed",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_event_dispatch_mutant_is_killed",
       "official_rule_ids": ["116.2b", "508.1", "508.1m", "508.3c", "508.3d", "509.1", "509.1h", "602.2", "603.2", "603.2e", "603.3", "701.8a", "701.26a", "701.26b", "701.34", "702.29", "702.37e", "702.168b", "701.22a", "701.22b", "701.22d", "701.25a", "701.25c", "701.25d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -223592,6 +226212,80 @@
       "official_rule_ids": ["116.2b", "508.1", "508.1m", "508.3c", "508.3d", "509.1", "509.1h", "602.2", "603.2", "603.2e", "603.3", "701.8a", "701.26a", "701.26b", "701.34", "702.29", "702.37e", "702.168b", "701.22a", "701.22b", "701.22d", "701.25a", "701.25c", "701.25d"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Remove or block the closed face-up binding and prove the real trigger cannot retain exact CardProgram admission."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -223681,6 +226375,117 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_event_contract_matrix_compiles_exactly",
       "official_rule_ids": ["116.2b", "508.1", "508.1m", "508.3c", "508.3d", "509.1", "509.1h", "602.2", "603.2", "603.2e", "603.3", "701.8a", "701.26a", "701.26b", "701.34", "702.29", "702.37e", "702.168b", "701.22a", "701.22b", "701.22d", "701.25a", "701.25c", "701.25d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -223758,6 +226563,117 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
       "official_rule_ids": ["116.2b", "508.1", "508.1m", "508.3c", "508.3d", "509.1", "509.1h", "602.2", "603.2", "603.2e", "603.3", "701.8a", "701.26a", "701.26b", "701.34", "702.29", "702.37e", "702.168b", "701.22a", "701.22b", "701.22d", "701.25a", "701.25c", "701.25d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -223823,6 +226739,117 @@
         "commander_review"
       ],
       "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_blight_land_mana_action_creates_untargeted_delayed_destruction",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -224398,6 +227425,52 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -224746,6 +227819,52 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -224969,6 +228088,52 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_native_occurrence_compiler_and_result_omissions_are_killed",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_signed_counter_lki_and_attached_destruction_omissions_are_killed",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_zone_trigger_detection_mutant_is_killed",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -224981,6 +228146,52 @@
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill omission of the normalized counter-event derivation at the shared committed zone-change boundary."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -225112,6 +228323,52 @@
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -225378,6 +228635,29 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "privacy",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -225597,6 +228877,52 @@
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Do not derive a public normalized trigger event for an ordinary private library-to-hand move; visibility-dependent hidden-zone trigger families remain excluded and fail closed."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_occurrences.AttachedOccurrenceTests.test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full original Aura casts retain enchant restrictions and siblings; tap occurrences, untargeted destruction/counters, numeric -0/-2 consequences, locked Aura life result, current or exact departure controller, simultaneous attachment LKI, source departure, blink incarnation, principal rollback/privacy, pending load/replay, independent minima, verified withdrawals and actual omissions are bounded executable evidence."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",

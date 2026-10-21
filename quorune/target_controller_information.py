@@ -82,6 +82,7 @@ def _reference_indices(value):
 def pin_target_controller_departures(host,cards,*,error_type=ValueError):
     """Use the existing zone owner's atomic departure capture boundary."""
     try:
+        pin_occurrence_controller_departures(host,cards)
         departing={(c.object_id,c.zone_change_counter):c for c in cards};updates=[]
         for item in host.state.stack:
             program=host.semantics.get(item.semantic_key) if item.semantic_key else None
@@ -100,3 +101,74 @@ def pin_target_controller_departures(host,cards,*,error_type=ValueError):
             if captured!=old:updates.append((item,captured))
         for item,captured in updates:item.context[_LKI_FIELD]=captured
     except (TypeError,ValueError,KeyError) as exc:raise error_type(str(exc)) from exc
+
+
+OCCURRENCE_CONTROLLER_INFORMATION_KIND='occurrence_controller_information'
+_OCCURRENCE_LKI_FIELD='occurrence_controller_information_lki'
+
+
+def _occurrence_reference(value):
+    if (not isinstance(value,Mapping) or set(value)!={'kind','schema_version'}
+            or value['kind']!=OCCURRENCE_CONTROLLER_INFORMATION_KIND or type(value['schema_version']) is not int
+            or value['schema_version']!=1):raise ValueError('Occurrence controller information uses one closed schema')
+
+
+def _uses_occurrence_controller(value):
+    if isinstance(value,Mapping):
+        if value.get('kind')==OCCURRENCE_CONTROLLER_INFORMATION_KIND:
+            _occurrence_reference(value);return True
+        return any(_uses_occurrence_controller(v) for v in value.values())
+    if isinstance(value,(tuple,list)):return any(_uses_occurrence_controller(v) for v in value)
+    return False
+
+
+def _occurrence_identity(item):
+    object_id=item.context.get('card_object_id');identity=item.context.get('card_object_identity')
+    if type(object_id) is not str or not object_id or type(identity) is not str or not identity:
+        raise ValueError('Occurrence controller information requires a sealed public incarnation')
+    return object_id,identity
+
+
+def resolve_occurrence_controller_information(host,value,item):
+    _occurrence_reference(value);object_id,identity=_occurrence_identity(item)
+    card=host.state.cards.get(object_id)
+    if card is not None and card.zone=='battlefield' and card.logical_object_id==identity:
+        return host._effective_card_data(card).get('controller',card.controller)
+    raw=item.context.get(_OCCURRENCE_LKI_FIELD)
+    if not isinstance(raw,Mapping) or set(raw)!={'logical_object_id','information'} or raw['logical_object_id']!=identity:
+        raise ValueError('Occurrence current or departure controller information is unavailable')
+    info=TargetControllerInformation.from_dict(raw['information'])
+    if info.object_id!=object_id or f'{info.object_id}@{info.zone_change_counter}'!=identity:
+        raise ValueError('Occurrence controller departure identity changed')
+    return info.controller
+
+
+def pin_occurrence_controller_departures(host,cards):
+    departing={c.object_id:c for c in cards};updates=[]
+    for item in host.state.stack:
+        program=host.semantics.get(item.semantic_key) if item.semantic_key else None
+        if program is None or not _uses_occurrence_controller(program.effects):continue
+        object_id,identity=_occurrence_identity(item);card=departing.get(object_id)
+        if card is None or card.zone!='battlefield' or card.logical_object_id!=identity:continue
+        controller=host._effective_card_data(card).get('controller',card.controller)
+        updates.append((item,{'logical_object_id':identity,
+            'information':TargetControllerInformation(card.object_id,card.zone_change_counter,controller).to_dict()}))
+    for item,value in updates:item.context[_OCCURRENCE_LKI_FIELD]=value
+    from .trigger_batches import PendingTriggerBatch
+    from .trigger_processing import replace_pending_trigger_batch
+    pending=[]
+    for index,batch in enumerate(getattr(host.state,'pending_trigger_batches',())):
+        data=batch.to_dict();changed=False
+        for group in data['groups']:
+            for frame in group['items']:
+                program=host.semantics.get(frame.get('semantic_key'))
+                if program is None or not _uses_occurrence_controller(program.effects):continue
+                context=frame['context'];object_id=context.get('card_object_id');identity=context.get('card_object_identity')
+                card=departing.get(object_id)
+                if card is None or card.zone!='battlefield' or card.logical_object_id!=identity:continue
+                controller=host._effective_card_data(card).get('controller',card.controller)
+                context[_OCCURRENCE_LKI_FIELD]={'logical_object_id':identity,
+                    'information':TargetControllerInformation(card.object_id,card.zone_change_counter,controller).to_dict()}
+                changed=True
+        if changed:pending.append((index,PendingTriggerBatch.from_dict(data)))
+    for index,batch in pending:replace_pending_trigger_batch(host,index,batch)

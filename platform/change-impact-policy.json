@@ -7217,6 +7217,41 @@
         "test_riot_rules",
         "test_fixed_copy_type_exceptions"
       ]
+    },
+    {
+      "id": "attached-occurrence-object-results",
+      "patterns": [
+        "quorune/compiler/attached_destruction.py",
+        "quorune/compiler/occurrence_object_results.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/public_event_closure_variants.py",
+        "quorune/compiler/tap_state_event_bindings.py",
+        "quorune/compiler/event_counter_results.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/rules/occurrence_object_results.py",
+        "quorune/rules/destruction_regeneration_capability_shapes.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/event_counter_reference.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/target_controller_information.py",
+        "quorune/counter_names.py",
+        "quorune/object_query.py",
+        "tests/test_attached_occurrences.py",
+        "tests/fixtures/attached-occurrence-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_occurrences",
+        "test_object_query",
+        "test_paid_mana_resolution",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_counter_zone_triggers",
+        "test_zone_trigger_events",
+        "test_targeted_tap_state_effect_clauses",
+        "test_card_program_trust",
+        "test_destruction_rules"
+      ]
     }
   ],
   "symbol_rules": [

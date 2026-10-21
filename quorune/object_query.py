@@ -102,9 +102,9 @@ def exact_numeric_characteristic(
     )
     if base is None:
         return None
-    plus = card.counters.get("+1/+1", 0)
-    minus = card.counters.get("-1/-1", 0)
-    if type(plus) is not int or type(minus) is not int:
+    from .counter_names import power_toughness_counter_modifier
+    counter_delta=power_toughness_counter_modifier(card.counters,stat)
+    if counter_delta is None:
         return None
     duration = card.annotations.get("until_end_of_turn") or {}
     if not isinstance(duration, Mapping):
@@ -112,7 +112,7 @@ def exact_numeric_characteristic(
     delta = exact_integer(duration.get(stat, 0))
     if delta is None:
         return None
-    return base + plus - minus + delta
+    return base + counter_delta + delta
 
 
 def object_query_result(

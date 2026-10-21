@@ -95,7 +95,8 @@ def _attachment_or_owner_zone_move(
     source_is_permanent: bool | None,
     source_attachment_relation: AttachmentReferenceKind | None,
 ):
-    return fixed_source_attachment_effect_template(
+    from .attached_destruction import attached_destruction_template
+    return attached_destruction_template(text,source_attachment_relation=source_attachment_relation) or fixed_source_attachment_effect_template(
         text,
         source_attachment_relation=source_attachment_relation,
     ) or fixed_owner_zone_move_effect_template(
