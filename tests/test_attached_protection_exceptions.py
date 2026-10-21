@@ -93,7 +93,10 @@ class AttachedProtectionExceptionTests(unittest.TestCase):
         self.assertIs(ProtectionVerdict.UNRESOLVED,protection_verdict({**data,'ability_fragments':(ability_fragment_to_dict(replace(spec,exempt_aura_incarnation='$source')), )},white,retaining_aura='ward@1'))
         text="Enchanted creature has protection from white. This effect doesn't remove this Aura."
         self.assertIsNotNone(attached_fixed_characteristics_handler(text))
-        for bad in (text.replace('this Aura','Auras'),text.replace('white','the chosen color'),text.replace('Enchanted creature','Equipped creature')):
+        from quorune.protection_attachment_exceptions import CHOSEN_AURA_PROTECTION_HANDLER
+        chosen=attached_fixed_characteristics_handler(text.replace('white','the chosen color'))
+        self.assertIsNotNone(chosen);self.assertEqual(CHOSEN_AURA_PROTECTION_HANDLER,chosen[1]['handler_id'])
+        for bad in (text.replace('this Aura','Auras'),text.replace('white','the chosen mana value'),text.replace('Enchanted creature','Equipped creature')):
             self.assertIsNone(attached_fixed_characteristics_handler(bad))
         for changes in ({'schema_version':True},{'schema_version':2},{'quality_kind':'everything'},
                         {'exempt_aura_incarnation':None},{'unknown':0}):
