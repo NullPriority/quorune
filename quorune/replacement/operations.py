@@ -379,6 +379,32 @@ class CreateAffectedObjectCounter:
 
 
 @dataclass(frozen=True, slots=True)
+class AddAffectedObjectCounter(CreateAffectedObjectCounter):
+    """Add counters to the affected entry's current counter instruction."""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {**CreateAffectedObjectCounter.to_dict(self), "op": "add_affected_object_counter"}
+
+
+@dataclass(frozen=True, slots=True)
+class GrantAffectedObjectSubtype:
+    subtype: str
+    sequence: int = 0
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self) -> None:
+        from ..creature_subtypes import canonical_creature_subtype
+        if type(self.subtype) is not str or canonical_creature_subtype(self.subtype) != self.subtype:
+            raise ReplacementOperationError("Entry subtype grants require a canonical creature subtype")
+        _integer(self.sequence, field="entry subtype sequence", minimum=0)
+        if type(self.schema_version) is not int or self.schema_version != OPERATION_SCHEMA_VERSION:
+            raise ReplacementOperationError("Unsupported entry subtype operation version")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"op": "grant_affected_object_subtype", "subtype": self.subtype, "sequence": self.sequence}
+
+
+@dataclass(frozen=True, slots=True)
 class GrantAffectedObjectKeyword:
     """Grant one closed keyword to the affected entering zone object."""
 
@@ -626,6 +652,24 @@ class DredgeDraw:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class ApplyEntryCounterReplacement:
+    """Ephemeral choice adapter; persisted choices retain the original effect."""
+
+    event_id: str
+    effect: Any
+
+    def __post_init__(self):
+        if type(self.event_id) is not str or not self.event_id:
+            raise ReplacementOperationError('Entry counter adapter requires an event identity')
+        from .model import ReplacementEffect
+        if not isinstance(self.effect, ReplacementEffect) or self.effect.event_kind != 'counter.place':
+            raise ReplacementOperationError('Entry counter adapter requires a typed counter effect')
+
+    def to_dict(self):
+        raise ReplacementOperationError('Entry counter choice adapters are reconstructed, never serialized')
+
+
 ReplacementOperation: TypeAlias = (
     SetField
     | DevourEntryOperation
@@ -638,6 +682,9 @@ ReplacementOperation: TypeAlias = (
     | UnionValues
     | CreateNestedEvent
     | CreateAffectedObjectCounter
+    | AddAffectedObjectCounter
+    | ApplyEntryCounterReplacement
+    | GrantAffectedObjectSubtype
     | GrantAffectedObjectKeyword
     | CreateAdditionalToken
     | MultiplyTokenCreation
@@ -661,6 +708,9 @@ _TYPED_OPERATION_TYPES = (
     UnionValues,
     CreateNestedEvent,
     CreateAffectedObjectCounter,
+    AddAffectedObjectCounter,
+    ApplyEntryCounterReplacement,
+    GrantAffectedObjectSubtype,
     GrantAffectedObjectKeyword,
     CreateAdditionalToken,
     MultiplyTokenCreation,
@@ -969,6 +1019,12 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         return CreateNestedEvent(FrozenMap(event))
     if op == "create_affected_object_counter":
         return _affected_object_counter_from_dict(value, operation=op)
+    if op == "add_affected_object_counter":
+        base = _affected_object_counter_from_dict(value, operation=op)
+        return AddAffectedObjectCounter(base.counter_name, base.amount, base.placing_player, base.source_ref, base.sequence)
+    if op == "grant_affected_object_subtype":
+        _exact_fields(value, {"op", "subtype", "sequence"}, operation=op)
+        return GrantAffectedObjectSubtype(value["subtype"], _integer(value["sequence"], field="entry subtype sequence", minimum=0))
     if op == "grant_affected_object_keyword":
         return _affected_object_keyword_from_dict(value, operation=op)
     if op == "create_additional_token":

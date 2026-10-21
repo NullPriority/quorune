@@ -7182,6 +7182,41 @@
         "test_continuous_effect_components",
         "test_static_characteristic_settings"
       ]
+    },
+    {
+      "id": "external-additional-entry-counters",
+      "patterns": [
+        "quorune/external_entry_counter_model.py",
+        "quorune/compiler/external_entry_counters.py",
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/rules/external_entry_counters.py",
+        "quorune/rules/entry_subtype_grants.py",
+        "quorune/semantic_runtime/external_entry_counters.py",
+        "quorune/replacement/entry_counter_application.py",
+        "quorune/replacement/entry_counter_ordering.py",
+        "quorune/replacement/ordering.py",
+        "quorune/replacement/application.py",
+        "quorune/replacement/operations.py",
+        "quorune/semantic_runtime/zone_replacements.py",
+        "quorune/semantic_runtime/zone_preparation_results.py",
+        "quorune/entry_results.py",
+        "tests/test_external_entry_counters.py",
+        "tests/fixtures/external-entry-counter-cards.json",
+        "quorune/replacement/devour.py"
+      ],
+      "test_modules": [
+        "test_external_entry_counters",
+        "test_card_program_trust",
+        "test_external_entry_tapped",
+        "test_devour",
+        "test_counter_placement_replacements",
+        "test_replacement_model_hardening",
+        "test_replacement_event_tree",
+        "test_fixed_self_entry_counters",
+        "test_copied_self_entry_counters",
+        "test_riot_rules",
+        "test_fixed_copy_type_exceptions"
+      ]
     }
   ],
   "symbol_rules": [

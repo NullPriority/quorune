@@ -367,6 +367,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.life.gain.multiplier",
                 "replacement.zone.destination",
                 "replacement.zone.entry_state",
+                "replacement.zone.external_entry_counter",
                 "replacement.zone.entry_designation",
                 "replacement.zone.entry_color_exclusion",
                 "replacement.zone.entry_copy",

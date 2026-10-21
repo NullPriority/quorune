@@ -96,6 +96,11 @@ def closed_static_or_replacement_node(
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if classic is not None:return classic
 
+    from .external_entry_counters import external_entry_counter_node
+    counters=external_entry_counter_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if counters is not None:return counters
+
     from .target_restriction_nodes import target_restriction_node
     restriction=target_restriction_node(node_id=node_id,line=line,material_line=material_line,span=span,
         source_name=source_name,card_types=card_types,permanent_card_types=permanent_card_types,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)

@@ -25,6 +25,7 @@ from .model import (
 from .operations import (
     DevourEntryOperation,
     AddAmount,
+    AddAffectedObjectCounter,
     AppendValues,
     CapResultLifeLoss,
     CreateAffectedObjectCounter,
@@ -33,6 +34,7 @@ from .operations import (
     CreateNestedEvent,
     DredgeDraw,
     GrantAffectedObjectKeyword,
+    GrantAffectedObjectSubtype,
     MultiplyAmount,
     MultiplyTokenCreation,
     PreventAmount,
@@ -60,6 +62,7 @@ from .replay import ReplacementContinuation
 
 __all__ = [
     "AddAmount",
+    "AddAffectedObjectCounter",
     "AffectedObject",
     "AppendValues",
     "CapResultLifeLoss",
@@ -71,6 +74,7 @@ __all__ = [
     "EntryReplacementScope",
     "FrozenMap",
     "GrantAffectedObjectKeyword",
+    "GrantAffectedObjectSubtype",
     "MultiplyAmount",
     "MultiplyTokenCreation",
     "PreventAmount",

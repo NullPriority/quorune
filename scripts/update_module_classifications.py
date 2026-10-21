@@ -94,6 +94,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/block_capacity_model.py",
         "quorune/landwalk_permission_model.py",
         "quorune/external_entry_state_model.py",
+        "quorune/external_entry_counter_model.py",
         "quorune/landwalk_vocabulary.py",
         "quorune/qualified_hexproof.py",
         "quorune/protection_attachment_exceptions.py",
