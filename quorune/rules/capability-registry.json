@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 436,
+  "registry_version": 437,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12849,7 +12849,7 @@
     },
     {
       "id": "quantity_expression.scalar_effect_amount",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "107.1b",
         "107.2",
@@ -12894,7 +12894,8 @@
         "quorune.scalar_effect_amounts.pin_scalar_characteristic_departures",
         "quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template",
         "quorune.compiler.scalar_effect_amounts.scalar_amount_shape_context",
-        "quorune.semantic_runtime.values.resolve_semantic_value"
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.card_programs.runtime_requirements.typed_result_amount_runtime_dependencies"
       ],
       "positive_tests": [
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
@@ -12921,7 +12922,11 @@
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
       ],
       "negative_tests": [
         "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
@@ -12936,7 +12941,11 @@
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
         "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
-        "test_verified_owner_withdrawals_reject_combined_group_results"
+        "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
       ],
       "interaction_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12965,7 +12974,10 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "multiplayer_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -12987,7 +12999,10 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "privacy_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -13009,7 +13024,10 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "replay_tests": [
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
@@ -13037,7 +13055,10 @@
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "required_evidence": [
         "positive",
@@ -13056,7 +13077,7 @@
     },
     {
       "id": "quantity_expression.declared_effect_amount",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "107.3a",
         "107.3b",
@@ -13109,7 +13130,8 @@
         "quorune.query_effect_amount_model.scope_declared_amount_bindings",
         "quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount",
         "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
-        "quorune.semantic_runtime.values.resolve_semantic_value"
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.card_programs.runtime_requirements.typed_result_amount_runtime_dependencies"
       ],
       "positive_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13146,7 +13168,11 @@
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
       ],
       "negative_tests": [
         "test_amount_versions_and_cast_values_reject_malformed_inputs",
@@ -13165,7 +13191,11 @@
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
         "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
-        "test_verified_owner_withdrawals_reject_combined_group_results"
+        "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
       ],
       "interaction_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13197,7 +13227,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "multiplayer_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13229,7 +13262,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "privacy_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13261,7 +13297,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "replay_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13296,7 +13335,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "required_evidence": [
         "positive",
@@ -13315,7 +13357,7 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 13,
+      "version": 14,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -13348,7 +13390,8 @@
           "fixed signed coefficient",
           "existing fixed effect operation and target schema",
           "source-self or direct-target temporary power/toughness result, optionally beside fixed supported keywords",
-          "complete public negative-supertype predicate through the shared existing ObjectQuerySpec exclusion"
+          "complete public negative-supertype predicate through the shared existing ObjectQuerySpec exclusion",
+          "persisted typed public-query values and independently scoped declared quantities, decoded at runtime binding"
         ],
         "outputs": [
           "one deterministic resolution-time integer",
@@ -13380,7 +13423,8 @@
         "quorune.effect_runtime.objects_stack_and_tokens._apply_modify_stats_until_end_of_turn",
         "quorune.public_quantity_reductions.reduce_public_quantity",
         "quorune.compiler.collection_quantity_templates.collection_quantity",
-        "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic"
+        "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
+        "quorune.card_programs.runtime_requirements.typed_result_amount_runtime_dependencies"
       ],
       "positive_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13403,7 +13447,8 @@
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
       ],
       "negative_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13422,7 +13467,9 @@
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
         "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
-        "test_verified_owner_withdrawals_reject_combined_group_results"
+        "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
       ],
       "interaction_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -14286,7 +14333,7 @@
     },
     {
       "id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "611.2a",
         "611.2c",
@@ -14400,7 +14447,11 @@
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries"
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -14417,7 +14468,11 @@
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
         "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
-        "test_verified_owner_withdrawals_reject_combined_group_results"
+        "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
       ],
       "interaction_tests": [
         "test_resolution_set_is_locked_to_logical_objects",
@@ -14464,7 +14519,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -14504,7 +14562,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -14543,7 +14604,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -14582,7 +14646,10 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source"
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "required_evidence": [
         "positive",
@@ -18985,7 +19052,7 @@
     },
     {
       "id": "resolution.effect_program.closed_components",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "608.2b",
         "608.2c",
@@ -19004,7 +19071,8 @@
           "two to four top-level sentence, comma-then, or and-separated components",
           "independently typed fixed effects",
           "zero or one direct target schema",
-          "the canonical semantic continuation"
+          "the canonical semantic continuation",
+          "independently scoped declared or scalar quantity instruction followed or preceded by an already closed fixed instruction, including public characteristic sets"
         ],
         "outputs": [
           "one capability-closed CardProgram node",
@@ -19030,20 +19098,30 @@
         "quorune.rules.closed_effect_program_shapes.closed_effect_program_node_capabilities",
         "CommanderEngine._continue_resolution",
         "quorune.compiler.query_counter_sequences.ordered_quantity_sequence_template",
-        "quorune.compiler.multisentence_effect_components.multisentence_effect_program"
+        "quorune.compiler.multisentence_effect_components.multisentence_effect_program",
+        "quorune.compiler.query_counter_sequences._fixed_quantity_component",
+        "quorune.rules.closed_effect_program_shapes.closed_effect_program_runtime_dependencies"
       ],
       "positive_tests": [
         "test_closed_program_compiles_across_contexts_and_component_shapes",
         "test_independent_multisentence_selection_keeps_complete_component_and_printed_order",
         "test_independent_query_results_share_ordered_program_owner",
         "test_measured_corpus_lower_bound_is_capability_closed",
-        "test_private_scry_suspends_draw_and_life_then_replays"
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
       ],
       "negative_tests": [
         "test_conditional_linked_and_ambiguous_sequences_remain_residual",
         "test_multisentence_component_omission_and_dependency_withdrawal_fail_closed",
         "test_parser_shape_and_compiler_fail_closed",
-        "test_stale_target_fizzles_every_three_component_effect"
+        "test_stale_target_fizzles_every_three_component_effect",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
       ],
       "interaction_tests": [
         "test_actual_mind_unbound_counter_is_counted_by_later_draw",
@@ -19052,24 +19130,36 @@
         "test_original_augury_resumes_into_current_proliferate_choice_once",
         "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
         "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_target_characteristics_commit_before_private_scry"
+        "test_target_characteristics_commit_before_private_scry",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "multiplayer_tests": [
         "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
         "test_original_augury_resumes_into_current_proliferate_choice_once",
-        "test_private_scry_suspends_draw_and_life_then_replays"
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "privacy_tests": [
         "test_actual_union_counts_hand_after_its_draw_and_replays",
         "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
-        "test_private_scry_suspends_draw_and_life_then_replays"
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "replay_tests": [
         "test_original_augury_resumes_into_current_proliferate_choice_once",
         "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
         "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
         "test_pending_counter_replacement_resumes_once_before_later_quantity",
-        "test_private_scry_suspends_draw_and_life_then_replays"
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
       ],
       "required_evidence": [
         "positive",
@@ -19082,7 +19172,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The composition shape requires its marker, bounded effect count, coherent target group, and an existing strict component capability for every flattened effect; unknown operations, missing owners, or detached target contracts prevent closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_parser_shape_and_compiler_fail_closed removes the composition production and proves the exact source returns to a material residual with different semantic and CardProgram fingerprints.",
+      "implementation_mutation_rationale": "test_parser_shape_and_compiler_fail_closed removes the composition production and proves the exact source returns to a material residual with different semantic and CardProgram fingerprints. Fresh original-card fallback, early quantity and group commit omissions, plus ordered-owner runtime omission, are killed by the new family witnesses.",
       "blockers": [],
       "status": "trusted"
     },

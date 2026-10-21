@@ -156,9 +156,10 @@ def _additional_price_declares_x(oracle_text: str) -> bool:
 
 def closed_additional_cost_x_result(program: Any, *, recognizers) -> bool:
     """Check the complete known price before its independent result owner."""
-    if program.event!='resolve' or not str(program.ability_id).startswith('spell:'):return False
     schema=program.cost_schema
     if not isinstance(schema,Mapping) or set(schema)!={'additional_costs'} or not isinstance(schema['additional_costs'],list) or len(schema['additional_costs'])!=1:return False
+    # Component-only views cannot establish a whole spell's cost context.
+    if getattr(program,'event',None)!='resolve' or not str(getattr(program,'ability_id','')).startswith('spell:'):return False
     from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies,AnnouncedXLifeAdditionalCost
     from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
     from .spell_additional_cost_templates import FixedZoneChangeAdditionalCostTemplate

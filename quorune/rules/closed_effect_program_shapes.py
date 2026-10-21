@@ -74,8 +74,18 @@ def closed_effect_program_node_capabilities(
     return tuple(sorted(dependencies))
 
 
+def closed_effect_program_runtime_dependencies(program):
+    """Keep the persisted ordered-program kind bound to its mutation owner."""
+    if CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage:
+        return ()
+    if not 2 <= len(program.effects) <= 8:
+        raise ValueError('Closed ordered programs require two to eight effects')
+    return (CLOSED_EFFECT_PROGRAM_CAPABILITY,)
+
+
 __all__ = [
     "CLOSED_EFFECT_PROGRAM_CAPABILITY",
     "CLOSED_EFFECT_PROGRAM_MECHANIC",
     "closed_effect_program_node_capabilities",
+    "closed_effect_program_runtime_dependencies",
 ]

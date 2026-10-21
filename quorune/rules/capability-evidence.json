@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "fc9125447a973585e1e216b9e24246f549e866fce059623bc0a0ff1cb536398d",
-  "declaration_source_fingerprint": "33df5d2679d0389938ea7f2603652a81a061e62e674fcb29f70c497900f1498d",
+  "registry_fingerprint": "eb7cf6343383b356aa5e1a45cc33af3604932c279516d59dae8d7922ce9e748a",
+  "declaration_source_fingerprint": "9162152fb0cbbe4c8d731d2411c81daa3138447a86c9e05515da65c9e6662554",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -108966,6 +108966,63 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_selected_counter_costs.SelectedCounterCostRuntimeTests.test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
       "official_rule_ids": [
         "611.2a",
@@ -109669,6 +109726,63 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_selected_counter_costs.SelectedCounterCostRuntimeTests.test_actual_sunstar_and_korozda_keep_their_ordinary_targeted_results",
       "official_rule_ids": [
         "611.2a",
@@ -110105,6 +110219,44 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "negative",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_malformed_fixed_characteristic_keywords_roll_back",
       "official_rule_ids": [
@@ -110349,6 +110501,82 @@
         "commander_review"
       ],
       "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -110862,6 +111090,82 @@
         "commander_review"
       ],
       "applicability_note": "Committed spell spending and existing result owners compose through actual colored/colorless payments, tax, Flashback, copied-spell zero, counters, public sets, private fixed discard, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -111546,6 +111850,63 @@
         "commander_review"
       ],
       "applicability_note": "Committed spell spending and existing result owners compose through actual colored/colorless payments, tax, Flashback, copied-spell zero, counters, public sets, private fixed discard, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -112268,6 +112629,63 @@
         "commander_review"
       ],
       "applicability_note": "Committed spell spending and existing result owners compose through actual colored/colorless payments, tax, Flashback, copied-spell zero, counters, public sets, private fixed discard, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -190604,6 +191022,63 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
       "official_rule_ids": [
         "107.3a",
@@ -191174,6 +191649,63 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
       "official_rule_ids": [
         "107.3a",
@@ -191284,6 +191816,44 @@
         "commander_review"
       ],
       "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -191531,6 +192101,82 @@
         "commander_review"
       ],
       "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -192181,6 +192827,82 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingCompilerTests.test_mandatory_public_land_count_uses_existing_quantity_and_preserves_surface",
       "official_rule_ids": [
         "107.3a",
@@ -192808,6 +193530,63 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_scalar_mill_wording.ScalarMillWordingRuntimeTests.test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
       "official_rule_ids": [
         "107.3a",
@@ -193412,6 +194191,63 @@
         "commander_review"
       ],
       "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h",
+        "107.3k",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -196909,6 +197745,34 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two independently declared public quantities keep distinct binding identities. Actual generated program binding rejects stripped quantity/declared owners and malformed values; omitting the physical runtime reader is killed."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
       "test_id": "tests.test_public_negative_supertypes.PublicNegativeSupertypeRuntimeTests.test_negative_supertype_producer_omission_is_killed_by_fresh_native_cases",
       "official_rule_ids": [
         "109.2",
@@ -197213,6 +198077,34 @@
         "commander_review"
       ],
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two independently declared public quantities keep distinct binding identities. Actual generated program binding rejects stripped quantity/declared owners and malformed values; omitting the physical runtime reader is killed."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -197941,6 +198833,34 @@
         "commander_review"
       ],
       "applicability_note": "Complete represented token definition including trailing fixed keywords is retained; current Defender entry count changes after an actual Snakeform response and creates exact Flying Birds."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c",
+        "205.4a",
+        "205.4b",
+        "205.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two independently declared public quantities keep distinct binding identities. Actual generated program binding rejects stripped quantity/declared owners and malformed values; omitting the physical runtime reader is killed."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -199637,6 +200557,66 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
@@ -200137,6 +201117,66 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
@@ -200253,6 +201293,46 @@
         "commander_review"
       ],
       "applicability_note": "Combined ordinary keyword and P/T set keeps canonical typed quantity/result owners, current or LKI timing, locked logical recipients, independent authority rejection, cleanup and native private loaded replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -200413,6 +201493,86 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -200937,6 +202097,86 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
@@ -201437,6 +202677,66 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_state_event_actions.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
       "official_rule_ids": [
         "107.1b",
@@ -201853,6 +203153,66 @@
         "commander_review"
       ],
       "applicability_note": "Linked Multikicker count and existing result owner compose through actual paid casts, entry/departure, copied costs, counter responses, zero, private projection, rollback and loaded exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -212013,6 +213373,57 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_union_counts_hand_after_its_draw_and_replays",
       "official_rule_ids": [
         "608.2b",
@@ -212064,6 +213475,57 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
       "official_rule_ids": [
         "608.2b",
@@ -212111,6 +213573,40 @@
         "commander_review"
       ],
       "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
@@ -212183,6 +213679,74 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityCompilerTests.test_conditional_linked_and_ambiguous_sequences_remain_residual",
       "official_rule_ids": [
         "608.2b",
@@ -212251,6 +213815,74 @@
     {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
       "test_id": "tests.test_ordered_quantity_results.OrderedQuantityCompilerTests.test_independent_query_results_share_ordered_program_owner",
       "official_rule_ids": [
         "608.2b",
@@ -212298,6 +213930,57 @@
         "commander_review"
       ],
       "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
@@ -212383,6 +214066,57 @@
         "commander_review"
       ],
       "applicability_note": "Complete independently typed multi-sentence instructions retain printed component order across private library choices and Proliferate; actual Bond/Ral/Augury actions, stale target rejection, pending load and full replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_amount_clauses.OrderedAmountClauseTests.test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent instruction scopes and printed order reuse existing typed quantity and result owners. Native originals distinguish prior gain, loss and opponent gain; signed group consequences, pending state-action replacements, principal rollback, privacy, load/replay and actual owner omissions are covered."
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
@@ -291779,5 +293513,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "97432953729c0366220d74236dd4613c95a396990c55b8927445394eb8a13c80"
+  "fingerprint": "83e0926b18cde68653acae1fd6d4c4b35471d6e3c4cbd20647b125829d258842"
 }

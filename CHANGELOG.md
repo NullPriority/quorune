@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compose independently scoped quantity instructions with closed public-set
+  results, retaining printed order, life-history timing, pending state actions
+  and independent ordered-program runtime authority.
+
 - Compile combined keyword-first and stat-first temporary creature grants
   through the same resolution owner, preserving quantity timing, source
   information, fixed recipients, cleanup and independent runtime authority.

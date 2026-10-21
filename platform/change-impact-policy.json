@@ -7016,6 +7016,29 @@
         "test_game_record_v3",
         "test_public_query_effect_amounts"
       ]
+    },
+    {
+      "id": "ordered-quantity-closed-public-set-clauses",
+      "patterns": [
+        "quorune/compiler/query_counter_sequences.py",
+        "quorune/rules/closed_effect_program_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_ordered_amount_clauses.py",
+        "tests/fixtures/ordered-amount-clause-cards.json",
+        "quorune/query_effect_amount_model.py",
+        "quorune/compiler/declared_effect_amounts.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_closed_effect_programs",
+        "test_declared_effect_amounts",
+        "test_game_record_v3",
+        "test_ordered_amount_clauses",
+        "test_ordered_quantity_results",
+        "test_public_query_effect_amounts",
+        "test_scalar_effect_amounts",
+        "test_state_based_destination_replacements"
+      ]
     }
   ],
   "symbol_rules": [

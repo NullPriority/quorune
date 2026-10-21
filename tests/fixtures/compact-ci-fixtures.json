@@ -185,6 +185,7 @@
     "tests/fixtures/opponent-keyword-prohibition-cards.json",
     "tests/fixtures/optional-draw-discard-sequences.json",
     "tests/fixtures/optional-object-action-counters.json",
+    "tests/fixtures/ordered-amount-clause-cards.json",
     "tests/fixtures/ordered-quantity-results.json",
     "tests/fixtures/paid-color-entry-cards.json",
     "tests/fixtures/paid-entry-copy-cards.json",
