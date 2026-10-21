@@ -6838,6 +6838,7 @@
         "quorune/semantic_runtime/continuous_components.py",
         "quorune/protection_attachment_exceptions.py",
         "quorune/compiler/attached_protection_exceptions.py",
+        "quorune/compiler/continuous_templates.py",
         "tests/test_chosen_aura_protection.py",
         "tests/fixtures/chosen-aura-protection-cards.json"
       ],
