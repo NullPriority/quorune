@@ -154,8 +154,10 @@ Zone-destination replacements use the closed
 parent zone event. The operation binds the affected physical object and the
 already transformed destination at application time, so one immutable source
 effect can serve every event in a simultaneous batch. The containing zone
-event is exhausted before its child is considered. Every replacement choice
-is complete before the move; the child counter commits only after the card
+event normally finishes before its child is considered. Additional entry
+counters share the current entry instruction with its quantity replacements,
+so the affected controller can order those modifications together. Every
+replacement choice is complete before the move; the child counter commits only after the card
 reaches its validated destination. A counter on a card outside the battlefield
 is represented for ordering but remains outside the permanent-only quantity
 component. A suspended continuation validates that prospective child against
@@ -608,6 +610,35 @@ replacement descriptor and routes the placement through the existing nested
 zone-change and quantity-replacement transaction. Variable, zero, larger,
 optional, conditional, additional, multikind, linked, and another-object forms
 remain material residuals; the grammar does not infer or parse them at runtime.
+
+External additional entry counters use a separate bounded producer. A current,
+phased-in source modifies other creatures entering under its current
+controller, independently of ownership or origin. Whole source sentences may
+require or exclude one creature subtype and add one +1/+1 counter, or use the
+source's current power, toughness, or +1/+1 counter count. Prospective copy and
+control replacements determine the entering creature's eligibility. The shared
+layer-6 component marker suppresses a source whose ability has been removed;
+a simultaneously entering source supplies no external bonus.
+
+The rules owner captures the source quantity into an immutable value at entry
+preparation. Negative quantities become zero. Contributions from the same
+placing player and counter kind share the current placement; quantity
+replacement history stays attached to that instruction. The entry ordering
+also permits a later Devour contribution to join an already modified shared
+instruction without applying a quantity source twice. The historical Devour
+path retains its original contribution operation when no external addition
+has participated. The adapter is reconstructed from the original typed effects and current child
+event, and does not add persistent effect or continuation fields. Earlier
+control and copy priority, pending principal authority, atomic commit and
+replay still use the canonical replacement owner.
+
+The bounded source-power form may also add the Mutant subtype while preserving
+the creature's existing types. That result applies even when the counter
+quantity is zero. It commits as a layer-4 replacement-origin effect locked to
+the resulting zone object, before entry observers. It is not a copiable value
+and expires when that incarnation leaves. Unknown qualifiers, counter kinds,
+quantity expressions, subtype companions and counter prohibitions remain
+material residuals.
 
 Fixed choices between two distinct ordinary keyword counters use a separate
 closed entry component. The prospective controller chooses one counter before

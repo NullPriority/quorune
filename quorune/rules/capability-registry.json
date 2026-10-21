@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 443,
+  "registry_version": 444,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -40562,6 +40562,163 @@
       "dependency_fail_closed_rationale": "Canonically verified intrinsic-owner and APNAP-owner withdrawals independently keep all eight otherwise complete originals residual; the delayed cleanup ability uses normal placement and ordering.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh full-original compiler and accepted-cast schedule omissions, stale-incarnation guard removal, and an incorrect locked-controller sacrifice filter all fail their actual gameplay assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.producer.external_additional_entry",
+      "version": 1,
+      "official_rules": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Existing applicable sources replace other controlled creature entries with additional +1/+1 counters from a fixed one or current source quantity, with a bounded Mutant subtype companion.",
+        "inputs": [
+          "one complete source-spanned other-creature entry instruction",
+          "current phased-in battlefield source and controller",
+          "prospective destination controller and creature subtype predicates",
+          "fixed one or source current power, toughness or +1/+1 counter quantity"
+        ],
+        "outputs": [
+          "replacement-aware additional entry counters before entry observers",
+          "current-object noncopiable Mutant type grant where represented",
+          "canonical affected-controller choices, atomicity, private projections and replay"
+        ],
+        "exclusions": [
+          "unrepresented qualifiers or counter kinds",
+          "dynamic quantities other than the three current-source values",
+          "unrepresented subtype companions or timing overrides",
+          "simultaneously entering source abilities"
+        ]
+      },
+      "dependencies": [
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.external_entry_counters.external_entry_counter_handler",
+        "quorune.external_entry_counter_model.ExternalEntryCounterSpec",
+        "quorune.rules.external_entry_counters.snapshot_external_entry_counter_source",
+        "quorune.semantic_runtime.external_entry_counters.ExternalEntryCounterHandler",
+        "quorune.rules.entry_subtype_grants.commit_entry_subtype_grants",
+        "quorune.replacement.entry_counter_application.apply_entry_counter_operation",
+        "quorune.replacement.entry_counter_ordering.entry_counter_order_effects",
+        "quorune.compiler.external_entry_counters.external_entry_counter_node"
+      ],
+      "positive_tests": [
+        "test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+        "test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+        "test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+        "test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+        "test_actual_arwen_reads_current_toughness_after_response_before_entry",
+        "test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+        "test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+        "test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+        "test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+        "test_external_entry_counter_value_model_and_whole_source_grammar_are_closed",
+        "test_runtime_source_snapshot_lowers_owned_destination_and_subtype_predicates",
+        "test_additional_counter_preserves_current_instruction_and_applied_history"
+      ],
+      "negative_tests": [
+        "test_external_entry_counter_value_model_and_whole_source_grammar_are_closed",
+        "test_runtime_source_snapshot_lowers_owned_destination_and_subtype_predicates",
+        "test_external_producer_and_counter_owner_are_independent_runtime_requirements",
+        "test_canonically_verified_producer_and_counter_withdrawal_blocks_all_originals",
+        "test_additional_entry_operations_reject_wrong_event_and_combine_unmodified_contributions"
+      ],
+      "interaction_tests": [
+        "test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+        "test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+        "test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+        "test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+        "test_actual_arwen_reads_current_toughness_after_response_before_entry",
+        "test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+        "test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+        "test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+        "test_entry_order_offers_counter_multiplier_before_or_after_additional_source",
+        "test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+        "test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+        "test_grumgully_uses_prospective_copy_subtypes_before_entry",
+        "test_destination_controller_overrides_owner_and_simultaneous_sources_do_not_apply",
+        "test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+        "test_negative_source_power_clamps_counters_but_keeps_mutant_and_sources_add",
+        "test_source_control_change_uses_current_controller_for_later_entries",
+        "test_additional_entry_operations_reject_wrong_event_and_combine_unmodified_contributions"
+      ],
+      "multiplayer_tests": [
+        "test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+        "test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+        "test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+        "test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+        "test_actual_arwen_reads_current_toughness_after_response_before_entry",
+        "test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+        "test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+        "test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+        "test_entry_order_offers_counter_multiplier_before_or_after_additional_source",
+        "test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+        "test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+        "test_grumgully_uses_prospective_copy_subtypes_before_entry",
+        "test_destination_controller_overrides_owner_and_simultaneous_sources_do_not_apply",
+        "test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+        "test_negative_source_power_clamps_counters_but_keeps_mutant_and_sources_add",
+        "test_source_control_change_uses_current_controller_for_later_entries",
+        "test_additional_entry_operations_reject_wrong_event_and_combine_unmodified_contributions"
+      ],
+      "privacy_tests": [
+        "test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+        "test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+        "test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+        "test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+        "test_actual_arwen_reads_current_toughness_after_response_before_entry",
+        "test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+        "test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+        "test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+        "test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+        "test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+        "test_grumgully_uses_prospective_copy_subtypes_before_entry",
+        "test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+        "test_source_control_change_uses_current_controller_for_later_entries"
+      ],
+      "replay_tests": [
+        "test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+        "test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+        "test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+        "test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+        "test_actual_arwen_reads_current_toughness_after_response_before_entry",
+        "test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+        "test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+        "test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+        "test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+        "test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+        "test_grumgully_uses_prospective_copy_subtypes_before_entry",
+        "test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+        "test_negative_source_power_clamps_counters_but_keeps_mutant_and_sources_add",
+        "test_source_control_change_uses_current_controller_for_later_entries"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonically rebuilt and validated evidence indexes prove independently blocking this producer or the counter quantity owner keeps every complete original residual. Stripping either emitted runtime dependency separately prevents strict binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh compiler, amount lowerer, native source collector, subtype commit and shared entry-order omissions fail their exact source or gameplay consequence assertions.",
       "blockers": [],
       "status": "trusted"
     }

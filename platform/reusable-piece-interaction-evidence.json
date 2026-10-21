@@ -18282,6 +18282,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual RelicWard blocks its artifact controller targeting the noncreature artifact, preserves its mana ability, and allows Aura removal to restore targeting before a real bounce; advertised and committed legality, rollback and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.external_additional_entry"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.external_additional_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full Bloodspore Devour creates its counter instruction before actual Grumgully and Doubling Season modifications. Both legal orders preserve expected three/four counters, no partial sacrifice, private pending load, unauthorized rollback and exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+      "piece_ids": [
+        "capability.counter.producer.external_additional_entry",
+        "capability.zone.entry.devour"
+      ],
+      "capability_ids": [
+        "counter.producer.external_additional_entry",
+        "zone.entry.devour"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Bloodspore cast pays mana, selects and sacrifices two public controlled creatures, enters with two Devour counters and adds that current count to a later creature entry, with pending load and replay."
     }
   ]
 }

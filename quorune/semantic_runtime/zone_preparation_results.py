@@ -26,6 +26,9 @@ def prepared_from_zone_event(
             visit(child)
 
     visit(event)
+    from ..rules.entry_subtype_grants import entry_subtype_grants
+    try:entry_subtype_grants(event)
+    except (ValueError,TypeError) as exc:raise ZoneReplacementError(str(exc)) from exc
     raw_grants = event.payload.get("entry_keyword_grants", ())
     if not isinstance(raw_grants, (list, tuple)):
         raise ZoneReplacementError("Entry keyword grants must be an array")

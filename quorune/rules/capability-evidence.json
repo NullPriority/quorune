@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d0e753409ac35c811d41ff1d324c63b7be1a3ce741fbff2500efc01e47111c42",
-  "declaration_source_fingerprint": "595d841b5cb6097e15aeb7c6bb14ed6450fcaf7c7444bd91b08119778eb7ddeb",
+  "registry_fingerprint": "c735e790327410c576fe194903c1393d59bf244bd98ee3b431d931fdf6bca09e",
+  "declaration_source_fingerprint": "e93b7c40feb246b262957379c35e7225c60a3266809f08c6042f17ce4705f321",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -133520,6 +133520,1766 @@
         "commander_review"
       ],
       "applicability_note": "Replay the source-pinned Evolve trigger and canonical counter placement to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_arwen_reads_current_toughness_after_response_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_additional_entry_operations_reject_wrong_event_and_combine_unmodified_contributions",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_destination_controller_overrides_owner_and_simultaneous_sources_do_not_apply",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_entry_order_offers_counter_multiplier_before_or_after_additional_source",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_grumgully_uses_prospective_copy_subtypes_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_negative_source_power_clamps_counters_but_keeps_mutant_and_sources_add",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_control_change_uses_current_controller_for_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_arwen_reads_current_toughness_after_response_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_additional_entry_operations_reject_wrong_event_and_combine_unmodified_contributions",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_destination_controller_overrides_owner_and_simultaneous_sources_do_not_apply",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_entry_order_offers_counter_multiplier_before_or_after_additional_source",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_grumgully_uses_prospective_copy_subtypes_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_negative_source_power_clamps_counters_but_keeps_mutant_and_sources_add",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_control_change_uses_current_controller_for_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_external_entry_compiler_and_lowerer_omissions_are_killed",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_native_source_subtype_and_replacement_order_omissions_are_killed",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_additional_entry_operations_reject_wrong_event_and_combine_unmodified_contributions",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_canonically_verified_producer_and_counter_withdrawal_blocks_all_originals",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_external_entry_counter_value_model_and_whole_source_grammar_are_closed",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_external_producer_and_counter_owner_are_independent_runtime_requirements",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_runtime_source_snapshot_lowers_owned_destination_and_subtype_predicates",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_arwen_reads_current_toughness_after_response_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_additional_counter_preserves_current_instruction_and_applied_history",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_external_entry_counter_value_model_and_whole_source_grammar_are_closed",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_runtime_source_snapshot_lowers_owned_destination_and_subtype_predicates",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_arwen_reads_current_toughness_after_response_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_grumgully_uses_prospective_copy_subtypes_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_control_change_uses_current_controller_for_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_arwen_reads_current_toughness_after_response_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_biomancer_reads_current_power_and_adds_noncopiable_mutant",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_bramblewood_adds_to_other_warrior_and_current_counter_grants_trample",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_grumgully_excludes_itself_and_human_but_adds_before_nonhuman_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_renata_retains_devotion_definition_and_counter_bearing_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_sage_adds_to_wizard_then_pays_that_counter_for_private_draw",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_actual_zero_power_biomancer_still_adds_mutant_without_counters",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_biomancer_subtype_is_not_copied_and_expires_with_its_zone_object",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_grumgully_uses_prospective_copy_subtypes_before_entry",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_negative_source_power_clamps_counters_but_keeps_mutant_and_sources_add",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_ability_loss_before_entry_suppresses_bonus_and_departure_stops_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
+    },
+    {
+      "capability_id": "counter.producer.external_additional_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_external_entry_counters.ExternalEntryCounterTests.test_source_control_change_uses_current_controller_for_later_entries",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "611.3a",
+        "611.3b",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing sources modify prospective controlled creature entry before events and state actions; complete originals preserve Devour, devotion, current-counter Trample and counter-removal draw. Current source stats, ability loss, control, simultaneous entry, copy, noncopiable Mutant, counter ordering, principal rollback, private pending load, replay, verified withdrawals and fresh omissions have bounded executable witnesses."
     },
     {
       "capability_id": "counter.producer.fabricate",
@@ -301698,5 +303458,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "d8fe92d5fee8245c62e925c97a2cb8e8ca03367c4382ec95abab7186670b498a"
+  "fingerprint": "e02ea48966779d762e80a424a7351d9dae59c2b1e0994f904be11d5e0fcc4cb0"
 }

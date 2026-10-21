@@ -1,0 +1,494 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned external additional-entry-counter originals; full native proof required before gain acceptance.",
+  "cards": [
+    {
+      "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+      "name": "Grumgully, the Generous",
+      "mana_cost": "{1}{R}{G}",
+      "type_line": "Legendary Creature — Goblin Shaman",
+      "oracle_text": "Each other non-Human creature you control enters with an additional +1/+1 counter on it.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+          "published_at": "2019-10-04",
+          "source": "wotc",
+          "comment": "If a non-Human creature enters the battlefield as a copy of a Human creature, it won't get a +1/+1 counter. Similarly, if a Human enters as a non-Human creature, it will get a +1/+1 counter."
+        },
+        {
+          "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+          "published_at": "2019-10-04",
+          "source": "wotc",
+          "comment": "A non-Human creature you control that would enter the battlefield with no +1/+1 counters on it enters with one +1/+1 counter on it."
+        },
+        {
+          "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+          "published_at": "2019-10-04",
+          "source": "wotc",
+          "comment": "Any other non-Human creatures that enter the battlefield at the same time as Grumgully won't get a +1/+1 counter."
+        }
+      ]
+    },
+    {
+      "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+      "name": "Renata, Called to the Hunt",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Legendary Enchantment Creature — Demigod",
+      "oracle_text": "Renata's power is equal to your devotion to green. (Each {G} in the mana costs of permanents you control counts toward your devotion to green.)\nEach other creature you control enters with an additional +1/+1 counter on it.",
+      "power": "*",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "The ability that defines Renata's power works in all zones, not just the battlefield."
+        },
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "Mana symbols in the text boxes of permanents you control don't count toward your devotion to any color."
+        },
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "If a creature you control would normally enter the battlefield with no +1/+1 counters on it, Renata's second ability causes it to enter the battlefield with a +1/+1 counter on it."
+        },
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it's still on the battlefield at that time."
+        },
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "If you put an Aura on an opponent's permanent, you still control the Aura, and mana symbols in its mana cost count towards your devotion."
+        },
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "A creature entering the battlefield at the same time as Renata won't get an additional +1/+1 counter."
+        },
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s)."
+        },
+        {
+          "oracle_id": "6761b077-7a89-42c9-93ab-675fe4231564",
+          "published_at": "2020-01-24",
+          "source": "wotc",
+          "comment": "Colorless and generic mana symbols ({C}, {0}, {1}, {2}, {X}, and so on) in mana costs of permanents you control don't count toward your devotion to any color."
+        }
+      ]
+    },
+    {
+      "oracle_id": "be455184-c57d-4504-8c34-3be42bc3f04b",
+      "name": "Bramblewood Paragon",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Elf Warrior",
+      "oracle_text": "Each other Warrior creature you control enters with an additional +1/+1 counter on it.\nEach creature you control with a +1/+1 counter on it has trample.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-02-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "be455184-c57d-4504-8c34-3be42bc3f04b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "If Bramblewood Paragon enters at the same time as another Warrior (due to Living End, for example), that creature doesn't get a +1/+1 counter."
+        },
+        {
+          "oracle_id": "be455184-c57d-4504-8c34-3be42bc3f04b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "The effects from more than one Bramblewood Paragon are cumulative. That is, if you have more than one Bramblewood Paragon on the battlefield, Warrior creatures you control enter with that many additional +1/+1 counters on them."
+        },
+        {
+          "oracle_id": "be455184-c57d-4504-8c34-3be42bc3f04b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "If a Warrior would normally enter with a certain number of +1/+1 counters on it, it enters with that many +1/+1 counters plus one on it instead. If a Warrior would normally enter with no +1/+1 counters on it, it enters with one +1/+1 counter on it instead."
+        },
+        {
+          "oracle_id": "be455184-c57d-4504-8c34-3be42bc3f04b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "The creature gets the counter if it would enter under your control. It doesn't matter who owns the creature or what zone it enters from (such as your opponent's graveyard, for example)."
+        }
+      ]
+    },
+    {
+      "oracle_id": "f53da056-97be-41ad-8cfc-0d92e17dcd7b",
+      "name": "Sage of Fables",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Merfolk Wizard",
+      "oracle_text": "Each other Wizard creature you control enters with an additional +1/+1 counter on it.\n{2}, Remove a +1/+1 counter from a creature you control: Draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "f53da056-97be-41ad-8cfc-0d92e17dcd7b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "The effects from more than one Sage of Fables are cumulative. That is, if you have two Sage of Fables on the battlefield, Wizard creatures you control enter with two additional +1/+1 counters on them."
+        },
+        {
+          "oracle_id": "f53da056-97be-41ad-8cfc-0d92e17dcd7b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "If Sage of Fables enters at the same time as another Wizard (due to Living End, for example), that creature doesn't get a +1/+1 counter."
+        },
+        {
+          "oracle_id": "f53da056-97be-41ad-8cfc-0d92e17dcd7b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "The creature gets the counter if it would enter under your control. It doesn't matter who owns the creature or what zone it enters from (such as your opponent's graveyard, for example)."
+        },
+        {
+          "oracle_id": "f53da056-97be-41ad-8cfc-0d92e17dcd7b",
+          "published_at": "2008-04-01",
+          "source": "wotc",
+          "comment": "If a Wizard would normally enter with a certain number of +1/+1 counters on it, it enters with that many +1/+1 counters plus one on it instead. If a Wizard would normally enter with no +1/+1 counters on it, it enters with one +1/+1 counter on it instead."
+        }
+      ]
+    },
+    {
+      "oracle_id": "c0891157-f3dd-4866-866f-fd13e9be9633",
+      "name": "Arwen, Weaver of Hope",
+      "mana_cost": "{1}{G}{G}",
+      "type_line": "Legendary Creature — Elf Noble",
+      "oracle_text": "Each other creature you control enters with a number of additional +1/+1 counters on it equal to Arwen's toughness.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "c0891157-f3dd-4866-866f-fd13e9be9633",
+          "published_at": "2023-06-16",
+          "source": "wotc",
+          "comment": "If Arwen, Weaver of Hope and another creature you control enter the battlefield at the same time, Arwen's ability won't cause that creature to enter with additional +1/+1 counters on it."
+        },
+        {
+          "oracle_id": "c0891157-f3dd-4866-866f-fd13e9be9633",
+          "published_at": "2023-06-16",
+          "source": "wotc",
+          "comment": "To determine how many additional +1/+1 counters a creature enters the battlefield with, use Arwen, Weaver of Hope's toughness as that creature is entering the battlefield."
+        }
+      ]
+    },
+    {
+      "oracle_id": "1f4743ed-4e91-4344-9409-c8ede5c4804d",
+      "name": "Bloodspore Thrinax",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Creature — Lizard",
+      "oracle_text": "Devour 1 (As this creature enters, you may sacrifice any number of creatures. It enters with that many +1/+1 counters on it.)\nEach other creature you control enters with an additional X +1/+1 counters on it, where X is the number of +1/+1 counters on this creature.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Devour"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "1f4743ed-4e91-4344-9409-c8ede5c4804d",
+          "published_at": "2020-08-07",
+          "source": "wotc",
+          "comment": "If Bloodspore Thrinax enters the battlefield at the same time as other creatures you control, those creatures won't get additional +1/+1 counters from Bloodspore Thrinax's last ability. Those creatures also can't be devoured by Bloodspore Thrinax."
+        }
+      ]
+    },
+    {
+      "oracle_id": "afeba4d7-b659-4fb1-84dd-27704fbb2621",
+      "name": "Master Biomancer",
+      "mana_cost": "{2}{G}{U}",
+      "type_line": "Creature — Elf Wizard",
+      "oracle_text": "Each other creature you control enters with a number of additional +1/+1 counters on it equal to this creature's power and as a Mutant in addition to its other types.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "afeba4d7-b659-4fb1-84dd-27704fbb2621",
+          "published_at": "2013-01-24",
+          "source": "wotc",
+          "comment": "To determine how many additional +1/+1 counters a creature enters with, use Master Biomancer's power as that creature is entering."
+        }
+      ]
+    }
+  ]
+}

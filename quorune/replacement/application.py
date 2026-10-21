@@ -20,6 +20,9 @@ from .operations import (
     AppendValues,
     CapResultLifeLoss,
     CreateAffectedObjectCounter,
+    AddAffectedObjectCounter,
+    ApplyEntryCounterReplacement,
+    GrantAffectedObjectSubtype,
     CreateAdditionalToken,
     CreateResultDraws,
     CreateNestedEvent,
@@ -592,22 +595,9 @@ def _apply_operation(
             )
         )
         return entry_scope
-    if isinstance(operation, CreateAffectedObjectCounter):
-        _create_affected_object_counter_event(
-            event,
-            payload,
-            children,
-            operation,
-            effect_id=effect_id,
-        )
-        return entry_scope
-    if isinstance(operation, GrantAffectedObjectKeyword):
-        _apply_affected_object_keyword(
-            event,
-            payload,
-            operation,
-            effect_id=effect_id,
-        )
+    if isinstance(operation,(ApplyEntryCounterReplacement,CreateAffectedObjectCounter,GrantAffectedObjectSubtype,GrantAffectedObjectKeyword)):
+        from .entry_counter_application import apply_entry_counter_operation
+        apply_entry_counter_operation(event,payload,children,operation,effect_id=effect_id)
         return entry_scope
     if isinstance(operation, CreateAdditionalToken):
         _apply_additional_token(event, payload, operation)
