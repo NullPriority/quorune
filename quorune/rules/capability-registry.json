@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 433,
+  "registry_version": 434,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -39392,6 +39392,116 @@
       "dependency_fail_closed_rationale": "Verified withdrawal of the random-price, random-subset or ordinary discard-cost owner blocks the complete spell. Stripping the new price authority prevents runtime binding.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual Sonic Burst casts detect omitted source production, server random subset selection and canonical discard payment commit.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.announced_x_hand_discard",
+      "version": 1,
+      "official_rules": [
+        "107.3a",
+        "107.3b",
+        "601.2a",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "701.9a",
+        "701.9b",
+        "733.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One mandatory declared-X owned-hand discard links exact current card resources to the original spell declaration.",
+        "inputs": [
+          "one nonnegative announced X",
+          "owned current unrestricted/creature/land hand predicate",
+          "original spell and target contracts"
+        ],
+        "outputs": [
+          "exactly X distinct qualifying hand discards",
+          "unchanged declared X and independently represented result"
+        ],
+        "exclusions": [
+          "random/optional/mixed/linked X prices",
+          "different-name predicates",
+          "X sacrifice or return",
+          "unrepresented result siblings"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "implementation_components": [
+        "quorune.rules.casting_additional_costs._validate_announced_zone_cost",
+        "quorune.rules.casting_additional_costs.announced_zone_cost_capabilities",
+        "quorune.compiler.spell_additional_cost_templates.announced_x_additional_cost_template",
+        "quorune.rules.casting.additional_zone_costs.select_zone_change_additional_cost"
+      ],
+      "positive_tests": [
+        "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+        "test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+        "test_both_original_zero_x_casts_need_neither_cost_cards_nor_targets",
+        "test_closed_discard_parameter_keeps_old_payloads_and_rejects_unowned_shapes",
+        "test_countering_keeps_the_declared_discards_and_mana_paid",
+        "test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+        "test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+        "test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x"
+      ],
+      "negative_tests": [
+        "test_closed_discard_parameter_keeps_old_payloads_and_rejects_unowned_shapes",
+        "test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+        "test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+        "test_verified_declared_discard_and_result_owner_withdrawals_and_runtime_minimum",
+        "test_wrong_types_owners_cardinalities_and_malformed_x_reject_before_payment"
+      ],
+      "interaction_tests": [
+        "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+        "test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+        "test_countering_keeps_the_declared_discards_and_mana_paid",
+        "test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+        "test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+        "test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x"
+      ],
+      "multiplayer_tests": [
+        "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+        "test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+        "test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+        "test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x"
+      ],
+      "privacy_tests": [
+        "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+        "test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+        "test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+        "test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x",
+        "test_wrong_types_owners_cardinalities_and_malformed_x_reject_before_payment"
+      ],
+      "replay_tests": [
+        "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+        "test_actual_scorched_earth_pays_land_cards_before_destroying_original_land_targets",
+        "test_both_original_zero_x_casts_need_neither_cost_cards_nor_targets",
+        "test_countering_keeps_the_declared_discards_and_mana_paid",
+        "test_partial_and_all_target_departure_do_not_change_or_refund_the_price",
+        "test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+        "test_unrestricted_hand_control_excludes_the_source_and_declares_x_without_mana_x"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal of the declared hand price, ordinary discard owner or independently required target-count authority blocks the original. Runtime minimum stripping rejects removal of the declared price authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual Aether Tide detects omitted compiler production, actual required-count binding forced to one and canonical discard commitment omitted.",
       "blockers": [],
       "status": "trusted"
     }

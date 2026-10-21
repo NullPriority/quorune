@@ -12,6 +12,7 @@
     "tests/fixtures/all-counter-self-cost-cards.json",
     "tests/fixtures/alternative-activation-cost-cards.json",
     "tests/fixtures/amass-rules-cards.json",
+    "tests/fixtures/announced-hand-discard-cards.json",
     "tests/fixtures/announced-target-cardinality-cards.json",
     "tests/fixtures/announced-x-activation-cards.json",
     "tests/fixtures/announced-x-additional-cost-cards.json",

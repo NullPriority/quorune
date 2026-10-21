@@ -17787,6 +17787,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Normal White Ward, Pentarch Ward and Tattoo Ward retain themselves through their own grants. An independent legal colorless Steppe grants white protection; two complete generic destination replacements suspend the Aura SBA before movement. Pending load keeps the live attachment and grant. In the chosen case B controls the creature and plays Steppe on B actual next turn while Aura-owner A chooses its destination. Wrong-principal/unoffered choices roll back; exile adds one replacement counter, ends the Aura grant and preserves private hands/pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete originals keep one X across mana, exact owned creature/land discards and distinct original targets. Costs precede resolution; zero, partial/all target loss, countering and rejected selections retain their independent meanings. Sequential destination choices preserve earlier typed discards through transactional rollback, private pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.target.cardinality.mana_announced_x"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "target.cardinality.mana_announced_x"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete originals keep one X across mana, exact owned creature/land discards and distinct original targets. Costs precede resolution; zero, partial/all target loss, countering and rejected selections retain their independent meanings. Sequential destination choices preserve earlier typed discards through transactional rollback, private pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete originals keep one X across mana, exact owned creature/land discards and distinct original targets. Costs precede resolution; zero, partial/all target loss, countering and rejected selections retain their independent meanings. Sequential destination choices preserve earlier typed discards through transactional rollback, private pending load and pre-cast replay."
     }
   ]
 }

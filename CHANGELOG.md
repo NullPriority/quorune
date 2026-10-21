@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Pay mandatory announced-X hand-discard spell prices through the existing
+  discard owner, retaining linked target counts, zero casts, private selectors
+  and pending destination choices.
+
 - Suspend competing graveyard-destination replacements for state-based damage
   and zero-toughness moves before mutation, retaining prior Umbra choices,
   simultaneous source departures, principal privacy and pending replay.
