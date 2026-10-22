@@ -1,0 +1,1458 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned global fixed alternative-cost originals, independent rulings and canonical public controls.",
+  "cards": [
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "name": "Fist of Suns",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "You may pay {W}{U}{B}{R}{G} rather than pay the mana cost for spells you cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "8be4745e-36d8-430f-945e-c8a7fde9b4f6",
+      "name": "Jodah, Archmage Eternal",
+      "mana_cost": "{1}{U}{R}{W}",
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "Flying\nYou may pay {W}{U}{B}{R}{G} rather than pay the mana cost for spells you cast.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-07-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "6835bf6d-7197-481b-ac26-276ce363b4ad",
+      "name": "Rooftop Storm",
+      "mana_cost": "{5}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may pay {0} rather than pay the mana cost for Zombie creature spells you cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "name": "Omniscience",
+      "mana_cost": "{7}{U}{U}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may cast spells from your hand without paying their mana costs.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 10.0
+    },
+    {
+      "oracle_id": "9b06f2bf-146d-4b30-b467-e16f1a942253",
+      "name": "Dracogenesis",
+      "mana_cost": "{6}{R}{R}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may cast Dragon spells without paying their mana costs.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 8.0
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "fea95888-e16a-4209-9cd4-623f7f4d2f67",
+      "name": "Walking Corpse",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Gravecrawler",
+      "oracle_id": "09ff28b1-b6c9-48e6-b12e-2f0e644f709f",
+      "oracle_text": "This creature can't block.\nYou may cast this card from your graveyard as long as you control a Zombie.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "1",
+      "type_line": "Creature — Zombie"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Kicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Burst Lightning",
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "oracle_text": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nBurst Lightning deals 2 damage to any target. If this spell was kicked, it deals 4 damage instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "name": "Sphere of Resistance",
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "name": "Ancestral Vision",
+      "mana_cost": "",
+      "type_line": "Sorcery",
+      "oracle_text": "Suspend 4—{U} (Rather than cast this card from your hand, pay {U} and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)\nTarget player draws three cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Suspend"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "name": "Cloudshift",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "name": "Mirrormade",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may have this enchantment enter as a copy of any artifact or enchantment on the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "faces": [],
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "994db177-03f5-43dd-bf7b-2994e8d430d3",
+      "name": "Volcanic Dragon",
+      "mana_cost": "{4}{R}{R}",
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying, haste",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "name": "Young Blue Dragon // Sand Augury",
+      "mana_cost": "{4}{U} // {1}{U}",
+      "type_line": "Creature — Dragon // Sorcery — Adventure",
+      "oracle_text": "Young Blue Dragon: Flying\n//\nSand Augury: Scry 1, then draw a card. (Then exile this card. You may cast the creature later from exile.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry",
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "adventure",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0,
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{U}",
+          "name": "Young Blue Dragon",
+          "oracle_text": "Flying",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature — Dragon"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Sand Augury",
+          "oracle_text": "Scry 1, then draw a card. (Then exile this card. You may cast the creature later from exile.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery — Adventure"
+        }
+      ]
+    },
+    {
+      "oracle_id": "584cf0fd-112a-4ca6-9c0e-1f3228a7d325",
+      "name": "Reckless Impulse",
+      "mana_cost": "{1}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile the top two cards of your library. Until the end of your next turn, you may play those cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "name": "Think Twice",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "728d2e30-2f36-4054-81db-29b01e376a82",
+      "name": "Sickening Dreams",
+      "mana_cost": "{1}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, discard X cards.\nSickening Dreams deals X damage to each creature and each player.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "card_faces": [],
+      "rulings": []
+    },
+    {
+      "oracle_id": "0596920f-9946-42f4-a03b-24aab67f9f1b",
+      "name": "Blaze",
+      "mana_cost": "{X}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Blaze deals X damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "37de575d-15d4-42a2-a3d2-3855fb6ab110",
+      "name": "Slaughter",
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Buyback—Pay 4 life. (You may pay 4 life in addition to any other costs as you cast this spell. If you do, put this card into your hand as it resolves.)\nDestroy target nonblack creature. It can't be regenerated.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Buyback"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1998-06-15",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "09ff28b1-b6c9-48e6-b12e-2f0e644f709f",
+      "published_at": "2011-01-22",
+      "source": "wotc",
+      "comment": "Gravecrawler's ability doesn't change when you could cast it."
+    },
+    {
+      "oracle_id": "09ff28b1-b6c9-48e6-b12e-2f0e644f709f",
+      "published_at": "2011-01-22",
+      "source": "wotc",
+      "comment": "Once you've cast Gravecrawler and it's on the stack, it doesn't matter if you lose control of the other Zombie."
+    },
+    {
+      "oracle_id": "37de575d-15d4-42a2-a3d2-3855fb6ab110",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You can’t pay the buyback if you have less than 4 life, even if an effect would keep you from losing for having 0 or less life."
+    },
+    {
+      "oracle_id": "584cf0fd-112a-4ca6-9c0e-1f3228a7d325",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You must still pay all costs to cast those spells and follow normal casting permissions. For example, if one of the exiled cards is a sorcery, this effect doesn't allow you to cast it during an opponent's turn."
+    },
+    {
+      "oracle_id": "6835bf6d-7197-481b-ac26-276ce363b4ad",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of the spell are unchanged. Rooftop Storm only changes what you pay."
+    },
+    {
+      "oracle_id": "6835bf6d-7197-481b-ac26-276ce363b4ad",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "You must still pay any mandatory additional costs, such as exiling a creature card from your graveyard for Makeshift Mauler."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Fist of Suns's ability is an alternative cost to cast a spell. You can't combine this with other alternative costs, such as flashback. You can pay additional costs, such as kicker, in addition to this alternative cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you apply Fist of Suns's alternative cost to a spell with {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you cast a spell for which mana of any color can be spent to cast it, you may cast it for Fist of Suns's alternative cost and still spend any color of mana to cover that cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you pay {W}{U}{B}{R}{G} rather than pay the mana cost of a spell with {X} in its mana cost, the only legal choice for X is 0."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If a spell has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, such as that of Tormenting Voice, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Once you cast Omniscience, if it's your turn, you'll have priority immediately after it resolves. You can cast another spell before any player can attempt to remove Omniscience with spells or abilities."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of each spell you cast."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when Mirrormade enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the chosen permanent will also work."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If Mirrormade copies an Aura this way, you choose what the Aura will enchant just before it enters the battlefield. You can't choose any permanent cards entering the battlefield at the same time as that Aura. This doesn't target the player or permanent it will enchant, so an opponent's permanent with hexproof may be chosen this way. The chosen recipient must be able to legally be enchanted by the Aura, so a player or permanent with protection from one of the Aura's qualities can't be chosen this way. If there's nothing legal for Mirrormade to enchant, it stays in its current zone (unless it's a spell, in which case it's put into its owner's graveyard)."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If Mirrormade somehow enters the battlefield at the same time as another artifact or enchantment, it can't become a copy of that permanent. You may choose only a permanent that's already on the battlefield."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the chosen permanent has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the chosen permanent is a token, Mirrormade copies the original characteristics of that token as stated by the effect that created the token. Mirrormade doesn't become a token in this case."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the chosen permanent is copying something else (for example, if the chosen permanent is another Mirrormade), then Mirrormade enters the battlefield as whatever the chosen permanent copied."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Mirrormade copies exactly what was printed on the original permanent (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether it has any counters on it or any Auras attached to it, or any non-copy effects that have changed its types, color, or so on. Notably, if Mirrormade copies an artifact creature or enchantment creature that's normally not a creature (such as one affected by Bring to Life), Mirrormade won't be a creature."
+    },
+    {
+      "oracle_id": "8be4745e-36d8-430f-945e-c8a7fde9b4f6",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "If you apply Jodah's alternative cost to a spell with {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "8be4745e-36d8-430f-945e-c8a7fde9b4f6",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "If you cast a spell for which mana may be spent as though it were mana of any color, you may cast it for Jodah's alternative cost and still spend mana as though it were mana of any color."
+    },
+    {
+      "oracle_id": "8be4745e-36d8-430f-945e-c8a7fde9b4f6",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "Jodah's ability is an alternative cost to cast a spell. You can't combine this with other alternative costs, such as flashback. You can pay additional costs, such as kicker, in addition to this alternative cost."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2013-06-07",
+      "source": "wotc",
+      "comment": "Although originally printed with a characteristic-defining ability that defined its color, this card now has a color indicator. This color indicator can't be affected by text-changing effects (such as the one created by Crystal Spray), although color-changing effects can still overwrite it."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "A card with no mana cost can't be cast normally; you'll need a way to cast it for an alternative cost or without paying its mana cost, such as by suspending it."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Cards exiled with suspend are exiled face up."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Due to a recent rules change to suspend, you are no longer required to cast the suspended card as the second triggered ability of suspend resolves. Instead, as the second triggered ability resolves, you may cast the card. Timing permissions based on the card's type are ignored. If you don't cast the card, it remains exiled with no time counters on it, and it's no longer suspended."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Exiling a card with suspend isn't casting that card. This action doesn't use the stack and can't be responded to."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If a card with no mana cost is given an alternative cost equal to its mana cost (by Snapcaster Mage, for example), that cost cannot be paid and the card cannot be cast this way."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If an effect refers to a \"suspended card,\" that means a card that (1) has suspend, (2) is in exile, and (3) has one or more time counters on it."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the first triggered ability of suspend (the one that removes time counters) is countered, no time counter is removed. The ability will trigger again at the beginning of the card's owner's next upkeep."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the second triggered ability is countered, the card can't be cast. It remains exiled with no time counters on it, and it's no longer suspended."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If the spell requires any targets, those targets are chosen when the spell is finally cast, not when it's exiled."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" such as with suspend, you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those if you want to cast the card."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Suspend is a keyword that represents three abilities. The first is a static ability that allows you to exile the card from your hand with the specified number of time counters (the number before the dash) on it by paying its suspend cost (listed after the dash). The second is a triggered ability that removes a time counter from the suspended card at the beginning of each of your upkeeps. The third is a triggered ability that gives you the option to cast the card when the last time counter is removed."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The mana value of a spell cast without paying its mana cost is determined by its mana cost, even though that cost wasn't paid."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "When the last time counter is removed, the second triggered ability of suspend (the one that lets you cast the card) triggers. It doesn't matter why the last time counter was removed or what effect removed it."
+    },
+    {
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You can exile a card in your hand using suspend any time you could cast that card. Consider its card type, any effects that modify when you could cast it (such as flash) and any other effects that stop you from casting it (such as from Meddling Mage's ability) to determine if and when you can do this. Whether you could actually complete all steps in casting the card is irrelevant. For example, you can exile a card with suspend that has no mana cost or that requires a target even if no legal targets are available at that time."
+    },
+    {
+      "oracle_id": "9b06f2bf-146d-4b30-b467-e16f1a942253",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If a spell has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "9b06f2bf-146d-4b30-b467-e16f1a942253",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If you cast a spell “without paying its mana cost,” you can’t choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the spell has any mandatory additional costs those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "9b06f2bf-146d-4b30-b467-e16f1a942253",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Once you cast Dracogenesis, if it’s your turn, you’ll have priority immediately after it resolves. You can cast another spell before any player can attempt to remove Dracogenesis with spells or abilities."
+    },
+    {
+      "oracle_id": "9b06f2bf-146d-4b30-b467-e16f1a942253",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of each Dragon spell you cast this way."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\""
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An adventurer card is a permanent card in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it’s in your graveyard, Altar of Bhaal is an artifact card whose mana value is 2."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An effect may refer to a card, spell, or permanent that “has an Adventure.” This refers to a card, spell, or permanent that has an adventurer card’s set of alternative characteristics, even if they’re not being used and even if that card was never cast as an Adventure."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Casting a card as an Adventure isn’t casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner’s graveyard as it resolves. For as long as it remains exiled, that player may cast it as a permanent spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won’t be exiled and the spell’s controller won’t be able to cast it as a permanent later."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won’t give you permission to cast it as a permanent spell."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it’s not possible to cast the copy from exile."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it’s a token) or cease to be a copy (if it’s a nontoken permanent), and so you won’t be able to cast it as an Adventure."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it’s legal to cast that spell."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card’s normal characteristics. The spell’s color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "fff28b30-9903-4a0a-a723-31216abd457d",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "You must still follow any relevant timing rules for the permanent spell you cast from exile. Normally, you’ll be able to cast it only during your main phase while the stack is empty."
+    }
+  ]
+}

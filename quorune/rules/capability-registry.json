@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 455,
+  "registry_version": 456,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -42158,6 +42158,185 @@
         "test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
         "test_actual_inventor_pays_entry_energy_to_move_its_attachment",
         "test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit"
+      ]
+    },
+    {
+      "id": "casting.alternative_cost.fixed_battlefield_grant",
+      "version": 1,
+      "official_rules": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A current controlled battlefield source grants one optional fixed alternate mana price to its represented spell set and origin without granting casting-zone access.",
+        "inputs": [
+          "complete current typed source descriptor",
+          "selected spell type/subtype and existing zone authorization",
+          "one selected alternative and complete mandatory/optional cost facts"
+        ],
+        "outputs": [
+          "optional immutable cast-price alternatives",
+          "ordinary cost increases/reductions, commander tax and additional payments",
+          "current-ability and source-incarnation bound authorization"
+        ],
+        "exclusions": [
+          "new casting-zone permissions",
+          "combined alternative methods",
+          "variable or nonmana source-granted prices",
+          "unrepresented dynamic selectors and conditions"
+        ]
+      },
+      "dependencies": [
+        "casting.alternative_cost.fixed_public"
+      ],
+      "implementation_components": [
+        "quorune.rules.global_alternative_cost_model.GlobalAlternativeCostSpec",
+        "quorune.compiler.global_alternative_cost_templates.fixed_global_alternative_cost_handler",
+        "quorune.semantic_runtime.global_alternative_costs.GlobalAlternativeCostHandler",
+        "quorune.rules.casting.global_alternatives.battlefield_alternative_base_options",
+        "quorune.rules.casting.global_alternatives.is_battlefield_optional_cost_option"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact source descriptor and complete-card admission, independent registered runtime owner, verified withdrawal and closed origin/type/mana schema prevent unowned prices.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original admission and actual Fist/source-ability witnesses detect omitted compiler production, omitted cast-option integration and bypassed current source-ability participation.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_global_alternative_cost_originals_have_normal_admission",
+        "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+        "test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+        "test_actual_rooftop_only_discounts_own_zombie_creatures",
+        "test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+        "test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+        "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+        "test_actual_alternative_preserves_optional_kicker_price_and_effect",
+        "test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+        "test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+        "test_actual_source_ability_loss_removes_future_alternative_offers",
+        "test_actual_battlefield_grants_do_not_create_graveyard_permission",
+        "test_actual_global_price_preserves_commander_tax",
+        "test_actual_flashback_only_permission_excludes_other_alternatives",
+        "test_actual_ordinary_graveyard_permission_can_use_rooftop",
+        "test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+        "test_actual_copied_source_grants_its_own_current_alternative",
+        "test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+        "test_selected_adventure_spell_does_not_inherit_the_dragon_price",
+        "test_global_alternative_descriptor_and_grammar_are_closed"
+      ],
+      "negative_tests": [
+        "test_registered_descriptor_owner_is_an_independent_runtime_minimum",
+        "test_canonically_verified_owner_withdrawal_keeps_full_originals_residual",
+        "test_global_alternative_descriptor_and_grammar_are_closed",
+        "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+        "test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+        "test_actual_rooftop_only_discounts_own_zombie_creatures",
+        "test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+        "test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+        "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+        "test_actual_alternative_preserves_optional_kicker_price_and_effect",
+        "test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+        "test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+        "test_actual_source_ability_loss_removes_future_alternative_offers",
+        "test_actual_battlefield_grants_do_not_create_graveyard_permission",
+        "test_actual_global_price_preserves_commander_tax",
+        "test_actual_flashback_only_permission_excludes_other_alternatives",
+        "test_actual_ordinary_graveyard_permission_can_use_rooftop",
+        "test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+        "test_actual_copied_source_grants_its_own_current_alternative",
+        "test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+        "test_selected_adventure_spell_does_not_inherit_the_dragon_price"
+      ],
+      "interaction_tests": [
+        "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+        "test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+        "test_actual_rooftop_only_discounts_own_zombie_creatures",
+        "test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+        "test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+        "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+        "test_actual_alternative_preserves_optional_kicker_price_and_effect",
+        "test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+        "test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+        "test_actual_source_ability_loss_removes_future_alternative_offers",
+        "test_actual_battlefield_grants_do_not_create_graveyard_permission",
+        "test_actual_global_price_preserves_commander_tax",
+        "test_actual_flashback_only_permission_excludes_other_alternatives",
+        "test_actual_ordinary_graveyard_permission_can_use_rooftop",
+        "test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+        "test_actual_copied_source_grants_its_own_current_alternative",
+        "test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+        "test_selected_adventure_spell_does_not_inherit_the_dragon_price"
+      ],
+      "multiplayer_tests": [
+        "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+        "test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+        "test_actual_rooftop_only_discounts_own_zombie_creatures",
+        "test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+        "test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+        "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+        "test_actual_alternative_preserves_optional_kicker_price_and_effect",
+        "test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+        "test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+        "test_actual_source_ability_loss_removes_future_alternative_offers",
+        "test_actual_battlefield_grants_do_not_create_graveyard_permission",
+        "test_actual_global_price_preserves_commander_tax",
+        "test_actual_flashback_only_permission_excludes_other_alternatives",
+        "test_actual_ordinary_graveyard_permission_can_use_rooftop",
+        "test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+        "test_actual_copied_source_grants_its_own_current_alternative",
+        "test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+        "test_selected_adventure_spell_does_not_inherit_the_dragon_price"
+      ],
+      "privacy_tests": [
+        "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+        "test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+        "test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+        "test_actual_flashback_only_permission_excludes_other_alternatives",
+        "test_actual_alternative_preserves_nonmana_buyback_payment_and_return"
+      ],
+      "replay_tests": [
+        "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+        "test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+        "test_actual_rooftop_only_discounts_own_zombie_creatures",
+        "test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+        "test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+        "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+        "test_actual_alternative_preserves_optional_kicker_price_and_effect",
+        "test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+        "test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+        "test_actual_source_ability_loss_removes_future_alternative_offers",
+        "test_actual_battlefield_grants_do_not_create_graveyard_permission",
+        "test_actual_global_price_preserves_commander_tax",
+        "test_actual_flashback_only_permission_excludes_other_alternatives",
+        "test_actual_ordinary_graveyard_permission_can_use_rooftop",
+        "test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+        "test_actual_copied_source_grants_its_own_current_alternative",
+        "test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+        "test_selected_adventure_spell_does_not_inherit_the_dragon_price"
       ]
     }
   ]

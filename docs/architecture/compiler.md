@@ -2521,6 +2521,20 @@ conditions, team-specific history, tap/reveal/opponent/library/counter/random
 payments, variable or complex mana, multiple nonmana payments, and sibling
 additional, lifecycle, or alternative costs remain residual.
 
+Battlefield sources can separately grant a fixed alternative mana price through
+`GlobalAlternativeCostSpec`. Its source-spanned descriptor retains a fixed
+spell type/subtype selector and an optional hand-only restriction. Current
+controller, face, ability presence, and source incarnation govern availability.
+The grant adds one alternative before ordinary additional-cost expansion and
+price modifiers; it preserves optional prices, mandatory costs, commander tax,
+and increases or reductions. The selected spell characteristics govern the
+selector. The grant supplies no casting-zone permission and cannot combine
+with a forced alternative method. A printed mana-cost X is zero when the
+alternative contains no X. Private or dynamic selectors and nonmana or variable
+granted prices remain residual.
+Optional additions retain the selected base alternative identity through
+lifecycle validation, including paid nonmana Buyback and its resolution return.
+
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
 engine does not yet evaluate exact ability additions or removals outside the

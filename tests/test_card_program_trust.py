@@ -286,6 +286,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.trigger.training",
                 "ability.trigger.ward",
                 "casting.alternative-cost.fixed-public",
+                "casting.alternative-cost.fixed-battlefield-grant",
                 "casting.additional.paid_entry_copy",
                 "casting.bestow.fixed_mana",
                 "casting.cost.modifier.fixed_query",

@@ -554,6 +554,7 @@ class CastCostComponentRegistry(
 
 @lru_cache(maxsize=1)
 def default_cast_cost_component_registry() -> CastCostComponentRegistry:
+    from .global_alternative_costs import GlobalAlternativeCostHandler
     registry = CastCostComponentRegistry(
         (
             AffinityCostHandler(),
@@ -573,6 +574,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaReplicateHandler(),
             FixedConspireHandler(),
             FixedActivationCostModifierHandler(),
+            GlobalAlternativeCostHandler(),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())

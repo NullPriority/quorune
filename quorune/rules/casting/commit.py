@@ -1283,6 +1283,9 @@ def _revalidate_fixed_lifecycle_contract(
     if proposed.kind is FixedCastLifecycleKind.AFTERMATH:valid_id=True
     elif proposed.kind is FixedCastLifecycleKind.RETRACE:valid_id=option_id=='retrace'
     else:valid_id=option_id==proposed.kind.value
+    if not valid_id and proposed.kind is FixedCastLifecycleKind.BUYBACK:
+        from .global_alternatives import is_battlefield_optional_cost_option
+        valid_id=is_battlefield_optional_cost_option(selected_option,proposed.kind.value)
     if (
         current != proposed
         or selected_option.get("fixed_cast_lifecycle_fingerprint")

@@ -32487,6 +32487,2632 @@
       "applicability_note": "Fixed-mana Emerge uses the selected current creature mana value to reduce the total after Sphere cost increases; Autochthon Wurm and Glass Golem prices remain distinct, source registration is normal, invalid principal and sacrifice choices roll back, and pending casts retain save/load and replay."
     },
     {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_optional_kicker_price_and_effect",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_battlefield_grants_do_not_create_graveyard_permission",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_copied_source_grants_its_own_current_alternative",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_flashback_only_permission_excludes_other_alternatives",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_global_price_preserves_commander_tax",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_ordinary_graveyard_permission_can_use_rooftop",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_rooftop_only_discounts_own_zombie_creatures",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_source_ability_loss_removes_future_alternative_offers",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_selected_adventure_spell_does_not_inherit_the_dragon_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_optional_kicker_price_and_effect",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_battlefield_grants_do_not_create_graveyard_permission",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_copied_source_grants_its_own_current_alternative",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_flashback_only_permission_excludes_other_alternatives",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_global_price_preserves_commander_tax",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_ordinary_graveyard_permission_can_use_rooftop",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_rooftop_only_discounts_own_zombie_creatures",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_source_ability_loss_removes_future_alternative_offers",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_selected_adventure_spell_does_not_inherit_the_dragon_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_fresh_compiler_cost_integration_and_current_ability_omissions_are_killed",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_optional_kicker_price_and_effect",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_battlefield_grants_do_not_create_graveyard_permission",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_copied_source_grants_its_own_current_alternative",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_flashback_only_permission_excludes_other_alternatives",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_global_price_preserves_commander_tax",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_ordinary_graveyard_permission_can_use_rooftop",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_rooftop_only_discounts_own_zombie_creatures",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_source_ability_loss_removes_future_alternative_offers",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_canonically_verified_owner_withdrawal_keeps_full_originals_residual",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_global_alternative_descriptor_and_grammar_are_closed",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_registered_descriptor_owner_is_an_independent_runtime_minimum",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_selected_adventure_spell_does_not_inherit_the_dragon_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_optional_kicker_price_and_effect",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_battlefield_grants_do_not_create_graveyard_permission",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_copied_source_grants_its_own_current_alternative",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_flashback_only_permission_excludes_other_alternatives",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_global_price_preserves_commander_tax",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_ordinary_graveyard_permission_can_use_rooftop",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_rooftop_only_discounts_own_zombie_creatures",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_source_ability_loss_removes_future_alternative_offers",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_complete_global_alternative_cost_originals_have_normal_admission",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_global_alternative_descriptor_and_grammar_are_closed",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_selected_adventure_spell_does_not_inherit_the_dragon_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_flashback_only_permission_excludes_other_alternatives",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_alternative_preserves_optional_kicker_price_and_effect",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_battlefield_grants_do_not_create_graveyard_permission",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_copied_source_grants_its_own_current_alternative",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_dracogenesis_keeps_dragon_characteristics_and_ordinary_actions",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_flashback_only_permission_excludes_other_alternatives",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_global_price_preserves_commander_tax",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_jodah_keeps_flying_and_supplies_the_same_optional_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_mana_x_is_zero_and_positive_forgery_rolls_back",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_omniscience_casts_no_cost_vision_and_draws_privately",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_ordinary_graveyard_permission_can_use_rooftop",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_rooftop_only_discounts_own_zombie_creatures",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_actual_source_ability_loss_removes_future_alternative_offers",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual casts preserve full source/recipient consequences, optional payment, type and controller selectors, original-zone authority, paid costs, source ability presence, mana-X zero, mandatory and optional additional costs, private draws, rollback and pending-load replay. Closed descriptors, independent runtime minima, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_battlefield_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_alternative_costs.GlobalAlternativeCostTests.test_selected_adventure_spell_does_not_inherit_the_dragon_price",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "107.3b",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "400.7",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual commander tax, copied and blinked sources, proposed face predicates, authorized impulse exile, ordinary graveyard permission and Flashback exclusivity preserve optional prices, existing origin authority, source incarnation, full outcomes and pending-load replay."
+    },
+    {
       "capability_id": "casting.alternative_cost.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostConditionTests.test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",

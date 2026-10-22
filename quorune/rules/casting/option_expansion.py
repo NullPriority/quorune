@@ -27,7 +27,10 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
                 {
                     **base_option,
                     **metadata,
-                    "id": str(additional["id"]),
+                    **({'label': str(base_option.get('label') or '')+' + '+str(additional.get('label') or additional['id'])}
+                       if base_option.get('battlefield_alternative_cost') else {}),
+                    "id": (str(base_option['id'])+'+'+str(additional['id'])
+                           if base_option.get('battlefield_alternative_cost') else str(additional["id"])),
                     "kind": str(
                         additional.get("kind") or "optional_additional"
                     ),
