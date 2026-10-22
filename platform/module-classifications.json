@@ -510,6 +510,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/banding_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/basic_land_types.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -10993,6 +11005,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/banding.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/block_capacity.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -11036,6 +11062,20 @@
     },
     {
       "file": "quorune/rules/block_prohibitions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/block_trigger_multiplicity.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -12506,6 +12546,20 @@
     },
     {
       "file": "quorune/rules/increment_condition.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/keyword_runtime_requirements.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -18574,5 +18628,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a8f0dd7ef339271eba0cbc88a0694e3d6b5a857ee7ffa0180ffdbabd59010003"
+  "fingerprint": "6086f7f35d65ffdd794dbff8404573961015e0913de277c2d1ee530c794f9e8a"
 }

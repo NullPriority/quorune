@@ -266,6 +266,23 @@ Validated pairs sort by attacker and blocker identity before commit. Client
 mapping order therefore cannot change the authoritative blocker list or saved
 command replay.
 
+Ordinary Banding declares optional disjoint groups of current attacking
+incarnations through `rules/banding.py`. Every group attacks the same player,
+planeswalker, or battle and contains at least one creature with Banding and at
+most one without it. The attack form maps each member to a Banding member that
+leads its group. The canonical combat relationship owner stores these groups
+and removes departed combatants; losing Banding later preserves membership.
+Blocker anchors obey the ordinary declaration restrictions, requirements,
+capacity, and costs. After a legal declaration, that blocker blocks every
+current member of the anchor's band, including members it could not separately
+be declared to block. Public snapshots and blocker offers include these groups.
+Creatures retain their own abilities. Quality-based “bands with other” and
+unrepresented effects that add blockers or make creatures blocked remain
+residual. The [damage owner](damage.md) explains Banding's assignment control.
+General blocking triggers occur once per blocking creature. Conditions tied
+to the individual blocked creature retain a separate occurrence per matching
+relationship; trigger multipliers still multiply each applicable occurrence.
+
 Fixed selected-object tap costs may accompany a source tap symbol. The source
 and selected objects are distinct: the source cannot pay both costs. The source
 tap obeys creature acquisition timing; selected-object taps without a tap

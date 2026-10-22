@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 467,
+  "registry_version": 468,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -15501,24 +15501,83 @@
     },
     {
       "id": "combat.damage.assignment.canonical",
-      "version": 1,
-      "official_rules": ["510.1", "510.1a", "510.1b", "510.1c", "510.1d", "510.1e", "510.4", "616.1", "802.5"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "510.1",
+        "510.1a",
+        "510.1b",
+        "510.1c",
+        "510.1d",
+        "510.1e",
+        "510.4",
+        "616.1",
+        "802.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Snapshot current combat-damage participants and legal recipients, validate each APNAP proposal, canonicalize every announcement, and materialize one deterministic simultaneous damage batch.",
-        "inputs": ["typed strike-step participation", "current effective power, toughness, abilities, marked damage, controllers, and logical identities", "deathtouch lethal-assignment contribution", "declaration-time attacked recipient and current recipient validity", "current blocker relationships and historical was-blocked state"],
-        "outputs": ["immutable closed CombatDamageSnapshot", "seat-scoped proposal-order assignments", "zero-free canonical announcements", "stable proposal and damage-event identities", "deterministic APNAP replacement-choice and event journals", "one canonical damage-batch commitment"],
-        "exclusions": ["banding and effects that change who assigns combat damage", "damage assignment modifiers other than represented deathtouch and Trample", "unsupported combat recipient kinds", "unsupported continuous-effect, copy, face-down, and ability-changing producers"]
+        "inputs": [
+          "typed strike-step participation",
+          "current effective power, toughness, abilities, marked damage, controllers, and logical identities",
+          "deathtouch lethal-assignment contribution",
+          "declaration-time attacked recipient and current recipient validity",
+          "current blocker relationships and historical was-blocked state"
+        ],
+        "outputs": [
+          "immutable closed CombatDamageSnapshot",
+          "seat-scoped proposal-order assignments",
+          "zero-free canonical announcements",
+          "stable proposal and damage-event identities",
+          "deterministic APNAP replacement-choice and event journals",
+          "one canonical damage-batch commitment"
+        ],
+        "exclusions": [
+          "assignment-control changes beyond the ordinary typed Banding owner",
+          "damage assignment modifiers other than represented deathtouch and Trample",
+          "unsupported combat recipient kinds",
+          "unsupported continuous-effect, copy, face-down, and ability-changing producers"
+        ]
       },
-      "dependencies": ["combat.damage.participation.strike_steps"],
-      "implementation_components": ["quorune.combat_damage_snapshot.CombatDamageSnapshot", "quorune.combat_damage_snapshot.build_combat_damage_snapshot", "quorune.combat_damage_assignment.CombatDamageAssignmentProposal", "quorune.combat_damage_sequence.CombatDamageAssignmentSequence", "quorune.damage.combat_damage_proposals"],
-      "positive_tests": ["test_snapshot_and_proposal_have_one_canonical_relationship_order"],
-      "negative_tests": ["test_malformed_internal_relationships_fail_before_projection"],
-      "interaction_tests": ["test_permuted_combat_assignment_has_identical_replacement_replay"],
-      "multiplayer_tests": ["test_discretionary_assignments_are_collected_in_apnap_order_and_replay"],
-      "privacy_tests": ["test_four_player_trample_task_is_seat_scoped_and_replays"],
-      "replay_tests": ["test_permuted_combat_assignment_has_identical_replacement_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "combat.damage.participation.strike_steps"
+      ],
+      "implementation_components": [
+        "quorune.combat_damage_snapshot.CombatDamageSnapshot",
+        "quorune.combat_damage_snapshot.build_combat_damage_snapshot",
+        "quorune.combat_damage_assignment.CombatDamageAssignmentProposal",
+        "quorune.combat_damage_sequence.CombatDamageAssignmentSequence",
+        "quorune.damage.combat_damage_proposals"
+      ],
+      "positive_tests": [
+        "test_snapshot_and_proposal_have_one_canonical_relationship_order"
+      ],
+      "negative_tests": [
+        "test_malformed_internal_relationships_fail_before_projection"
+      ],
+      "interaction_tests": [
+        "test_permuted_combat_assignment_has_identical_replacement_replay"
+      ],
+      "multiplayer_tests": [
+        "test_discretionary_assignments_are_collected_in_apnap_order_and_replay"
+      ],
+      "privacy_tests": [
+        "test_four_player_trample_task_is_seat_scoped_and_replays"
+      ],
+      "replay_tests": [
+        "test_permuted_combat_assignment_has_identical_replacement_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Capability closure reaches the typed strike-step owner and fails closed if that participation dependency is unavailable.",
       "implementation_mutation_status": "killed",
@@ -44175,6 +44234,168 @@
         "test_actual_deepwood_pump_retains_source_incarnation_and_paid_cost",
         "test_actual_ruse_and_haze_preserve_their_distinct_damage_prevention_scopes",
         "test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify"
+      ]
+    },
+    {
+      "id": "combat.banding",
+      "version": 1,
+      "official_rules": [
+        "702.22a",
+        "702.22b",
+        "702.22c",
+        "702.22d",
+        "702.22e",
+        "702.22f",
+        "702.22g",
+        "702.22h",
+        "702.22i",
+        "702.22j",
+        "702.22k",
+        "702.22m",
+        "508.1",
+        "509.1",
+        "510.1c",
+        "510.1d",
+        "510.4",
+        "702.19b",
+        "509.3a",
+        "509.3b",
+        "509.3c",
+        "509.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Ordinary Banding declares disjoint current-incarnation attack groups, propagates legally declared blocks and uses current combat participants to select damage assignment actors without changing source controllers.",
+        "inputs": [
+          "current effective Banding and combat eligibility",
+          "one complete attacker declaration and optional disjoint same-defender bands",
+          "legally chosen blocker anchors",
+          "current typed combat damage snapshot"
+        ],
+        "outputs": [
+          "canonical typed attack bands and removal on combat departure",
+          "band-wide blocking relationships after anchor legality",
+          "APNAP assignment proposals controlled by the current Banding player",
+          "unchanged physical damage source and controller"
+        ],
+        "exclusions": [
+          "bands with other quality abilities",
+          "unrepresented effects making creatures blocked or adding blockers after declaration",
+          "other effects changing damage assignment control",
+          "unrepresented companion abilities"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "combat.damage.assignment.canonical"
+      ],
+      "implementation_components": [
+        "quorune.banding_model.AttackBand",
+        "quorune.banding_model.combat_assignment_actor",
+        "quorune.rules.banding.prepare_attack_bands",
+        "quorune.rules.banding.expanded_block_pairs",
+        "quorune.combat_relationship_state.commit_attack_declaration",
+        "quorune.combat_relationship_state.remove_combat_relationships",
+        "quorune.combat_damage_assignment.CombatDamageSourceSpec",
+        "quorune.rules.keyword_runtime_requirements.keyword_runtime_dependencies",
+        "quorune.rules.block_trigger_multiplicity.block_trigger_already_collected"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Normal complete-source admission and independently removed runtime minimum fail closed; no unsupported quality bands are admitted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual combat witnesses detect omitted band propagation, wrong assignment actor and duplicated per-blocker trigger occurrences.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_attack_bands_are_closed_disjoint_incarnations_and_old_wire_is_unchanged",
+        "test_relationship_owner_rejects_stale_band_before_any_attack_write",
+        "test_all_originals_admit_with_independent_banding_minimum_and_actual_paid_casts",
+        "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
+        "test_indirect_menace_and_flying_blocking_preserve_anchor_legality_and_assignment_actor",
+        "test_defensive_banding_changes_chooser_without_attack_band_or_source_control_change",
+        "test_trample_spill_still_requires_lethal_when_defender_assigns_damage",
+        "test_blinked_banding_member_leaves_group_and_returned_incarnation_does_not_rejoin",
+        "test_lifelink_uses_blocker_controller_when_attacker_chooses_damage",
+        "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
+        "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
+        "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+      ],
+      "negative_tests": [
+        "test_attack_bands_are_closed_disjoint_incarnations_and_old_wire_is_unchanged",
+        "test_relationship_owner_rejects_stale_band_before_any_attack_write",
+        "test_all_originals_admit_with_independent_banding_minimum_and_actual_paid_casts",
+        "test_verified_banding_withdrawal_is_residual_and_quality_bands_remain_unsupported",
+        "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
+        "test_indirect_menace_and_flying_blocking_preserve_anchor_legality_and_assignment_actor",
+        "test_defensive_banding_changes_chooser_without_attack_band_or_source_control_change",
+        "test_trample_spill_still_requires_lethal_when_defender_assigns_damage",
+        "test_blinked_banding_member_leaves_group_and_returned_incarnation_does_not_rejoin",
+        "test_lifelink_uses_blocker_controller_when_attacker_chooses_damage",
+        "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
+        "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
+        "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+      ],
+      "interaction_tests": [
+        "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
+        "test_indirect_menace_and_flying_blocking_preserve_anchor_legality_and_assignment_actor",
+        "test_defensive_banding_changes_chooser_without_attack_band_or_source_control_change",
+        "test_trample_spill_still_requires_lethal_when_defender_assigns_damage",
+        "test_blinked_banding_member_leaves_group_and_returned_incarnation_does_not_rejoin",
+        "test_lifelink_uses_blocker_controller_when_attacker_chooses_damage",
+        "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
+        "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
+        "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+      ],
+      "multiplayer_tests": [
+        "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
+        "test_indirect_menace_and_flying_blocking_preserve_anchor_legality_and_assignment_actor",
+        "test_defensive_banding_changes_chooser_without_attack_band_or_source_control_change",
+        "test_trample_spill_still_requires_lethal_when_defender_assigns_damage",
+        "test_blinked_banding_member_leaves_group_and_returned_incarnation_does_not_rejoin",
+        "test_lifelink_uses_blocker_controller_when_attacker_chooses_damage",
+        "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
+        "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
+        "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+      ],
+      "privacy_tests": [
+        "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
+        "test_indirect_menace_and_flying_blocking_preserve_anchor_legality_and_assignment_actor",
+        "test_defensive_banding_changes_chooser_without_attack_band_or_source_control_change",
+        "test_trample_spill_still_requires_lethal_when_defender_assigns_damage",
+        "test_blinked_banding_member_leaves_group_and_returned_incarnation_does_not_rejoin",
+        "test_lifelink_uses_blocker_controller_when_attacker_chooses_damage",
+        "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
+        "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
+        "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+      ],
+      "replay_tests": [
+        "test_attack_offer_and_band_input_reject_overlap_extra_members_and_different_defenders",
+        "test_indirect_menace_and_flying_blocking_preserve_anchor_legality_and_assignment_actor",
+        "test_defensive_banding_changes_chooser_without_attack_band_or_source_control_change",
+        "test_trample_spill_still_requires_lethal_when_defender_assigns_damage",
+        "test_blinked_banding_member_leaves_group_and_returned_incarnation_does_not_rejoin",
+        "test_lifelink_uses_blocker_controller_when_attacker_chooses_damage",
+        "test_current_ability_loss_keeps_group_but_ends_banding_assignment_right",
+        "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
+        "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
+        "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
       ]
     }
   ]

@@ -5441,6 +5441,8 @@ class CommanderEngine(
         permanent_defender_ids = {
             walker["id"] for walker in planeswalker_defenders
         }
+        from .rules.banding import banding_offer
+        attack_banding = banding_offer(self, candidates)
         self.permissions.issue(
             kind="combat.attackers",
             role="pilot",
@@ -5449,6 +5451,7 @@ class CommanderEngine(
             payload_by_actor={
                 active: {
                     "candidates": candidates,
+                    **({'banding': attack_banding} if attack_banding else {}),
                     **({'enlist':rows} if (rows:=enlist_offer_rows(self,active,candidates)) else {}),
                     **({'exert':rows} if (rows:=exert_offer_rows(self,active,candidates)) else {}),
                     "defenders": [
@@ -5714,6 +5717,8 @@ class CommanderEngine(
             )
         self._validate_declaration_requirements(problem, canonical)
         chosen.sort(key=lambda pair:(pair[0].ref,pair[0].object_id))
+        from .rules.banding import prepare_attack_bands
+        bands = prepare_attack_bands(self, chosen, response.get('bands'))
         enlist_plans=prepare_enlist_costs(self,active,chosen,response.get('enlist'))
         exert_plans=prepare_exert_costs(self,active,chosen,response.get('exert'))
         attack_triggers: list[StackItem] = []
@@ -5735,7 +5740,7 @@ class CommanderEngine(
                 spend_context="combat_declaration",
             )
         committed = attack_transitions.commit_engine_attack_declaration(
-            self, controller=active, chosen=chosen
+            self, controller=active, chosen=chosen, bands=bands
         )
         surviving_attackers = [
             (self.state.cards[value.attacker_object_id], value.target_context)
@@ -5888,6 +5893,8 @@ class CommanderEngine(
             blocker: list(options)
             for blocker, options in problem.domains.items()
         }
+        from .banding_model import projected_attack_bands
+        bands = projected_attack_bands(self.state.combat, self.state.cards)
         self.permissions.issue(
             kind="combat.blockers",
             role="pilot",
@@ -5898,6 +5905,7 @@ class CommanderEngine(
                     "attackers": attackers,
                     "blockers": blockers,
                     "legal_blocks": legal_blocks,
+                    **({'bands': bands} if bands else {}),
                     "minimum_blockers": minimum_blockers,
                     "declaration_constraints": problem.projection(),
                     "declaration_costs": [
@@ -6048,7 +6056,7 @@ class CommanderEngine(
                             ),
                         ),
                         "instruction": (
-                            "Assign damage for sources you control. Earlier "
+                            "Assign damage for the listed sources. Earlier "
                             "APNAP assignments are final and public."
                         ),
                     }
@@ -6243,6 +6251,9 @@ class CommanderEngine(
                 dict(value) for value in announced_assignments
             ],
         }
+        if self.state.combat.attack_bands:
+            from .banding_model import projected_attack_bands
+            payload['bands'] = projected_attack_bands(self.state.combat, self.state.cards)
         if seat is not None:
             payload["damage_sources"] = self._combat_damage_source_options(
                 seat

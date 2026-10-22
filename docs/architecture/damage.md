@@ -73,6 +73,15 @@ Combat snapshots freeze the relevant public relationships and effective
 characteristics before a pilot decision is issued. Assignment validation owns
 legal recipients, totals, canonical source and recipient order, lethal
 thresholds, and trample spill. Client JSON order is never authoritative.
+Current ordinary Banding changes the assignment actor under CR 702.22j/k.
+A blocker with Banding lets the defending player assign its attacker's damage;
+an attacker with Banding lets the active player assign damage from its blockers.
+This applies without a declared attack band. Each damage step derives that
+actor from the current typed participant graph. An explicit chooser override
+preserves the damage source's actual controller for lifelink and other damage
+consequences. The APNAP sequence collects proposals from these assignment
+actors, and Trample still requires lethal assignment before spill. Empty
+chooser and band extensions preserve historical proposal identities and wire.
 Typed as-unblocked permission adds one optional all-recipient assignment to
 that same proposal. Ordinary assignment remains legal, and Trample retains
 its lethal-before-spill route. Choosing the permission changes assignment

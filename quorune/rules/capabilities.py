@@ -367,6 +367,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         for mechanic in QUALIFIED_LANDWALK_KEYWORDS
     },
     _DEFENDER_MECHANIC: ("combat.attack.defender",),
+    "banding": ("combat.banding",),
     _MENACE_MECHANIC: ("combat.block.menace",),
     _FEAR_MECHANIC: ("combat.block.fear",),
     _HORSEMANSHIP_MECHANIC: ("combat.block.horsemanship",),

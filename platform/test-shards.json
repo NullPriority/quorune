@@ -58,6 +58,7 @@
       "test_ante_rules",
       "test_any_source_counter_costs",
       "test_attached_protection_exceptions",
+      "test_banding",
       "test_basic_land_type_mana",
       "test_block_transitions",
       "test_boast_restrictions",

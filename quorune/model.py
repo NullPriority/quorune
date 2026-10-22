@@ -20,6 +20,7 @@ from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
+from .banding_model import normalize_attack_bands
 
 CONTROL_HISTORY_VERSION = 2
 _COLORED_MANA_SYMBOLS = tuple("WUBRG")
@@ -752,9 +753,11 @@ class CombatState:
         default_factory=list
     )
     blocking_requirements:tuple[ResolvedBlockingRequirement,...]=()
+    attack_bands: tuple = ()
 
     def __post_init__(self):
         self.blocking_requirements=normalize_blocking_requirements(self.blocking_requirements)
+        self.attack_bands=normalize_attack_bands(self.attack_bands)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -764,6 +767,8 @@ class CombatState:
             payload.pop("damage_sequence_id")
         if self.blocking_requirements:payload['blocking_requirements']=[v.to_dict() for v in self.blocking_requirements]
         else:payload.pop('blocking_requirements')
+        if self.attack_bands:payload['attack_bands']=[value.to_dict() for value in self.attack_bands]
+        else:payload.pop('attack_bands')
         return payload
 
     @classmethod

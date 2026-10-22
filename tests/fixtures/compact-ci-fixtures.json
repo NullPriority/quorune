@@ -27,6 +27,7 @@
     "tests/fixtures/attached-protection-cards.json",
     "tests/fixtures/attached-pt-keyword-removal-cards.json",
     "tests/fixtures/backup-cards.json",
+    "tests/fixtures/banding-cards.json",
     "tests/fixtures/batch-interaction-recovery-cards.json",
     "tests/fixtures/batched-public-assurance-cards.json",
     "tests/fixtures/batched-support-assurance-cards.json",

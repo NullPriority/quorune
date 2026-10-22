@@ -661,6 +661,9 @@ class StateProjector:
                 1 if self.state.combat.first_strike_step else 0
             ),
         }
+        if self.state.combat.attack_bands:
+            from .banding_model import projected_attack_bands
+            combat['bands'] = projected_attack_bands(self.state.combat, self.state.cards)
         snapshot = {
             "rev": self.state.revision,
             "event": self.state.event_sequence,

@@ -95,6 +95,8 @@ def commit_engine_block_declaration(
 ) -> tuple[BlockDeclarationAssignment, ...]:
     """Adapt validated card pairs to the typed relationship mutation owner."""
 
+    from .rules.banding import expanded_block_pairs
+    chosen = expanded_block_pairs(engine, chosen)
     try:
         return commit_block_declaration(
             engine.state.combat,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .event_counter_reference import event_counter_recipient_context
+from .rules.block_trigger_multiplicity import block_trigger_already_collected
 from .entry_copy import copiable_oracle_id
 
 import copy
@@ -1344,6 +1345,9 @@ def dispatch_semantic_event(
                 context,
                 source_zone=active_zone,
             ):
+                continue
+            if event == 'creature.blocks' and block_trigger_already_collected(program.key,
+                    source.object_id, context, _selected_event_subscription(program, event)[2], trigger_batch):
                 continue
             if (
                 host.state.config.semantic_policy == "trusted_only"

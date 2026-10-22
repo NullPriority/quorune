@@ -233,7 +233,7 @@ class SourceReferenceCompilerTests(unittest.TestCase):
             "Whenever Ant-Man attacks alone, draw a card.",
             "Whenever Ant-Man or a remembered creature attacks, draw a card.",
             "{1}: Ant-Man gets +X/+X until end of turn.",
-            "{1}: Ant-Man gains banding until end of turn.",
+            "{1}: Ant-Man gains bands with other green creatures until end of turn.",
             "{1}: Ant-Man gets +1/+1 until your next turn.",
             "{1}: Target creature named Ant-Man gets +1/+1 until end of turn.",
         ):

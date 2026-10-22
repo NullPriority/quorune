@@ -104,6 +104,7 @@ def commit_attack_declaration(
     *,
     controller: str,
     assignments: Sequence[AttackDeclarationAssignment],
+    bands: tuple = (),
 ) -> tuple[AttackDeclarationAssignment, ...]:
     """Commit already-validated attackers that survived declaration costs."""
 
@@ -125,6 +126,18 @@ def commit_attack_declaration(
         raise CombatRelationshipStateError(
             "An attacker cannot be committed more than once"
         )
+    from .banding_model import AttackBand, normalize_attack_bands
+    try:
+        bands = normalize_attack_bands(bands)
+    except ValueError as exc:
+        raise CombatRelationshipStateError(str(exc)) from exc
+    by_id = {value.attacker_object_id: value for value in values}
+    for band in bands:
+        if any(oid not in by_id or oid not in cards or cards[oid].logical_object_id != logical
+                for oid, logical in band.members):
+            raise CombatRelationshipStateError('Attack bands require current declared incarnations')
+        if len({by_id[oid].target for oid, _logical in band.members}) != 1:
+            raise CombatRelationshipStateError('An attack band requires a single defender')
     committed: list[AttackDeclarationAssignment] = []
     for assignment in values:
         attacker = cards.get(assignment.attacker_object_id)
@@ -154,6 +167,9 @@ def commit_attack_declaration(
         combat.attack_target_context[assignment.attacker_object_id] = (
             assignment.target_context
         )
+    committed_ids = {value.attacker_object_id for value in committed}
+    combat.attack_bands = tuple(AttackBand(tuple(value for value in band.members if value[0] in committed_ids))
+        for band in bands if any(value[0] in committed_ids for value in band.members))
     return tuple(committed)
 
 
@@ -258,6 +274,9 @@ def remove_combat_relationships(
         # relationships whose attacker is no longer in combat.
         combat.attackers.pop(object_id, None)
         combat.attack_target_context.pop(object_id, None)
+        from .banding_model import AttackBand
+        combat.attack_bands = tuple(AttackBand(tuple(value for value in band.members if value[0] != object_id))
+            for band in combat.attack_bands if any(value[0] != object_id for value in band.members))
 
     return CombatRelationshipRemoval(
         was_attacker=was_attacker,

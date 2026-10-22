@@ -11,6 +11,7 @@ from .combat_damage_snapshot import (
     CombatDamageSnapshot,
 )
 from .combat_damage_trample import trample_assignment_error
+from .banding_model import combat_assignment_actor
 from .combat_damage_values import (
     assignment_identity as _identity,
     CombatDamageAssignmentError,
@@ -29,10 +30,15 @@ class CombatDamageSourceSpec:
     logical_object_id: str
     power: int
     targets: tuple[str, ...]
+    assignment_controller: str | None = None
 
     def __post_init__(self) -> None:
         _identity(self.source, label="Damage source")
         _identity(self.controller, label="Damage source controller")
+        if self.assignment_controller is not None:
+            _identity(self.assignment_controller, label='Damage assignment controller')
+            if self.assignment_controller == self.controller:
+                raise CombatDamageAssignmentError('A chooser override must differ from the source controller')
         _identity(
             self.logical_object_id,
             label="Damage source logical identity",
@@ -89,9 +95,9 @@ class CombatDamageAssignmentProposal:
             raise CombatDamageAssignmentError(
                 "Combat damage sources must be unique"
             )
-        if any(source.controller != self.actor for source in sources):
+        if any((source.assignment_controller or source.controller) != self.actor for source in sources):
             raise CombatDamageAssignmentError(
-                "Every combat damage source must belong to the proposal actor"
+                "Every combat damage source must be assigned by the proposal actor"
             )
         logical_ids = [source.logical_object_id for source in sources]
         if len(logical_ids) != len(set(logical_ids)):
@@ -155,6 +161,10 @@ class CombatDamageAssignmentProposal:
         }
         if self.as_unblocked_sources:payload['as_unblocked']=[{'source':value.attacker,'recipient':value.recipient} for value in self.as_unblocked_sources]
         if self.mandatory_as_unblocked_sources:payload['mandatory_as_unblocked']=sorted(self.mandatory_as_unblocked_sources)
+        redirected = {source.source: {'controller': source.controller, 'assignment_controller': source.assignment_controller}
+            for source in self.sources if source.assignment_controller is not None}
+        if redirected:
+            payload['assignment_controllers'] = redirected
         digest = hashlib.sha256(
             json.dumps(
                 payload,
@@ -176,6 +186,10 @@ class CombatDamageAssignmentProposal:
             option=options[permission.attacker];option['as_unblocked_recipient']=permission.recipient
             if option['targets']==[permission.recipient] and permission.attacker not in {value.attacker for value in self.trample_sources}:
                 option['allowed_totals']=[0,option['power']]
+        for source in self.sources:
+            if source.assignment_controller is not None:
+                options[source.source]['source_controller'] = source.controller
+                options[source.source]['assignment_controller'] = source.assignment_controller
         return options
 
     def automatic_assignments(self) -> tuple[DamageAssignment, ...] | None:
@@ -293,7 +307,9 @@ def build_combat_damage_assignment_proposal(
     as_unblocked_sources: list[AsUnblockedDamageSpec] = []
     mandatory_as_unblocked_sources: set[str] = set()
     for participant in snapshot.participants:
-        if participant.controller != seat or not participant.assigns_damage:
+        chooser = combat_assignment_actor(snapshot, participant, participants, attacks,
+            blocks_by_attacker, blocked_attackers_by_blocker)
+        if chooser != seat or not participant.assigns_damage:
             continue
         targets: tuple[str, ...]
         attack = attacks.get(participant.object_id)
@@ -352,6 +368,7 @@ def build_combat_damage_assignment_proposal(
                 logical_object_id=participant.logical_object_id,
                 power=max(0, participant.toughness if participant.assigns_using_toughness else participant.power),
                 targets=targets,
+                assignment_controller=chooser if chooser != participant.controller else None,
             )
         )
     return CombatDamageAssignmentProposal(

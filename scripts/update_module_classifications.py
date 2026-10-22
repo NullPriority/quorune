@@ -89,6 +89,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/fixed_blocker_restrictions.py",
         "quorune/source_block_pair_model.py",
         "quorune/blocking_requirement_model.py",
+        "quorune/banding_model.py",
         "quorune/power_up_model.py",
         "quorune/as_unblocked.py",
         "quorune/public_characteristic_aggregate_model.py",

@@ -179,7 +179,7 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
         excluded = (
             "Target creature gets +X/+X until end of turn, where X is the chosen creature's power.",
             "Target creature gains protection from the card type of your choice until end of turn.",
-            "Target creature gains your choice of flying or banding until end of turn.",
+            "Target creature gains your choice of flying or bands with other green creatures until end of turn.",
             "Target creature gets +2/+2 until end of turn. If you attacked this turn, it also gains trample until end of turn.",
             "Target creature gets +2/+2 until end of turn and must be blocked this turn if able.",
             "Target creature gains forestwalk until your next turn.",

@@ -36,7 +36,7 @@ from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_d
 from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies
 from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dependencies
 from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
-from ..rules.attached_keyword_requirements import attached_keyword_runtime_dependencies
+from ..rules.keyword_runtime_requirements import keyword_runtime_dependencies
 from ..rules.fixed_blocker_restriction_shapes import fixed_blocker_runtime_dependencies
 from ..rules.source_block_pairs import source_block_pair_runtime_dependencies
 from ..rules.nonmana_buyback_costs import nonmana_buyback_runtime_dependencies
@@ -91,7 +91,7 @@ def program_dynamic_runtime_requirements(program):
     from ..rules.occurrence_object_results import occurrence_object_runtime_dependencies
     try:required.update(occurrence_object_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_occurrence_object:invalid:{exc}')
-    try:required.update(attached_keyword_runtime_dependencies(program))
+    try:required.update(keyword_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_attached_keyword:invalid:{exc}')
     try:required.update(temporary_cast_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_cast_restriction:invalid:{exc}')

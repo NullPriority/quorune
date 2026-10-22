@@ -48,6 +48,7 @@ def triggered_keyword_grant(value: str):
 FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[
     str, tuple[str, ...]
 ] = {
+    "Banding": ("combat.banding",),
     "Deathtouch": (
         "combat.damage.assignment.deathtouch",
         "damage.result.deathtouch",

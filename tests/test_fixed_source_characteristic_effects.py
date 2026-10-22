@@ -133,7 +133,7 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
             "Target land becomes an X/X creature until end of turn. It's still a land.",
             "Target land becomes a 2/2 creature until your next turn. It's still a land.",
             "Target creature becomes a copy of another creature until end of turn.",
-            "Target land becomes a 2/2 creature with banding until end of turn. It's still a land.",
+            "Target land becomes a 2/2 creature with bands with other green creatures until end of turn. It's still a land.",
             "Target land becomes a 2/2 creature until end of turn. It can't be blocked until your next turn.",
             "Target creature has base power and toughness 2/2 until end of turn, then draw the chosen number of cards.",
             "Target creature becomes a blue Robot with base power and toughness 2/2 in addition to its other colors and types until end of turn.",
@@ -491,7 +491,7 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 "Creature — Test",
             ),
             (
-                "{1}: This creature gains banding until end of turn.",
+                "{1}: This creature gains bands with other green creatures until end of turn.",
                 "Creature — Test",
             ),
             (
