@@ -114,7 +114,7 @@ A valid rules family:
 - regenerates rules, compiler, card, architecture and status artifacts once at
   the final exact head.
 
-Card-support delivery pull requests must add at least 200 net distinct
+Card-support delivery pull requests must add at least 500 net distinct
 capability-closed cards from the pinned Commander snapshot. Multiple mechanics
 may share one delivery pull request; keep each mechanic's contract, ownership,
 evidence and commits independently reviewable. Stage smaller measured families

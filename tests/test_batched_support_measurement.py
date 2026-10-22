@@ -24,7 +24,7 @@ class BatchedSupportMeasurementTests(unittest.TestCase):
         policy=json.loads((ROOT/'platform/rules-subsystems.json').read_text(encoding='utf-8'))['work_selection']
         declaration=validated_semantic_transition_declaration(policy['semantic_transition_declaration'])
         self.assertEqual(ORACLE_COMPILER_VERSION,declaration['compiler_version'])
-        self.assertEqual(200,policy['coverage_family']['minimum_pr_complete_card_gain'])
+        self.assertEqual(500,policy['coverage_family']['minimum_pr_complete_card_gain'])
         bundles,_weights=validate_bundle_policy(policy['coverage_family'])
         by_id={row['bundle_id']:row for row in bundles}
         self.assertIn('bundle:batched-card-support',by_id)

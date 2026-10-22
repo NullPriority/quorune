@@ -47,7 +47,7 @@ well-bounded issue; otherwise open the relevant issue form with a sanitized
 reproduction and the governing source. Coordinate before beginning a protocol,
 persistence, replay, schema, privacy, or broad rules change.
 
-Card-support pull requests deliver at least 200 net newly capability-closed
+Card-support pull requests deliver at least 500 net newly capability-closed
 Commander cards from the pinned snapshot. Combine several measured mechanics
 in one delivery pull request when needed. Keep each mechanic scoped to its
 existing typed owners, with independently reviewable commits, behavior

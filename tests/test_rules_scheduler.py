@@ -160,9 +160,9 @@ class SupportDeliveryPolicyTests(unittest.TestCase):
         catalog = json.loads((ROOT / "platform/rules-subsystems.json").read_text(encoding="utf-8"))
         coverage = catalog["work_selection"]["coverage_family"]
         validated = _validated_coverage_policy(coverage)
-        self.assertEqual(200, validated["minimum_pr_complete_card_gain"])
-        self.assertLess(validated["minimum_complete_card_gain"], 200)
-        for value in (199, True, None):
+        self.assertEqual(500, validated["minimum_pr_complete_card_gain"])
+        self.assertLess(validated["minimum_complete_card_gain"], 500)
+        for value in (200, 499, True, None):
             with self.subTest(value=value), self.assertRaises(WorkSelectionError):
                 _validated_coverage_policy({**coverage, "minimum_pr_complete_card_gain": value})
 

@@ -350,7 +350,7 @@
       "starting_uncovered_high_risk_pairs": 0
     },
     "coverage_family": {
-      "minimum_pr_complete_card_gain": 200,
+      "minimum_pr_complete_card_gain": 500,
       "minimum_complete_card_gain": 50,
       "minimum_exact_ability_gain": 100,
       "minimum_material_residual_reduction": 100,
@@ -502,7 +502,7 @@
           "estimated_implementation_hours": 80,
           "estimated_probe_hours": 2,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
           "explicit_exclusions": [
             "Each Oracle ID counts once; support losses subtract from net delivery",
             "Parser matches and residual reductions do not replace complete-card closure",
@@ -613,7 +613,7 @@
           "estimated_implementation_hours": 80,
           "estimated_probe_hours": 2,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
           "explicit_exclusions": [
             "Each Oracle ID counts once and support losses subtract from net delivery",
             "Parser matches and residual reductions do not replace complete-card closure",
@@ -1109,7 +1109,7 @@
           "estimated_implementation_hours": 80,
           "estimated_probe_hours": 2,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one combined verified census, with any support losses subtracted.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed Commander cards through one combined verified census, with any support losses subtracted.",
           "explicit_exclusions": [
             "Duplicate Oracle IDs do not increase gain",
             "Independent unrepresented siblings remain residual",
@@ -1187,7 +1187,7 @@
           "estimated_implementation_hours": 24,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
           "explicit_exclusions": [
             "Duplicate Oracle IDs do not increase gain",
             "Independent unrepresented siblings remain residual",
@@ -1488,7 +1488,7 @@
           "estimated_implementation_hours": 3,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Retain measured original whole-card closure as one component of a combined delivery meeting the 200 net distinct card floor.",
+          "expected_downstream_closure": "Retain measured original whole-card closure as one component of a combined delivery meeting the 500 net distinct card floor.",
           "explicit_exclusions": [
             "Independently unsupported whole-card siblings",
             "Repeated mandatory price declarations and open cost grammar"
@@ -1551,7 +1551,7 @@
           "estimated_implementation_hours": 20,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
           "explicit_exclusions": [
             "Duplicate Oracle IDs do not increase gain",
             "Independent unrepresented siblings remain residual",
@@ -1685,7 +1685,7 @@
           "estimated_implementation_hours": 20,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
           "explicit_exclusions": [
             "Duplicate Oracle IDs do not increase gain",
             "Independent unrepresented siblings remain residual",
@@ -1763,7 +1763,7 @@
           "estimated_implementation_hours": 20,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
           "explicit_exclusions": [
             "Duplicate Oracle IDs do not increase gain",
             "Independent unrepresented siblings remain residual",
@@ -7066,7 +7066,7 @@
           "estimated_implementation_hours": 80,
           "estimated_probe_hours": 2,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
           "explicit_exclusions": [
             "Each Oracle ID counts once; support losses subtract from net delivery",
             "Parser matches and residual reductions do not replace complete-card closure",
@@ -7183,7 +7183,7 @@
           "estimated_implementation_hours": 80,
           "estimated_probe_hours": 2,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "At least 200 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
+          "expected_downstream_closure": "At least 500 net distinct capability-closed pinned Commander cards in one delivery, after subtracting support losses and binding the generated base/head census.",
           "explicit_exclusions": [
             "Each Oracle ID counts once; support losses subtract from net delivery",
             "Native witnesses and generic compiler closure remain separate claims",

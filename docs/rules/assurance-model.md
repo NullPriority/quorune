@@ -183,7 +183,7 @@ avoid a measured demotion. Prefer a subsystem-sized family that removes a
 shared blocker and has one reviewable mutation boundary.
 
 A support delivery may combine multiple such families in one pull request.
-The combined final pinned Commander corpus must gain at least 200 net distinct
+The combined final pinned Commander corpus must gain at least 500 net distinct
 capability-closed cards against the pull request's base. Count overlapping
 families once per Oracle ID, subtract demotions, and verify every remaining
 whole-card sibling and newly reachable interaction. Smaller component

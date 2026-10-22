@@ -552,10 +552,11 @@ Implementation-eligible work always outranks a measurement in the same
 correctness class. Bundle selection reports shared owner, source-context,
 grammar, card, ability, residual, blocker-closure, and cycle-hour fields before
 ranking within the machine-readable correctness-first class order.
-The policy separately declares a 200-card pull-request delivery floor. Family
-probe thresholds remain diagnostic selection boundaries, while multiple
+The policy separately declares a 500-card pull-request delivery floor to
+amortize corpus generation and complete certification across a larger delivery.
+Family probe thresholds remain diagnostic selection boundaries, while multiple
 mechanics can accumulate on one delivery branch. `PR / Plan` uses immutable
-base/head Commander receipts to require at least 200 net capability-closed
+base/head Commander receipts to require at least 500 net capability-closed
 cards for a declared support harvest or a positive support delta. Overlapping
 families count once through the final corpus; support losses reduce the net
 gain. Ability counts, residual reductions and forecasts cannot substitute for

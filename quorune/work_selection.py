@@ -117,7 +117,7 @@ def _validated_priority_policy(
 
 def _validated_coverage_policy(coverage: Mapping[str, Any]) -> dict[str, Any]:
     fields = {
-        "minimum_pr_complete_card_gain": 200,
+        "minimum_pr_complete_card_gain": 500,
         "minimum_complete_card_gain": 50,
         "minimum_exact_ability_gain": 100,
         "minimum_material_residual_reduction": 100,

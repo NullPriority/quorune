@@ -157,8 +157,8 @@ def require_support_delivery_floor(
         metadata = evidence["source_metadata"]
     except (KeyError, TypeError) as exc:
         raise PullRequestEvidenceError("PR support delivery evidence is incomplete") from exc
-    if type(minimum) is not int or minimum < 200:
-        raise PullRequestEvidenceError("Support PRs require a minimum of 200 capability-closed cards")
+    if type(minimum) is not int or minimum < 500:
+        raise PullRequestEvidenceError("Support PRs require a minimum of 500 capability-closed cards")
     if type(actual) is not int:
         raise PullRequestEvidenceError("PR capability-closed card delta must be an integer")
     support_delivery = metadata.get("bundle_id") is not None or actual > 0
