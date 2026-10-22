@@ -54,7 +54,7 @@ class RandomDiscardCompilerTests(unittest.TestCase):
         expected=tuple(row.ref for row in random.Random('7019|stack:one|random-discard|A').sample(
             sorted(cards.values(),key=lambda row:row.object_id),3))
         self.assertEqual(expected,selected[0])
-        with patch('quorune.random_discard.random.Random') as randomizer:
+        with patch('quorune.rules.random_selection.random.Random') as randomizer:
             randomizer.return_value.sample.side_effect=lambda members,count:members[:count]
             mutant=[];resolve_random_discard(host,intent,commit_batch=lambda refs:mutant.append(refs))
         self.assertNotEqual(expected,mutant[0])

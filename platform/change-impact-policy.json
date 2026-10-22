@@ -7212,7 +7212,7 @@
         "test_counter_placement_replacements",
         "test_replacement_model_hardening",
         "test_replacement_event_tree",
-        "test_fixed_self_entry_counters",
+        "test_fixed_keyword_entry_counters",
         "test_copied_self_entry_counters",
         "test_riot_rules",
         "test_fixed_copy_type_exceptions"
@@ -7552,7 +7552,7 @@
         "test_global_alternative_costs",
         "test_fixed_stack_spell_copy",
         "test_oracle_ir",
-        "test_card_programs",
+        "test_card_program_v2",
         "test_card_program_trust"
       ]
     },
@@ -7584,7 +7584,7 @@
         "test_fixed_public_state_characteristics",
         "test_card_program_trust",
         "test_oracle_ir",
-        "test_card_programs"
+        "test_card_program_v2"
       ]
     }
   ],
