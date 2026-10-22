@@ -346,6 +346,8 @@ def _compile_card_program_from_ir(
     from ..compiler.paired_spell_faces import missing_paired_variant_residuals
     from ..spell_text_variants import SpellTextVariantKind
     residuals.extend(missing_paired_variant_residuals(ir, programs.values(), SpellTextVariantKind.CLEAVE))
+    from ..compiler.fuse_faces import missing_fuse_program_residuals
+    residuals.extend(missing_fuse_program_residuals(ir, programs.values()))
     residuals.extend(card_form_compilation.residuals)
     return CardProgram.create(
         compiler_version=ORACLE_COMPILER_VERSION,

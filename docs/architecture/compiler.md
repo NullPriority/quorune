@@ -9,6 +9,27 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/fuse_faces.py` binds the printed Fuse declarations across both faces
+of a split card after their ordinary spell bodies lower. The existing ability
+component registry validates one complete-source declaration. Neither an
+isolated Fuse keyword nor an exact half admits an unsupported companion.
+`compiler/fuse_programs.py` derives the fused resolution program from the two
+ordinary programs, retaining their source identities and capability closures.
+Its shape owner checks both original bodies, their order, and the exact combined
+effect and target projection. Missing executable composition remains a material
+CardProgram residual; the physical card still has two faces.
+
+Each represented half keeps its own fixed single-object target roles. The
+composer maps flat and named references into distinct canonical target groups,
+preserving constraints within a half while allowing the same object in both
+halves. A target-hand-count amount receives an explicit version-7 group binding;
+its player remains independent of the other half's target. The runtime minimum
+validator restores each half and delegates its requirements to the existing
+owners. Variable printed mana, modal or variable-cardinality target bodies,
+additional-price declarations, and unowned companion instructions remain
+residual under this production. Earlier scalar encodings retain their fields
+and meaning.
+
 `compiler/action_permission_templates.py` lowers the complete optional
 opening-hand battlefield clause to a hand-scoped permission in the existing
 action registry. Named self-references and ordinary object pronouns use the

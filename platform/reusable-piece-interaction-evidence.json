@@ -19122,6 +19122,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Song of the Dryads removes the Orb prohibition through ordinary layer-four ability consequences while an opposing Mindcensor still limits the resulting search window."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_free_and_wubrg_prices_combine_with_fuse_and_one_tax",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.method.fuse"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.method.fuse"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete fused spells accept Omniscience and Fist prices, apply one Sphere tax, consume the full price, retain one cast and resolve both bodies."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_target_revalidation_preserves_legal_half_and_fizzles_all_illegal",
+      "piece_ids": [
+        "capability.casting.method.fuse",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "casting.method.fuse",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual opponent bounce before resolution preserves the legal half, skips an illegal half and prevents both bodies when all targets become illegal; rollback and pending replay retain target incarnations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fused_copy_retains_combined_characteristics_and_target_roles",
+      "piece_ids": [
+        "capability.casting.method.fuse",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "casting.method.fuse",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Reverberate copies the whole fused spell with combined characteristics and independent half targets, preserves private consequences and adds no third cast occurrence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_toil_and_trouble_keep_different_player_roles",
+      "piece_ids": [
+        "capability.casting.method.fuse",
+        "capability.quantity_expression.target_player_hand_count"
+      ],
+      "capability_ids": [
+        "casting.method.fuse",
+        "quantity_expression.target_player_hand_count"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Toil and Trouble target different players; the explicit right-half group reads its own current hand count after the left draw and life result without disclosing card identities."
     }
   ]
 }

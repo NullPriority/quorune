@@ -7526,6 +7526,35 @@
         "test_static_action_permissions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fused-split-spells",
+      "patterns": [
+        "quorune/compiler/fuse_faces.py",
+        "quorune/compiler/fuse_programs.py",
+        "quorune/compiler/card_face_finalization.py",
+        "quorune/compiler/program_composition.py",
+        "quorune/rules/fuse.py",
+        "quorune/rules/fuse_model.py",
+        "quorune/rules/fuse_shapes.py",
+        "quorune/semantic_runtime/fuse.py",
+        "quorune/rules/casting/characteristic_methods.py",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "tests/test_fuse_rules.py",
+        "tests/fixtures/fuse-cards.json"
+      ],
+      "test_modules": [
+        "test_fuse_rules",
+        "test_prototype_rules",
+        "test_target_player_hand_counts",
+        "test_global_alternative_costs",
+        "test_fixed_stack_spell_copy",
+        "test_oracle_ir",
+        "test_card_programs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

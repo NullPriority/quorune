@@ -262,6 +262,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.player_target_protection",
                 "ability.static.start_your_engines",
                 "ability.static.prototype",
+                "ability.static.fuse",
                 "ability.static.enlist",
                 "ability.static.exert_attack",
                 "ability.activated.graveyard_copy_keyword",

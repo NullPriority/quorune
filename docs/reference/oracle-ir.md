@@ -10,6 +10,19 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+For represented Fuse split cards, the source-wide face finalizer retains both
+physical faces and emits one typed complete-source method declaration. Normal
+program lowering keeps each half's executable body and derives a separate
+`spell:<left-face-id>:fuse` program. Its provenance contains the correlated half
+programs and printed characteristic declaration; the closed shape validator
+checks the ordered effects, target projection, and dependencies. A missing
+derived program blocks complete CardProgram admission.
+
+The cast action payload selects this method with `cast_method: "fuse"`. Fuse
+does not use the alternative-cost option kind. A fused hand-count amount uses
+scalar schema version 7 and an explicit canonical `target_group`; versions 1
+through 6 keep their existing encodings.
+
 Typed Oracle IR is the deterministic compiler representation between pinned
 Oracle/rulings input and canonical CardProgram abilities. It classifies source
 text without giving Oracle prose runtime authority. The compiler and

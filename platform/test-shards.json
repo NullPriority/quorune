@@ -30,6 +30,7 @@
       "test_end_step_rules",
       "test_fixed_attachment_actions",
       "test_fixed_stack_spell_copy",
+      "test_fuse_rules",
       "test_game_record_v3",
       "test_granted_skulk",
       "test_indestructible_rules",

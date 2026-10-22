@@ -910,8 +910,8 @@ def _create_spell_item(
     card.zone = "stack"
     card.controller = proposal.seat
     card.active_face = proposal.face
-    from ..prototype import commit_prototype_cast
-    commit_prototype_cast(card,details.get('prototype'))
+    from .characteristic_methods import commit_cast_characteristics,characteristic_stack_context
+    commit_cast_characteristics(card,details)
     if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
         mark_card_kicked(card)
     from ...zone_object_state import mark_multikicker_paid
@@ -997,7 +997,7 @@ def _create_spell_item(
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
             'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
-            **({'cast_method':'prototype','prototype':details['prototype']} if details.get('cast_method')=='prototype' else {}),
+            **characteristic_stack_context(details),
             **lifecycle_context,
             **_fixed_cast_lifecycle_cost_context(costs),
             **(
@@ -1461,6 +1461,9 @@ def _commit_cast_costs_and_stack(
     from ..prototype import revalidate_prototype_cast
     try:revalidate_prototype_cast(host,card,details)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_prototype_contract') from exc
+    from ..fuse import revalidate_fuse_cast
+    try:revalidate_fuse_cast(host,card,details)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_fuse_contract') from exc
     selected_option = _revalidate_cast_contracts(
         host,
         proposal,

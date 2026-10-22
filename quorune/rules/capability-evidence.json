@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "adc78e18cc5b24d2e25869309fa3d6341a53e4b93b92aa7dcf734bb2091f7a3f",
-  "declaration_source_fingerprint": "dc527ff313f0e65c4698ffb0f88394cc78f0a94b55b15f36d740f8479562b55b",
+  "registry_fingerprint": "f356912c3d4b533e2a2d3bee458c3aff814c45c5bc7cf8a256a217d26dadf4e5",
+  "declaration_source_fingerprint": "807fb65db35b22bccd5eb06f142cc1741b8e7eade6c94e767b6d67f4b3b341a1",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -55409,6 +55409,4298 @@
         "commander_review"
       ],
       "applicability_note": "Replay the rolled-back special action, selected counter replacement order, reveal, and final authoritative hash."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_and_well_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_well_observes_created_token",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_and_flying_kick_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_then_flying_kick_uses_three_independent_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_and_dirty_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_discard_resumes_before_dirty_returns_own_card",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_and_away_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_bounces_before_away_selects_remaining_creature",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_free_and_wubrg_prices_combine_with_fuse_and_one_tax",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_copy_retains_combined_characteristics_and_target_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_halves_have_no_state_based_actions_between_them",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_impulse_permission_allows_each_half_from_exile_but_cannot_fuse",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_left_destruction_does_not_reuse_departed_right_target",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_and_loss_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_loss_applies_both_controller_scopes",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_and_serve_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_serve_allows_same_creature_for_both_halves",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_reduction_applies_once_to_combined_printed_cost",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_target_revalidation_preserves_legal_half_and_fizzles_all_illegal",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_keep_different_player_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_and_burn_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_removes_flying_before_burn_kills_one_toughness",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_and_tear_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_tear_destroys_independent_artifact_and_enchantment",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_and_well_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_well_observes_created_token",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_and_flying_kick_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_then_flying_kick_uses_three_independent_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_and_dirty_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_discard_resumes_before_dirty_returns_own_card",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_and_away_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_bounces_before_away_selects_remaining_creature",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_free_and_wubrg_prices_combine_with_fuse_and_one_tax",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_copy_retains_combined_characteristics_and_target_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_halves_have_no_state_based_actions_between_them",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_impulse_permission_allows_each_half_from_exile_but_cannot_fuse",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_left_destruction_does_not_reuse_departed_right_target",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_and_loss_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_loss_applies_both_controller_scopes",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_and_serve_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_serve_allows_same_creature_for_both_halves",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_reduction_applies_once_to_combined_printed_cost",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_target_revalidation_preserves_legal_half_and_fizzles_all_illegal",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_keep_different_player_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_and_burn_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_removes_flying_before_burn_kills_one_toughness",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_and_tear_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_tear_destroys_independent_artifact_and_enchantment",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_fresh_fuse_source_omission_is_killed",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_fresh_method_target_and_order_omissions_are_killed",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_and_well_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_well_observes_created_token",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_and_flying_kick_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_then_flying_kick_uses_three_independent_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_and_dirty_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_discard_resumes_before_dirty_returns_own_card",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_and_away_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_bounces_before_away_selects_remaining_creature",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_free_and_wubrg_prices_combine_with_fuse_and_one_tax",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_copy_retains_combined_characteristics_and_target_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_halves_have_no_state_based_actions_between_them",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_impulse_permission_allows_each_half_from_exile_but_cannot_fuse",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_left_destruction_does_not_reuse_departed_right_target",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_and_loss_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_loss_applies_both_controller_scopes",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_and_serve_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_serve_allows_same_creature_for_both_halves",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_reduction_applies_once_to_combined_printed_cost",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_target_revalidation_preserves_legal_half_and_fizzles_all_illegal",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_keep_different_player_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_and_burn_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_removes_flying_before_burn_kills_one_toughness",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_and_tear_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_tear_destroys_independent_artifact_and_enchantment",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_closed_fuse_model_and_unsupported_sources",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_complete_originals_have_normal_admission",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_composition_and_independent_runtime_minima_reject_tampering",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_fuse_method_rejects_nonhand_origins_single_faces_and_unrelated_cards",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_missing_fused_executable_keeps_all_three_casts_unavailable",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_scoped_hand_count_preserves_legacy_wire_and_rejects_unknown_groups",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_verified_fuse_dependency_withdrawal_is_the_actual_blocker",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_and_well_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_well_observes_created_token",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_and_flying_kick_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_then_flying_kick_uses_three_independent_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_and_dirty_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_discard_resumes_before_dirty_returns_own_card",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_and_away_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_bounces_before_away_selects_remaining_creature",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_free_and_wubrg_prices_combine_with_fuse_and_one_tax",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_copy_retains_combined_characteristics_and_target_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_halves_have_no_state_based_actions_between_them",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_impulse_permission_allows_each_half_from_exile_but_cannot_fuse",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_left_destruction_does_not_reuse_departed_right_target",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_and_loss_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_loss_applies_both_controller_scopes",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_and_serve_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_serve_allows_same_creature_for_both_halves",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_reduction_applies_once_to_combined_printed_cost",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_target_revalidation_preserves_legal_half_and_fizzles_all_illegal",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_keep_different_player_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_and_burn_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_removes_flying_before_burn_kills_one_toughness",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_and_tear_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_tear_destroys_independent_artifact_and_enchantment",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_closed_fuse_model_and_unsupported_sources",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_complete_originals_have_normal_admission",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_composition_and_independent_runtime_minima_reject_tampering",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_fuse_method_rejects_nonhand_origins_single_faces_and_unrelated_cards",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_missing_fused_executable_keeps_all_three_casts_unavailable",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_scoped_hand_count_preserves_legacy_wire_and_rejects_unknown_groups",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_verified_fuse_dependency_withdrawal_is_the_actual_blocker",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_well_observes_created_token",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_and_well_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_alive_well_observes_created_token",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_and_flying_kick_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_double_jump_then_flying_kick_uses_three_independent_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_and_dirty_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_down_discard_resumes_before_dirty_returns_own_card",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_and_away_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_far_bounces_before_away_selects_remaining_creature",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_free_and_wubrg_prices_combine_with_fuse_and_one_tax",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_copy_retains_combined_characteristics_and_target_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_fused_halves_have_no_state_based_actions_between_them",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_impulse_permission_allows_each_half_from_exile_but_cannot_fuse",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_left_destruction_does_not_reuse_departed_right_target",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_and_loss_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_profit_loss_applies_both_controller_scopes",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_and_serve_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_protect_serve_allows_same_creature_for_both_halves",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_reduction_applies_once_to_combined_printed_cost",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_target_revalidation_preserves_legal_half_and_fizzles_all_illegal",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_and_trouble_keep_different_player_roles",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_toil_trouble_draws_privately_before_damage",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_and_burn_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_turn_removes_flying_before_burn_kills_one_toughness",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_and_tear_can_each_be_cast_alone",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
+    },
+    {
+      "capability_id": "casting.method.fuse",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fuse_rules.FuseTests.test_actual_wear_tear_destroys_independent_artifact_and_enchantment",
+      "official_rule_ids": [
+        "202.3d",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "608.2b",
+        "608.2c",
+        "702.102a",
+        "702.102b",
+        "702.102c",
+        "702.102d",
+        "709.3a",
+        "709.3b",
+        "709.4a",
+        "709.4b",
+        "709.4c",
+        "709.4d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete split sources, one hand-only cast with independent half targets, ordinary cost authority, ordered complete consequences, source-bound trust, private four-seat projection, rollback and pending-load/pre-action replay."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
@@ -324117,5 +328409,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "8e8fca22ccb3b41d01e5e12df8dc673a0fb388fb7666f955578b49c203a3a2f6"
+  "fingerprint": "16cd1dd268cc193cdf69a5d75ffdee04f42f88ce4b2da6a66f94c23a46bdee82"
 }

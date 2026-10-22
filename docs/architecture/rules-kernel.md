@@ -9,6 +9,26 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Fuse is a hand-only casting method selected through the ordinary cast offer and
+proposal. It creates one spell with both halves' names, types, colors, and
+combined printed mana cost and mana value. Casting a single half retains that
+half's stack characteristics. Fuse is compatible with an independently supplied
+alternative mana cost or permission to cast without paying the mana cost; the
+shared cost owner applies increases and reductions once to the combined spell.
+It grants no permission to cast from another zone.
+
+`rules/casting/characteristic_methods.py` shares prospective characteristics and
+committed stack context for the represented characteristic-selecting methods.
+`rules/fuse.py` requires a current complete declaration and its correlated
+executable fused program, together with both current half programs. Standalone
+half casts share this complete-source requirement. The existing resolution owner executes the left half
+before the right in one resolution, including choices that suspend that
+resolution, with no priority or state-based actions between halves. Ordinary
+target revalidation and incarnation checks remain authoritative. Spell copies
+retain the combined characteristics and target roles through the existing copy
+owner. The canonical zone reset removes the original spell's Fuse annotation
+when it leaves the stack.
+
 `opening_hand.py` owns optional battlefield-entry actions after all multiplayer
 mulligans and bottoming finish. It snapshots eligible final hand incarnations
 and lets the starting player act in any order before proceeding through the
