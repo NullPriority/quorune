@@ -5,6 +5,7 @@ from __future__ import annotations
 from .activation_condition_model import ActivationCondition,ActivationConditionKind
 from .activation_usage import ActivationLimit
 from .activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
+from .activation_restriction_composition import activation_restriction_from_effect
 
 BOAST_CAPABILITY='activation.boast.fixed_restrictions'
 
@@ -12,6 +13,8 @@ BOAST_CAPABILITY='activation.boast.fixed_restrictions'
 def keyword_activation_restrictions(prefix,effect_lower,conditions):
     limit=(ActivationLimit.EXHAUST_ONCE if prefix=='exhaust' else ActivationLimit.ONCE_PER_TURN
         if prefix=='boast' or 'only once each turn' in effect_lower else None)
+    represented=activation_restriction_from_effect(effect_lower)
+    if represented is not None and prefix not in {'exhaust','boast'}:limit=represented.activation_limit
     if prefix!='boast':return limit,conditions,False
     condition=ActivationCondition(ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN)
     return limit,tuple(dict.fromkeys((*conditions,condition))),True

@@ -2007,19 +2007,27 @@
       "patterns": [
         "quorune/abilities.py",
         "quorune/activation_condition_model.py",
+        "quorune/activation_restriction_composition.py",
         "quorune/compiler/activated_costs.py",
         "quorune/compiler/activated_mana_nodes.py",
         "quorune/compiler/target_effect_corpus_assurance.py",
         "quorune/rules/activation/commit.py",
         "quorune/rules/activation/conditions.py",
+        "quorune/rules/activation/restriction_requirements.py",
+        "quorune/rules/activation/turn_event_conditions.py",
+        "tests/fixtures/compound-activation-restriction-cards.json",
         "tests/fixtures/public-activation-condition-cards.json",
+        "tests/test_compound_activation_restrictions.py",
         "tests/test_public_activation_conditions.py"
       ],
       "test_modules": [
         "test_activation_conditions",
+        "test_boast_restrictions",
         "test_casting_activation_proposal_equivalence",
+        "test_compound_activation_restrictions",
         "test_fixed_counter_placement_effects",
         "test_fixed_entry_conditions",
+        "test_fixed_source_effect_sequences",
         "test_public_activation_conditions",
         "test_typed_activated_ability_catalog"
       ],

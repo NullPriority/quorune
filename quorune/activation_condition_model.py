@@ -33,6 +33,8 @@ class ActivationConditionKind(str, Enum):
     SOURCE_ATTACKED_THIS_TURN = 'source_attacked_this_turn'
     SOURCE_ATTACHED_TO_CREATURE = "source_attached_to_creature"
     CONTROLLER_HAS_CITYS_BLESSING = 'controller_has_citys_blessing'
+    CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN='controller_cast_instant_sorcery_this_turn'
+    OPPONENT_LOST_LIFE_THIS_TURN='opponent_lost_life_this_turn'
     UNSUPPORTED = "unsupported"
 
 
@@ -278,7 +280,7 @@ def _permanent_query(descriptor: str) -> ObjectQuerySpec | None:
     ):
         fields["types_all"] = ("land",)
         fields["subtypes_any"] = tuple(sorted(land_subtypes))
-    elif singular in {"artifact", "creature", "land"}:
+    elif singular in _PERMANENT_TYPES:
         fields["types_all"] = (singular,)
     elif singular == "permanent":
         fields["types_any"] = _PERMANENT_TYPES
@@ -404,6 +406,10 @@ def activation_restriction_spec(text: str) -> ActivationRestrictionSpec | None:
 
     normalized = " ".join(text.casefold().rstrip(".").split())
     fixed = {
+        "once": ActivationRestrictionSpec(activation_limit=ActivationLimit.ONCE_PER_OBJECT),
+        "if an opponent lost life this turn": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.OPPONENT_LOST_LIFE_THIS_TURN),)),
+        "if you've cast an instant or sorcery spell this turn": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN),)),
+        "if you’ve cast an instant or sorcery spell this turn": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN),)),
         "if you have the city's blessing": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING),)),
         "if you have the city’s blessing": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING),)),
         "as a sorcery": ActivationRestrictionSpec(sorcery_speed=True),
@@ -462,6 +468,9 @@ def activation_restriction_spec(text: str) -> ActivationRestrictionSpec | None:
     }
     if normalized in fixed:
         return fixed[normalized]
+    if ' and only ' in normalized:
+        from .activation_restriction_composition import compound_activation_restriction
+        return compound_activation_restriction(normalized)
     query = _public_query_condition(normalized)
     return (
         ActivationRestrictionSpec(conditions=(query,))

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 469,
+  "registry_version": 470,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -44751,6 +44751,219 @@
         "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
         "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
         "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours"
+      ]
+    },
+    {
+      "id": "activation.usage.once_per_object",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "400.7",
+        "602.1b",
+        "602.2a",
+        "602.2b",
+        "602.5",
+        "602.5b",
+        "602.5c",
+        "602.5d",
+        "608.2h",
+        "702.26d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Conjunctive activation instructions retain timing and current public conditions while one ability consumes its explicit once-per-object allowance.",
+        "inputs": [
+          "closed compiler-pinned activation metadata",
+          "current actor/source incarnation and canonical usage state",
+          "current sealed turn events and active players"
+        ],
+        "outputs": [
+          "shared offered/accepted activation legality before mutation",
+          "atomic successful-use commitment and exact save/load",
+          "no cast-time or current-life approximation"
+        ],
+        "exclusions": [
+          "unknown predicates or disjunctive restrictions",
+          "unsupported sibling costs/results",
+          "private identity or mutable state caching",
+          "turn-history approximation when unavailable"
+        ]
+      },
+      "dependencies": [
+        "activation.condition.public_query"
+      ],
+      "implementation_components": [
+        "quorune.activation_usage.activation_usage_verdict",
+        "quorune.activation_usage.commit_activation_usage",
+        "quorune.activation_restriction_composition.compound_activation_restriction",
+        "quorune.rules.activation.restriction_requirements.activation_restriction_runtime_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonical capability withdrawal and descriptor-owned independent usage/history minima reject incomplete scope.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh normal source and real consequence witnesses reject omitted conjunction and usage/current-event predicates.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
+        "test_complete_conjunction_preserves_all_fields_and_refuses_partial_unknown_or_duplicate_clauses",
+        "test_once_per_object_is_distinct_from_turn_and_legacy_usage_fields",
+        "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+      ],
+      "negative_tests": [
+        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
+        "test_complete_conjunction_preserves_all_fields_and_refuses_partial_unknown_or_duplicate_clauses",
+        "test_once_per_object_is_distinct_from_turn_and_legacy_usage_fields",
+        "test_verified_withdrawals_and_fresh_composition_usage_omissions_fail_closed",
+        "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+      ],
+      "interaction_tests": [
+        "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+      ],
+      "multiplayer_tests": [
+        "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+      ],
+      "privacy_tests": [
+        "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+      ],
+      "replay_tests": [
+        "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+      ]
+    },
+    {
+      "id": "activation.condition.current_turn_events",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "400.7",
+        "602.1b",
+        "602.2a",
+        "602.2b",
+        "602.5",
+        "602.5b",
+        "602.5c",
+        "602.5d",
+        "608.2h",
+        "702.26d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Read the activating players own instant/sorcery cast or opponents actual life loss from the canonical current-turn journal before cost payment.",
+        "inputs": [
+          "closed compiler-pinned activation metadata",
+          "current actor/source incarnation and canonical usage state",
+          "current sealed turn events and active players"
+        ],
+        "outputs": [
+          "shared offered/accepted activation legality before mutation",
+          "atomic successful-use commitment and exact save/load",
+          "no cast-time or current-life approximation"
+        ],
+        "exclusions": [
+          "unknown predicates or disjunctive restrictions",
+          "unsupported sibling costs/results",
+          "private identity or mutable state caching",
+          "turn-history approximation when unavailable"
+        ]
+      },
+      "dependencies": [
+        "activation.condition.phase_window"
+      ],
+      "implementation_components": [
+        "quorune.rules.activation.turn_event_conditions.activation_turn_event_status",
+        "quorune.activation_restriction_composition.compound_activation_restriction",
+        "quorune.rules.activation.restriction_requirements.activation_restriction_runtime_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonical capability withdrawal and descriptor-owned independent usage/history minima reject incomplete scope.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh normal source and real consequence witnesses reject omitted conjunction and usage/current-event predicates.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
+        "test_complete_conjunction_preserves_all_fields_and_refuses_partial_unknown_or_duplicate_clauses",
+        "test_turn_event_conditions_use_sealed_kind_actor_recipient_and_current_turn_only",
+        "test_gutterbones_return_reads_actual_opponent_life_loss_not_own_damage",
+        "test_hall_uses_a_real_own_spell_cast_even_when_countered_and_obeys_sorcery_timing",
+        "test_hall_other_player_cast_and_actual_copy_do_not_create_own_cast_fact",
+        "test_hall_qualifying_cast_fact_resets_on_the_next_turn",
+        "test_gutterbones_nondamage_loss_and_missing_history_share_offer_and_commit"
+      ],
+      "negative_tests": [
+        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
+        "test_complete_conjunction_preserves_all_fields_and_refuses_partial_unknown_or_duplicate_clauses",
+        "test_turn_event_conditions_use_sealed_kind_actor_recipient_and_current_turn_only",
+        "test_verified_withdrawals_and_fresh_composition_usage_omissions_fail_closed",
+        "test_gutterbones_return_reads_actual_opponent_life_loss_not_own_damage",
+        "test_hall_uses_a_real_own_spell_cast_even_when_countered_and_obeys_sorcery_timing",
+        "test_hall_other_player_cast_and_actual_copy_do_not_create_own_cast_fact",
+        "test_hall_qualifying_cast_fact_resets_on_the_next_turn",
+        "test_gutterbones_nondamage_loss_and_missing_history_share_offer_and_commit"
+      ],
+      "interaction_tests": [
+        "test_gutterbones_return_reads_actual_opponent_life_loss_not_own_damage",
+        "test_hall_uses_a_real_own_spell_cast_even_when_countered_and_obeys_sorcery_timing",
+        "test_hall_other_player_cast_and_actual_copy_do_not_create_own_cast_fact",
+        "test_hall_qualifying_cast_fact_resets_on_the_next_turn",
+        "test_gutterbones_nondamage_loss_and_missing_history_share_offer_and_commit"
+      ],
+      "multiplayer_tests": [
+        "test_gutterbones_return_reads_actual_opponent_life_loss_not_own_damage",
+        "test_hall_uses_a_real_own_spell_cast_even_when_countered_and_obeys_sorcery_timing",
+        "test_hall_other_player_cast_and_actual_copy_do_not_create_own_cast_fact",
+        "test_hall_qualifying_cast_fact_resets_on_the_next_turn",
+        "test_gutterbones_nondamage_loss_and_missing_history_share_offer_and_commit"
+      ],
+      "privacy_tests": [
+        "test_gutterbones_return_reads_actual_opponent_life_loss_not_own_damage",
+        "test_hall_uses_a_real_own_spell_cast_even_when_countered_and_obeys_sorcery_timing",
+        "test_hall_other_player_cast_and_actual_copy_do_not_create_own_cast_fact",
+        "test_hall_qualifying_cast_fact_resets_on_the_next_turn",
+        "test_gutterbones_nondamage_loss_and_missing_history_share_offer_and_commit"
+      ],
+      "replay_tests": [
+        "test_gutterbones_return_reads_actual_opponent_life_loss_not_own_damage",
+        "test_hall_uses_a_real_own_spell_cast_even_when_countered_and_obeys_sorcery_timing",
+        "test_hall_other_player_cast_and_actual_copy_do_not_create_own_cast_fact",
+        "test_hall_qualifying_cast_fact_resets_on_the_next_turn",
+        "test_gutterbones_nondamage_loss_and_missing_history_share_offer_and_commit"
       ]
     }
   ]

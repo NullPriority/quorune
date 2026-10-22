@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..boast import boast_runtime_dependencies
+from ..rules.activation.restriction_requirements import activation_restriction_runtime_dependencies
 from typing import Any, Mapping
 
 """Descriptor-owned runtime requirements beyond registered operation minima."""
@@ -107,7 +107,7 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_resolution_characteristics:invalid:{exc}')
     try:required.update(cast_x_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_cast_x_amount:invalid:{exc}')
-    try:required.update(boast_runtime_dependencies(program))
+    try:required.update(activation_restriction_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_boast:invalid:{exc}')
     required.update(qualified_hexproof_runtime_dependencies(program))
     try:

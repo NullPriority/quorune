@@ -72,6 +72,7 @@
       "test_chosen_aura_protection",
       "test_combat_declaration_constraints",
       "test_combat_phase_rules",
+      "test_compound_activation_restrictions",
       "test_continuous_effect_components",
       "test_counter_state",
       "test_counter_target_predicates",

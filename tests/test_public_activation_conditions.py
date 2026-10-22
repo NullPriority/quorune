@@ -224,7 +224,7 @@ class PublicActivationConditionCompilerTests(unittest.TestCase):
             "Activate only during the declare blockers step.",
             "Activate only during an opponent's upkeep.",
             "Activate only if this artifact entered this turn.",
-            "Activate only if an opponent lost life this turn.",
+            "Activate only if an opponent gained life this turn.",
             "Activate only if you control an attacking modified creature.",
             "Activate only if you control three creatures with different powers.",
             "Activate only if you control your commander.",

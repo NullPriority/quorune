@@ -545,8 +545,8 @@ program cannot authorize an unsupported spell face, and a trusted spell target
 schema cannot disappear from its advertised offer.
 
 `abilities.py` generically lowers represented colon abilities, the supported
-Craft reminder grammar, and one typed activation-usage limit per
-printed Exhaust ability. `activation_usage.py` is the single owner for the
+Craft reminder grammar, and typed activation-usage limits for
+printed Exhaust and ordinary once-only abilities. `activation_usage.py` is the single owner for the
 usage journal: the use persists across turns, control changes, and phasing for
 the same object, and the ordinary zone-change reset clears it for the new
 object. Offer and commit share the same typed verdict; a commit postcondition
@@ -556,6 +556,18 @@ tap-mana and automatic-payment paths. Effects that permit another Exhaust use
 remain unsupported. CardPrograms may grant an activated ability through a
 serialized descriptor; historical card-named markers are interpreted only by
 the Game Record v3 compatibility adapter.
+
+Conjunctive activation instructions share the same current timing, predicate
+and usage verdict at offer and commit. Conditions apply before payment;
+sacrificing a qualifying land, exiling graveyard cards or removing the source
+as a cost does not make a paid ability recheck those activation instructions
+at resolution. A rejected command never consumes the allowance. Ordinary
+once-per-object state is separate from Exhaust and once-per-turn state.
+`rules/activation/turn_event_conditions.py` reads canonical current-turn cast
+and life-loss events. A countered spell was still cast; an ordinary copy was
+not. Non-damage life loss qualifies, while life gain, own loss and prevented
+damage do not. Missing or stale history fails closed. Descriptor-owned runtime
+requirements independently require the new usage and history capabilities.
 
 The compiler now attaches the complete closed activated-ability value to the
 source-pinned CardProgram through `activation.catalog.pinned.v1`. Runtime

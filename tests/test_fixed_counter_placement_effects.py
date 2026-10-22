@@ -357,6 +357,8 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
             "Activate only during your turn.",
             "Activate only during your turn and only once each turn.",
             "Activate only once each turn.",
+            "Activate only once.",
+            "Activate only if an opponent lost life this turn and only once each turn.",
             "Activate only if it's not your turn.",
             "Activate only if you created a token this turn.",
             (
@@ -389,11 +391,11 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
     def test_unrepresented_activation_restriction_tails_remain_residual(self):
         variants = (
             "Activate only during any upkeep step.",
-            "Activate only once.",
+            "Activate only once per game.",
             "Activate only during the declare blockers step.",
             "Activate only if this creature entered this turn.",
             "Activate only as a sorcery and only if you've cast a spell this turn.",
-            "Activate only if an opponent lost life this turn and only once each turn.",
+            "Activate only if an opponent gained life this turn and only once each turn.",
         )
         for restriction in variants:
             with self.subTest(restriction=restriction):

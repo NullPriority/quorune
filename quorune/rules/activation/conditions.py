@@ -112,6 +112,9 @@ def _typed_condition_status(
     source: Any | None,
 ) -> tuple[str, str | None]:
     kind = condition.kind
+    if kind in {ActivationConditionKind.CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN,ActivationConditionKind.OPPONENT_LOST_LIFE_THIS_TURN}:
+        from .turn_event_conditions import activation_turn_event_status
+        return activation_turn_event_status(host,seat,kind)
     if kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN:
         from .source_attack import source_attack_condition_status
         return source_attack_condition_status(host,source)

@@ -27,6 +27,7 @@ from .activation_condition_model import (
     ActivationConditionKind,
     activation_restriction_spec,
 )
+from .activation_restriction_composition import activation_restriction_from_effect
 from .activated_ability_descriptor import validate_activated_ability_descriptor
 from .boast import keyword_activation_restrictions,validate_boast_ability
 from .replacement.immutable import FrozenMap, thaw_value
@@ -1208,6 +1209,7 @@ def _activation_conditions(effect_text: str) -> tuple[ActivationCondition, ...]:
         represented = activation_restriction_spec(restriction)
         if represented is not None:
             return represented.conditions
+        if ' and only ' in restriction:return (ActivationCondition(ActivationConditionKind.UNSUPPORTED),)
     result: list[ActivationCondition] = []
     if "activate only during your turn" in lower:
         result.append(ActivationCondition(ActivationConditionKind.CONTROLLERS_TURN))
@@ -1503,6 +1505,7 @@ def _parse_activated_line(
     if (keyword_override or keyword_prefix or "").casefold() == "equip":
         builtin_semantic_key, target_schema = _equip_effect_descriptor()
     activation_limit,conditions,boast=keyword_activation_restrictions(prefix,effect_lower,_activation_conditions(effect_text))
+    restriction=activation_restriction_from_effect(effect_text)
     return (
         ActivatedAbility(
             ability_id=f"ab{line_index + 1}",
@@ -1533,7 +1536,7 @@ def _parse_activated_line(
             choices=cost.choices,
             uncompiled_costs=(*cost.uncompiled, *((POWER_UP_UNCOMPILED,) if prefix == "power-up" else ())),
             mana_ability=mana_ability,
-            sorcery_speed=bool(_ACTIVATE_ONLY_SORCERY.search(effect_text)),
+            sorcery_speed=(restriction.sorcery_speed if restriction is not None else bool(_ACTIVATE_ONLY_SORCERY.search(effect_text))),
             generic_reduction_per_legendary_creature=int(
                 bool(
                     re.search(

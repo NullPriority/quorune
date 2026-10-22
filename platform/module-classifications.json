@@ -152,6 +152,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/activation_restriction_composition.py",
+      "layer": "rules",
+      "owning_subsystem": "activated_abilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/activation_usage.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -10836,6 +10850,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/activation/restriction_requirements.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/activation/source_attack.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -10865,6 +10893,20 @@
     },
     {
       "file": "quorune/rules/activation/transform_snapshot.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/activation/turn_event_conditions.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -18697,5 +18739,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "fd9e5bba104c85b1f428b22350c5b587f1019c0ee4990f62b3dc1f8f5808effd"
+  "fingerprint": "8b52a42b6bf8ef61c8bbfe6eebe109f67ebbbbad3ceecee7d360e83f70efc662"
 }

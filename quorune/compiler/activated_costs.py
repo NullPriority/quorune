@@ -4,6 +4,7 @@ from typing import Any
 
 from ..abilities import ActivatedAbility, ActivationLimit
 from ..activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
+from ..activation_usage import ACTIVATION_ONCE_PER_OBJECT_CAPABILITY
 from ..power_up_model import POWER_UP_CAPABILITY
 from ..boast import BOAST_CAPABILITY
 from ..activation_condition_model import (
@@ -51,6 +52,7 @@ def activated_ability_cost_capabilities(
         additional.append("activation.exhaust.once_per_object")
     if ability.activation_limit is ActivationLimit.ONCE_PER_TURN:
         additional.append(ACTIVATION_ONCE_PER_TURN_CAPABILITY)
+    if ability.activation_limit is ActivationLimit.ONCE_PER_OBJECT:additional.append(ACTIVATION_ONCE_PER_OBJECT_CAPABILITY)
     condition_kinds = {
         condition.kind for condition in ability.activation_conditions
     }
@@ -63,6 +65,9 @@ def activated_ability_cost_capabilities(
         additional.append(ACTIVATION_PHASE_CONDITION_CAPABILITY)
     if ActivationConditionKind.PUBLIC_QUERY_COUNT in condition_kinds:
         additional.append(ACTIVATION_PUBLIC_QUERY_CAPABILITY)
+    if condition_kinds & {ActivationConditionKind.CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN,ActivationConditionKind.OPPONENT_LOST_LIFE_THIS_TURN}:
+        from ..rules.activation.turn_event_conditions import ACTIVATION_TURN_EVENT_CAPABILITY
+        additional.append(ACTIVATION_TURN_EVENT_CAPABILITY)
     if ActivationConditionKind.CLASS_LEVEL_EQUALS in condition_kinds:
         additional.append(CLASS_LEVEL_ACTIVATION_CAPABILITY)
     if ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING in condition_kinds:

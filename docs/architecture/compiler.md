@@ -1847,6 +1847,15 @@ metadata prevents this lowering.
 Separation preserves the entire preceding effect text, including its final
 period and earlier sentences. Activation instructions are not part of the
 effect; removing a represented instruction must not alter the result grammar.
+`activation_restriction_composition.py` joins complete `and only` clauses from
+the existing closed instruction grammar. It retains every public condition,
+one timing restriction and one usage limit, regardless of clause order.
+Unknown clauses, duplicate predicates or conflicting limits reject the whole
+instruction. Plain `once` carries a distinct once-per-object limit; it does not
+share Exhaust state. Fixed own instant-or-sorcery cast and opponent life-loss
+conditions lower to typed current-turn facts with their own runtime dependency.
+Current public enchantment and other permanent-type existence checks use the
+same closed object query as the existing artifact, creature and land forms.
 Qualified source-self, targeted, mass, optional, conditional, multiple-object,
 copied, granted, and text-changed movement stays source-spanned and residual.
 
