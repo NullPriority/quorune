@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 463,
+  "registry_version": 464,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12916,7 +12916,7 @@
     },
     {
       "id": "quantity_expression.scalar_effect_amount",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "107.1b",
         "107.2",
@@ -12962,7 +12962,7 @@
         "quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template",
         "quorune.compiler.scalar_effect_amounts.scalar_amount_shape_context",
         "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.card_programs.runtime_requirements.typed_result_amount_runtime_dependencies"
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
       ],
       "positive_tests": [
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
@@ -13144,7 +13144,7 @@
     },
     {
       "id": "quantity_expression.declared_effect_amount",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "107.3a",
         "107.3b",
@@ -13198,7 +13198,7 @@
         "quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount",
         "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
         "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.card_programs.runtime_requirements.typed_result_amount_runtime_dependencies"
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
       ],
       "positive_tests": [
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
@@ -13424,7 +13424,7 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 14,
+      "version": 15,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -13491,7 +13491,7 @@
         "quorune.public_quantity_reductions.reduce_public_quantity",
         "quorune.compiler.collection_quantity_templates.collection_quantity",
         "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
-        "quorune.card_programs.runtime_requirements.typed_result_amount_runtime_dependencies"
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
       ],
       "positive_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -43628,6 +43628,154 @@
         "test_original_masked_gorgon_cast_grants_global_protection_and_keeps_threshold",
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
         "test_original_narfi_snow_return_pays_three_real_snow_sources"
+      ]
+    },
+    {
+      "id": "actions.restriction.static_player",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "109.2",
+        "117.1a",
+        "117.1b",
+        "601.2a",
+        "601.2e",
+        "602.2",
+        "602.5",
+        "605.1a",
+        "605.3a",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed battlefield static restrictions use current acting player turn, opponent nonhand casting, source-turn opponent action restrictions and actual nonartifact cast history.",
+        "inputs": [
+          "closed versioned player restriction selector",
+          "current actor/active-player/source-controller identities",
+          "actual cast origin and canonical completed cast journal",
+          "current ability source public types and zone"
+        ],
+        "outputs": [
+          "shared offer/commit cast prohibition",
+          "shared explicit and auto-payment mana activation prohibition",
+          "coupled cast/activation restrictions from one current source component"
+        ],
+        "exclusions": [
+          "arbitrary turn counts, chosen values and unrepresented conditions",
+          "granted restrictions and independently unsupported source siblings",
+          "history reconstructed from zones or costs"
+        ]
+      },
+      "dependencies": [
+        "casting.prohibition.fixed_public",
+        "activation.restriction.fixed_public_query",
+        "casting.limit.once_per_turn_static"
+      ],
+      "implementation_components": [
+        "quorune.static_player_restriction_model.StaticPlayerRestrictionSpec",
+        "quorune.static_player_restriction_model.static_player_restriction_capabilities",
+        "quorune.compiler.static_player_restrictions.static_player_restriction_template",
+        "quorune.semantic_runtime.static_cast_rules.static_cast_prohibition_reason",
+        "quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions",
+        "quorune.mana_source_discovery.mana_plan_abilities",
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies",
+        "quorune.compiler.generated_program_identity.generated_ability_id",
+        "quorune.mana_activation.complete_mana_plan_activations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent descriptor inference, stripped runtime dependencies and canonically verified withdrawal require the complete fixed player owner.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original admission and actual off-turn cast/activation witnesses detect producer and shared verdict omissions.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_closed_player_restriction_wire_preserves_actor_and_source_turn_roles",
+        "test_original_surfaces_keep_cast_and_activation_halves_and_old_descriptor_wire",
+        "test_activation_actor_all_zones_and_abolisher_permanent_types_remain_distinct",
+        "test_versioned_handlers_reject_mixed_scope_and_schema_drift",
+        "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
+        "test_actual_source_control_and_ability_loss_recompute_both_abolisher_halves",
+        "test_actual_city_cast_blocks_off_turn_mana_and_cycling_but_not_own_turn",
+        "test_actual_abolisher_cast_keeps_land_mana_and_hand_cycling_available",
+        "test_actual_canonist_cast_counts_prior_nonartifact_and_allows_artifact_creatures",
+        "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
+        "test_five_originals_have_complete_native_programs_and_independent_minimum",
+        "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
+        "test_drannith_command_and_exile_permissions_recheck_source_departure",
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+      ],
+      "negative_tests": [
+        "test_closed_player_restriction_wire_preserves_actor_and_source_turn_roles",
+        "test_original_surfaces_keep_cast_and_activation_halves_and_old_descriptor_wire",
+        "test_activation_actor_all_zones_and_abolisher_permanent_types_remain_distinct",
+        "test_versioned_handlers_reject_mixed_scope_and_schema_drift",
+        "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
+        "test_actual_source_control_and_ability_loss_recompute_both_abolisher_halves",
+        "test_actual_city_cast_blocks_off_turn_mana_and_cycling_but_not_own_turn",
+        "test_actual_abolisher_cast_keeps_land_mana_and_hand_cycling_available",
+        "test_actual_canonist_cast_counts_prior_nonartifact_and_allows_artifact_creatures",
+        "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
+        "test_canonically_verified_player_restriction_withdrawal_blocks_all_originals",
+        "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
+        "test_drannith_command_and_exile_permissions_recheck_source_departure",
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+      ],
+      "interaction_tests": [
+        "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
+        "test_actual_source_control_and_ability_loss_recompute_both_abolisher_halves",
+        "test_actual_city_cast_blocks_off_turn_mana_and_cycling_but_not_own_turn",
+        "test_actual_abolisher_cast_keeps_land_mana_and_hand_cycling_available",
+        "test_actual_canonist_cast_counts_prior_nonartifact_and_allows_artifact_creatures",
+        "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
+        "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
+        "test_drannith_command_and_exile_permissions_recheck_source_departure",
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+      ],
+      "multiplayer_tests": [
+        "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
+        "test_actual_source_control_and_ability_loss_recompute_both_abolisher_halves",
+        "test_actual_city_cast_blocks_off_turn_mana_and_cycling_but_not_own_turn",
+        "test_actual_abolisher_cast_keeps_land_mana_and_hand_cycling_available",
+        "test_actual_canonist_cast_counts_prior_nonartifact_and_allows_artifact_creatures",
+        "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
+        "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
+        "test_drannith_command_and_exile_permissions_recheck_source_departure",
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+      ],
+      "privacy_tests": [
+        "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
+        "test_actual_source_control_and_ability_loss_recompute_both_abolisher_halves",
+        "test_actual_city_cast_blocks_off_turn_mana_and_cycling_but_not_own_turn",
+        "test_actual_abolisher_cast_keeps_land_mana_and_hand_cycling_available",
+        "test_actual_canonist_cast_counts_prior_nonartifact_and_allows_artifact_creatures",
+        "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
+        "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
+        "test_drannith_command_and_exile_permissions_recheck_source_departure",
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+      ],
+      "replay_tests": [
+        "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
+        "test_actual_source_control_and_ability_loss_recompute_both_abolisher_halves",
+        "test_actual_city_cast_blocks_off_turn_mana_and_cycling_but_not_own_turn",
+        "test_actual_abolisher_cast_keeps_land_mana_and_hand_cycling_available",
+        "test_actual_canonist_cast_counts_prior_nonartifact_and_allows_artifact_creatures",
+        "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
+        "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
+        "test_drannith_command_and_exile_permissions_recheck_source_departure",
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
       ]
     }
   ]

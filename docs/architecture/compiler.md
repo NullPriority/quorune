@@ -3295,6 +3295,16 @@ or comparisons, linked objects, spell-self riders, Split second, Epic, grants,
 copies, text changes, and unsupported compound siblings remain outside this
 static grammar.
 
+`compiler/static_player_restrictions.py` also lowers fixed acting-player turn,
+opponent nonhand casting, nonartifact cast limits, and source-controller-turn
+opponent restrictions. A coupled cast/activation sentence produces separate
+event-bound nodes with the same printed source span and distinct role keys.
+Both require the complete typed player restriction capability. Handler versions
+and old payloads stay unchanged; the additive selector has its own closed
+version. Actor turn, source controller, spell origin and current ability-source
+zone remain separate facts. Nonartifact limits read completed cast events,
+including earlier and countered spells, through the existing turn journal.
+
 `compiler/temporary_cast_restrictions.py` separately lowers fixed resolution
 instructions that prohibit all, creature, or noncreature spells through end of
 turn for opponents, all players, or one targeted player. The immutable

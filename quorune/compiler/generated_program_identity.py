@@ -135,6 +135,8 @@ def generated_ability_id(
             }
         ):
             return f"static:{face_id}:n{line}:{parts[-2]}:{parts[-1]}"
+        if len(parts) >= 2 and parts[-2] == 'player-restriction' and parts[-1] in {'cast', 'activation'}:
+            return f'static:{face_id}:n{line}:player-restriction:{parts[-1]}'
         if str(node_id or "").endswith(":flash"):
             return f"static:{face_id}:n{line}:flash"
         node_parts = str(node_id or "").split(":")

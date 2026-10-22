@@ -20,6 +20,7 @@ from ..enchant_spec import (
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import ObjectQueryResult, object_matches_query, object_query_result
 from ..rules.capabilities import load_default_capability_registry
+from ..static_player_restriction_model import StaticPlayerRestrictionSpec, StaticPlayerRestrictionKind
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
@@ -85,6 +86,7 @@ class StaticCastRule:
     source_tapped: bool
     source_chosen_name: str
     source_attached_player: str | None
+    player_restriction: StaticPlayerRestrictionSpec | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,6 +106,8 @@ class StaticCastRuleHandler:
     )
 
     def validate(self, descriptor: Mapping[str, Any]) -> dict[str, Any]:
+        restriction = (StaticPlayerRestrictionSpec.from_dict(descriptor['player_restriction'])
+            if 'player_restriction' in descriptor else None)
         exact_fields(
             descriptor,
             {
@@ -119,6 +123,7 @@ class StaticCastRuleHandler:
                 "chosen_name",
                 "affects_abilities",
                 "required_enchant_spec",
+                *({'player_restriction'} if restriction is not None else ()),
             },
             field="Static cast-rule handler",
         )
@@ -177,6 +182,17 @@ class StaticCastRuleHandler:
             raise SemanticNodeError("Only cast prohibitions use a chosen name")
         if descriptor["affects_abilities"] and kind is not StaticCastRuleKind.UNCOUNTERABLE:
             raise SemanticNodeError("Only uncounterable rules may affect abilities")
+        if restriction is not None:
+            expected_kind = (StaticCastRuleKind.CAST_LIMIT if restriction.kind is StaticPlayerRestrictionKind.NONARTIFACT_LIMIT
+                else StaticCastRuleKind.CAST_PROHIBITION)
+            if kind is not expected_kind or condition is not StaticCastCondition.ALWAYS or zones or descriptor['chosen_name']:
+                raise SemanticNodeError('Static player restriction cannot widen its fixed cast family')
+            expected_scope = (StaticCastPlayerScope.SOURCE_OPPONENTS if restriction.kind in {
+                StaticPlayerRestrictionKind.OPPONENT_NONHAND, StaticPlayerRestrictionKind.SOURCE_TURN_OPPONENTS}
+                else StaticCastPlayerScope.ALL_PLAYERS)
+            expected_query = ObjectQuerySpec(excluded_types=('artifact', 'land') if restriction.kind is StaticPlayerRestrictionKind.NONARTIFACT_LIMIT else ('land',))
+            if scope is not expected_scope or queries != (expected_query,):
+                raise SemanticNodeError('Static player restrictions require their exact spell and player scope')
         raw_enchant_spec = descriptor["required_enchant_spec"]
         if raw_enchant_spec is None:
             required_enchant_spec = None
@@ -199,6 +215,7 @@ class StaticCastRuleHandler:
             "chosen_name": descriptor["chosen_name"],
             "affects_abilities": descriptor["affects_abilities"],
             "required_enchant_spec": required_enchant_spec,
+            "player_restriction": restriction,
         }
 
     def lower(
@@ -224,6 +241,7 @@ class StaticCastRuleHandler:
                 source_tapped=context.source_tapped,
                 source_chosen_name=" ".join(context.chosen_name.casefold().split()),
                 source_attached_player=context.attached_player,
+                player_restriction=value['player_restriction'],
             ),
         )
 
@@ -517,6 +535,13 @@ def static_cast_prohibition_reason(
     if any(restriction_matches_spell(effect,row) for effect in temporary):return 'temporary_cast_prohibition'
     name = str((face or {}).get("name") or row.printed_name)
     for rule in rules:
+        restriction = rule.player_restriction
+        if restriction is not None:
+            if not restriction.applies(actor=player, active_player=host.state.active_player,
+                    source_controller=rule.source_controller):
+                continue
+            if restriction.kind is StaticPlayerRestrictionKind.OPPONENT_NONHAND and card.zone == 'hand':
+                continue
         if not _rule_matches_spell(rule, row, spell_name=name):
             continue
         if rule.origin_zones and card.zone not in rule.origin_zones:

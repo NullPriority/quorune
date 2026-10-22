@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v538"
+ORACLE_COMPILER_VERSION = "oracle-ir-v539"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1176,6 +1176,12 @@ def _compile_face(
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue
         line, material_line, span = row; node_id = f"{face_id}:n{index}"
+        from .compiler.static_player_restrictions import static_player_restriction_nodes
+        player_nodes = static_player_restriction_nodes(node_id=node_id, line=line, material_line=material_line,
+            span=span, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+        if player_nodes is not None:
+            nodes.extend(player_nodes)
+            continue
         early_nodes = _keyword_or_attached_grant_nodes(
             record=record, face_id=face_id, node_id=node_id, line=line,
             material_line=material_line, span=span,

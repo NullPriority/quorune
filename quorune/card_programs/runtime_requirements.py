@@ -45,28 +45,7 @@ from ..rules.city_blessing_shapes import city_activation_runtime_dependencies
 from ..rules.graveyard_cast_costs import paid_graveyard_runtime_dependencies
 
 
-def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
-    """Decode persisted public/scalar amounts without trusting annotations."""
-    from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
-        DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
-    if isinstance(value, Mapping):
-        if value.get('kind') == 'public_quantity_mana':
-            from ..public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_CAPABILITY
-            PublicQuantityManaOutput.from_dict(value)
-            return (PUBLIC_QUANTITY_MANA_CAPABILITY,)
-        if value.get('kind') == PUBLIC_QUERY_AMOUNT_KIND:
-            spec = PublicQueryAmountSpec.from_dict(value)
-            return tuple(sorted({PUBLIC_QUERY_AMOUNT_CAPABILITY,
-                                 *((DECLARED_AMOUNT_CAPABILITY,) if spec.schema_version == 2 else ())}))
-        if value.get('kind') == 'scalar_effect_amount':
-            from ..scalar_effect_amount_model import ScalarEffectAmountSpec, SCALAR_AMOUNT_CAPABILITY
-            spec = ScalarEffectAmountSpec.from_dict(value)
-            return tuple(sorted({SCALAR_AMOUNT_CAPABILITY,
-                                 *((DECLARED_AMOUNT_CAPABILITY,) if spec.binding_id is not None else ())}))
-        return tuple(sorted({cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child)}))
-    if isinstance(value, (list, tuple)):
-        return tuple(sorted({cap for child in value for cap in typed_result_amount_runtime_dependencies(child)}))
-    return ()
+from .descriptor_requirements import typed_result_amount_runtime_dependencies
 
 
 def nonmana_equip_runtime_dependencies(program):

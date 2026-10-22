@@ -74,6 +74,7 @@ def activation_availability(
         host,
         card,
         ability,
+        actor=seat,
     )
     if activation_prohibitions:
         return "unavailable", activation_prohibitions[0].reason

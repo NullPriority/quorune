@@ -6,6 +6,7 @@ from typing import AbstractSet, Any, Mapping
 
 from ..rules.capabilities import CapabilityRegistry
 from ..object_predicate import object_query_capabilities
+from ..static_player_restriction_model import static_player_restriction_capabilities
 from ..characteristic_fragments import characteristic_quantity_capabilities
 from .dependency_gate import dependency_gate, explicit_capabilities_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
@@ -44,7 +45,8 @@ def runtime_handler_node(
         else (raw_handlers,)
     )
     required = (*((capabilities,) if isinstance(capabilities, str) else capabilities),
-                *characteristic_quantity_capabilities(handlers), *object_query_capabilities(handlers))
+                *characteristic_quantity_capabilities(handlers), *object_query_capabilities(handlers),
+                *static_player_restriction_capabilities(handlers))
     if mechanics:
         gate = dependency_gate(mechanics=mechanics, effects=(), target_schema=None,
             trusted_mechanics=frozenset(), capability_registry=capability_registry,

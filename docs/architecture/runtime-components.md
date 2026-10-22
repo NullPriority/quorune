@@ -977,6 +977,16 @@ catalog. The exact attached untap compound contributes an ordinary
 cost-changing, target-relative, granted, copied, and unrepresented compound
 forms remain unavailable rather than being inferred from Oracle prose.
 
+Fixed player restrictions pass the authenticated acting seat into the shared
+activation verdict. Own-turn-only restrictions cover mana abilities and
+abilities outside the battlefield. Source-turn opponent restrictions can
+instead select only artifact, creature and enchantment permanents, leaving
+ordinary land abilities and Cycling from hand available. Automatic mana-source
+discovery and payment commitment use the same current prohibition filter,
+including recordless token abilities. Current source ability loss, phasing,
+departure and control changes recompute both cast and activation restrictions.
+Already committed stack items continue to resolve.
+
 ## Ownership boundaries
 
 Components receive immutable source-authorized facts, never

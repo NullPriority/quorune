@@ -16,6 +16,7 @@ from ..card_program_faces import program_matches_face
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import ObjectQueryResult, object_matches_query
 from ..rules.capabilities import load_default_capability_registry
+from ..static_player_restriction_model import StaticPlayerRestrictionSpec, StaticPlayerRestrictionKind
 from ..untap_step import (
     UntapInstruction,
     UntapStepParticipation,
@@ -62,6 +63,8 @@ class ActivationRestrictionContext:
     restriction_attached_player: str | None
     candidate_row: ObjectQueryResult | None
     candidate_is_loyalty_ability: bool
+    candidate_actor: str | None = None
+    active_player: str | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -189,6 +192,8 @@ class FixedPublicActivationProhibitionHandler:
     )
 
     def validate(self, descriptor: Mapping[str, Any]) -> dict[str, Any]:
+        restriction = (StaticPlayerRestrictionSpec.from_dict(descriptor['player_restriction'])
+            if 'player_restriction' in descriptor else None)
         exact_fields(
             descriptor,
             {
@@ -200,6 +205,7 @@ class FixedPublicActivationProhibitionHandler:
                 "ability_scope",
                 "predicate",
                 "prevents_untap",
+                *({'player_restriction'} if restriction is not None else ()),
             },
             field="Fixed public activation prohibition",
         )
@@ -222,6 +228,7 @@ class FixedPublicActivationProhibitionHandler:
             "enchanted_object",
             "enchanted_player",
             "chosen_name",
+            *({'actor'} if restriction is not None else ()),
         }:
             raise SemanticNodeError("Activation-prohibition subject is unsupported")
         controller_relation = descriptor["controller_relation"]
@@ -267,12 +274,21 @@ class FixedPublicActivationProhibitionHandler:
             raise SemanticNodeError(
                 "Pinned activation-prohibition subjects reserve predicates"
             )
+        if restriction is not None:
+            city = restriction.kind is StaticPlayerRestrictionKind.ACTOR_OTHER_TURN
+            abolisher = restriction.kind is StaticPlayerRestrictionKind.SOURCE_TURN_OPPONENTS
+            expected = ObjectQuerySpec() if city else ObjectQuerySpec(zones=('battlefield',), types_any=('artifact', 'creature', 'enchantment'))
+            if (not (city or abolisher) or relation != ('actor' if city else 'query')
+                    or controller_relation != ('any' if city else 'source_opponents')
+                    or ability_scope != 'all' or descriptor['prevents_untap'] or predicate != expected):
+                raise SemanticNodeError('Static player activation restrictions require their exact closed scope')
         return {
             "relation": relation,
             "controller_relation": controller_relation,
             "ability_scope": ability_scope,
             "predicate": predicate,
             "prevents_untap": descriptor["prevents_untap"],
+            "player_restriction": restriction,
         }
 
     def lower(
@@ -281,6 +297,10 @@ class FixedPublicActivationProhibitionHandler:
         context: ActivationRestrictionContext,
     ) -> tuple[ActivationProhibition, ...]:
         node = self.validate(descriptor)
+        restriction = node['player_restriction']
+        if restriction is not None and not restriction.applies(actor=context.candidate_actor,
+                active_player=context.active_player, source_controller=context.restriction_source_controller):
+            return ()
         if context.candidate_row is None:
             raise SemanticNodeError(
                 "Fixed activation prohibitions require public source data"
@@ -302,6 +322,8 @@ class FixedPublicActivationProhibitionHandler:
             return ()
         relation = node["relation"]
         applies = bool(
+            (relation == 'actor' and restriction is not None)
+            or
             (
                 relation == "query"
                 and context.candidate_row.zone == "battlefield"
@@ -389,6 +411,7 @@ def current_activation_prohibitions(
     host: ActivationRestrictionHost,
     source: Any,
     ability: ActivatedAbility,
+    *, actor: str | None = None,
 ) -> tuple[ActivationProhibition, ...]:
     """Collect trusted current-face prohibitions for one candidate ability."""
 
@@ -470,6 +493,8 @@ def current_activation_prohibitions(
                     candidate_is_loyalty_ability=(
                         ability.loyalty_delta is not None
                     ),
+                    candidate_actor=actor or source.controller,
+                    active_player=host.state.active_player,
                 )
                 prohibitions.extend(registry.lower(descriptor, context))
     return tuple(

@@ -212,7 +212,10 @@ def _mana_plan_modes(
 ) -> tuple[ManaMode, ...]:
     record = host.card_record(card)
     if not record:
-        modes = tuple(host._recordless_mana_modes(seat, card))
+        abilities = mana_plan_abilities(host, seat, card)
+        modes = payable_mana_modes(typed_mana_modes_for_abilities(host, seat, card,
+            tuple(ability for ability in abilities
+                if host._activation_condition_status(seat, ability, card)[0] == 'payable')))
         if not modes:
             raise GameRuleError(f"{card.ref} has no compiled mana mode")
         return modes
