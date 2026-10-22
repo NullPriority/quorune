@@ -56,6 +56,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/spell_mana_conditions.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
+        "quorune/object_query_union.py",
         "quorune/ability_line_normalization.py",
         "quorune/conditional_copy_model.py",
         "quorune/copy_value_types.py",
@@ -741,6 +742,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/affected_permanents.py",
         "quorune/object_predicate.py",
         "quorune/object_query.py",
+        "quorune/object_query_union.py",
     }:
         return "object_query"
     if relative == "quorune/state_planner.py":

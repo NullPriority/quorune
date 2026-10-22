@@ -607,6 +607,13 @@ families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
 source-controller, source-opponent, or global battlefield queries into
 immutable layer-6 effects. The same canonical query scopes fixed layer-7c
 power/toughness modifiers and combined characteristic grants. It evaluates
+flat receiver unions as one affected set, so an object matching several
+branches receives each modifier once. Shared controller and source exclusions
+apply outside the union; a branch-local “other” binds only that branch to the
+current source reference. These leaves use battlefield type, subtype, snow,
+and color facts from earlier layers. Recursive, hidden, numeric, keyword and
+state-qualified union leaves are rejected. Existing query payloads retain
+their exact encoding when no union is present. Single-set queries also evaluate
 type, subtype, color cardinality, token identity, and named +1/+1 counter state
 from the current public characteristic boundary; opponent relations exclude
 the source controller without enumerating seats in the descriptor. Each

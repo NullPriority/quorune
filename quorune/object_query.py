@@ -222,6 +222,7 @@ def object_matches_query(
             or row.known_to_actor is spec.known_to_actor
         )
         and (spec.exclude_ref is None or row.ref != spec.exclude_ref)
+        and (not spec.any_of or any(object_matches_query(row, part) for part in spec.any_of))
         and (spec.numeric_characteristic is None or spec.numeric_characteristic.permits(
             power=row.effective_power, toughness=row.effective_toughness))
         and (

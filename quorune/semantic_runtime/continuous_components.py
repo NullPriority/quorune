@@ -30,6 +30,7 @@ from ..leveler_bands import (
     LevelerBandsSpec,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..object_query_union import bind_receiver_union_source, validate_receiver_union_template
 from ..counter_names import normalized_counter_name
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap
@@ -212,7 +213,7 @@ def _fixed_query_effect_predicate(
     """Bind one validated controller relation to a canonical live query."""
 
     return replace(
-        predicate,
+        bind_receiver_union_source(predicate, context.source_ref),
         zones=("battlefield",),
         owner=context.source_controller if target_controller=='source_owner' else None,
         controller=(
@@ -442,6 +443,7 @@ class FixedQueryPowerToughnessAnthemHandler:
             )
         try:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+            validate_receiver_union_template(predicate)
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
@@ -465,6 +467,10 @@ class FixedQueryPowerToughnessAnthemHandler:
             or (not predicate.types_all and (predicate.subtypes_all or predicate.subtypes_any)
                 and all(canonical_creature_subtype(value) == value
                         for value in (*predicate.subtypes_all, *predicate.subtypes_any)))
+            or (predicate.any_of and all(
+                'creature' in part.types_all or (not part.types_all and part.subtypes_all
+                    and all(canonical_creature_subtype(value) == value for value in part.subtypes_all))
+                for part in predicate.any_of))
         ):
             raise SemanticNodeError(
                 "fixed query anthem requires creatures or a canonical creature-subtype set"
@@ -720,6 +726,7 @@ class FixedQueryAbilityGrantHandler:
             )
         try:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+            validate_receiver_union_template(predicate)
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
@@ -911,6 +918,7 @@ class FixedQueryKeywordGrantHandler:
             )
         try:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+            validate_receiver_union_template(predicate)
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):

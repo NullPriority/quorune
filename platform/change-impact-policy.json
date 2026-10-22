@@ -7662,6 +7662,28 @@
         "test_self_target_reductions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "flat-receiver-query-unions",
+      "patterns": [
+        "quorune/object_query_union.py",
+        "quorune/compiler/receiver_union_queries.py",
+        "quorune/object_predicate.py",
+        "quorune/object_query.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/semantic_runtime/conditional_continuous.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/test_receiver_query_unions.py",
+        "tests/fixtures/union-receiver-cards.json"
+      ],
+      "test_modules": [
+        "test_receiver_query_unions",
+        "test_object_query",
+        "test_fixed_query_keyword_grants",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1020,6 +1020,16 @@ Fixed live-set stat and keyword composition accepts singular “each ... gets
 query, subtype union, source exclusion and layer owners. Unknown subjects,
 variable results and unsupported siblings retain their existing residuals.
 
+Fixed characteristic subjects also represent flat unions of public
+battlefield type, subtype, snow and color sets. Repeated “you control” clauses
+share one controller relation. A leading “other” excludes the source from the
+whole union, while “Skeletons you control and other Zombies you control”
+excludes it only from the Zombie branch. The existing query matcher applies a
+union once per object; it does not emit an independent bonus for each matching
+branch. The compiler declares the receiver-union capability in addition to the
+existing stat or keyword consumers. Recursive, hidden, numeric and
+ability-qualified unions remain residual.
+
 The public quantity compiler recognizes single-color and two-distinct-color
 devotion through a dedicated versioned reduction. It retains the CR 700.5a
 timing boundary instead of treating devotion as an ordinary color or object

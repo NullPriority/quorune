@@ -751,7 +751,8 @@ def fixed_characteristic_battlefield_query_subject(
         # Singular attachment-relative subjects are owned by the attachment
         # reference grammar, not by a public battlefield-set query.
         return None
-    parsed = fixed_battlefield_query_subject(subject)
+    from .receiver_union_queries import fixed_receiver_union_subject
+    parsed = fixed_receiver_union_subject(subject) or fixed_battlefield_query_subject(subject)
     if parsed is None:
         return None
     _relation, predicate, _exclude_source = parsed
@@ -823,6 +824,10 @@ def fixed_power_toughness_battlefield_query(
     if parsed is None or not (
         "creature" in parsed[1].types_all
         or (not parsed[1].types_all and (parsed[1].subtypes_all or parsed[1].subtypes_any))
+        or (parsed[1].any_of and all(
+            'creature' in part.types_all or (not part.types_all and part.subtypes_all
+                and all(canonical_creature_subtype(value) == value for value in part.subtypes_all))
+            for part in parsed[1].any_of))
     ):
         return None
     return parsed

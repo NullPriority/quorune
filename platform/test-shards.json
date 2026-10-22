@@ -312,6 +312,7 @@
       "test_opponent_keyword_prohibition",
       "test_preparation",
       "test_public_condition_surfaces",
+      "test_receiver_query_unions",
       "test_rule_capabilities",
       "test_saga_counter_progression",
       "test_self_cast_restrictions",

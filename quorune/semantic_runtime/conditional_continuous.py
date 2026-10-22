@@ -123,6 +123,7 @@ def _validate_target(
             or predicate.excluded_controllers
             or predicate.exclude_ref is not None
             or predicate.known_to_actor is not None
+            or predicate.any_of
         ):
             raise SemanticNodeError(
                 "fixed public-state queries reserve owner, controller, "

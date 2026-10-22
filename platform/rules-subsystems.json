@@ -1380,7 +1380,7 @@
           "estimated_implementation_hours": 3,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Retain measured original whole-card closure within the combined net-200 delivery; independent unsupported siblings remain blocked.",
+          "expected_downstream_closure": "Retain measured original whole-card closure within a combined delivery meeting the configured net distinct card floor; independent unsupported siblings remain blocked.",
           "explicit_exclusions": [
             "All-kind, chosen and player counter quantities",
             "Unknown counter facts",
@@ -1417,7 +1417,7 @@
           "estimated_implementation_hours": 3,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Measure this reusable component against original pinned whole cards and retain it within a combined net-200 delivery; do not count leaf recognition or unsupported siblings as implemented cards.",
+          "expected_downstream_closure": "Measure this reusable component against original pinned whole cards and retain it within a combined delivery meeting the configured net distinct card floor; do not count leaf recognition or unsupported siblings as implemented cards.",
           "explicit_exclusions": [
             "Aggregation, combat and turn history",
             "Counter quantities, no-counter and chosen-counter queries",
@@ -1452,7 +1452,7 @@
           "estimated_implementation_hours": 3,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Retain distinct original whole-card closure as a component of a combined net-200 delivery; subtract independently confirmed lowering losses.",
+          "expected_downstream_closure": "Retain distinct original whole-card closure as a component of a combined delivery meeting the configured net distinct card floor; subtract independently confirmed lowering losses.",
           "explicit_exclusions": [
             "Copies, targets-only, counts and first-per-turn limits",
             "Departed targets and last-known target information",
@@ -6423,7 +6423,7 @@
           "estimated_implementation_hours": 3,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic net-distinct200 delivery.",
+          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic delivery meeting the configured net distinct card floor.",
           "explicit_exclusions": [
             "Instead branches, additional conditional targets and unrepresented quantities",
             "Multiple or nonmana kicker and unsupported whole-card siblings"
@@ -6457,7 +6457,7 @@
           "estimated_implementation_hours": 3,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic net-distinct200 delivery.",
+          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic delivery meeting the configured net distinct card floor.",
           "explicit_exclusions": [
             "Independent unrepresented result references and whole-card siblings",
             "Optional, conditional, delayed or other-zone returns"
@@ -6492,7 +6492,7 @@
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Retain a measured target occurrence component in one multi-mechanic distinct-net200 delivery batch, proving actual accepted targeting commands and source sacrifice identity.",
+          "expected_downstream_closure": "Retain a measured target occurrence component in one multi-mechanic delivery batch meeting the configured net distinct card floor, proving actual accepted targeting commands and source sacrifice identity.",
           "explicit_exclusions": [
             "First-time or once-per-turn trigger limits",
             "Hidden-zone and player target subscriptions",
@@ -6529,7 +6529,7 @@
           "estimated_implementation_hours": 3,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Measure actual complete CardPrograms and stage the retained kicked result component in a distinct-net200 multi-mechanic delivery batch.",
+          "expected_downstream_closure": "Measure actual complete CardPrograms and stage the retained kicked result component in a multi-mechanic delivery batch meeting the configured net distinct card floor.",
           "explicit_exclusions": [
             "Cost-specific and conditional spell replacement results",
             "Multikicker and multiple or nonmana kicker costs",
@@ -7206,7 +7206,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v534-batched-reusable-card-closure",
-      "compiler_version": "oracle-ir-v537",
+      "compiler_version": "oracle-ir-v538",
       "bundle_id": "bundle:batched-reusable-card-closure-v534",
       "candidate_ids": [
         "compiler:batched-reusable-card-closure-v534"
