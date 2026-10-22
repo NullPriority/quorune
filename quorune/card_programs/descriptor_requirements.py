@@ -13,6 +13,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
         own = (*own, *conditional_recipient_capabilities(value))
         from ..public_zone_condition_model import public_zone_condition_capabilities
         own = (*own, *public_zone_condition_capabilities(value))
+        from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
+        own = (*own, *conditional_free_cast_capabilities(value))
         if value.get('kind') == 'public_quantity_mana':
             from ..public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_CAPABILITY
             PublicQuantityManaOutput.from_dict(value)

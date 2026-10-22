@@ -302,7 +302,12 @@ def compile_fixed_public_alternative_cost(
     line_index: int,
 ) -> FixedPublicAlternativeCostSpec | None:
     """Parse one closed fixed alternative-cost declaration."""
-
+    from .conditional_free_casts import conditional_zero_mana_condition
+    zero_condition = conditional_zero_mana_condition(material_line)
+    if zero_condition is not None:
+        return FixedPublicAlternativeCostSpec(ability_id=f'ab{line_index+1}', line_index=line_index,
+            oracle_line=oracle_line, kind=FixedPublicAlternativeCostKind.PLAIN, condition=zero_condition,
+            cost_text='{0}', mana_requirements=_zero_mana())
     keyword = _KEYWORD.fullmatch(material_line.strip())
     if keyword is not None:
         kind = FixedPublicAlternativeCostKind(

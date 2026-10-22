@@ -2603,6 +2603,19 @@ conditions, team-specific history, tap/reveal/opponent/library/counter/random
 payments, variable or complex mana, multiple nonmana payments, and sibling
 additional, lifecycle, or alternative costs remain residual.
 
+Conditional “without paying its mana cost” forms reuse that owner with an
+explicit version-two condition. The closed grammar requires either one
+caster-controlled basic land type and one opponent-controlled basic land type,
+or any designated commander currently controlled by the caster. The commander
+may be owned by another player. These forms add one zero-mana replacement price
+while preserving the normal printed price, ordinary timing, targets, cost
+increases and atomic payment. Current effective land types, control and phasing
+govern eligibility; later changes do not reprice a committed spell.
+Fixed source-only temporary stat changes use the existing incarnation-bound
+characteristic instruction. A source-equivalent reviewed price/exile compound
+is superseded only when source hashes, target, fixed effect and the represented
+commander price agree with the current typed programs.
+
 Battlefield sources can separately grant a fixed alternative mana price through
 `GlobalAlternativeCostSpec`. Its source-spanned descriptor retains a fixed
 spell type/subtype selector and an optional hand-only restriction. Current

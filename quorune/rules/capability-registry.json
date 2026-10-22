@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 466,
+  "registry_version": 467,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -44026,6 +44026,155 @@
         "test_actual_spawn_cast_and_mill_cross_a_single_library_boundary",
         "test_face_down_exile_counts_owner_without_revealing_identity_or_counting_tokens",
         "test_library_threshold_and_empty_hand_use_current_seats_without_private_identity"
+      ]
+    },
+    {
+      "id": "casting.alternative_cost.conditional_zero_mana",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2e",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One optional intrinsic zero replacement price is eligible under current caster/opponent basic-land types or any currently controlled designated commander.",
+        "inputs": [
+          "closed version2 fixed public alternative condition",
+          "current effective land subtypes/controller/phasing or physical Commander designation",
+          "existing source-complete price declaration and normal cost option owner"
+        ],
+        "outputs": [
+          "one zero-mana alternative alongside normal printed price",
+          "shared current offer/commit eligibility and ordinary final total-cost arithmetic",
+          "no change to ordinary cast timing, targets or postcommit costs"
+        ],
+        "exclusions": [
+          "unrepresented conditional prices, alternate-price combinations and dynamic payment",
+          "intrinsic flash or free timing from price wording",
+          "unowned result companions and identity-dispatched rules"
+        ]
+      },
+      "dependencies": [
+        "casting.alternative_cost.fixed_public"
+      ],
+      "implementation_components": [
+        "quorune.conditional_free_cast_model.validate_free_cast_condition",
+        "quorune.rules.conditional_free_cast_shapes.conditional_free_cast_capabilities",
+        "quorune.compiler.conditional_free_casts.conditional_zero_mana_condition",
+        "quorune.public_alternative_costs.FixedPublicAlternativeCondition",
+        "quorune.public_alternative_costs.FixedPublicAlternativeCostSpec",
+        "quorune.public_alternative_costs.fixed_public_alternative_condition_met",
+        "quorune.rules.casting.alternative_costs.alternative_cost_condition_met",
+        "quorune.card_programs.alternative_price_overlay.shadowed_reviewed_zero_price_keys",
+        "quorune.compiler.fixed_target_effect_sequences.FixedSourceCharacteristicsTemplate"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "New condition descriptors independently infer authority; complete original minima and verified withdrawal reject missing zero-price support.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh full-original and actual Legate offered/accepted free-cast witnesses detect the producer and current condition-verdict omissions.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_new_condition_wire_is_closed_and_old_condition_and_price_stay_exact",
+        "test_pinned_public_surfaces_reject_unowned_timing_prices_and_conditions",
+        "test_condition_reads_caster_current_land_types_and_any_owned_commander",
+        "test_five_actual_legates_offer_both_prices_and_complete_free_creature_casts",
+        "test_land_pair_instants_and_massacre_execute_complete_fixed_results",
+        "test_borrowed_commander_enables_actual_rollick_guardianship_and_maneuver",
+        "test_each_legates_normal_printed_price_remains_available_without_the_condition",
+        "test_land_pair_stale_offer_type_control_and_phasing_require_both_current_relations",
+        "test_zero_price_pays_increases_and_keeps_sorcery_timing_and_post_cast_cost_lock",
+        "test_fourteen_originals_have_complete_admission_and_independent_zero_price_minimum",
+        "test_actual_deepwood_pump_retains_source_incarnation_and_paid_cost",
+        "test_actual_ruse_and_haze_preserve_their_distinct_damage_prevention_scopes",
+        "test_reviewed_price_overlay_requires_same_source_target_result_and_condition",
+        "test_unowned_new_target_companion_stays_residual",
+        "test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify"
+      ],
+      "negative_tests": [
+        "test_new_condition_wire_is_closed_and_old_condition_and_price_stay_exact",
+        "test_pinned_public_surfaces_reject_unowned_timing_prices_and_conditions",
+        "test_condition_reads_caster_current_land_types_and_any_owned_commander",
+        "test_five_actual_legates_offer_both_prices_and_complete_free_creature_casts",
+        "test_land_pair_instants_and_massacre_execute_complete_fixed_results",
+        "test_borrowed_commander_enables_actual_rollick_guardianship_and_maneuver",
+        "test_each_legates_normal_printed_price_remains_available_without_the_condition",
+        "test_land_pair_stale_offer_type_control_and_phasing_require_both_current_relations",
+        "test_zero_price_pays_increases_and_keeps_sorcery_timing_and_post_cast_cost_lock",
+        "test_canonically_verified_conditional_zero_price_withdrawal_blocks_originals",
+        "test_actual_deepwood_pump_retains_source_incarnation_and_paid_cost",
+        "test_actual_ruse_and_haze_preserve_their_distinct_damage_prevention_scopes",
+        "test_reviewed_price_overlay_requires_same_source_target_result_and_condition",
+        "test_unowned_new_target_companion_stays_residual",
+        "test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify"
+      ],
+      "interaction_tests": [
+        "test_five_actual_legates_offer_both_prices_and_complete_free_creature_casts",
+        "test_land_pair_instants_and_massacre_execute_complete_fixed_results",
+        "test_borrowed_commander_enables_actual_rollick_guardianship_and_maneuver",
+        "test_each_legates_normal_printed_price_remains_available_without_the_condition",
+        "test_land_pair_stale_offer_type_control_and_phasing_require_both_current_relations",
+        "test_zero_price_pays_increases_and_keeps_sorcery_timing_and_post_cast_cost_lock",
+        "test_actual_deepwood_pump_retains_source_incarnation_and_paid_cost",
+        "test_actual_ruse_and_haze_preserve_their_distinct_damage_prevention_scopes",
+        "test_reviewed_price_overlay_requires_same_source_target_result_and_condition",
+        "test_unowned_new_target_companion_stays_residual",
+        "test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify"
+      ],
+      "multiplayer_tests": [
+        "test_five_actual_legates_offer_both_prices_and_complete_free_creature_casts",
+        "test_land_pair_instants_and_massacre_execute_complete_fixed_results",
+        "test_borrowed_commander_enables_actual_rollick_guardianship_and_maneuver",
+        "test_each_legates_normal_printed_price_remains_available_without_the_condition",
+        "test_land_pair_stale_offer_type_control_and_phasing_require_both_current_relations",
+        "test_zero_price_pays_increases_and_keeps_sorcery_timing_and_post_cast_cost_lock",
+        "test_actual_deepwood_pump_retains_source_incarnation_and_paid_cost",
+        "test_actual_ruse_and_haze_preserve_their_distinct_damage_prevention_scopes",
+        "test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify"
+      ],
+      "privacy_tests": [
+        "test_five_actual_legates_offer_both_prices_and_complete_free_creature_casts",
+        "test_land_pair_instants_and_massacre_execute_complete_fixed_results",
+        "test_borrowed_commander_enables_actual_rollick_guardianship_and_maneuver",
+        "test_each_legates_normal_printed_price_remains_available_without_the_condition",
+        "test_land_pair_stale_offer_type_control_and_phasing_require_both_current_relations",
+        "test_zero_price_pays_increases_and_keeps_sorcery_timing_and_post_cast_cost_lock",
+        "test_actual_deepwood_pump_retains_source_incarnation_and_paid_cost",
+        "test_actual_ruse_and_haze_preserve_their_distinct_damage_prevention_scopes",
+        "test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify"
+      ],
+      "replay_tests": [
+        "test_five_actual_legates_offer_both_prices_and_complete_free_creature_casts",
+        "test_land_pair_instants_and_massacre_execute_complete_fixed_results",
+        "test_borrowed_commander_enables_actual_rollick_guardianship_and_maneuver",
+        "test_each_legates_normal_printed_price_remains_available_without_the_condition",
+        "test_land_pair_stale_offer_type_control_and_phasing_require_both_current_relations",
+        "test_zero_price_pays_increases_and_keeps_sorcery_timing_and_post_cast_cost_lock",
+        "test_actual_deepwood_pump_retains_source_incarnation_and_paid_cost",
+        "test_actual_ruse_and_haze_preserve_their_distinct_damage_prevention_scopes",
+        "test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify"
       ]
     }
   ]

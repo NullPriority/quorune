@@ -52,6 +52,8 @@ class FixedPublicAlternativeCostKind(str, Enum):
 
 
 class FixedPublicAlternativeConditionKind(str, Enum):
+    LAND_PAIR = 'land_pair'
+    CONTROLLED_COMMANDER = 'controlled_commander'
     ALWAYS = "always"
     CONTROLLER_CAST_ANOTHER_SPELL = "controller_cast_another_spell"
     CONTROLS_BASIC_LAND_TYPE = "controls_basic_land_type"
@@ -67,8 +69,19 @@ class FixedPublicAlternativeCondition:
     kind: FixedPublicAlternativeConditionKind
     basic_land_type: str | None = None
     schema_version: int = 1
+    opponent_basic_land_type: str | None = None
 
     def __post_init__(self) -> None:
+        if self.schema_version == 2:
+            from .conditional_free_cast_model import validate_free_cast_condition
+            if not isinstance(self.kind, FixedPublicAlternativeConditionKind):
+                raise FixedPublicAlternativeCostError('Alternative-cost condition kind is unsupported')
+            try:
+                validate_free_cast_condition(kind=self.kind.value, own_land=self.basic_land_type,
+                    opponent_land=self.opponent_basic_land_type, schema_version=self.schema_version)
+            except ValueError as exc:
+                raise FixedPublicAlternativeCostError(str(exc)) from exc
+            return
         if type(self.schema_version) is not int or self.schema_version != 1:
             raise FixedPublicAlternativeCostError(
                 "Unsupported alternative-cost condition version"
@@ -77,6 +90,9 @@ class FixedPublicAlternativeCondition:
             raise FixedPublicAlternativeCostError(
                 "Alternative-cost condition kind is unsupported"
             )
+        if self.opponent_basic_land_type is not None or self.kind in {
+                FixedPublicAlternativeConditionKind.LAND_PAIR, FixedPublicAlternativeConditionKind.CONTROLLED_COMMANDER}:
+            raise FixedPublicAlternativeCostError('Extended free-cast conditions require version2')
         expected_land = (
             self.kind
             is FixedPublicAlternativeConditionKind.CONTROLS_BASIC_LAND_TYPE
@@ -94,11 +110,14 @@ class FixedPublicAlternativeCondition:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "kind": self.kind.value,
             "basic_land_type": self.basic_land_type,
         }
+        if self.schema_version == 2:
+            value['opponent_basic_land_type'] = self.opponent_basic_land_type
+        return value
 
     @classmethod
     def from_dict(
@@ -108,6 +127,7 @@ class FixedPublicAlternativeCondition:
             "schema_version",
             "kind",
             "basic_land_type",
+            *({'opponent_basic_land_type'} if value.get('schema_version') == 2 else ()),
         }:
             raise FixedPublicAlternativeCostError(
                 "Alternative-cost condition fields are closed"
@@ -117,6 +137,7 @@ class FixedPublicAlternativeCondition:
                 schema_version=value["schema_version"],
                 kind=FixedPublicAlternativeConditionKind(value["kind"]),
                 basic_land_type=value["basic_land_type"],
+                opponent_basic_land_type=value.get('opponent_basic_land_type'),
             )
         except (TypeError, ValueError) as exc:
             raise FixedPublicAlternativeCostError(str(exc)) from exc
@@ -224,6 +245,8 @@ class FixedPublicAlternativeCostSpec:
                 "Keyword alternative cost has the wrong condition"
             )
         if self.kind is FixedPublicAlternativeCostKind.PLAIN and self.condition.kind not in {
+            FixedPublicAlternativeConditionKind.LAND_PAIR,
+            FixedPublicAlternativeConditionKind.CONTROLLED_COMMANDER,
             FixedPublicAlternativeConditionKind.ALWAYS,
             FixedPublicAlternativeConditionKind.CONTROLS_BASIC_LAND_TYPE,
             FixedPublicAlternativeConditionKind.NOT_YOUR_TURN,
@@ -232,6 +255,10 @@ class FixedPublicAlternativeCostSpec:
             raise FixedPublicAlternativeCostError(
                 "Plain alternative cost has an unsupported condition"
             )
+        if self.condition.schema_version == 2 and (
+                self.kind is not FixedPublicAlternativeCostKind.PLAIN or self.cost_text != '{0}'
+                or any(requirements.values()) or self.additional_costs):
+            raise FixedPublicAlternativeCostError('Conditional zero-mana alternative requires exactly the zero replacement price')
 
     @property
     def option_id(self) -> str:
@@ -371,6 +398,13 @@ def fixed_public_alternative_condition_met(
     except (FixedPublicAlternativeCostError, TypeError):
         return False
     kind = condition.kind
+    if kind is FixedPublicAlternativeConditionKind.CONTROLLED_COMMANDER:
+        return any(candidate.zone == 'battlefield' and not candidate.phased_out
+            and candidate.controller == seat and candidate.is_commander for candidate in host.state.cards.values())
+    if kind is FixedPublicAlternativeConditionKind.LAND_PAIR:
+        return _controlled_basic_land(host, seat, condition.basic_land_type) and any(
+            opponent != seat and _controlled_basic_land(host, opponent, condition.opponent_basic_land_type)
+            for opponent in host.active_seats)
     if kind is FixedPublicAlternativeConditionKind.ALWAYS:
         return True
     if kind is FixedPublicAlternativeConditionKind.YOUR_TURN:

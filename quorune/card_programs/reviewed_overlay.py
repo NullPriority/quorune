@@ -279,13 +279,14 @@ def shadowed_reviewed_program_keys(
     """Apply shared current-program precedence in both assembly paths."""
     generated = tuple(generated_programs)
     reviewed = tuple(reviewed_programs)
+    from .alternative_price_overlay import shadowed_reviewed_zero_price_keys
     return shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_event_return_keys(record, generated, reviewed) | shadowed_reviewed_subtype_anthem_keys(
         record, generated, reviewed,
-    )
+    ) | shadowed_reviewed_zero_price_keys(record, generated, reviewed)
 
 
 __all__ = [

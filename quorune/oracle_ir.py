@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v541"
+ORACLE_COMPILER_VERSION = "oracle-ir-v542"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -352,19 +352,9 @@ def _effect_template(
         re.IGNORECASE,
     )
     if match:
-        return (
-            f"modify-self-{match.group('kind').casefold()}-stats-eot-v1",
-            (
-                {
-                    "op": "modify_stats_until_end_of_turn",
-                    "card": "$source",
-                    "power": int(match.group("power")),
-                    "toughness": int(match.group("toughness")),
-                },
-            ),
-            None,
-            ("cr-611-continuous-effects",),
-        )
+        from .compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+        return FixedSourceCharacteristicsTemplate(source_kind=match.group('kind').casefold(),
+            power=int(match.group('power')), toughness=int(match.group('toughness'))).compiled()
     match = re.fullmatch(
         r"this (?P<kind>artifact|creature|enchantment|permanent) gains "
         r"(?P<keyword>deathtouch|double strike|first strike|flying|haste|"

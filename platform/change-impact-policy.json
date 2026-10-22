@@ -7757,6 +7757,30 @@
         "test_fixed_public_state_characteristics",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "conditional-zero-mana-prices",
+      "patterns": [
+        "quorune/conditional_free_cast_model.py",
+        "quorune/compiler/conditional_free_casts.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/compiler/static_runtime_nodes.py",
+        "quorune/public_alternative_costs.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "tests/test_conditional_free_casts.py",
+        "tests/fixtures/conditional-free-cast-cards.json",
+        "quorune/rules/conditional_free_cast_shapes.py",
+        "quorune/card_programs/alternative_price_overlay.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "quorune/oracle_ir.py"
+      ],
+      "test_modules": [
+        "test_conditional_free_casts",
+        "test_fixed_public_alternative_costs",
+        "test_global_alternative_costs",
+        "test_fixed_alternative_additional_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

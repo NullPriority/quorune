@@ -735,6 +735,15 @@ events; plain forms may consume the active turn or a current controlled
 basic-land subtype. The handler creates no casting-legality, payment, history,
 zone-transition, or runtime Oracle-text authority of its own.
 
+The nested condition's version two represents a current basic-land pair or a
+controlled commander for an intrinsic zero-mana alternative. It is valid only
+with the zero replacement mana vector and no bundled nonmana payment. The
+existing cast-option owner keeps the normal price and rechecks the condition
+on acceptance. Borrowed designated commanders qualify, copies do not acquire
+the designation, and phased-out sources do not qualify. An alternative price
+does not grant instant timing or bypass a casting prohibition. Taxes and other
+supported mandatory costs still enter ordinary total-cost determination.
+
 `replacement.zone.kicked-entry.v1` consumes that immutable fact for one closed
 mandatory self-replacement. It creates a nested +1/+1 counter event and an
 optional affected-object Flying, First Strike, Haste, or Trample grant, then

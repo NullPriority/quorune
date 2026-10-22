@@ -283,6 +283,7 @@
       "test_conditional_color_grants",
       "test_conditional_copy_values",
       "test_conditional_flash",
+      "test_conditional_free_casts",
       "test_conditional_recipients",
       "test_continuous_compiler_hardening",
       "test_declare_attackers_rules",
