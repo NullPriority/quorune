@@ -144,6 +144,10 @@ class _FixedPublicStateSnapshotResolver:
         fact = condition.fact
         if not isinstance(fact, FixedPublicStateFact):
             return None
+        if fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER:
+            return int(any(card.zone == 'battlefield' and not card.phased_out
+                and card.is_commander and card.owner == source.controller and card.controller == source.controller
+                for card in self.state.cards.values()))
         if fact is FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON:
             return self._most_common_color_quantity(condition)
         if fact in {

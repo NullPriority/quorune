@@ -60,6 +60,7 @@
     "tests/fixtures/conditional-exile-cards.json",
     "tests/fixtures/conditional-flash-cards.json",
     "tests/fixtures/conditional-query-declaration-cards.json",
+    "tests/fixtures/conditional-recipient-cards.json",
     "tests/fixtures/controlled-counter-cost-cards.json",
     "tests/fixtures/controller-damage-cards.json",
     "tests/fixtures/controller-sacrifice-cards.json",

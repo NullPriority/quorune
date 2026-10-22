@@ -800,6 +800,16 @@ state predicate. Declaration restrictions consume the same snapshot for their
 closed public conditions; they do not add a combat-local query registry. No
 runtime Oracle parser or parallel applicability registry is involved.
 
+Fixed conditional recipient roles are additive data on the existing
+`continuous.characteristics.fixed-public-state.v1` descriptor. Each role is
+validated against its exact target query; unique-creature roles also require
+the complete exactly-one count condition. Separate descriptors retain one
+source condition with distinct component indices for self and other recipients.
+Commander presence reads current designation, owner, controller, zone and
+phasing facts. Type changes, creature counts, commander control, source ability
+loss and departure immediately change the ordinary layer-6/7c contributions.
+Historical descriptors omit the recipient field and keep their encoding.
+
 `continuous.characteristics.public-state-keywords.v1` retains complete typed
 keyword fragments behind the same public-state predicate and target relation.
 Its keyword labels and fragments use the ordinary query-grant validator;

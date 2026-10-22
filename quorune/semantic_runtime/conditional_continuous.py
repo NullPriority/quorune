@@ -283,6 +283,9 @@ class FixedPublicStateCharacteristicsHandler:
     def validate(
         self, descriptor: Mapping[str, Any]
     ) -> FixedPublicStateCharacteristicsNode:
+        if 'recipient' in descriptor:
+            from ..conditional_recipient_model import validate_conditional_recipient_descriptor
+            validate_conditional_recipient_descriptor(descriptor)
         exact_fields(
             descriptor,
             {
@@ -292,6 +295,7 @@ class FixedPublicStateCharacteristicsHandler:
                 "source_condition",
                 "target",
                 "modifier",
+                *({'recipient'} if 'recipient' in descriptor else ()),
             },
             field="runtime handler",
         )

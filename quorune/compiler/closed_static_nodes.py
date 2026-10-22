@@ -74,6 +74,12 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
     if graveyard is not None:
         return graveyard
+    from .conditional_recipients import conditional_recipient_node
+    recipients = conditional_recipient_node(node_id=node_id, line=line, material_line=material_line,
+        span=span, source_name=face_name or record.name, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if recipients is not None:
+        return recipients
     card_types, subtypes, _supertypes = type_parts(type_line)
     return closed_static_or_replacement_node(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=face_name or record.name, card_types=card_types,

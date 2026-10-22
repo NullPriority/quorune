@@ -85,6 +85,7 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    CONTROLLER_CONTROLS_OWN_COMMANDER = 'controller_controls_own_commander'
     PERMANENT_COLOR_IS_MOST_COMMON = 'permanent_color_is_most_common'
     CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES = (
         "controller_graveyard_distinct_card_types"
@@ -277,6 +278,9 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
+    if fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER and (
+            schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError('Commander presence requires one boolean current designation fact')
     if schema_version not in {3, 4}:
         if (schema_version != 7 or fact is not FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON
                 or amount != 1 or type(parameter) is not str or parameter not in 'WUBRG' or len(parameter) != 1):

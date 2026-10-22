@@ -1423,6 +1423,10 @@ def _fixed_public_state_condition(
 ) -> FixedPublicStateConditionSpec | None:
     from .public_condition_surfaces import normalize_public_condition_surface
     normalized = normalize_public_condition_surface(text.strip().rstrip("."))
+    from .conditional_recipient_conditions import conditional_recipient_condition
+    recipient_condition = conditional_recipient_condition(normalized)
+    if recipient_condition is not None:
+        return recipient_condition
     if normalized.casefold() in {"it's your turn","it’s your turn"}:
         normalized='your turn'
     total = re.fullmatch(r'there are (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+) or more counters among creatures you control', normalized, re.I)

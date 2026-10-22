@@ -7711,6 +7711,31 @@
         "test_priced_mana_sources",
         "test_ordered_amount_clauses"
       ]
+    },
+    {
+      "id": "conditional-characteristic-recipients",
+      "patterns": [
+        "quorune/conditional_recipient_model.py",
+        "quorune/compiler/conditional_recipients.py",
+        "quorune/compiler/conditional_recipient_conditions.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/compiler/static_runtime_nodes.py",
+        "quorune/continuous_conditions.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/semantic_runtime/conditional_continuous.py",
+        "tests/test_conditional_recipients.py",
+        "tests/fixtures/conditional-recipient-cards.json"
+      ],
+      "test_modules": [
+        "test_conditional_recipients",
+        "test_fixed_public_state_characteristics",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_commander_characteristic_grants",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

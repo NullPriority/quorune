@@ -58,6 +58,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/ability_fragments.py",
         "quorune/object_query_union.py",
         "quorune/static_player_restriction_model.py",
+        "quorune/conditional_recipient_model.py",
         "quorune/ability_line_normalization.py",
         "quorune/conditional_copy_model.py",
         "quorune/copy_value_types.py",
@@ -437,6 +438,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == 'quorune/conditional_recipient_model.py':
+        return 'continuous_effects'
     if relative == 'quorune/static_player_restriction_model.py':
         return 'casting_activation_and_costs'
     if relative in {'quorune/activation_x.py','quorune/rules/activation/x_costs.py',

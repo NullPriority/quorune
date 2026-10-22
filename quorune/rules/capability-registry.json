@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 464,
+  "registry_version": 465,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -43776,6 +43776,136 @@
         "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
         "test_drannith_command_and_exile_permissions_recheck_source_departure",
         "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+      ]
+    },
+    {
+      "id": "continuous.characteristics.conditional_recipients",
+      "version": 1,
+      "official_rules": [
+        "109.2",
+        "109.5",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "903.3",
+        "903.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed characteristic clauses share a live source condition while preserving self, other-set and current sole-creature recipient scope.",
+        "inputs": [
+          "closed conditional recipient roles with ordinary fixed-state descriptors",
+          "current land or creature counts and designated commander owner/controller facts",
+          "existing current static components and layer6/7c emission"
+        ],
+        "outputs": [
+          "separate fixed source and set contributions without overlap double counting",
+          "exactly-one live creature recipient and fixed keyword/stat result",
+          "owned controlled Commander presence distinct from opponent commander control"
+        ],
+        "exclusions": [
+          "unowned conditional type changes, hidden identity and numeric layer cycles",
+          "arbitrary antecedents or unmatched recipient clauses",
+          "independently unsupported whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "implementation_components": [
+        "quorune.conditional_recipient_model.ConditionalRecipientSpec",
+        "quorune.conditional_recipient_model.validate_conditional_recipient_descriptor",
+        "quorune.conditional_recipient_model.conditional_recipient_capabilities",
+        "quorune.compiler.conditional_recipients.conditional_recipient_template",
+        "quorune.compiler.conditional_recipient_conditions.conditional_recipient_condition",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver",
+        "quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete descriptors independently derive recipient and Commander authority; stripped minima and canonically verified withdrawal keep sources residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete-original and actual Lieutenant consequence witnesses detect recipient producer and current commander-fact omissions.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_roles_and_exactly_one_condition_have_closed_legacy_compatible_wire",
+        "test_pinned_bodies_keep_separate_recipients_and_reject_scope_drift",
+        "test_commander_presence_fact_requires_boolean_designation_and_independent_minimum",
+        "test_actual_advocate_cast_and_land_animation_apply_overlap_once",
+        "test_actual_field_marshal_cast_grants_current_creatures_vigilance_and_self_stats",
+        "test_actual_baloth_cast_buffs_source_once_and_grants_other_creatures_trample",
+        "test_actual_seclusion_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_wanderings_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_second_creature_and_removal_move_the_unique_bonus_live",
+        "test_actual_source_ability_loss_and_departure_remove_both_recipient_grants",
+        "test_five_originals_have_complete_programs_and_independent_recipient_minimum"
+      ],
+      "negative_tests": [
+        "test_roles_and_exactly_one_condition_have_closed_legacy_compatible_wire",
+        "test_pinned_bodies_keep_separate_recipients_and_reject_scope_drift",
+        "test_commander_presence_fact_requires_boolean_designation_and_independent_minimum",
+        "test_actual_advocate_cast_and_land_animation_apply_overlap_once",
+        "test_actual_field_marshal_cast_grants_current_creatures_vigilance_and_self_stats",
+        "test_actual_baloth_cast_buffs_source_once_and_grants_other_creatures_trample",
+        "test_actual_seclusion_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_wanderings_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_second_creature_and_removal_move_the_unique_bonus_live",
+        "test_actual_source_ability_loss_and_departure_remove_both_recipient_grants",
+        "test_lieutenant_checks_current_controller_own_commander_and_phasing",
+        "test_canonically_verified_conditional_recipient_withdrawal_blocks_all_originals"
+      ],
+      "interaction_tests": [
+        "test_actual_advocate_cast_and_land_animation_apply_overlap_once",
+        "test_actual_field_marshal_cast_grants_current_creatures_vigilance_and_self_stats",
+        "test_actual_baloth_cast_buffs_source_once_and_grants_other_creatures_trample",
+        "test_actual_seclusion_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_wanderings_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_second_creature_and_removal_move_the_unique_bonus_live",
+        "test_actual_source_ability_loss_and_departure_remove_both_recipient_grants",
+        "test_lieutenant_checks_current_controller_own_commander_and_phasing"
+      ],
+      "multiplayer_tests": [
+        "test_actual_advocate_cast_and_land_animation_apply_overlap_once",
+        "test_actual_field_marshal_cast_grants_current_creatures_vigilance_and_self_stats",
+        "test_actual_baloth_cast_buffs_source_once_and_grants_other_creatures_trample",
+        "test_actual_seclusion_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_wanderings_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_second_creature_and_removal_move_the_unique_bonus_live",
+        "test_actual_source_ability_loss_and_departure_remove_both_recipient_grants"
+      ],
+      "privacy_tests": [
+        "test_actual_advocate_cast_and_land_animation_apply_overlap_once",
+        "test_actual_field_marshal_cast_grants_current_creatures_vigilance_and_self_stats",
+        "test_actual_baloth_cast_buffs_source_once_and_grants_other_creatures_trample",
+        "test_actual_seclusion_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_wanderings_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_second_creature_and_removal_move_the_unique_bonus_live",
+        "test_actual_source_ability_loss_and_departure_remove_both_recipient_grants"
+      ],
+      "replay_tests": [
+        "test_actual_advocate_cast_and_land_animation_apply_overlap_once",
+        "test_actual_field_marshal_cast_grants_current_creatures_vigilance_and_self_stats",
+        "test_actual_baloth_cast_buffs_source_once_and_grants_other_creatures_trample",
+        "test_actual_seclusion_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_wanderings_cast_grants_only_current_sole_creature_and_lifelink_damage",
+        "test_actual_second_creature_and_removal_move_the_unique_bonus_live",
+        "test_actual_source_ability_loss_and_departure_remove_both_recipient_grants"
       ]
     }
   ]

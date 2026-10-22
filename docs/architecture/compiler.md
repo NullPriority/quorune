@@ -709,6 +709,16 @@ constructing their closed quantity descriptor. An unsupported condition keeps
 its source-spanned residual; a successful direct-target predicate does not
 imply that the narrower quantity owner can evaluate it.
 
+`compiler/conditional_recipients.py` composes fixed self and controlled-set
+clauses beneath one complete public condition. Closed recipient roles preserve
+source-only, other-creature and other-land-creature scope, so a source that also
+joins the set receives one modifier. “Exactly one creature” uses the existing
+minimum and maximum count leaves; “that creature” becomes the current controlled
+creature set under that exact condition. Lieutenant checks current battlefield
+presence of a commander owned and controlled by the source controller, using
+the designation rather than printed identity. Each descriptor independently
+requires the recipient capability and any commander designation authority.
+
 `compiler/declaration_nodes.py` composes one independently exact
 recipient-relative declaration requirement or restriction with fixed
 power/toughness and represented keywords behind a closed public-state
