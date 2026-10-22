@@ -7617,6 +7617,34 @@
         "test_live_modifier_quantities",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "paid-intrinsic-graveyard-casting",
+      "patterns": [
+        "quorune/rules/graveyard_cast_costs.py",
+        "quorune/rules/fixed_payment_groups.py",
+        "quorune/compiler/paid_graveyard_templates.py",
+        "tests/test_paid_graveyard_casts.py",
+        "tests/fixtures/paid-graveyard-cast-cards.json",
+        "quorune/rules/graveyard_payment_sources.py",
+        "quorune/compiler/paid_graveyard_nodes.py",
+        "quorune/semantic_runtime/paid_graveyard_casts.py",
+        "quorune/semantic_runtime/casting_activation_metadata.py",
+        "quorune/rules/zone_action_permissions.py",
+        "quorune/rules/self_graveyard_discard.py",
+        "quorune/rules/casting/base_cost_options.py",
+        "quorune/rules/casting/global_alternatives.py",
+        "quorune/rules/casting/additional_zone_costs.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/card_programs/runtime_requirements.py"
+      ],
+      "test_modules": [
+        "test_paid_graveyard_casts",
+        "test_self_zone_discard_casts",
+        "test_fixed_zone_change_additional_costs",
+        "test_spell_random_discard_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

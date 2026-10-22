@@ -19387,6 +19387,141 @@
       ],
       "interaction_order": 2,
       "assertion": "The pinned Kami War source retains unresolved replacement ordering and Saga semantics. An exact characteristic fragment never clears those siblings or provides strict gameplay admission; unavailable commands reject before mutation and the saved state replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_life_zone",
+        "capability.casting.zone.self_graveyard.fixed_payment"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_life_zone",
+        "casting.zone.self_graveyard.fixed_payment"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual own-graveyard casts retain fixed life plus selected resources, while normal hand casts do not inherit the intrinsic price. Pending source casts resolve their complete bodies and preserve private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_discard",
+        "capability.casting.zone.self_graveyard.fixed_payment"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "casting.zone.self_graveyard.fixed_payment"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Demonic Embrace pays its own three-life and selected-hand discard price with its ordinary mana, targets a real creature and resolves the complete Aura body."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_mana_creatures_can_tap_before_being_sacrificed_for_the_same_cast",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.casting.zone.self_graveyard.fixed_payment"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "casting.zone.self_graveyard.fixed_payment"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Scourge uses its fixed graveyard BB alternative and two controlled creature sacrifices. Two real Birds can produce the required mana before being sacrificed for that same cast; payment and the pending spell replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_exile",
+        "capability.casting.zone.self_graveyard.fixed_payment"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_exile",
+        "casting.zone.self_graveyard.fixed_payment"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Helbrute casts from its owner graveyard by exiling another owned creature card, never the casting source, and resolves its complete Haste creature body with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_additional_graveyard_prices_keep_resources_with_a_global_alternative_price",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.zone.self_graveyard.fixed_payment"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.zone.self_graveyard.fixed_payment"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Fist of Suns replaces Demonic Embrace mana while its intrinsic graveyard life/discard price remains mandatory and paid exactly once. The corresponding fixed-alternative graveyard methods reject combining a second alternative."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.casting.zone.self_graveyard.fixed_payment"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "casting.zone.self_graveyard.fixed_payment"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real graveyard casts of Raffine Guidance and Demonic Embrace target and attach to an existing creature through the ordinary Aura owner, preserve pending load, and produce the full stat, Flying and added-Demon outcomes."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_life_zone",
+        "capability.casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_life_zone",
+        "casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "interaction_order": 2,
+      "assertion": "The canonical life plus hand-resource transaction charges Demonic Embrace three life and exactly one selected owned card, with principal-correct hidden choices and pending replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_life_zone",
+        "capability.casting.additional_cost.fixed_sacrifice"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_life_zone",
+        "casting.additional_cost.fixed_sacrifice"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Wickerfolk pays two life and sacrifices one real Memnite. Its artifact/creature union contains that object once; native resource payment resolves through the shared canonical owners."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_life_zone",
+        "capability.casting.additional_cost.zone_change.fixed_exile"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_life_zone",
+        "casting.additional_cost.zone_change.fixed_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "A clearly constructed, uncounted source pays normal B plus two life and one other owned graveyard creature exile. Self-payment rejects before mutation, and the pending cast, private projection and result replay."
     }
   ]
 }

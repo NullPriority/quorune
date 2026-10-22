@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 460,
+  "registry_version": 461,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -43223,6 +43223,187 @@
         "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
         "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
         "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+      ]
+    },
+    {
+      "id": "casting.zone.self_graveyard.fixed_payment",
+      "version": 1,
+      "official_rules": [
+        "113.6f",
+        "118.8",
+        "118.9",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability": {
+        "summary": "An intrinsic own-graveyard casting method with ordinary fixed replacement mana or fixed additional life and selected discard, sacrifice or graveyard exile.",
+        "inputs": [
+          "complete typed price and current owned source",
+          "canonical shared cost legality and payment"
+        ],
+        "outputs": [
+          "immutable casting method or composite payment contract"
+        ],
+        "exclusions": [
+          "variable/conditional prices and unsupported entry consequences",
+          "other owners or source zones",
+          "face-down/copied/card-form or additional printed cost-method variants outside the closed production"
+        ]
+      },
+      "dependencies": [
+        "casting.zone.self_public_repeatable"
+      ],
+      "implementation_components": [
+        "quorune.rules.graveyard_cast_costs.PaidGraveyardCastSpec",
+        "quorune.rules.graveyard_cast_costs.validate_paid_graveyard_option",
+        "quorune.compiler.paid_graveyard_templates.paid_graveyard_spec",
+        "quorune.semantic_runtime.paid_graveyard_casts.PaidGraveyardCastPermissionHandler",
+        "quorune.rules.graveyard_cast_costs.compiled_paid_graveyard_specs",
+        "quorune.rules.graveyard_cast_costs.paid_graveyard_runtime_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Current complete-source admission and independent stored-payment decoding require the zone method, its actual selected-resource/life owners and any life+resource composition owner. Removing each declared owner rejects with a fresh current closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original whole-program binding and native payment witnesses protect compiler production, actual offered graveyard methods and the independent runtime minimum; these checks are required before accepting the family.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_pinned_originals_have_complete_payment_programs_and_independent_minima",
+        "test_all_five_normal_hand_casts_keep_printed_mana_and_no_graveyard_resource_price",
+        "test_countered_paid_spell_keeps_payment_and_recast_uses_fresh_resources_and_incarnation"
+      ],
+      "negative_tests": [
+        "test_missing_duplicate_foreign_resource_and_principal_payments_reject_without_mutation",
+        "test_unrepresented_entry_surcharge_and_foreign_graveyard_sources_stay_closed",
+        "test_fixed_graveyard_alternatives_cannot_combine_or_use_an_unpaid_normal_route",
+        "test_pinned_originals_have_complete_payment_programs_and_independent_minima",
+        "test_verified_owner_withdrawal_blocks_only_the_affected_payment_branches",
+        "test_permission_handler_and_selected_price_seal_reject_drift_before_mutation",
+        "test_source_scope_rejects_other_cost_methods_variable_mana_and_printed_additional_costs"
+      ],
+      "interaction_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_additional_graveyard_prices_keep_resources_with_a_global_alternative_price",
+        "test_mana_creatures_can_tap_before_being_sacrificed_for_the_same_cast",
+        "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner",
+        "test_all_five_normal_hand_casts_keep_printed_mana_and_no_graveyard_resource_price",
+        "test_countered_paid_spell_keeps_payment_and_recast_uses_fresh_resources_and_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_missing_duplicate_foreign_resource_and_principal_payments_reject_without_mutation"
+      ],
+      "privacy_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner",
+        "test_all_five_normal_hand_casts_keep_printed_mana_and_no_graveyard_resource_price",
+        "test_countered_paid_spell_keeps_payment_and_recast_uses_fresh_resources_and_incarnation"
+      ],
+      "replay_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_additional_graveyard_prices_keep_resources_with_a_global_alternative_price",
+        "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner",
+        "test_all_five_normal_hand_casts_keep_printed_mana_and_no_graveyard_resource_price",
+        "test_countered_paid_spell_keeps_payment_and_recast_uses_fresh_resources_and_incarnation"
+      ]
+    },
+    {
+      "id": "casting.additional_cost.fixed_life_zone",
+      "version": 1,
+      "official_rules": [
+        "118.8",
+        "601.2f",
+        "601.2g",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review",
+        "traditional"
+      ],
+      "applicability": {
+        "summary": "A fixed life payment composed with one canonical selected hand-discard, battlefield-sacrifice or own-graveyard-exile price.",
+        "inputs": [
+          "complete typed price and current owned source",
+          "canonical shared cost legality and payment"
+        ],
+        "outputs": [
+          "immutable casting method or composite payment contract"
+        ],
+        "exclusions": [
+          "variable/conditional prices and unsupported entry consequences",
+          "other owners or source zones",
+          "face-down/copied/card-form or additional printed cost-method variants outside the closed production"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.fixed_life_payment"
+      ],
+      "implementation_components": [
+        "quorune.rules.fixed_payment_groups.decode_fixed_life_zone_costs",
+        "quorune.rules.fixed_payment_groups.fixed_life_zone_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Current complete-source admission and independent stored-payment decoding require the zone method, its actual selected-resource/life owners and any life+resource composition owner. Removing each declared owner rejects with a fresh current closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original whole-program binding and native payment witnesses protect compiler production, actual offered graveyard methods and the independent runtime minimum; these checks are required before accepting the family.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_pinned_originals_have_complete_payment_programs_and_independent_minima",
+        "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner"
+      ],
+      "negative_tests": [
+        "test_missing_duplicate_foreign_resource_and_principal_payments_reject_without_mutation",
+        "test_unrepresented_entry_surcharge_and_foreign_graveyard_sources_stay_closed",
+        "test_fixed_graveyard_alternatives_cannot_combine_or_use_an_unpaid_normal_route",
+        "test_pinned_originals_have_complete_payment_programs_and_independent_minima",
+        "test_verified_owner_withdrawal_blocks_only_the_affected_payment_branches",
+        "test_permission_handler_and_selected_price_seal_reject_drift_before_mutation"
+      ],
+      "interaction_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_additional_graveyard_prices_keep_resources_with_a_global_alternative_price",
+        "test_mana_creatures_can_tap_before_being_sacrificed_for_the_same_cast",
+        "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner"
+      ],
+      "multiplayer_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_missing_duplicate_foreign_resource_and_principal_payments_reject_without_mutation"
+      ],
+      "privacy_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner"
+      ],
+      "replay_tests": [
+        "test_all_five_originals_pay_and_resolve_with_pending_load_private_projection_and_replay",
+        "test_additional_graveyard_prices_keep_resources_with_a_global_alternative_price",
+        "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner"
       ]
     }
   ]

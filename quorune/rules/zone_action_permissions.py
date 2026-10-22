@@ -45,6 +45,9 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any) -> bool:
 
 
 def compiled_zone_cast_permission(host: Any, seat: str, card: Any) -> bool:
+    from .graveyard_cast_costs import compiled_paid_graveyard_specs
+    if compiled_paid_graveyard_specs(host, seat, card):
+        return True
     if compiled_self_graveyard_discard_specs(host,seat,card):
         return True
     if compiled_ordinary_zone_cast_permission(host, seat, card):

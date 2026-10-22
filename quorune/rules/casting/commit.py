@@ -448,7 +448,8 @@ def _resolve_fixed_zone_change_additional_cost(
         raise CastProposalError(
             str(exc), reason="additional_cost_malformed"
         ) from exc
-    if cost is None or len(raw_costs) != 1:
+    from ..fixed_payment_groups import fixed_life_zone_costs
+    if cost is None or (len(raw_costs) != 1 and not fixed_life_zone_costs(raw_costs)):
         raise CastProposalError(
             "The zone-change additional cost is outside the represented family",
             reason="additional_cost_unsupported",

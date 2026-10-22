@@ -42,6 +42,7 @@ from ..rules.source_block_pairs import source_block_pair_runtime_dependencies
 from ..rules.nonmana_buyback_costs import nonmana_buyback_runtime_dependencies
 from ..rules.token_prowess_requirements import token_prowess_runtime_dependencies
 from ..rules.city_blessing_shapes import city_activation_runtime_dependencies
+from ..rules.graveyard_cast_costs import paid_graveyard_runtime_dependencies
 
 
 def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
@@ -94,6 +95,8 @@ def program_dynamic_runtime_requirements(program):
     required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     try:required.update(city_activation_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_city_activation:invalid:{exc}')
+    try:required.update(paid_graveyard_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_paid_graveyard:invalid:{exc}')
     if fused is not None:
         required.update(fused[0]);blockers.update(fused[1])
     try:required.update(nonmana_equip_runtime_dependencies(program))

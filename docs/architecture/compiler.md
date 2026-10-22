@@ -986,6 +986,16 @@ ordinary cast semantics; Max Speed and monarch predicates retain their own
 capability requirements. Additional costs, alternative zones, hidden conditions,
 permission riders and unsupported siblings remain outside this production.
 
+`compiler/paid_graveyard_templates.py` and its record-aware node owner lower a
+complete ordinary intrinsic graveyard price. A fixed mana replacement remains
+distinct from additional life, hand discard, creature or artifact/creature
+sacrifice, and another own-graveyard creature exile. A decorative title is
+retained in the source span while the complete clause supplies its semantics.
+The node declares the payment's actual owners and current-ability fragment;
+independent runtime decoding rejects a missing owner or changed price. The
+record-aware production excludes variable printed mana, other casting methods,
+printed additional-cost companions and unrepresented entry consequences.
+
 Attached characteristic grammar represents fixed modifiers per Equipment,
 Aura, or Aura/Equipment attached to the recipient. The compiler emits the
 versioned recipient-relative public quantity; the ordinary attached owner

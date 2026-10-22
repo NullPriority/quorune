@@ -7,12 +7,11 @@ from copy import deepcopy
 from dataclasses import dataclass
 import hashlib
 
-from ..card_program_faces import program_matches_face
-from ..card_programs.admission import program_has_complete_card_program_admission
 from ..additional_cost_vocabulary import DISCARD_ONE_COST
 from ..object_predicate import ObjectQuerySpec
 from ..util import stable_json
 from .casting_additional_costs import FixedZoneChangeAdditionalCost
+from .graveyard_payment_sources import compiled_graveyard_payment_specs
 
 
 CAPABILITY = 'casting.zone.self_graveyard.fixed_discard'
@@ -69,23 +68,8 @@ class SelfGraveyardDiscardSpec:
 
 
 def compiled_self_graveyard_discard_specs(host, seat, card):
-    if (card.owner != seat or card.zone != 'graveyard' or card.face_down or card.object_kind != 'card'
-            or card.annotations.get('copy_overrides') is not None):
-        return ()
-    record=host.card_record(card)
-    if record is None:return ()
-    from ..semantic_runtime.casting_activation_metadata import default_self_zone_cast_permission_registry
-    registry=default_self_zone_cast_permission_registry();found=[];components=None
-    for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,active_zone='all',event=EVENT):
-        descriptors=[row for row in program.handlers if row.get('handler_id')==HANDLER_ID]
-        if not descriptors:continue
-        if (not host.semantic_program_is_current_trusted(program) or not program_has_complete_card_program_admission(program)
-                or not program_matches_face(record,program,card)):
-            continue
-        if components is None:components=frozenset(host._effective_static_component_keys(card))
-        if program.key not in components:continue
-        found.extend(spec for row in descriptors for spec in registry.lower(row,None))
-    return tuple(sorted(set(found),key=lambda spec:spec.discard_count))
+    return tuple(sorted(compiled_graveyard_payment_specs(host, seat, card, HANDLER_ID),
+        key=lambda spec: spec.discard_count))
 
 
 def self_graveyard_discard_base_options(host, seat, card, printed: Sequence[Mapping], *,
@@ -96,6 +80,8 @@ def self_graveyard_discard_base_options(host, seat, card, printed: Sequence[Mapp
 
 
 def validate_self_graveyard_discard_option(host, seat, card, option, *, origin):
+    from .graveyard_cast_costs import validate_paid_graveyard_option
+    validate_paid_graveyard_option(host, seat, card, option, origin=origin)
     raw=option.get(CONTEXT_FIELD)
     if raw is None:
         if str(option.get('id','')).startswith('graveyard-discard:'):

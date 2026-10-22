@@ -837,6 +837,25 @@ discard descriptor before payment; replacements and atomic movement remain
 with the existing zone-cost transaction. The permission is repeatable and
 retains ordinary resolution destinations and timing.
 
+`permission.cast.self-graveyard-fixed-payment.v1` supplies an intrinsic method
+with fixed replacement mana or fixed additional life and selected resources.
+Its immutable payment value distinguishes an alternative price from costs added
+to the existing mana price. The ordinary zone-permission reader excludes this
+method: zone access and its sealed price must be selected together. Current
+owner, face, whole-source admission and the shared ability-component key gate
+discovery and commit. Replacement prices cannot combine with another
+alternative; an additional-resource method can use an independently applicable
+global mana alternative while retaining every resource payment.
+
+The canonical casting owners select and commit one fixed life payment together
+with a selected discard, sacrifice or graveyard exile. Their shared closed
+codec is used by both offer selection and commit validation. Mana abilities
+remain available before the resources are paid; tapping a mana creature and
+then sacrificing it for the same spell is legal. Normal hand costs, resolution
+destinations and the earlier fixed-discard wire remain unchanged. Variable or
+conditional prices, multiface or copied sources, other printed cost methods,
+and unrepresented entry or surcharge consequences remain outside this family.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two

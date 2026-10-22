@@ -28,9 +28,12 @@ def is_battlefield_optional_cost_option(option,optional_id):
 def battlefield_alternative_base_options(host,seat,card,*,cast_type_line,enabled,has_mana_x,x_value,
     commander_tax,temporary_permission):
     if not enabled or has_mana_x and x_value not in (None,0):return []
-    if card.zone not in {'hand','command'} and not (
+    ordinary_zone = card.zone in {'hand','command'} or (
         compiled_ordinary_zone_cast_permission(host,seat,card) or card.zone=='exile' and temporary_permission
-    ):return []
+    )
+    from ..graveyard_cast_costs import compiled_paid_graveyard_specs
+    paid_zone = tuple(spec for spec in compiled_paid_graveyard_specs(host,seat,card) if spec.mana_cost is None)
+    if not ordinary_zone and not paid_zone:return []
     registry=default_cast_cost_component_registry();sources=[]
     for source in host._semantic_event_sources(zones={'battlefield'}):
         if source.zone!='battlefield' or source.phased_out or source.controller!=seat:continue
@@ -58,8 +61,10 @@ def battlefield_alternative_base_options(host,seat,card,*,cast_type_line,enabled
                 identity={'source':source.object_id,'logical':source.logical_object_id,'program':program.key,'grant':spec.to_dict()}
                 identity_hash=hashlib.sha256(stable_json(identity).encode('utf-8')).hexdigest()[:24]
                 requirements=dict(spec.mana);requirements['GENERIC']+=commander_tax
-                result.append({'id':'battlefield-alternative:'+identity_hash,'kind':'alternate',
+                option={'id':'battlefield-alternative:'+identity_hash,'kind':'alternate',
                     'label':'Alternative mana cost from '+source.printed_name,'requirements':requirements,
                     **({'x_value_policy':'zero'} if has_mana_x else {}),
-                    'battlefield_alternative_cost':identity})
+                    'battlefield_alternative_cost':identity}
+                if ordinary_zone:result.append(option)
+                result.extend(spec.cost_option(option) for spec in paid_zone)
     return result
