@@ -183,7 +183,13 @@ def _history_amount(host, item, fact):
     return sum(event.actor == item.controller for event in events)
 
 
-def _hand_count_target(item):
+def _hand_count_target(item,spec):
+    if spec.target_group is not None:
+        groups=item.context.get('target_groups_current',item.context.get('target_groups',{}))
+        targets=groups.get(spec.target_group) if isinstance(groups,Mapping) else None
+        if not isinstance(targets,(tuple,list)) or len(targets)!=1 or type(targets[0]) is not str or not targets[0]:
+            raise PublicQueryAmountError('Scoped hand count requires one current selected player')
+        return targets[0]
     if len(item.targets)!=1 or type(item.targets[0]) is not str or not item.targets[0]:
         raise PublicQueryAmountError('Target hand count requires one selected player')
     return item.targets[0]
@@ -200,7 +206,7 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     spec = ScalarEffectAmountSpec.from_dict(value)
     cache = item.context.setdefault("declared_scalar_amounts", {}) if spec.binding_id else None
     identity = {"controller": item.controller, **spec.producer_identity}
-    hand_target=_hand_count_target(item) if spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT else None
+    hand_target=_hand_count_target(item,spec) if spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT else None
     if hand_target is not None:identity['target_player']=hand_target
     if cache is not None:
         if not isinstance(cache, dict):

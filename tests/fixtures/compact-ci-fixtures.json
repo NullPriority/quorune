@@ -145,6 +145,7 @@
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/flavor-named-trigger-cards.json",
     "tests/fixtures/fractional-player-result-cards.json",
+    "tests/fixtures/fuse-cards.json",
     "tests/fixtures/gain-and-get-cards.json",
     "tests/fixtures/global-alternative-cost-cards.json",
     "tests/fixtures/global-plural-characteristic-sets.json",

@@ -83,7 +83,14 @@ def nonmana_equip_runtime_dependencies(program):
 
 
 def program_dynamic_runtime_requirements(program):
+    from ..rules.fuse_shapes import fuse_runtime_requirements
+    try:
+        fused=fuse_runtime_requirements(program)
+        if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
+    except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
     required=set();blockers=set()
+    if fused is not None:
+        required.update(fused[0]);blockers.update(fused[1])
     try:required.update(nonmana_equip_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_nonmana_equip:invalid:{exc}')
     try:required.update(token_prowess_runtime_dependencies(program))

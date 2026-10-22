@@ -72,7 +72,7 @@ class CastProposalRequest:
             raise CastProposalError(
                 "Cast requests require an actor, card, and source zone"
             )
-        if self.cast_method is not None and self.cast_method not in (*FACE_DOWN_CAST_METHODS,'prototype'):
+        if self.cast_method is not None and self.cast_method not in (*FACE_DOWN_CAST_METHODS,'prototype','fuse'):
             raise CastProposalError("Unsupported cast method")
         if not isinstance(self.targets, (FrozenObject, FrozenArray)):
             object.__setattr__(self, "targets", freeze_json(self.targets))
