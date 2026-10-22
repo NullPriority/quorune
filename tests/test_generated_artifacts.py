@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -1032,6 +1033,28 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             hook.index("--write --fail-on-change"),
         )
         self.assertNotIn("python scripts/finalize_generated.py", hook)
+
+    def test_normal_receipt_push_cannot_bypass_pre_corpus_failure(self):
+        shell=shutil.which('sh')
+        if shell is None and (git:=shutil.which('git')) is not None:
+            bundled=Path(git).resolve().parent.parent/'usr/bin/sh.exe'
+            if bundled.is_file():shell=str(bundled)
+        if shell is None:self.skipTest('A POSIX shell is required to execute the tracked hook')
+        with TemporaryDirectory() as directory:
+            root=Path(directory)
+            subprocess.run(['git','init','-q',str(root)],check=True,capture_output=True)
+            python=root/'.venv/bin/python';python.parent.mkdir(parents=True)
+            python.write_text("#!/bin/sh\nprintf '%s\\n' \"$*\" >> hook-calls.txt\ncase \"$1\" in */scripts/quick_gate.py) exit 79;; esac\nexit 0\n",encoding='utf-8')
+            python.chmod(0o755)
+            environment=dict(os.environ)
+            environment.pop('QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON',None)
+            environment.pop('MTG_CARD_DB',None)
+            result=subprocess.run([shell,(ROOT/'.githooks/pre-push').as_posix()],cwd=root,
+                env=environment,capture_output=True,text=True,encoding='utf-8')
+            self.assertEqual(79,result.returncode,result.stdout+result.stderr)
+            calls=(root/'hook-calls.txt').read_text(encoding='utf-8').splitlines()
+            self.assertTrue(any('quick_gate.py' in call and '--phase pre-corpus' in call for call in calls))
+            self.assertFalse(any('finalize_generated.py' in call for call in calls))
 
     def test_finalizer_checks_the_architecture_policy_before_publication(self):
         self.assertIn(

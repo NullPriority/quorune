@@ -131,7 +131,7 @@ class ChosenAuraProtectionTests(unittest.TestCase):
         from quorune.oracle_ir import compile_oracle_card
         from quorune.card_programs.binding import bind_semantic_program_runtime
         cap='protection.attachment.source_chosen_color'
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         known=set(discover_tests(ROOT).values())
         def verified(value):

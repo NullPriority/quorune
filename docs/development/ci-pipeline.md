@@ -586,6 +586,11 @@ metadata. The pre-push hook verifies that receipt and blocks publication on
 either generated drift or architecture-policy failure without repeating the
 full corpus when the finalized inputs and outputs are identical.
 
+Both ordinary receipt-based pushes and source checkpoints run the same cheap
+pre-corpus sentinels against the branch's main base. A current generated receipt
+cannot bypass explicit UTF-8 text-I/O, compiler-identity or source-policy checks.
+Source checkpoints still require a clean tracked worktree before the sentinels.
+
 The worktree readiness command installs and verifies the tracked pre-push hook.
 The hook-only installer remains available when repairing an existing setup:
 
