@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 456,
+  "registry_version": 457,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -42337,6 +42337,293 @@
         "test_actual_copied_source_grants_its_own_current_alternative",
         "test_actual_blink_changes_future_price_identity_but_keeps_a_paid_spell",
         "test_selected_adventure_spell_does_not_inherit_the_dragon_price"
+      ]
+    },
+    {
+      "id": "library.search.restriction.static",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current typed library search prohibitions or fixed opponent top-N windows preserve private inspection, legitimate choices, canonical shuffles and independent results.",
+        "inputs": [
+          "complete current static source or resolved turn-duration prohibition",
+          "searching player and actual searched zones",
+          "immutable private candidate and visible-window snapshots"
+        ],
+        "outputs": [
+          "prohibited searches issue no inspection/choice",
+          "bounded library candidates and actor-private visible window",
+          "mandatory shuffle and optional-search distinction",
+          "ordinary cleanup and exact replay"
+        ],
+        "exclusions": [
+          "special-action payments to ignore a source",
+          "causal-controller search prohibitions",
+          "unowned search control or replacement variants",
+          "extra-turn and independently unsupported source bodies"
+        ]
+      },
+      "dependencies": [
+        "library.search.fixed_counted"
+      ],
+      "implementation_components": [
+        "quorune.library_search_model.LibrarySearchRuleSpec",
+        "quorune.rules.library_search_rules.library_search_constraint",
+        "quorune.rules.library_search_rules.library_search_object_ids",
+        "quorune.selection.searching.HiddenSearchOwnerMixin._finish_prohibited_library_search",
+        "quorune.semantic_runtime.library_search_rules.LibrarySearchRuleHandler"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed static/temporary schemas, independent registered runtime minima and canonically verified withdrawal leave incomplete owners residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete-source admission and real mandatory, bounded private and optional-search witnesses detect omitted source production, prohibition, top window and impossible-choice suppression.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_library_search_rule_originals_have_normal_admission",
+        "test_closed_rule_and_duration_models_reject_malformed_data",
+        "test_prohibition_does_not_filter_nonlibrary_search_queries",
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "negative_tests": [
+        "test_closed_rule_and_duration_models_reject_malformed_data",
+        "test_independent_runtime_owners_and_verified_withdrawal_fail_closed",
+        "test_prohibition_does_not_filter_nonlibrary_search_queries",
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "interaction_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "multiplayer_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "privacy_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition"
+      ],
+      "replay_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ]
+    },
+    {
+      "id": "library.search.prohibition.resolution_until_end_of_turn",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current typed library search prohibitions or fixed opponent top-N windows preserve private inspection, legitimate choices, canonical shuffles and independent results.",
+        "inputs": [
+          "complete current static source or resolved turn-duration prohibition",
+          "searching player and actual searched zones",
+          "immutable private candidate and visible-window snapshots"
+        ],
+        "outputs": [
+          "prohibited searches issue no inspection/choice",
+          "bounded library candidates and actor-private visible window",
+          "mandatory shuffle and optional-search distinction",
+          "ordinary cleanup and exact replay"
+        ],
+        "exclusions": [
+          "special-action payments to ignore a source",
+          "causal-controller search prohibitions",
+          "unowned search control or replacement variants",
+          "extra-turn and independently unsupported source bodies"
+        ]
+      },
+      "dependencies": [
+        "library.search.restriction.static"
+      ],
+      "implementation_components": [
+        "quorune.library_search_model.ResolvedLibrarySearchProhibition",
+        "quorune.rules.library_search_rules.apply_library_search_prohibition",
+        "quorune.semantic_runtime.library_search_rules.ProhibitLibrarySearchHandler",
+        "quorune.rules.library_search_rule_shapes.temporary_library_search_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed static/temporary schemas, independent registered runtime minima and canonically verified withdrawal leave incomplete owners residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete-source admission and real mandatory, bounded private and optional-search witnesses detect omitted source production, prohibition, top window and impossible-choice suppression.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_library_search_rule_originals_have_normal_admission",
+        "test_closed_rule_and_duration_models_reject_malformed_data",
+        "test_prohibition_does_not_filter_nonlibrary_search_queries",
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "negative_tests": [
+        "test_closed_rule_and_duration_models_reject_malformed_data",
+        "test_independent_runtime_owners_and_verified_withdrawal_fail_closed",
+        "test_prohibition_does_not_filter_nonlibrary_search_queries",
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "interaction_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "multiplayer_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
+      ],
+      "privacy_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition"
+      ],
+      "replay_tests": [
+        "test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+        "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+        "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+        "test_mindcensor_controller_searches_the_whole_library",
+        "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+        "test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+        "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+        "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+        "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+        "test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+        "test_actual_builtin_fetch_uses_the_same_private_top_window"
       ]
     }
   ]

@@ -350,6 +350,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "participation.untap_step.static",
                 "participation.untap_step.fixed_selection_limit",
                 "permission.action.static",
+                "permission.action.library-search-rule",
                 "permission.cast.self-zone",
                 "permission.cast.classic_flash_cleanup",
                 "state_query.devotion.fixed_increase",

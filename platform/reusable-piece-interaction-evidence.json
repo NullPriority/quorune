@@ -19032,6 +19032,96 @@
       ],
       "interaction_order": 2,
       "assertion": "A Flashback-only graveyard permission permits its own paid method and excludes the source-granted alternative; Think Twice draws privately and finishes in exile."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "piece_ids": [
+        "capability.library.search.fixed_counted",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.fixed_counted",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual flashed Mindcensor limits a real Tutor to four private cards, rejects the fifth and preserves authorized result movement and full-library shuffle."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "piece_ids": [
+        "capability.library.search.fixed_to_battlefield",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.fixed_to_battlefield",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Evolving Wilds still pays tap and source sacrifice, cannot perform its library search, moves no land, and completes the independent full-library shuffle."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "piece_ids": [
+        "capability.library.search.prohibition.resolution_until_end_of_turn",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.prohibition.resolution_until_end_of_turn",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real Shadow creates the all-player turn rule, draws privately, blocks an already queued mandatory search while preserving shuffle, and expires through ordinary cleanup."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "piece_ids": [
+        "capability.library.search.fixed_type_to_hand",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.fixed_type_to_hand",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual optional Borderland Ranger search to hand cannot be chosen under prohibition; no private search or contingent shuffle occurs and the creature enters normally."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "piece_ids": [
+        "capability.library.scry.fixed_controller",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.scry.fixed_controller",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Opt retains its private Scry choice and draw under a prohibition affecting only library searches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Song of the Dryads removes the Orb prohibition through ordinary layer-four ability consequences while an opposing Mindcensor still limits the resulting search window."
     }
   ]
 }

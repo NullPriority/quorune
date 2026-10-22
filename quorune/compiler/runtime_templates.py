@@ -59,6 +59,7 @@ from ..entry_state_conditions import FIXED_ENTRY_CONDITION_HANDLER_ID
 from .life_templates import static_life_handler
 from .token_templates import static_additional_token_replacement_handler
 from .trigger_participation_templates import static_trigger_multiplier_handler
+from .library_search_rule_templates import fixed_library_search_rule_handler
 from .untap_step_templates import static_untap_step_handler
 from .zone_templates import static_zone_destination_replacement_handler
 
@@ -257,6 +258,7 @@ def _source_permanent_participation_template(
         )
     action_permission = (opening_hand_reveal_permission_handler(text,source_name=source_name)
         or opening_hand_battlefield_permission_handler(text,source_name=source_name)
+        or fixed_library_search_rule_handler(text)
         or static_action_permission_handler(text))
     if action_permission is not None:
         opening_hand=action_permission[0] in {'opening-hand-battlefield-permission-v1','opening-hand-reveal-permission-v1'}

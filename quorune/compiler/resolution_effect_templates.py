@@ -169,8 +169,8 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
-    from .temporary_cast_restrictions import temporary_cast_restriction_template
-    cast_restriction=temporary_cast_restriction_template(text)
+    from .temporary_player_rule_templates import temporary_player_rule_template
+    cast_restriction=temporary_player_rule_template(text)
     if cast_restriction is not None:return cast_restriction
     from .random_graveyard_returns import random_graveyard_return_template
     random_return=random_graveyard_return_template(text)

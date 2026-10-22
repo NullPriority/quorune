@@ -1276,7 +1276,9 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 
 def _closed_effect_recognizers():
+    from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     return (
+        is_closed_library_search_prohibition_program,
         is_closed_announced_target_set_program,
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,

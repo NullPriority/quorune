@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c37cd99eacada7448c261d09d9df3e773cd0be9b1a327fb4e6e18ac9bc3ccdbd",
-  "declaration_source_fingerprint": "72d3f26aef85848b345b3cd845e1f71cf02590376f50cc1feb765ae1864a94dd",
+  "registry_fingerprint": "adc78e18cc5b24d2e25869309fa3d6341a53e4b93b92aa7dcf734bb2091f7a3f",
+  "declaration_source_fingerprint": "dc527ff313f0e65c4698ffb0f88394cc78f0a94b55b15f36d740f8479562b55b",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -189230,6 +189230,3306 @@
       "applicability_note": "Replay target selection, private named selection, replacement-aware hand move, and deterministic shuffle to the same authoritative hash."
     },
     {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_fresh_source_permission_window_and_optional_omissions_are_killed",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_closed_rule_and_duration_models_reject_malformed_data",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_independent_runtime_owners_and_verified_withdrawal_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_prohibition_does_not_filter_nonlibrary_search_queries",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_closed_rule_and_duration_models_reject_malformed_data",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_complete_library_search_rule_originals_have_normal_admission",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_prohibition_does_not_filter_nonlibrary_search_queries",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.prohibition.resolution_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_fresh_source_permission_window_and_optional_omissions_are_killed",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_closed_rule_and_duration_models_reject_malformed_data",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_independent_runtime_owners_and_verified_withdrawal_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_prohibition_does_not_filter_nonlibrary_search_queries",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_closed_rule_and_duration_models_reject_malformed_data",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_complete_library_search_rule_originals_have_normal_admission",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_prohibition_does_not_filter_nonlibrary_search_queries",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_builtin_fetch_uses_the_same_private_top_window",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_mindlock_prevents_tutor_choice_but_keeps_mandatory_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Scry/private draw remain legal, search activation costs remain paid, and nonlibrary queries remain available under prohibition. Normal admission, complete consequences, wrong-principal/invalid-window rollback and pending-load replay preserve the represented library rule boundary."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_bound_multi_card_search_keeps_one_window_and_shuffles_entire_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
+      "capability_id": "library.search.restriction.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_search_rules.LibrarySearchRuleTests.test_mindcensor_controller_searches_the_whole_library",
+      "official_rule_ids": [
+        "101.2",
+        "609.3",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.23f",
+        "701.23h",
+        "611.2c",
+        "611.3b",
+        "514.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source admission and actual searches distinguish no search from fail-to-find, mandatory shuffle from optional search, actor-private top-N windows from deeper cards, source ability loss and temporary cleanup. Costs remain paid; dependent choices, private projection, rollback and pending-load replay preserve complete results. Closed shapes, independent owners, verified withdrawal and fresh omissions bound trust."
+    },
+    {
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_graveyard_destination_replacement_resumes_before_partition_commit",
@@ -320817,5 +324117,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "06177a0edd79c25944c1ea0095b4c01a3d22cf7fee92cd59d80c6548e635d9f2"
+  "fingerprint": "8e8fca22ccb3b41d01e5e12df8dc673a0fb388fb7666f955578b49c203a3a2f6"
 }
