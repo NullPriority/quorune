@@ -719,6 +719,15 @@ presence of a commander owned and controlled by the source controller, using
 the designation rather than printed identity. Each descriptor independently
 requires the recipient capability and any commander designation authority.
 
+`compiler/public_zone_conditions.py` binds fixed public zone facts to the same
+condition descriptor: an opponent has an empty hand, an opponent owns a card in
+exile, or one library has at most a fixed number of cards. Opponent relations
+follow the current source controller. Library thresholds quantify each library
+independently, including the controller's; they never sum library sizes. The
+compiler and runtime independently require the public-zone condition capability.
+Private identity predicates, aggregate-library wording and unsupported companion
+abilities remain residual.
+
 `compiler/declaration_nodes.py` composes one independently exact
 recipient-relative declaration requirement or restriction with fixed
 power/toughness and represented keywords behind a closed public-state

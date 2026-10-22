@@ -85,6 +85,9 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
+    OPPONENT_OWNS_EXILED_CARD = 'opponent_owns_exiled_card'
+    ANY_LIBRARY_COUNT_AT_MOST = 'any_library_count_at_most'
     CONTROLLER_CONTROLS_OWN_COMMANDER = 'controller_controls_own_commander'
     PERMANENT_COLOR_IS_MOST_COMMON = 'permanent_color_is_most_common'
     CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES = (
@@ -278,6 +281,10 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
+    from .public_zone_condition_model import PUBLIC_ZONE_FACTS, validate_public_zone_fact
+    if fact.value in PUBLIC_ZONE_FACTS:
+        validate_public_zone_fact(fact.value, amount=amount, parameter=parameter, schema_version=schema_version)
+        return
     if fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Commander presence requires one boolean current designation fact')

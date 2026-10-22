@@ -11,6 +11,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
         own = static_player_restriction_capabilities(value) if 'player_restriction' in value else ()
         from ..conditional_recipient_model import conditional_recipient_capabilities
         own = (*own, *conditional_recipient_capabilities(value))
+        from ..public_zone_condition_model import public_zone_condition_capabilities
+        own = (*own, *public_zone_condition_capabilities(value))
         if value.get('kind') == 'public_quantity_mana':
             from ..public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_CAPABILITY
             PublicQuantityManaOutput.from_dict(value)

@@ -144,6 +144,10 @@ class _FixedPublicStateSnapshotResolver:
         fact = condition.fact
         if not isinstance(fact, FixedPublicStateFact):
             return None
+        from ..public_zone_condition_model import public_zone_fact_value
+        zone_value = public_zone_fact_value(self.state, source.controller, fact.value, condition.fact_parameter)
+        if zone_value is not None:
+            return zone_value
         if fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER:
             return int(any(card.zone == 'battlefield' and not card.phased_out
                 and card.is_commander and card.owner == source.controller and card.controller == source.controller

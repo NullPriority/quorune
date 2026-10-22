@@ -1423,6 +1423,10 @@ def _fixed_public_state_condition(
 ) -> FixedPublicStateConditionSpec | None:
     from .public_condition_surfaces import normalize_public_condition_surface
     normalized = normalize_public_condition_surface(text.strip().rstrip("."))
+    from .public_zone_conditions import public_zone_condition
+    zone_condition = public_zone_condition(normalized)
+    if zone_condition is not None:
+        return zone_condition
     from .conditional_recipient_conditions import conditional_recipient_condition
     recipient_condition = conditional_recipient_condition(normalized)
     if recipient_condition is not None:

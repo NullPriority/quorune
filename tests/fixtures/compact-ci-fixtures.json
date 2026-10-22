@@ -235,6 +235,7 @@
     "tests/fixtures/public-scalar-stat-cards.json",
     "tests/fixtures/public-self-replacement-cards.json",
     "tests/fixtures/public-static-action-rule-cards.json",
+    "tests/fixtures/public-zone-condition-cards.json",
     "tests/fixtures/qualified-declaration-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",
     "tests/fixtures/qualified-hexproof-cards.json",

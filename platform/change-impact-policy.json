@@ -7736,6 +7736,27 @@
         "test_commander_characteristic_grants",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "public-zone-condition-facts",
+      "patterns": [
+        "quorune/public_zone_condition_model.py",
+        "quorune/compiler/public_zone_conditions.py",
+        "quorune/continuous_conditions.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/static_runtime_nodes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "tests/test_public_zone_conditions.py",
+        "tests/fixtures/public-zone-condition-cards.json"
+      ],
+      "test_modules": [
+        "test_public_zone_conditions",
+        "test_public_state_condition_compiler",
+        "test_public_state_condition_runtime",
+        "test_fixed_public_state_characteristics",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

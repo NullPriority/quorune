@@ -810,6 +810,16 @@ phasing facts. Type changes, creature counts, commander control, source ability
 loss and departure immediately change the ordinary layer-6/7c contributions.
 Historical descriptors omit the recipient field and keep their encoding.
 
+Public zone conditions use only current hand or library lengths and exile
+ownership/card status. Each active player's hand or library is evaluated
+separately. Face-down exiled cards count for their owner without consulting
+identity or visibility, while tokens do not satisfy a card predicate. Public
+object references and authorized identity projection remain the existing
+visibility owner's responsibility. Draw, discard, mill, zone changes and source
+control or ability changes recompute the ordinary conditional modifier. These
+facts use the existing schema-four boolean fact envelope and retain older
+condition payloads unchanged.
+
 `continuous.characteristics.public-state-keywords.v1` retains complete typed
 keyword fragments behind the same public-state predicate and target relation.
 Its keyword labels and fragments use the ordinary query-grant validator;

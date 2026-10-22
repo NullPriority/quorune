@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 465,
+  "registry_version": 466,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -43906,6 +43906,126 @@
         "test_actual_wanderings_cast_grants_only_current_sole_creature_and_lifelink_damage",
         "test_actual_second_creature_and_removal_move_the_unique_bonus_live",
         "test_actual_source_ability_loss_and_departure_remove_both_recipient_grants"
+      ]
+    },
+    {
+      "id": "state_query.public_zone.condition",
+      "version": 1,
+      "official_rules": [
+        "108.3",
+        "109.5",
+        "400.1",
+        "400.3",
+        "400.4a",
+        "401.3",
+        "402.3",
+        "406.1",
+        "406.3",
+        "406.4",
+        "611.3a",
+        "611.3b",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Closed current public-zone conditions use an opponent empty hand, opponent-owned card in exile, or any one library at or below a fixed threshold without reading private identities.",
+        "inputs": [
+          "closed schema4 boolean fact and fixed canonical library threshold",
+          "current active seats and source controller relation",
+          "public hand/library lengths and exile card owner/token status"
+        ],
+        "outputs": [
+          "one boolean condition verdict shared with existing source/layer owners",
+          "face-down exile counts without identity disclosure",
+          "single-player library and hand quantifiers retained"
+        ],
+        "exclusions": [
+          "private card identity/type/order predicates",
+          "summed library counts or all-player interpretation",
+          "unrepresented companions including Hideaway and optional graveyard return"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.public_zone_condition_model.validate_public_zone_fact",
+        "quorune.public_zone_condition_model.public_zone_fact_value",
+        "quorune.public_zone_condition_model.public_zone_condition_capabilities",
+        "quorune.compiler.public_zone_conditions.public_zone_condition",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver",
+        "quorune.compiler.static_runtime_nodes.runtime_handler_node",
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete typed facts independently infer authority; stripped minima and canonically verified withdrawal block all newly closed sources.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete-source and actual Warden exile/return witnesses detect condition producer and fact verdict omissions.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_zone_facts_preserve_player_owner_and_single_library_quantifiers",
+        "test_closed_fact_wire_rejects_identity_and_threshold_scope_drift",
+        "test_actual_warden_cast_exile_and_return_recompute_bonus_once",
+        "test_actual_specter_combat_discard_opens_bonus_and_private_draw_closes_it",
+        "test_actual_source_ability_loss_and_bounce_recompute_zone_bonus",
+        "test_actual_spawn_cast_and_mill_cross_a_single_library_boundary",
+        "test_three_originals_have_complete_admission_and_independent_zone_fact_minimum"
+      ],
+      "negative_tests": [
+        "test_zone_facts_preserve_player_owner_and_single_library_quantifiers",
+        "test_closed_fact_wire_rejects_identity_and_threshold_scope_drift",
+        "test_actual_warden_cast_exile_and_return_recompute_bonus_once",
+        "test_actual_specter_combat_discard_opens_bonus_and_private_draw_closes_it",
+        "test_actual_source_ability_loss_and_bounce_recompute_zone_bonus",
+        "test_actual_spawn_cast_and_mill_cross_a_single_library_boundary",
+        "test_face_down_exile_counts_owner_without_revealing_identity_or_counting_tokens",
+        "test_library_threshold_and_empty_hand_use_current_seats_without_private_identity",
+        "test_canonically_verified_zone_condition_withdrawal_blocks_all_new_originals",
+        "test_existing_avatar_retains_full_support_and_unowned_carriers_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_actual_warden_cast_exile_and_return_recompute_bonus_once",
+        "test_actual_specter_combat_discard_opens_bonus_and_private_draw_closes_it",
+        "test_actual_source_ability_loss_and_bounce_recompute_zone_bonus",
+        "test_actual_spawn_cast_and_mill_cross_a_single_library_boundary",
+        "test_face_down_exile_counts_owner_without_revealing_identity_or_counting_tokens",
+        "test_library_threshold_and_empty_hand_use_current_seats_without_private_identity"
+      ],
+      "multiplayer_tests": [
+        "test_actual_warden_cast_exile_and_return_recompute_bonus_once",
+        "test_actual_specter_combat_discard_opens_bonus_and_private_draw_closes_it",
+        "test_actual_source_ability_loss_and_bounce_recompute_zone_bonus",
+        "test_actual_spawn_cast_and_mill_cross_a_single_library_boundary",
+        "test_face_down_exile_counts_owner_without_revealing_identity_or_counting_tokens",
+        "test_library_threshold_and_empty_hand_use_current_seats_without_private_identity"
+      ],
+      "privacy_tests": [
+        "test_actual_warden_cast_exile_and_return_recompute_bonus_once",
+        "test_actual_specter_combat_discard_opens_bonus_and_private_draw_closes_it",
+        "test_actual_source_ability_loss_and_bounce_recompute_zone_bonus",
+        "test_actual_spawn_cast_and_mill_cross_a_single_library_boundary",
+        "test_face_down_exile_counts_owner_without_revealing_identity_or_counting_tokens",
+        "test_library_threshold_and_empty_hand_use_current_seats_without_private_identity"
+      ],
+      "replay_tests": [
+        "test_actual_warden_cast_exile_and_return_recompute_bonus_once",
+        "test_actual_specter_combat_discard_opens_bonus_and_private_draw_closes_it",
+        "test_actual_source_ability_loss_and_bounce_recompute_zone_bonus",
+        "test_actual_spawn_cast_and_mill_cross_a_single_library_boundary",
+        "test_face_down_exile_counts_owner_without_revealing_identity_or_counting_tokens",
+        "test_library_threshold_and_empty_hand_use_current_seats_without_private_identity"
       ]
     }
   ]
