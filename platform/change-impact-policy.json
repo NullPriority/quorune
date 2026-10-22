@@ -7645,6 +7645,23 @@
         "test_spell_random_discard_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "battlefield-fixed-target-reductions",
+      "patterns": [
+        "quorune/targeted_spell_costs.py",
+        "quorune/compiler/targeted_spell_costs.py",
+        "quorune/semantic_runtime/targeted_spell_costs.py",
+        "quorune/rules/casting/targeted_costs.py",
+        "tests/test_battlefield_target_reductions.py",
+        "tests/fixtures/battlefield-target-reduction-cards.json"
+      ],
+      "test_modules": [
+        "test_battlefield_target_reductions",
+        "test_targeted_spell_costs",
+        "test_self_target_reductions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

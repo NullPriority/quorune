@@ -30,6 +30,7 @@
     "tests/fixtures/batch-interaction-recovery-cards.json",
     "tests/fixtures/batched-public-assurance-cards.json",
     "tests/fixtures/batched-support-assurance-cards.json",
+    "tests/fixtures/battlefield-target-reduction-cards.json",
     "tests/fixtures/bestow-cards.json",
     "tests/fixtures/binding-aware-event-payments.json",
     "tests/fixtures/block-capacity-cards.json",

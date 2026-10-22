@@ -44,6 +44,7 @@ def _self_targeted_reduction_sources(host,caster,card,spell_program):
         for index,descriptor in enumerate(program.handlers):
             if descriptor.get('handler_id')!=TARGETED_SPELL_COST_HANDLER:continue
             spec=handler.validate(descriptor)
+            if spec.schema_version==3:continue
             if spec.subject is not TargetedCostSubject.SPELL_TARGET:continue
             plan=target_plan(thaw_value(spec.target_schema))
             candidates=host._target_candidate_map(caster,plan,acting_source=spell_targeting_source(host,card),source_ref=card.ref)
@@ -59,7 +60,6 @@ def targeted_spell_cost_sources(host,caster,*,card=None,spell_program=None):
     battlefield=tuple(sorted((card for card in host._semantic_event_sources(zones={'battlefield'})
         if not card.phased_out and card.controller in host.active_seats),key=lambda card:card.ref))
     for source in battlefield:
-        if source.controller==caster:continue
         record=host.card_record(source)
         if record is None:continue
         for program in host.semantics.runtime_handler_programs_for_oracle(copiable_oracle_id(source),active_zone='battlefield',event=TARGETED_SPELL_COST_EVENT):
@@ -68,6 +68,17 @@ def targeted_spell_cost_sources(host,caster,*,card=None,spell_program=None):
             for index,descriptor in enumerate(program.handlers):
                 if descriptor.get('handler_id')!=TARGETED_SPELL_COST_HANDLER:continue
                 spec=handler.validate(descriptor)
+                if spec.schema_version==3:
+                    if (spec.caster_relation=='source_controller' and source.controller!=caster
+                            or spec.caster_relation=='source_opponents' and source.controller==caster):continue
+                    if spec.subject is TargetedCostSubject.SPELL_TARGET:
+                        refs=tuple(candidate.ref for candidate in battlefield
+                            if 'creature' in host._type_parts(str(host._effective_card_data(candidate).get('type_line') or ''))[0])
+                    else:refs=(source.ref,)
+                    sources.append(TargetedSpellCostSource(source.ref,source.logical_object_id,source.controller,
+                        f'{source.logical_object_id}:{program.key}:{index}',spec,refs))
+                    continue
+                if source.controller==caster:continue
                 if spec.subject is TargetedCostSubject.SPELL_TARGET:continue
                 refs=(source.ref,) if spec.subject is TargetedCostSubject.SOURCE else tuple(card.ref for card in battlefield
                     if card.controller==source.controller and card.is_commander

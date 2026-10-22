@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 461,
+  "registry_version": 462,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -43405,6 +43405,112 @@
         "test_additional_graveyard_prices_keep_resources_with_a_global_alternative_price",
         "test_constructed_life_and_graveyard_exile_uses_the_same_atomic_payment_owner"
       ]
+    },
+    {
+      "id": "casting.cost.battlefield_target_generic_reduction",
+      "version": 1,
+      "official_rules": [
+        "115.1a",
+        "115.3",
+        "118.7a",
+        "601.2c",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A current battlefield source gives one fixed generic reduction to spells of the represented caster relation that target itself or at least one current creature.",
+        "inputs": [
+          "current trusted source incarnation and ability presence",
+          "current caster relative to source controller",
+          "announced legal target references and current creature characteristics"
+        ],
+        "outputs": [
+          "one signed fixed adjustment per applicable source, never per target",
+          "affordable target witnesses shared by offers and accepted commands"
+        ],
+        "exclusions": [
+          "per-target cardinality",
+          "colored, variable or conditional amounts",
+          "unrepresented granted target-cost abilities and private predicates"
+        ]
+      },
+      "dependencies": [
+        "casting.cost.targeted_fixed_generic"
+      ],
+      "implementation_components": [
+        "quorune.compiler.targeted_spell_costs.targeted_spell_cost_template",
+        "quorune.targeted_spell_costs.TargetedSpellCostSpec",
+        "quorune.targeted_spell_costs.self_target_reduction_runtime_dependencies",
+        "quorune.semantic_runtime.targeted_spell_costs.targeted_spell_cost_sources",
+        "quorune.rules.casting.targeted_costs.target_cost_fact"
+      ],
+      "positive_tests": [
+        "test_three_originals_have_complete_normal_admission_and_independent_reduction_minimum",
+        "test_actual_ouphe_reduces_any_caster_once_and_never_reduces_colored_mana",
+        "test_actual_killian_uses_creature_targets_and_its_current_controller_only",
+        "test_actual_elderwood_preserves_opponent_tax_and_own_reduction_with_keywords",
+        "test_announced_x_keeps_its_value_and_colored_mana_after_one_fixed_reduction",
+        "test_generic_floor_still_requires_colored_mana_and_aura_cast_targets_qualify",
+        "test_increases_precede_reductions_and_paid_cost_does_not_change_after_source_departure"
+      ],
+      "negative_tests": [
+        "test_three_originals_have_complete_normal_admission_and_independent_reduction_minimum",
+        "test_per_target_count_companions_stay_residual_and_do_not_receive_a_fixed_discount",
+        "test_source_ability_loss_and_control_change_rebind_the_current_reduction",
+        "test_verified_withdrawal_and_closed_runtime_activity_keep_the_new_owner_required",
+        "test_component_rejects_predicate_scope_and_caster_field_drift"
+      ],
+      "interaction_tests": [
+        "test_actual_ouphe_reduces_any_caster_once_and_never_reduces_colored_mana",
+        "test_actual_killian_uses_creature_targets_and_its_current_controller_only",
+        "test_actual_elderwood_preserves_opponent_tax_and_own_reduction_with_keywords",
+        "test_independent_sources_stack_but_multiple_creature_targets_do_not_multiply_one_source",
+        "test_same_source_in_separate_target_groups_and_zero_generic_floor_apply_once",
+        "test_source_ability_loss_and_control_change_rebind_the_current_reduction",
+        "test_announced_x_keeps_its_value_and_colored_mana_after_one_fixed_reduction",
+        "test_generic_floor_still_requires_colored_mana_and_aura_cast_targets_qualify",
+        "test_increases_precede_reductions_and_paid_cost_does_not_change_after_source_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ouphe_reduces_any_caster_once_and_never_reduces_colored_mana",
+        "test_actual_killian_uses_creature_targets_and_its_current_controller_only"
+      ],
+      "privacy_tests": [
+        "test_actual_ouphe_reduces_any_caster_once_and_never_reduces_colored_mana",
+        "test_actual_killian_uses_creature_targets_and_its_current_controller_only",
+        "test_announced_x_keeps_its_value_and_colored_mana_after_one_fixed_reduction",
+        "test_increases_precede_reductions_and_paid_cost_does_not_change_after_source_departure"
+      ],
+      "replay_tests": [
+        "test_actual_ouphe_reduces_any_caster_once_and_never_reduces_colored_mana",
+        "test_actual_killian_uses_creature_targets_and_its_current_controller_only",
+        "test_actual_elderwood_preserves_opponent_tax_and_own_reduction_with_keywords",
+        "test_independent_sources_stack_but_multiple_creature_targets_do_not_multiply_one_source",
+        "test_same_source_in_separate_target_groups_and_zero_generic_floor_apply_once",
+        "test_source_ability_loss_and_control_change_rebind_the_current_reduction",
+        "test_announced_x_keeps_its_value_and_colored_mana_after_one_fixed_reduction",
+        "test_generic_floor_still_requires_colored_mana_and_aura_cast_targets_qualify",
+        "test_increases_precede_reductions_and_paid_cost_does_not_change_after_source_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The current battlefield contract and stored version3 descriptor independently require this owner. Removing declared ownership or changing source activity/caster/predicate cannot retain strict binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete original binding and actual any-caster payment witnesses require both the reduction producer and real target-cost source collection. The family is unaccepted until every named native and omission record passes.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

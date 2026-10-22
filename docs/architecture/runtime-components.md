@@ -416,6 +416,18 @@ Target-relative prices, unrecorded history, dynamic power/toughness, chosen or
 hidden facts, caps, floors, and open arithmetic fail closed rather than
 becoming a runtime prose query.
 
+The existing targeted spell-cost component also captures fixed negative
+generic adjustments from current battlefield sources. Its version-three
+descriptor separates the caster relation from the selected-target predicate.
+One or more qualifying targets apply the fixed adjustment once per source;
+independent sources stack. Announced X and repeated target groups retain their
+own target and amount semantics. Offers preserve every affordable legal target
+assignment and accepted commands reprice through the same authority. Increases
+precede reductions, only generic mana is reduced, and a paid cost does not
+change when its source later departs. Source control, phasing and ability
+removal affect future offers; old tax and intrinsic target-reduction schemas
+retain their implicit scopes and encodings.
+
 An established source-self event can bind optional pronouns such as
 "you may have it deal" to that source before composing the existing optional
 result owner. The complete leaf retains its target restrictions and original

@@ -1,0 +1,1583 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_with_constructed_rule_controls",
+  "source": "Pinned battlefield target cost reducers and controls with complete canonical rulings; Generic Target Discount cards are constructed rules-only controls, not Oracle support gains.",
+  "cards": [
+    {
+      "oracle_id": "13979fb6-91ba-4dd2-9bb9-8dbc7307d433",
+      "name": "Spellwild Ouphe",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Ouphe",
+      "oracle_text": "Spells that target this creature cost {2} less to cast.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-05-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e233cb5b-7237-4271-8157-9179cc897b6c",
+      "name": "Killian, Ink Duelist",
+      "mana_cost": "{W}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Warlock",
+      "oracle_text": "Lifelink\nMenace (This creature can't be blocked except by two or more creatures.)\nSpells you cast that target a creature cost {2} less to cast.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Lifelink",
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "99c8647f-e08d-4217-b637-3f8f2bffdaa3",
+      "name": "Elderwood Scion",
+      "mana_cost": "{3}{G}{W}",
+      "cmc": 5.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "Trample, lifelink\nSpells you cast that target this creature cost {2} less to cast.\nSpells your opponents cast that target this creature cost {2} more to cast.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Lifelink",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "name": "Battlefield Thaumaturge",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Each instant and sorcery spell you cast costs {1} less to cast for each creature it targets.\nHeroic — Whenever you cast a spell that targets this creature, this creature gains hexproof until end of turn.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Heroic"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "aee473c7-c659-421c-96b5-05f57ca2ed97",
+      "name": "Hinata, Dawn-Crowned",
+      "mana_cost": "{1}{U}{R}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Kirin Spirit",
+      "oracle_text": "Flying, trample\nSpells you cast cost {1} less to cast for each target.\nSpells your opponents cast cost {1} more to cast for each target.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "68a2e371-ccf0-4c2a-aeef-c66852811e1a",
+      "name": "Boreal Elemental",
+      "mana_cost": "{4}{U}",
+      "cmc": 5.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "Flying\nSpells your opponents cast that target this creature cost {2} more to cast.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-07-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "name": "Esior, Wardwing Familiar",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Bird",
+      "oracle_text": "Flying\nSpells your opponents cast that target one or more commanders you control cost {3} more to cast.\nPartner (You can have two commanders if both have partner.)",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Murder",
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant",
+      "faces": []
+    },
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "name": "Control Magic",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "name": "Fist of Suns",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "You may pay {W}{U}{B}{R}{G} rather than pay the mana cost for spells you cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "name": "Think Twice",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "name": "Blessed Alliance",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Escalate {2} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Target player gains 4 life.\n• Untap up to two target creatures.\n• Target opponent sacrifices an attacking creature of their choice.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Escalate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-07-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ad3bf726-e0c2-4038-a66e-9a9dff439563",
+      "name": "Raffine's Guidance",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nYou may cast this card from your graveyard by paying {2}{W} rather than paying its mana cost.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Sphere of Resistance",
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-06-16",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{W}",
+      "name": "Quicksand Whirlpool",
+      "oracle_id": "43fb0f35-8eea-4344-9415-6ecb8aa46491",
+      "oracle_text": "This spell costs {3} less to cast if it targets a tapped creature.\nExile target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "6f067bfd-1c59-463f-99e1-61161b43b405",
+      "name": "Bounty of Might",
+      "mana_cost": "{4}{G}{G}",
+      "cmc": 6.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.\nTarget creature gets +3/+3 until end of turn.\nTarget creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8850-000000000001",
+      "name": "Generic Target Discount Pair",
+      "mana_cost": "{3}{U}",
+      "cmc": 4,
+      "type_line": "Instant",
+      "oracle_text": "Return up to two target creatures to their owners' hands.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8850-000000000002",
+      "name": "Generic Target Discount Mixed",
+      "mana_cost": "{3}{U}",
+      "cmc": 4,
+      "type_line": "Instant",
+      "oracle_text": "Return up to two target nonland permanents to their owners' hands.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "2f092562-9e17-43cd-aeb8-d0567f99363e",
+      "name": "Go for the Throat",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target nonartifact creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "049e9963-1b74-476f-9a81-dbfae543e1c5",
+      "name": "Gridlock",
+      "mana_cost": "{X}{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Tap X target nonland permanents.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-02-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "13979fb6-91ba-4dd2-9bb9-8dbc7307d433",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "The cost reduction will be {2} no matter how many times the spell targets the same Spellwild Ouphe."
+    },
+    {
+      "oracle_id": "13979fb6-91ba-4dd2-9bb9-8dbc7307d433",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "The cost reduction applies to spells cast by any player."
+    },
+    {
+      "oracle_id": "13979fb6-91ba-4dd2-9bb9-8dbc7307d433",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "The spell may have any number of other targets; that won’t affect the cost reduction unless the spell targets other Spellwild Ouphes as well. In that case, the spell costs {2} less to cast for each different Spellwild Ouphe it targets."
+    },
+    {
+      "oracle_id": "e233cb5b-7237-4271-8157-9179cc897b6c",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Killian can reduce alternative costs. For example, if you choose to pay the {1}{B} alternative cost for Baleful Mastery while targeting a creature, that cost would be reduced to {B}."
+    },
+    {
+      "oracle_id": "e233cb5b-7237-4271-8157-9179cc897b6c",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Killian, Ink Duelist can't reduce the colored mana requirement of a spell's mana cost."
+    },
+    {
+      "oracle_id": "e233cb5b-7237-4271-8157-9179cc897b6c",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a spell has additional costs, apply those increases before applying cost reductions."
+    },
+    {
+      "oracle_id": "99c8647f-e08d-4217-b637-3f8f2bffdaa3",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Aura spells require a target when they are cast. Elderwood Scion’s cost-reduction ability will affect Aura spells cast targeting it."
+    },
+    {
+      "oracle_id": "99c8647f-e08d-4217-b637-3f8f2bffdaa3",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Elderwood Scion’s cost-reduction ability can’t reduce the colored mana requirement of a spell."
+    },
+    {
+      "oracle_id": "99c8647f-e08d-4217-b637-3f8f2bffdaa3",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Elderwood Scion’s cost-reduction ability can apply to any cost of a spell, including additional or alternative costs."
+    },
+    {
+      "oracle_id": "99c8647f-e08d-4217-b637-3f8f2bffdaa3",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "None of Elderwood Scion’s abilities affect abilities that target it."
+    },
+    {
+      "oracle_id": "99c8647f-e08d-4217-b637-3f8f2bffdaa3",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "Spells you cast that target Elderwood Scion will cost {2} less to cast even if those spells have additional targets. The same is true for spells your opponents cast costing {2} more."
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The cost reduction is {1} per target creature, even if the spell targets a creature more than once."
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Heroic abilities won't trigger when a copy of a spell is created on the stack or when a spell's targets are changed to include a creature with a heroic ability."
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "To calculate the total cost of an instant or sorcery spell you're casting, start with the mana cost (or alternative cost, if applicable), add all cost increases (including additional costs such as those imposed by strive abilities), then subtract all cost reductions (such as the one created by Battlefield Thaumaturge's first ability)."
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Heroic abilities will resolve before the spell that caused them to trigger."
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The cost reduction created by Battlefield Thaumaturge's first ability can reduce only the generic portion of the spell's total cost. Colored mana requirements aren't affected."
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Battlefield Thaumaturge's first ability doesn't change that spell's mana cost or mana value. It changes only the amount you actually pay (the “total cost” of the spell)."
+    },
+    {
+      "oracle_id": "70d2f5f7-f727-48e1-9532-8d365b1c1ae5",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Heroic abilities will trigger only once per spell, even if that spell targets the creature with the heroic ability multiple times."
+    },
+    {
+      "oracle_id": "aee473c7-c659-421c-96b5-05f57ca2ed97",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Hinata's last two abilities ability count the number of players or objects that are targets of a spell as it is cast, not the number of times the card text uses the word “target.” For example, a spell you cast that says “target creature” twice would cost {1} less to cast if each instance targeted the same creature and {2} less to cast if they each targeted different creatures."
+    },
+    {
+      "oracle_id": "68a2e371-ccf0-4c2a-aeef-c66852811e1a",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "An opponent’s spell that targets Boreal Elemental more than once costs only {2} more to cast."
+    },
+    {
+      "oracle_id": "68a2e371-ccf0-4c2a-aeef-c66852811e1a",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you’re paying, add any cost increases (such as that of Boreal Elemental), then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Spells that target more than one commander you control cost only {3} more to cast."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "To determine the total cost of an opponent's spell that targets a commander you control, start with the mana cost or alternative cost that player is paying, add any cost increases (such as that of Esior's middle ability), then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "ddf38a32-302a-4658-9eaf-b813ebe275c9",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue."
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you apply Fist of Suns's alternative cost to a spell with {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Fist of Suns's ability is an alternative cost to cast a spell. You can't combine this with other alternative costs, such as flashback. You can pay additional costs, such as kicker, in addition to this alternative cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you cast a spell for which mana of any color can be spent to cast it, you may cast it for Fist of Suns's alternative cost and still spend any color of mana to cover that cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you pay {W}{U}{B}{R}{G} rather than pay the mana cost of a spell with {X} in its mana cost, the only legal choice for X is 0."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If one target of an escalate spell becomes illegal, the other targets will still be affected. If all of the targets become illegal, the spell won’t resolve."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "You can’t choose any one mode multiple times."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "Additional costs don’t affect a spell’s mana value."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "You choose all of your modes at once. You can’t wait to perform one mode’s actions and then decide to choose more modes."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "Effects that reduce the cost of spells reduce the total cost, including any escalate costs added."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "Untapping an attacking creature doesn’t cause it to be removed from combat."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If two of the chosen modes of an escalate spell target a creature, you may choose the same creature for each mode’s target, or choose different creatures. The same is true if the chosen modes target a player (or opponent)."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "The targeted opponent chooses which of their attacking creatures to sacrifice, not you."
+    },
+    {
+      "oracle_id": "48b67778-6616-4563-8456-62f302649768",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell that has escalate without paying its mana cost, you pay escalate costs for that spell if you choose more than one mode."
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "6f067bfd-1c59-463f-99e1-61161b43b405",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "You may choose the same creature as a target multiple times since Bounty of Might says “target creature” multiple times. You may give three different creatures +3/+3 each, one creature +6/+6 and another creature +3/+3, or a single creature +9/+9."
+    },
+    {
+      "oracle_id": "2f092562-9e17-43cd-aeb8-d0567f99363e",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If the targeted creature is also an artifact when Go for the Throat tries to resolve, it won't resolve."
+    },
+    {
+      "oracle_id": "2f092562-9e17-43cd-aeb8-d0567f99363e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the targeted creature is also an artifact when Go for the Throat tries to resolve, it won't resolve."
+    }
+  ]
+}

@@ -90,8 +90,13 @@ event owner. Optional and variable Waterbend grammar remains residual.
 source itself and one or more controlled commander creatures. Descriptors bind
 the fixed generic amount and target subject; the existing cast-cost component
 registry and current static-ability fragments own runtime applicability.
-Subtype targets, activation taxes, self-spell discounts and colored or variable
-increases remain residual under this production.
+Version-three descriptors also represent fixed generic battlefield-source
+reductions for spells targeting the source or at least one current creature.
+They retain an explicit all-caster, source-controller or source-opponent
+relation. A qualifying target set applies the adjustment once per source;
+per-target cardinality, granted target-cost abilities, activation prices and
+colored or variable adjustments remain outside this production. Historical
+tax and intrinsic source-face predicate schemas keep their existing wire.
 
 `compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
 face of a preparation card to closed inset instant or sorcery characteristics.

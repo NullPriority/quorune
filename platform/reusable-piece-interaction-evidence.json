@@ -19522,6 +19522,66 @@
       ],
       "interaction_order": 2,
       "assertion": "A clearly constructed, uncounted source pays normal B plus two life and one other owned graveyard creature exile. Self-payment rejects before mutation, and the pending cast, private projection and result replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_elderwood_preserves_opponent_tax_and_own_reduction_with_keywords",
+      "piece_ids": [
+        "capability.casting.cost.battlefield_target_generic_reduction",
+        "capability.casting.cost.targeted_fixed_generic"
+      ],
+      "capability_ids": [
+        "casting.cost.battlefield_target_generic_reduction",
+        "casting.cost.targeted_fixed_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Elderwood Scion keeps its own-controller fixed reduction separate from the existing opponent fixed target tax; native payments, Trample/Lifelink and replay retain both scopes."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_announced_x_keeps_its_value_and_colored_mana_after_one_fixed_reduction",
+      "piece_ids": [
+        "capability.casting.cost.battlefield_target_generic_reduction",
+        "capability.target.cardinality.mana_announced_x"
+      ],
+      "capability_ids": [
+        "casting.cost.battlefield_target_generic_reduction",
+        "target.cardinality.mana_announced_x"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real Gridlock choosesX2 and two creature targets while Killian pays only itsU. Noncreature-only andX3 unaffordable assignments reject; the chosenX and tap results survive private pending replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_generic_floor_still_requires_colored_mana_and_aura_cast_targets_qualify",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.casting.cost.battlefield_target_generic_reduction"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "casting.cost.battlefield_target_generic_reduction"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real Raffine Guidance cast targets a creature through the ordinary Aura owner, retains its requiredW even at generic floor0, and attaches with+1/+1 while unrelated colorless mana remains."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_increases_precede_reductions_and_paid_cost_does_not_change_after_source_departure",
+      "piece_ids": [
+        "capability.casting.cost.battlefield_target_generic_reduction",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.cost.battlefield_target_generic_reduction",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Sphere adds its generic increase before the fixed target reduction. An actual Unsummon response moves the reducing source; the paid price remains locked and the surviving target still returns through ordinary resolution and replay."
     }
   ]
 }
