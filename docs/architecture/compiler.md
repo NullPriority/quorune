@@ -1502,6 +1502,34 @@ announced-target-count and additional-cost requirements and validates both
 branches and the shared target of schema 5 before runtime trust. Older
 condition variants retain their existing runtime binding contract.
 
+`compiler/public_replacement_rows.py` joins an adjacent default instruction and
+its complete public-condition self-replacement only after the shared effect
+compiler proves that pair. The node retains the original raw source span;
+other keywords, casting permissions, and unsupported siblings remain separate.
+Ability-word labels are removed only at top-level sentence boundaries. A
+suffix such as “instead if” has the same typed condition and branch semantics
+as a leading “If” clause. Exactly one branch executes, before external draw,
+token, counter, or damage replacements.
+
+Public same-target schema 8 retains the complete original target schema in
+`target_binding`. Both branches independently close against that one role,
+including its predicates, count, zone, and controller relation. The target is
+chosen during casting and checked before resolution. Public source-result
+schema 9 retains `source_binding`, validating symbolic source ownership before
+runtime binding and the same resolved reference in each child afterward.
+These variants use the existing public-condition choice owner and canonical
+effect owners; older instruction schemas retain their original wire fields.
+Copies evaluate public conditions for their resolving controller and current
+game information, while preserving the copied effect and legal target choices.
+
+The land-entry condition reads sealed entry events for the current turn and
+their entry-time controller and card types. A searched land qualifies; playing
+a land is not required. Another player's entry or a previous turn's entry does
+not qualify. Graveyard conditions count cards, excluding tokens. A permanent
+card matches the canonical six permanent card types, with each card counted
+once; “permanent” is not a subtype. The resolving spell remains on the stack
+while that condition is read, including when cast using Flashback.
+
 Public self-death and attached-creature death returns bind the event card and
 its exact post-departure zone-change counter. The existing graveyard-return
 operation lowers that descriptor to the canonical zone move intent, which

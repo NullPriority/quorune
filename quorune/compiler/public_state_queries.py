@@ -14,6 +14,7 @@ from ..continuous_conditions import (
 )
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec
 from .boolean_public_conditions import compose_public_conditions,public_condition_parts_result
@@ -1050,6 +1051,8 @@ def _graveyard_query_count_condition(
     fields: dict[str, Any] = {"zones": ("graveyard",), "token": False}
     if quality == "instant and/or sorcery":
         fields["types_any"] = ("instant", "sorcery")
+    elif quality == 'permanent':
+        fields['types_any'] = tuple(sorted(PERMANENT_CARD_TYPES))
     elif quality in _CARD_TYPE_WORDS:
         fields["types_all"] = (quality,)
     elif quality:

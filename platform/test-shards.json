@@ -112,6 +112,7 @@
       "test_player_target_protection",
       "test_preflight_v080",
       "test_provoke_rules",
+      "test_public_condition_self_replacements",
       "test_qualified_hexproof",
       "test_reconfigure",
       "test_resolution_rules",

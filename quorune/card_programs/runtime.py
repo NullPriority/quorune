@@ -266,6 +266,7 @@ class _FixedPublicStateSnapshotResolver:
             )
         if fact in {
             FixedPublicStateFact.CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN,
+            FixedPublicStateFact.CONTROLLER_LANDS_ENTERED_THIS_TURN,
             FixedPublicStateFact.CONTROLLER_OTHER_CREATURES_ENTERED_THIS_TURN,
             FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN,
         }:
@@ -281,6 +282,8 @@ class _FixedPublicStateSnapshotResolver:
                 return sum("land" not in event.types for event in entered)
             if fact is FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN:
                 return sum("artifact" in event.types for event in entered)
+            if fact is FixedPublicStateFact.CONTROLLER_LANDS_ENTERED_THIS_TURN:
+                return sum('land' in event.types for event in entered)
             return sum(
                 "creature" in event.types
                 and event.object_incarnation != source.logical_object_id

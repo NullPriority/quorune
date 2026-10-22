@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v543"
+ORACLE_COMPILER_VERSION = "oracle-ir-v544"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1148,6 +1148,9 @@ def _compile_face(
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
 
     if spell:
+        from .compiler.public_replacement_rows import public_replacement_material_rows
+        material_rows=public_replacement_material_rows(material_rows,oracle_text=oracle_text,source_name=face_name or record.name,
+            compile_effect=declared_spell_effect_compiler(record,is_spell=spell,oracle_text=oracle_text,compile_effect=contextual_effect_template))
         typed_face = _typed_whole_spell_face(
             record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords, oracle_text=oracle_text,
             material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template),

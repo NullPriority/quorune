@@ -5364,6 +5364,36 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/public_replacement_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/public_replacement_rows.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/public_self_replacement_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8834,6 +8864,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/land_entry_condition_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/land_entry_coordination.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -9811,6 +9853,18 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/public_replacement_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -18628,5 +18682,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "6086f7f35d65ffdd794dbff8404573961015e0913de277c2d1ee530c794f9e8a"
+  "fingerprint": "8ab7c3e96dbbedb3615a6bafa60db05354371565d15344c76f3b5c42c71d13a4"
 }

@@ -15,6 +15,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
         own = (*own, *public_zone_condition_capabilities(value))
         from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
         own = (*own, *conditional_free_cast_capabilities(value))
+        from ..land_entry_condition_model import land_entry_condition_capabilities
+        own = (*own, *land_entry_condition_capabilities(value))
         if value.get('kind') == 'public_quantity_mana':
             from ..public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_CAPABILITY
             PublicQuantityManaOutput.from_dict(value)

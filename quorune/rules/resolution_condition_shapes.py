@@ -49,12 +49,16 @@ def resolution_condition_node_capabilities(
             or prefix[0].get('op')!='damage' or target_schema is None
             or target_schema.get('types_any')!=['creature'] or type(target_schema.get('count')) is not int or target_schema.get('count')!=1):return ()
     otherwise=wrapper.get('otherwise_effects',())
-    same_target=wrapper.get('schema_version') in {5,7}
+    same_target=wrapper.get('schema_version') in {5,7,8}
     paid_mana=wrapper.get('schema_version') in {6,7}
     if same_target:
+        from ..public_replacement_model import public_replacement_target_closed
+        from ..replacement.immutable import thaw_value
+        if wrapper.get('schema_version')==8 and thaw_value(wrapper['target_binding'])!=thaw_value(target_schema):return ()
+        closed=lambda value:public_replacement_target_closed(value,target_schema) if wrapper.get('schema_version')==8 else _same_target_result_closed(value)
         if (prefix or target_schema is None or type(target_schema.get('count')) is not int
-                or target_schema['count']!=1 or not _same_target_result_closed(conditional)
-                or not _same_target_result_closed(otherwise)):
+                or target_schema['count']!=1 or not closed(conditional)
+                or not closed(otherwise)):
             return ()
     elif _contains_target_reference(conditional) or _contains_target_reference(otherwise):
         return ()
@@ -70,14 +74,20 @@ def resolution_condition_node_capabilities(
     if len(targeted) > (2 if same_target else 1) or (target_schema is not None) != bool(targeted):
         return ()
     dependencies = {RESOLUTION_CONDITION_CAPABILITY}
+    from ..land_entry_condition_model import land_entry_condition_capabilities
+    dependencies.update(land_entry_condition_capabilities(_condition.to_dict()))
     if same_target:
-        from ..resolution_conditions import SAME_TARGET_SELF_REPLACEMENT_CAPABILITY
-        dependencies.add(SAME_TARGET_SELF_REPLACEMENT_CAPABILITY)
+        from ..resolution_conditions import SAME_TARGET_SELF_REPLACEMENT_CAPABILITY,PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY
+        dependencies.add(PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY if wrapper.get('schema_version')==8 else SAME_TARGET_SELF_REPLACEMENT_CAPABILITY)
     from ..characteristic_fragments import characteristic_quantity_capabilities
     dependencies.update(characteristic_quantity_capabilities(_condition.to_dict()))
-    if wrapper.get('schema_version') in {3,4,5,7}:
+    if wrapper.get('schema_version') in {3,4,5,7,8,9}:
         from ..resolution_conditions import PUBLIC_SELF_REPLACEMENT_CAPABILITY
         dependencies.add(PUBLIC_SELF_REPLACEMENT_CAPABILITY)
+    if wrapper.get('schema_version')==9:
+        if wrapper['source_binding']!='$source':return ()
+        from ..resolution_conditions import PUBLIC_SOURCE_SELF_REPLACEMENT_CAPABILITY
+        dependencies.add(PUBLIC_SOURCE_SELF_REPLACEMENT_CAPABILITY)
     if paid_mana:
         from ..spell_mana_conditions import PAID_MANA_CONDITION_CAPABILITY,PAID_MANA_CONDITION_MECHANIC
         from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
@@ -112,7 +122,7 @@ def resolution_condition_node_capabilities(
 
 
 def same_target_self_replacement_runtime_dependencies(program):
-    if not any(effect.get('op')==RESOLUTION_CONDITION_OPERATION and effect.get('schema_version')==5 for effect in program.effects):
+    if not any(effect.get('op')==RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') in {5,8,9} for effect in program.effects):
         return ()
     dependencies=resolution_condition_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         mechanic_ids=program.coverage,cost_schema=program.cost_schema)

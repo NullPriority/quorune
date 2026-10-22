@@ -25,7 +25,7 @@ class PublicResolutionConditionHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = ("CR 109.5", "CR 608.2c", "CR 608.2h")
     capability_dependencies: tuple[str, ...] = (RESOLUTION_CONDITION_CAPABILITY,)
-    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids')
+    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (

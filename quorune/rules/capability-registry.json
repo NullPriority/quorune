@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 468,
+  "registry_version": 469,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -44396,6 +44396,361 @@
         "test_current_granted_banding_is_offered_and_first_strike_band_uses_both_steps",
         "test_blocking_a_band_triggers_once_for_blocker_and_per_matching_creature",
         "test_static_banding_grant_keeps_group_after_source_bounce_and_cannot_strip_minimum"
+      ]
+    },
+    {
+      "id": "resolution.effect.public_same_target_self_replacement",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "207.2c",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.15",
+        "614.17c",
+        "616.1",
+        "702.34a",
+        "110.4",
+        "110.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Select one fixed self-replacement branch under a current closed public condition while preserving one complete original public target role.",
+        "inputs": [
+          "source-spanned complete default and alternative instruction",
+          "existing closed current public condition",
+          "complete typed child owners and shared target/source bindings"
+        ],
+        "outputs": [
+          "exactly one selected complete result",
+          "current resolving-controller condition and preserved result/source identity",
+          "canonical private projection, atomic failure and exact replay"
+        ],
+        "exclusions": [
+          "new target roles or target-relative conditions",
+          "variable or unbound source quantities",
+          "unrepresented siblings",
+          "opaque paid-cast facts"
+        ]
+      },
+      "dependencies": [
+        "resolution.effect.public_condition",
+        "resolution.effect.fixed_public_self_replacement",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.public_replacement_rows.public_replacement_material_rows",
+        "quorune.compiler.public_replacement_bindings.public_same_target_replacement",
+        "quorune.public_replacement_model.public_replacement_target_closed",
+        "quorune.resolution_conditions.validate_resolution_condition_instruction",
+        "quorune.rules.resolution_condition_shapes.resolution_condition_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete normal admission, independent descriptor minima and canonically verified capability withdrawals protect the new scopes.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Four fresh omissions are killed: pair coalescence, selected alternative result, source-result condition and land-entry condition; each uses the normal source or actual native consequence witness.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_originals_preserve_spans_siblings_and_independent_runtime_minima",
+        "test_target_binding_codecs_reject_drift_unknown_versions_and_source_role_changes",
+        "test_same_target_source_schemas_and_opaque_siblings_fail_closed",
+        "test_permanent_graveyard_condition_uses_six_card_types_not_a_subtype",
+        "test_morbid_actual_token_death_selects_one_damage_counter_stat_and_token_branch",
+        "test_metalcraft_damage_stats_and_spell_lifelink_keep_original_source_controller",
+        "test_hellbent_checks_resolution_hand_after_both_spells_leave_the_hand",
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles",
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_chandra_current_control_spell_mastery_and_graveyard_damage_amounts",
+        "test_delirium_and_descend_keep_card_types_card_counts_and_library_results_distinct",
+        "test_ferocious_is_controller_relative_and_raid_survives_attacker_departure",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_stubborn_denial_preserves_noncreature_target_and_the_paying_controller",
+        "test_copied_spell_uses_copy_controller_condition_and_its_new_target",
+        "test_actual_responses_change_current_power_and_artifact_conditions_before_resolution",
+        "test_wrong_target_and_departed_target_never_execute_either_damage_branch",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours",
+        "test_public_caster_draw_branch_delivers_private_cards_only_to_the_declared_target"
+      ],
+      "negative_tests": [
+        "test_complete_originals_preserve_spans_siblings_and_independent_runtime_minima",
+        "test_target_binding_codecs_reject_drift_unknown_versions_and_source_role_changes",
+        "test_same_target_source_schemas_and_opaque_siblings_fail_closed",
+        "test_permanent_graveyard_condition_uses_six_card_types_not_a_subtype",
+        "test_verified_capability_withdrawals_and_fresh_producer_condition_omissions_reject"
+      ],
+      "interaction_tests": [
+        "test_morbid_actual_token_death_selects_one_damage_counter_stat_and_token_branch",
+        "test_metalcraft_damage_stats_and_spell_lifelink_keep_original_source_controller",
+        "test_hellbent_checks_resolution_hand_after_both_spells_leave_the_hand",
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles",
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_chandra_current_control_spell_mastery_and_graveyard_damage_amounts",
+        "test_delirium_and_descend_keep_card_types_card_counts_and_library_results_distinct",
+        "test_ferocious_is_controller_relative_and_raid_survives_attacker_departure",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_stubborn_denial_preserves_noncreature_target_and_the_paying_controller",
+        "test_copied_spell_uses_copy_controller_condition_and_its_new_target",
+        "test_actual_responses_change_current_power_and_artifact_conditions_before_resolution",
+        "test_wrong_target_and_departed_target_never_execute_either_damage_branch",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours",
+        "test_public_caster_draw_branch_delivers_private_cards_only_to_the_declared_target"
+      ],
+      "multiplayer_tests": [
+        "test_morbid_actual_token_death_selects_one_damage_counter_stat_and_token_branch",
+        "test_metalcraft_damage_stats_and_spell_lifelink_keep_original_source_controller",
+        "test_hellbent_checks_resolution_hand_after_both_spells_leave_the_hand",
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles",
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_chandra_current_control_spell_mastery_and_graveyard_damage_amounts",
+        "test_delirium_and_descend_keep_card_types_card_counts_and_library_results_distinct",
+        "test_ferocious_is_controller_relative_and_raid_survives_attacker_departure",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_stubborn_denial_preserves_noncreature_target_and_the_paying_controller",
+        "test_copied_spell_uses_copy_controller_condition_and_its_new_target",
+        "test_actual_responses_change_current_power_and_artifact_conditions_before_resolution",
+        "test_wrong_target_and_departed_target_never_execute_either_damage_branch",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours",
+        "test_public_caster_draw_branch_delivers_private_cards_only_to_the_declared_target"
+      ],
+      "privacy_tests": [
+        "test_morbid_actual_token_death_selects_one_damage_counter_stat_and_token_branch",
+        "test_metalcraft_damage_stats_and_spell_lifelink_keep_original_source_controller",
+        "test_hellbent_checks_resolution_hand_after_both_spells_leave_the_hand",
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles",
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_chandra_current_control_spell_mastery_and_graveyard_damage_amounts",
+        "test_delirium_and_descend_keep_card_types_card_counts_and_library_results_distinct",
+        "test_ferocious_is_controller_relative_and_raid_survives_attacker_departure",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_stubborn_denial_preserves_noncreature_target_and_the_paying_controller",
+        "test_copied_spell_uses_copy_controller_condition_and_its_new_target",
+        "test_actual_responses_change_current_power_and_artifact_conditions_before_resolution",
+        "test_wrong_target_and_departed_target_never_execute_either_damage_branch",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours",
+        "test_public_caster_draw_branch_delivers_private_cards_only_to_the_declared_target"
+      ],
+      "replay_tests": [
+        "test_morbid_actual_token_death_selects_one_damage_counter_stat_and_token_branch",
+        "test_metalcraft_damage_stats_and_spell_lifelink_keep_original_source_controller",
+        "test_hellbent_checks_resolution_hand_after_both_spells_leave_the_hand",
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles",
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_chandra_current_control_spell_mastery_and_graveyard_damage_amounts",
+        "test_delirium_and_descend_keep_card_types_card_counts_and_library_results_distinct",
+        "test_ferocious_is_controller_relative_and_raid_survives_attacker_departure",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_stubborn_denial_preserves_noncreature_target_and_the_paying_controller",
+        "test_copied_spell_uses_copy_controller_condition_and_its_new_target",
+        "test_actual_responses_change_current_power_and_artifact_conditions_before_resolution",
+        "test_wrong_target_and_departed_target_never_execute_either_damage_branch",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours",
+        "test_public_caster_draw_branch_delivers_private_cards_only_to_the_declared_target"
+      ]
+    },
+    {
+      "id": "resolution.effect.public_source_self_replacement",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "207.2c",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.15",
+        "614.17c",
+        "616.1",
+        "702.34a",
+        "110.4",
+        "110.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Select one fixed source-attributed untargeted result under a current closed public condition without treating that information as a paid cast fact.",
+        "inputs": [
+          "source-spanned complete default and alternative instruction",
+          "existing closed current public condition",
+          "complete typed child owners and shared target/source bindings"
+        ],
+        "outputs": [
+          "exactly one selected complete result",
+          "current resolving-controller condition and preserved result/source identity",
+          "canonical private projection, atomic failure and exact replay"
+        ],
+        "exclusions": [
+          "new target roles or target-relative conditions",
+          "variable or unbound source quantities",
+          "unrepresented siblings",
+          "opaque paid-cast facts"
+        ]
+      },
+      "dependencies": [
+        "resolution.effect.public_condition",
+        "resolution.effect.fixed_public_self_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.public_self_replacement_templates.fixed_public_self_replacement_template",
+        "quorune.resolution_conditions.public_source_replacement_result_is_fixed",
+        "quorune.rules.resolution_condition_shapes.resolution_condition_node_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete normal admission, independent descriptor minima and canonically verified capability withdrawals protect the new scopes.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Four fresh omissions are killed: pair coalescence, selected alternative result, source-result condition and land-entry condition; each uses the normal source or actual native consequence witness.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_originals_preserve_spans_siblings_and_independent_runtime_minima",
+        "test_target_binding_codecs_reject_drift_unknown_versions_and_source_role_changes",
+        "test_same_target_source_schemas_and_opaque_siblings_fail_closed",
+        "test_permanent_graveyard_condition_uses_six_card_types_not_a_subtype",
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles"
+      ],
+      "negative_tests": [
+        "test_complete_originals_preserve_spans_siblings_and_independent_runtime_minima",
+        "test_target_binding_codecs_reject_drift_unknown_versions_and_source_role_changes",
+        "test_same_target_source_schemas_and_opaque_siblings_fail_closed",
+        "test_permanent_graveyard_condition_uses_six_card_types_not_a_subtype",
+        "test_verified_capability_withdrawals_and_fresh_producer_condition_omissions_reject"
+      ],
+      "interaction_tests": [
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles"
+      ],
+      "multiplayer_tests": [
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles"
+      ],
+      "privacy_tests": [
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles"
+      ],
+      "replay_tests": [
+        "test_threshold_spell_is_not_a_graveyard_card_until_it_finishes_and_flashback_exiles"
+      ]
+    },
+    {
+      "id": "condition.land_entered_this_turn",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "207.2c",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.15",
+        "614.17c",
+        "616.1",
+        "702.34a",
+        "110.4",
+        "110.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Read whether a land entered under the resolving controller this turn from canonical entry-time event facts, independently of land plays and current battlefield membership.",
+        "inputs": [
+          "source-spanned complete default and alternative instruction",
+          "existing closed current public condition",
+          "complete typed child owners and shared target/source bindings"
+        ],
+        "outputs": [
+          "exactly one selected complete result",
+          "current resolving-controller condition and preserved result/source identity",
+          "canonical private projection, atomic failure and exact replay"
+        ],
+        "exclusions": [
+          "new target roles or target-relative conditions",
+          "variable or unbound source quantities",
+          "unrepresented siblings",
+          "opaque paid-cast facts"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "implementation_components": [
+        "quorune.land_entry_condition_model.land_entry_condition_capabilities",
+        "quorune.compiler.public_self_replacement_templates._public_replacement_condition",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._public_fact_quantity"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete normal admission, independent descriptor minima and canonically verified capability withdrawals protect the new scopes.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Four fresh omissions are killed: pair coalescence, selected alternative result, source-result condition and land-entry condition; each uses the normal source or actual native consequence witness.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_originals_preserve_spans_siblings_and_independent_runtime_minima",
+        "test_target_binding_codecs_reject_drift_unknown_versions_and_source_role_changes",
+        "test_same_target_source_schemas_and_opaque_siblings_fail_closed",
+        "test_permanent_graveyard_condition_uses_six_card_types_not_a_subtype",
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours"
+      ],
+      "negative_tests": [
+        "test_complete_originals_preserve_spans_siblings_and_independent_runtime_minima",
+        "test_target_binding_codecs_reject_drift_unknown_versions_and_source_role_changes",
+        "test_same_target_source_schemas_and_opaque_siblings_fail_closed",
+        "test_permanent_graveyard_condition_uses_six_card_types_not_a_subtype",
+        "test_verified_capability_withdrawals_and_fresh_producer_condition_omissions_reject"
+      ],
+      "interaction_tests": [
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours"
+      ],
+      "multiplayer_tests": [
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours"
+      ],
+      "privacy_tests": [
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours"
+      ],
+      "replay_tests": [
+        "test_landfall_uses_current_controller_entry_and_resets_after_the_turn",
+        "test_threshold_search_entries_qualify_landfall_without_playing_a_land",
+        "test_search_can_find_zero_and_an_opponents_land_entry_does_not_satisfy_yours"
       ]
     }
   ]

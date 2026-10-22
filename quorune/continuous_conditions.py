@@ -85,6 +85,7 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    CONTROLLER_LANDS_ENTERED_THIS_TURN='controller_lands_entered_this_turn'
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
     OPPONENT_OWNS_EXILED_CARD = 'opponent_owns_exiled_card'
     ANY_LIBRARY_COUNT_AT_MOST = 'any_library_count_at_most'

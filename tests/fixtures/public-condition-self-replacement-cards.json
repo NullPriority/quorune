@@ -1,0 +1,2824 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned public self-replacement originals with complete canonical rulings and clearly constructed typed public-target controls.",
+  "cards": [
+    {
+      "oracle_id": "d12e374d-ed09-4d5e-bb7a-6c7d9ea80a1e",
+      "name": "Brimstone Volley",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Brimstone Volley deals 3 damage to any target.\nMorbid — Brimstone Volley deals 5 damage instead if a creature died this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Morbid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "5b5bf1fa-6502-4790-b66b-f0f8504ebc7c",
+      "name": "Cabal Ritual",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Add {B}{B}{B}.\nThreshold — Add {B}{B}{B}{B}{B} instead if there are seven or more cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Threshold"
+      ],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ab48147c-0bd7-4875-8e11-0e26185453dd",
+      "name": "Cackling Flames",
+      "mana_cost": "{3}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Cackling Flames deals 3 damage to any target.\nHellbent — Cackling Flames deals 5 damage instead if you have no cards in hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Hellbent"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-05-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "c0cc881c-b63b-44dd-8157-67680c65fc3d",
+      "name": "Chandra's Triumph",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Chandra's Triumph deals 3 damage to target creature or planeswalker an opponent controls. Chandra's Triumph deals 5 damage instead if you control a Chandra planeswalker.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2ef797ef-c05f-4309-85c7-1bd151dac3fa",
+      "name": "Far Wanderings",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.\nThreshold — If there are seven or more cards in your graveyard, instead search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Threshold"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f70f1f2e-7277-4bc9-b0bb-b44a1da2c62f",
+      "name": "Feed the Clan",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "You gain 5 life.\nFerocious — You gain 10 life instead if you control a creature with power 4 or greater.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Ferocious"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "27c84ad1-1491-459b-bf8a-0146062084dc",
+      "name": "Fiery Impulse",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Fiery Impulse deals 2 damage to target creature.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, Fiery Impulse deals 3 damage instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Spell mastery"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "name": "Firecannon Blast",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Firecannon Blast deals 3 damage to target creature.\nRaid — Firecannon Blast deals 6 damage instead if you attacked this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Raid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-09-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "d211c03a-03cd-40c5-b7c8-ada352fd01a6",
+      "name": "Galvanic Blast",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Galvanic Blast deals 2 damage to any target.\nMetalcraft — Galvanic Blast deals 4 damage instead if you control three or more artifacts.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Metalcraft"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "ff45677d-977e-4ef5-859c-52393ed71a6c",
+      "name": "Gather the Townsfolk",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create two 1/1 white Human creature tokens.\nFateful hour — If you have 5 or less life, create five of those tokens instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Fateful hour"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "name": "Grizzly Fate",
+      "mana_cost": "{3}{G}{G}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create two 2/2 green Bear creature tokens.\nThreshold — Create four 2/2 green Bear creature tokens instead if there are seven or more cards in your graveyard.\nFlashback {5}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Threshold",
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ddbacb74-1f98-4607-a92e-d14973b9d0ef",
+      "name": "Groundswell",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +2/+2 until end of turn.\nLandfall — If you had a land enter the battlefield under your control this turn, that creature gets +4/+4 until end of turn instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Landfall"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-08-28",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "296dee6b-6ec1-4ea4-8dc3-23080dd37646",
+      "name": "Hunger of the Howlpack",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Put a +1/+1 counter on target creature.\nMorbid — Put three +1/+1 counters on that creature instead if a creature died this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Morbid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b153fc70-0312-4856-befd-bb6b9a04a26e",
+      "name": "Join the Dead",
+      "mana_cost": "{1}{B}{B}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets -5/-5 until end of turn.\nDescend 4 — That creature gets -10/-10 until end of turn instead if there are four or more permanent cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Descend"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "563a8e37-b90e-4ea1-9366-8502b403e13e",
+      "name": "Might Beyond Reason",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Put two +1/+1 counters on target creature.\nDelirium — Put three +1/+1 counters on that creature instead if there are four or more card types among cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Delirium"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-04-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "35506b6b-6476-4830-9baa-4051c18322f0",
+      "name": "Mirran Mettle",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +2/+2 until end of turn.\nMetalcraft — That creature gets +4/+4 until end of turn instead if you control three or more artifacts.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Metalcraft"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3708eaae-9306-46b2-ae41-7ce6c50be3c7",
+      "name": "Mysteries of the Deep",
+      "mana_cost": "{4}{U}",
+      "cmc": 5.0,
+      "type_line": "Instant",
+      "oracle_text": "Draw two cards.\nLandfall — If you had a land enter the battlefield under your control this turn, draw three cards instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Landfall"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1180796-6e26-4b45-9263-130620d702e5",
+      "name": "Predator's Howl",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Create a 2/2 green Wolf creature token.\nMorbid — Create three 2/2 green Wolf creature tokens instead if a creature died this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Morbid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c7f08962-6c54-4fd5-a55e-7513e758af32",
+      "name": "Rest for the Weary",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Target player gains 4 life.\nLandfall — If you had a land enter the battlefield under your control this turn, that player gains 8 life instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Landfall"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bc3d5911-3580-4132-9daf-2826495b5739",
+      "name": "Stitch Together",
+      "mana_cost": "{B}{B}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Return target creature card from your graveyard to your hand.\nThreshold — Return that card from your graveyard to the battlefield instead if there are seven or more cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Threshold"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3adc3af3-5086-4d61-b38c-c1dddeaeebe6",
+      "name": "Stubborn Denial",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target noncreature spell unless its controller pays {1}.\nFerocious — If you control a creature with power 4 or greater, counter that spell instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Ferocious"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "52ad1a31-3ad8-4ead-ba77-675cad7e4a14",
+      "name": "Thermal Blast",
+      "mana_cost": "{4}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Thermal Blast deals 3 damage to target creature.\nThreshold — Thermal Blast deals 5 damage instead if there are seven or more cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Threshold"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "4b3bc59c-5439-4ec8-b25e-7493fa1cd3fd",
+      "name": "Tomb Hex",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets -2/-2 until end of turn.\nLandfall — If you had a land enter the battlefield under your control this turn, that creature gets -4/-4 until end of turn instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Landfall"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1b7e325d-24ee-42e3-b06f-6c91ec5280c3",
+      "name": "Tragic Fall",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets -3/-3 until end of turn.\nHellbent — That creature gets -13/-13 until end of turn instead if you have no cards in hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Hellbent"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fa6e2a47-a8cb-4224-ae3e-f61c90477285",
+      "name": "Tragic Slip",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets -1/-1 until end of turn.\nMorbid — That creature gets -13/-13 until end of turn instead if a creature died this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Morbid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c9dd2bf5-32e0-47f7-9a49-501c262d745b",
+      "name": "Traverse the Ulvenwald",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for a basic land card, reveal it, put it into your hand, then shuffle.\nDelirium — If there are four or more card types among cards in your graveyard, instead search your library for a creature or land card, reveal it, put it into your hand, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Delirium"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "name": "Unholy Heat",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Unholy Heat deals 2 damage to target creature or planeswalker.\nDelirium — Unholy Heat deals 6 damage instead if there are four or more card types among cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Delirium"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Raise the Alarm",
+      "oracle_id": "5b2364d7-a811-4595-a1b4-224c70555ffa",
+      "oracle_text": "Create two 1/1 white Soldier creature tokens.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "84dc94b2-95fb-4d53-aaa2-191cb645639f",
+      "name": "Parallel Lives",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "273b339c-964b-4a18-8eb5-ceb8abcdfd9e",
+      "name": "Divination",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Draw two cards.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "33d405ea-7a9a-4970-b70f-9c05d90dd6f0",
+      "name": "Duress",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Target opponent reveals their hand. You choose a noncreature, nonland card from it. That player discards that card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+      "name": "Memnite",
+      "mana_cost": "{0}",
+      "type_line": "Artifact Creature — Construct",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Thopter"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Generic Public Replacement Target",
+      "oracle_id": "00000000-0000-4000-8000-000000757001",
+      "oracle_text": "",
+      "power": "30",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "30",
+      "type_line": "Creature — Human"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Generic Public Replacement Ferocious",
+      "oracle_id": "00000000-0000-4000-8000-000000757002",
+      "oracle_text": "",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "4",
+      "type_line": "Creature — Human"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": "4",
+      "mana_cost": "{1}{W}",
+      "name": "Generic Public Replacement Chandra",
+      "oracle_id": "00000000-0000-4000-8000-000000757003",
+      "oracle_text": "",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": null,
+      "type_line": "Planeswalker — Chandra"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Generic Public Replacement Draw",
+      "oracle_id": "00000000-0000-4000-8000-000000757004",
+      "oracle_text": "Target player draws two cards. If you have no cards in hand, that player draws three cards instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Generic Public Replacement Life Bolt",
+      "oracle_id": "00000000-0000-4000-8000-000000757005",
+      "oracle_text": "Lifelink\nGeneric Public Replacement Life Bolt deals 2 damage to target player. Metalcraft — Generic Public Replacement Life Bolt deals 4 damage instead if you control three or more artifacts.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Generic Public Replacement Sorcery",
+      "oracle_id": "00000000-0000-4000-8000-000000757006",
+      "oracle_text": "You gain 1 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "c0cc881c-b63b-44dd-8157-67680c65fc3d",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "Controlling more than one planeswalker of the appropriate type won’t have any more of a benefit than just controlling one."
+    },
+    {
+      "oracle_id": "c0cc881c-b63b-44dd-8157-67680c65fc3d",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "Whether you control an appropriate planeswalker is checked only as the spell resolves."
+    },
+    {
+      "oracle_id": "f70f1f2e-7277-4bc9-b0bb-b44a1da2c62f",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Ferocious abilities of instants and sorceries that don’t use the word “instead” will provide an additional effect if you control a creature with power 4 or greater as they resolve."
+    },
+    {
+      "oracle_id": "f70f1f2e-7277-4bc9-b0bb-b44a1da2c62f",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Some ferocious abilities that appear on instants and sorceries use the word “instead.” These spells have an upgraded effect if you control a creature with power 4 or greater as they resolve. For these, you only get the upgraded effect, not both effects."
+    },
+    {
+      "oracle_id": "27c84ad1-1491-459b-bf8a-0146062084dc",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "Check to see if there are two or more instant and/or sorcery cards in your graveyard as the spell resolves to determine whether the spell mastery ability applies. The spell itself won’t count because it’s still on the stack as you make this check."
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities evaluate the entire turn to see if you attacked with a creature. That creature doesn't have to still be on the battlefield. Similarly, the player, planeswalker, or battle it attacked doesn't have to still be in the game or on the battlefield."
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Raid abilities care only that you attacked with a creature. It doesn't matter how many creatures you attacked with or which player, planeswalker, or battle those creatures attacked."
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "At the time this spell is resolving, it is on the stack and not in the graveyard. This means that you should not count this card when determining whether the Threshold effect occurs."
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "f3073e4f-ca7e-4fde-88a4-bd7b6ebfbc8c",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "ddbacb74-1f98-4607-a92e-d14973b9d0ef",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whether you had a land enter the battlefield under your control this turn is checked as this spell resolves, not as you cast it."
+    },
+    {
+      "oracle_id": "ddbacb74-1f98-4607-a92e-d14973b9d0ef",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The landfall ability checks for an action that has happened in the past. It doesn't matter if a land that entered the battlefield under your control previously in the turn is still on the battlefield, is still under your control, or is still a land."
+    },
+    {
+      "oracle_id": "ddbacb74-1f98-4607-a92e-d14973b9d0ef",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The effect of this spell's landfall ability replaces its normal effect. If you had a land enter under your control this turn, only the landfall-based effect happens."
+    },
+    {
+      "oracle_id": "ddbacb74-1f98-4607-a92e-d14973b9d0ef",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Once the spell resolves, having a land enter under your control provides no further benefit."
+    },
+    {
+      "oracle_id": "ddbacb74-1f98-4607-a92e-d14973b9d0ef",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Having more than one land enter the battlefield under your control this turn provides no additional benefit."
+    },
+    {
+      "oracle_id": "b153fc70-0312-4856-befd-bb6b9a04a26e",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some descend triggered abilities include intervening \"if\" clauses (i.e. \"if you have [four or eight] permanent cards in your graveyard\" in the middle of the ability). Each of these abilities checks your graveyard at the moment it would trigger to see if it does. If you don't have the required number of permanent cards in your graveyard at that time, the ability doesn't trigger at all. If it does trigger, it will check again as it tries to resolve. If you don't have the required number of permanent cards in your graveyard at that time, the ability won't resolve and none of its effects will happen."
+    },
+    {
+      "oracle_id": "b153fc70-0312-4856-befd-bb6b9a04a26e",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Cards with the ability word \"descend N\" have abilities that care if you have at least N permanent cards in your graveyard."
+    },
+    {
+      "oracle_id": "563a8e37-b90e-4ea1-9366-8502b403e13e",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The number of card types matters, not the number of cards. For example, Wicker Witch (an artifact creature) along with Catalog (an instant) and Chaplain's Blessing (a sorcery) will enable delirium."
+    },
+    {
+      "oracle_id": "563a8e37-b90e-4ea1-9366-8502b403e13e",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "In some rare cases, you can have a token or a copy of a spell in your graveyard at the moment that an object's delirium ability counts the card types among cards in your graveyard, before that token or copy ceases to exist. Because tokens and copies of spells are not cards, even if they are copies of cards, their types will never be counted."
+    },
+    {
+      "oracle_id": "563a8e37-b90e-4ea1-9366-8502b403e13e",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Some delirium abilities that appear on instants and sorceries use the word \"instead.\" These spells have an upgraded effect when they resolve if there are four or more card types among cards in your graveyard. They check that number only while they're resolving and don't count themselves, since they aren't in your graveyard yet. You only get the upgraded effect, not both effects."
+    },
+    {
+      "oracle_id": "563a8e37-b90e-4ea1-9366-8502b403e13e",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The card types in Magic are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Supertypes (such as legendary and basic) and subtypes (such as Human and Equipment) are not counted."
+    },
+    {
+      "oracle_id": "563a8e37-b90e-4ea1-9366-8502b403e13e",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Because you consider only the characteristics of a double-faced card's front face while it's not on the battlefield, the types of its back face won't be counted for delirium."
+    },
+    {
+      "oracle_id": "3708eaae-9306-46b2-ae41-7ce6c50be3c7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The effect of this spell's landfall ability replaces its normal effect. If you had a land enter under your control this turn, only the landfall-based effect happens."
+    },
+    {
+      "oracle_id": "3708eaae-9306-46b2-ae41-7ce6c50be3c7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The landfall ability checks for an action that has happened in the past. It doesn't matter if a land that entered the battlefield under your control previously in the turn is still on the battlefield, is still under your control, or is still a land."
+    },
+    {
+      "oracle_id": "3708eaae-9306-46b2-ae41-7ce6c50be3c7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Having more than one land enter the battlefield under your control this turn provides no additional benefit."
+    },
+    {
+      "oracle_id": "3708eaae-9306-46b2-ae41-7ce6c50be3c7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Once the spell resolves, having a land enter under your control provides no further benefit."
+    },
+    {
+      "oracle_id": "3708eaae-9306-46b2-ae41-7ce6c50be3c7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whether you had a land enter the battlefield under your control this turn is checked as this spell resolves, not as you cast it."
+    },
+    {
+      "oracle_id": "c7f08962-6c54-4fd5-a55e-7513e758af32",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Once the spell resolves, having a land enter under your control provides no further benefit."
+    },
+    {
+      "oracle_id": "c7f08962-6c54-4fd5-a55e-7513e758af32",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Having more than one land enter the battlefield under your control this turn provides no additional benefit."
+    },
+    {
+      "oracle_id": "c7f08962-6c54-4fd5-a55e-7513e758af32",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The landfall ability checks for an action that has happened in the past. It doesn't matter if a land that entered the battlefield under your control previously in the turn is still on the battlefield, is still under your control, or is still a land."
+    },
+    {
+      "oracle_id": "c7f08962-6c54-4fd5-a55e-7513e758af32",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whether you had a land enter the battlefield under your control this turn is checked as this spell resolves, not as you cast it."
+    },
+    {
+      "oracle_id": "c7f08962-6c54-4fd5-a55e-7513e758af32",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The effect of this spell's landfall ability replaces its normal effect. If you had a land enter under your control this turn, only the landfall-based effect happens."
+    },
+    {
+      "oracle_id": "bc3d5911-3580-4132-9daf-2826495b5739",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Checks the number of cards in your graveyard when it starts resolving. You may drop below seven cards during resolution, but that won't stop it from resolving."
+    },
+    {
+      "oracle_id": "3adc3af3-5086-4d61-b38c-c1dddeaeebe6",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Some ferocious abilities that appear on instants and sorceries use the word “instead.” These spells have an upgraded effect if you control a creature with power 4 or greater as they resolve. For these, you only get the upgraded effect, not both effects."
+    },
+    {
+      "oracle_id": "3adc3af3-5086-4d61-b38c-c1dddeaeebe6",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Ferocious abilities of instants and sorceries that don’t use the word “instead” will provide an additional effect if you control a creature with power 4 or greater as they resolve."
+    },
+    {
+      "oracle_id": "4b3bc59c-5439-4ec8-b25e-7493fa1cd3fd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Once the spell resolves, having a land enter under your control provides no further benefit."
+    },
+    {
+      "oracle_id": "4b3bc59c-5439-4ec8-b25e-7493fa1cd3fd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whether you had a land enter the battlefield under your control this turn is checked as this spell resolves, not as you cast it."
+    },
+    {
+      "oracle_id": "4b3bc59c-5439-4ec8-b25e-7493fa1cd3fd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The effect of this spell's landfall ability replaces its normal effect. If you had a land enter under your control this turn, only the landfall-based effect happens."
+    },
+    {
+      "oracle_id": "4b3bc59c-5439-4ec8-b25e-7493fa1cd3fd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The landfall ability checks for an action that has happened in the past. It doesn't matter if a land that entered the battlefield under your control previously in the turn is still on the battlefield, is still under your control, or is still a land."
+    },
+    {
+      "oracle_id": "4b3bc59c-5439-4ec8-b25e-7493fa1cd3fd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Having more than one land enter the battlefield under your control this turn provides no additional benefit."
+    },
+    {
+      "oracle_id": "c9dd2bf5-32e0-47f7-9a49-501c262d745b",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Some delirium abilities that appear on instants and sorceries use the word \"instead.\" These spells have an upgraded effect when they resolve if there are four or more card types among cards in your graveyard. They check that number only while they're resolving and don't count themselves, since they aren't in your graveyard yet. You only get the upgraded effect, not both effects."
+    },
+    {
+      "oracle_id": "c9dd2bf5-32e0-47f7-9a49-501c262d745b",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Some delirium abilities that appear on instants and sorceries use the word “instead.” These spells have an upgraded effect when they resolve if there are four or more card types among cards in your graveyard. They check that number only while they’re resolving and don’t count themselves, since they aren’t in your graveyard yet. You only get the upgraded effect, not both effects."
+    },
+    {
+      "oracle_id": "c9dd2bf5-32e0-47f7-9a49-501c262d745b",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "The number of card types matters, not the number of cards. For example, Epitaph Golem (an artifact creature) along with Memory Deluge (an instant) and Travel Preparations (a sorcery) will enable delirium."
+    },
+    {
+      "oracle_id": "c9dd2bf5-32e0-47f7-9a49-501c262d745b",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "The card types that could appear in your graveyard are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Supertypes (such as legendary and basic) and subtypes (such as Human and Equipment) are not counted."
+    },
+    {
+      "oracle_id": "c9dd2bf5-32e0-47f7-9a49-501c262d745b",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Because you consider only the characteristics of a double-faced card’s front face while it’s not on the battlefield, the types of its back face won’t be counted for delirium."
+    },
+    {
+      "oracle_id": "c9dd2bf5-32e0-47f7-9a49-501c262d745b",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "The delirium ability of Traverse the Ulvenwald allows you to find a nonbasic land card."
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The card types that can appear in a graveyard are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Legendary, basic, and snow are supertypes, not card types; Kavu and Equipment are subtypes, not card types."
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Unholy Heat checks your graveyard as it resolves to determine if it deals 2 or 6 damage. At that time, Unholy Heat isn't in the graveyard yet."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "84dc94b2-95fb-4d53-aaa2-191cb645639f",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If you control two Parallel Lives, then the number of tokens created is four times the original number. If you control three, then the number of tokens created is eight times the original number, and so on."
+    },
+    {
+      "oracle_id": "84dc94b2-95fb-4d53-aaa2-191cb645639f",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Everything that is specified by the effect creating the original token or tokens will also be true about the additional token or tokens created by Parallel Lives's replacement effect. For example, if an effect tells you to create a token \"tapped and attacking,\" the additional tokens will also be tapped and attacking."
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead."
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects."
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target."
+    }
+  ]
+}
