@@ -515,7 +515,7 @@ def _dependency_metadata(
 
 
 _ACTIVATION_RESTRICTION_PREFIX = re.compile(
-    r"^(?P<effect>.+?)\.?\s+activate only ",
+    r"^(?P<effect>.+?)\s+activate only ",
     re.IGNORECASE,
 )
 def _activated_effect_material(ability: ActivatedAbility) -> str:

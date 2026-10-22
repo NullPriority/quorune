@@ -257,6 +257,10 @@ closed ability bodies under the existing parent/child component scope. The
 scope follows current controller speed across zones. Unknown bodies remain
 residuals, and the Max Speed prefix is retained as a condition rather than
 discarded as decorative text.
+The compiler-pinned activation catalog also applies those parent scopes on the
+battlefield through `rules/scoped_activated_abilities.py`. It uses the same
+current source designations as off-battlefield catalogs, so an absent Max Speed
+child cannot advertise an activation through its intrinsic descriptor.
 
 `compiler/backup_nodes.py` binds each fixed Backup instance to the complete
 printed ability bundle below it after the face's ordinary nodes are compiled.
@@ -1840,6 +1844,9 @@ descriptor. The compiler strips that suffix only for result recognition and
 retains the original descriptor, so controller-upkeep and sorcery timing share
 the ordinary offer and command legality owner. Missing or conflicting timing
 metadata prevents this lowering.
+Separation preserves the entire preceding effect text, including its final
+period and earlier sentences. Activation instructions are not part of the
+effect; removing a represented instruction must not alter the result grammar.
 Qualified source-self, targeted, mass, optional, conditional, multiple-object,
 copied, granted, and text-changed movement stays source-spanned and residual.
 
@@ -3340,6 +3347,15 @@ CardProgram compilation and live generated-program registration. It removes a
 reviewed split only when every subscription has one trusted, body-identical
 source-self counterpart, preventing duplicate triggers without card identity
 dispatch.
+`card_programs/current_view_equivalence.py` also proves redundant fixed search
+and controller-upkeep type-count life views. It requires matching nonempty
+Oracle and ruling hashes, current capability closure, event and target scope,
+and complete result semantics. A reviewed activated search with no cost schema
+is redundant only when it retains the identical compiler-pinned cost catalog.
+An upkeep type count preserves the exact controller, type, threshold and life
+result while normalizing conjunction nesting and the redundant beginning phase.
+Conflicting costs, conditions, results or source hashes retain the reviewed
+view; current assembly never removes one merely because the IR is exact.
 
 `compiler/static_cast_rule_templates.py` and
 `compiler/activation_restriction_templates.py` own the closed battlefield-
