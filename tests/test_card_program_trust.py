@@ -338,6 +338,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.characteristics.conditional_chosen_designation",
                 "continuous.characteristics.leveler_bands",
                 "continuous.fixed_query_power_toughness_anthem",
+                "continuous.quantified_query_power_toughness_anthem",
                 "continuous.fixed_power_toughness_anthem",
                 "continuous.basic_land_type.add_all_lands",
                 "continuous.basic_land_type.fixed_addition",

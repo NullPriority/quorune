@@ -4422,6 +4422,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/live_modifier_quantities.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/madness_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12404,6 +12419,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/live_modifier_quantities.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/manifest_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -16406,6 +16435,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/quantified_anthems.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/query_effect_amounts.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -18249,5 +18293,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "38f742b2a827a62bddf3eeb44b5c53540a47f72719ba7c35354721f9bebfa16b"
+  "fingerprint": "906e40c1ce0ba22aa691acc71c07c7d5c7d98c60f96e07c92d1f2cc5f536015a"
 }

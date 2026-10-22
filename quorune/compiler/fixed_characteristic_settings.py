@@ -101,6 +101,9 @@ def _setting_part(modifier, part):
 
 
 def fixed_characteristic_setting_handler(text: str, *, source_name: str | None = None):
+    from .live_modifier_quantities import quantified_public_modifier_handler
+    quantified=quantified_public_modifier_handler(text)
+    if quantified is not None:return quantified
     from .static_land_animation import static_land_animation_handler
     animation=static_land_animation_handler(text)
     if animation is not None:return animation

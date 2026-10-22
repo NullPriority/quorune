@@ -46,6 +46,9 @@ def query_characteristic_count(
 ) -> int:
     """Resolve one closed public quantity through layer 5 only."""
 
+    if quantity.schema_version == 4:
+        from .rules.live_modifier_quantities import current_modifier_quantity
+        return current_modifier_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)
     if quantity.schema_version == 3:
         return sum(query_characteristic_count(host, source, term,
                    _enforce_static_component_applicability=_enforce_static_component_applicability)

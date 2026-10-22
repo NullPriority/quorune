@@ -7555,6 +7555,37 @@
         "test_card_programs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "live-characteristic-modifier-quantities",
+      "patterns": [
+        "quorune/characteristic_fragments.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/characteristic_evaluation.py",
+        "quorune/rules/live_modifier_quantities.py",
+        "quorune/compiler/live_modifier_quantities.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/fixed_characteristic_settings.py",
+        "quorune/semantic_runtime/quantified_anthems.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_live_modifier_quantities.py",
+        "tests/fixtures/live-modifier-quantity-cards.json"
+      ],
+      "test_modules": [
+        "test_live_modifier_quantities",
+        "test_query_power_toughness_definitions",
+        "test_shared_characteristic_queries",
+        "test_fixed_attachment_actions",
+        "test_fixed_characteristic_enchant",
+        "test_fixed_source_characteristic_effects",
+        "test_fixed_public_state_characteristics",
+        "test_card_program_trust",
+        "test_oracle_ir",
+        "test_card_programs"
+      ]
     }
   ],
   "symbol_rules": [

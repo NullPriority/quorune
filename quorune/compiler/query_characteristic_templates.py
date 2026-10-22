@@ -626,6 +626,9 @@ def _query_gated_self_characteristics(
 
 
 def _self_collection_quantity(phrase, *, source_name, value_form):
+    from .live_modifier_quantities import source_modifier_quantity
+    current=source_modifier_quantity(phrase)
+    if current is not None:return current
     if value_form:
         return query_characteristic_value(phrase,source_name=source_name)
     quantity=query_characteristic_quantity(phrase,source_name=source_name)

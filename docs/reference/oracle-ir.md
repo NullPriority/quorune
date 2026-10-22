@@ -10,6 +10,20 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+`CharacteristicQuantitySpec` version four carries closed current-value scopes
+for a source controller's nonnegative life total, current opponents' poison
+counters, or an attached recipient's colors or mana value. It retains the
+existing reduction fields and adds no GameState field. Quantity versions one
+through three retain their encoded forms; the new scopes are reserved for
+modifiers rather than characteristic-defining abilities.
+
+Live public-set modifiers use the registered quantified anthem descriptor.
+Its existing fixed-query condition identifies the affected creatures; its
+modifier holds integer coefficients, the typed quantity, and an explicit
+recipient-exclusion flag. Exclusion requires a validated subset relationship
+between the affected subject and counted domain. Independent fixed keywords
+on the same Oracle span remain independently executable components.
+
 For represented Fuse split cards, the source-wide face finalizer retains both
 physical faces and emits one typed complete-source method declaration. Normal
 program lowering keeps each half's executable body and derives a separate

@@ -437,6 +437,13 @@ def _object_continuous_effects(
     return effects
 
 
+def _intrinsic_quantity_fragments_after_abilities(state,effects,*,context):
+    """Separate source ability applicability from the quantity's layer-5 reads."""
+    through_abilities=evaluate_continuous_effects(copy.deepcopy(state),
+        (effect for effect in effects if effect.layer<=Layer.ABILITY),context=context)
+    return canonical_ability_fragments(through_abilities.characteristics.get('ability_fragments',()))
+
+
 def _query_characteristic_effects(
     card: CardInstance,
     state: CharacteristicState,
@@ -447,22 +454,15 @@ def _query_characteristic_effects(
 ) -> list[ContinuousEffect]:
     """Materialize typed live quantities at their CR 613 layer boundary.
 
-    The source fragment is selected after copy/type/color evaluation. Quantity
-    resolution is supplied by the engine through the same layer-5 boundary, so
+    The source fragment is selected after layer-6 ability applicability. Quantity
+    resolution is supplied by the engine through the layer-5 boundary, so
     a counted object's later-layer power, toughness, or abilities cannot recurse
     back into the quantity that is currently being evaluated.
     """
 
     if card.zone == "battlefield" and card.phased_out:
         return []
-    through_color = evaluate_continuous_effects(
-        copy.deepcopy(state),
-        (effect for effect in effects if effect.layer <= Layer.COLOR),
-        context=context,
-    )
-    fragments = canonical_ability_fragments(
-        through_color.characteristics.get("ability_fragments", ())
-    )
+    fragments = _intrinsic_quantity_fragments_after_abilities(state,effects,context=context)
     materialized: list[ContinuousEffect] = []
     for index, fragment in enumerate(fragments):
         if isinstance(fragment, QueryPowerToughnessDefinitionSpec):

@@ -757,11 +757,14 @@ def _attached_dynamic_modifier(
         body,
         re.IGNORECASE,
     )
+    if variable is None:
+        variable=re.fullmatch(r'gets (?P<power>[+-](?:X|\d+))/(?P<toughness>[+-](?:X|\d+)), where X is (?P<quantity>its mana value)',body,re.I)
     match = fixed or variable
     if match is None:
         return None
     quantity_text = match.group("quantity")
-    quantity = recipient_attachment_quantity(quantity_text)
+    from .live_modifier_quantities import attached_object_quantity
+    quantity = attached_object_quantity(quantity_text) or recipient_attachment_quantity(quantity_text)
     if re.search(
         r"(?:attached to (?:it|this creature)|\bits controller's\b|"
         r"\bof its\b|\bon it\b)",

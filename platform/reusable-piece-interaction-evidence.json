@@ -19182,6 +19182,126 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Toil and Trouble target different players; the explicit right-half group reads its own current hand count after the left draw and life result without disclosing card identities."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "piece_ids": [
+        "capability.damage.result.infect",
+        "capability.quantity_expression.current_player_value"
+      ],
+      "capability_ids": [
+        "damage.result.infect",
+        "quantity_expression.current_player_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Infect damage eliminates an opponent at ten poison; the live quantity stops counting that player, continues counting the other opponents, and excludes the controller."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mycosynth_control_change_rebinds_opponents_without_caching",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.quantity_expression.current_player_value"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "quantity_expression.current_player_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Control Magic rebinds the creature's current opponents and canonical poison totals through pending replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "piece_ids": [
+        "capability.casting.prototype.characteristics",
+        "capability.quantity_expression.attached_object_value"
+      ],
+      "capability_ids": [
+        "casting.prototype.characteristics",
+        "quantity_expression.attached_object_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Matrix Equip reads the prototyped permanent's current mana value, preserves Haste and ordinary payment, and rebinds to its copied token."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "piece_ids": [
+        "capability.quantity_expression.attached_object_value",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "quantity_expression.attached_object_value",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real token copy retains the copied Prototype mana cost and value rather than being treated as a zero-mana ordinary token."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_champion_counts_aura_equipment_union_and_retains_trample",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_count_modifier",
+        "capability.quantity_expression.attached_object_value"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_count_modifier",
+        "quantity_expression.attached_object_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Aura casting and Equip movement update the union. Humble removes the intrinsic quantity modifier and Trample while preserving the independent attached color bonus."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.continuous.power_toughness.live_quantity"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "continuous.power_toughness.live_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Confiscate changes the source controller; the global modifier uses the new controller's live public hand cardinality without disclosing identities."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "piece_ids": [
+        "capability.combat.attack.vigilance",
+        "capability.continuous.power_toughness.live_quantity"
+      ],
+      "capability_ids": [
+        "combat.attack.vigilance",
+        "continuous.power_toughness.live_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "The real global source grants Vigilance at zero Gates, after a Gate land play and after the land loses its Gate subtype."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.continuous.power_toughness.live_quantity"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "continuous.power_toughness.live_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Spreading Seas changes the counted land to an Island and draws; the quantity updates through layer five while the independent Vigilance grant remains."
     }
   ]
 }

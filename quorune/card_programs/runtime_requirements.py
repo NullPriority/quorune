@@ -89,6 +89,8 @@ def program_dynamic_runtime_requirements(program):
         if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
     required=set();blockers=set()
+    from ..characteristic_fragments import characteristic_quantity_capabilities
+    required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     if fused is not None:
         required.update(fused[0]);blockers.update(fused[1])
     try:required.update(nonmana_equip_runtime_dependencies(program))
