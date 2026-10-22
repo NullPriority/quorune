@@ -109,6 +109,7 @@ class SemanticChoiceQuery(
     def player_counters(self, seat: str) -> Mapping[str, int]: ...
 
     def library_refs(self, seat: str, *, top_first: bool) -> tuple[str, ...]: ...
+    def library_search_allowed(self,seat:str)->bool: ...
 
     def mana_pool(self, seat: str) -> Mapping[str, int]: ...
 
@@ -167,6 +168,7 @@ class SnapshotSemanticChoiceQuery:
     defined_discard_characteristic_ids: tuple[str, ...] = ()
     resolution_condition_facts: FrozenMap = field(default_factory=FrozenMap)
     rules_profile: str = ''
+    library_search_allowed_by_seat: FrozenMap = field(default_factory=FrozenMap)
 
     def __post_init__(self) -> None:
         for field_name in (
@@ -181,6 +183,7 @@ class SnapshotSemanticChoiceQuery:
             "opponent_cast_colors_by_seat",
             "draw_permissions_by_seat",
             "resolution_condition_facts",
+            "library_search_allowed_by_seat",
         ):
             value = getattr(self, field_name)
             if not isinstance(value, FrozenMap):
@@ -332,6 +335,11 @@ class SnapshotSemanticChoiceQuery:
     def library_refs(self, seat: str, *, top_first: bool) -> tuple[str, ...]:
         values = tuple(str(value) for value in self.libraries_by_seat.get(seat, ()))
         return tuple(reversed(values)) if top_first else values
+
+    def library_search_allowed(self,seat:str)->bool:
+        value=self.library_search_allowed_by_seat.get(seat,True)
+        if type(value) is not bool:raise ValueError('Library search permission snapshot must be boolean')
+        return value
 
     def mana_pool(self, seat: str) -> Mapping[str, int]:
         value = self.mana_by_seat.get(seat, FrozenMap())

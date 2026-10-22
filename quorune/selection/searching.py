@@ -12,6 +12,7 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import ReplacementChoiceRequired
 from ..zone_transitions import ZoneTransitionOwner
 from ..library_search_model import FixedCountedLibrarySearchTemplate, SEARCH_SUBTYPES
+from ..rules.library_search_rules import library_search_constraint,library_search_object_ids
 from .model import (
     SelectionContract,
     SelectionContinuation,
@@ -108,7 +109,7 @@ class HiddenSearchOwnerMixin:
     ) -> list[dict[str, str]]:
         requested = {str(value).casefold() for value in land_types}
         options: list[dict[str, str]] = []
-        for object_id in self.state.players[seat].zones["library"]:
+        for object_id in library_search_object_ids(self,seat,'library'):
             card = self.state.cards[object_id]
             record = self.card_record(card)
             if record is None or not record.is_land:
@@ -169,6 +170,9 @@ class HiddenSearchOwnerMixin:
         )
 
     def _begin_fetch_search(self, item: StackItem) -> None:
+        if library_search_constraint(self,item.controller).prohibited:
+            self._resolve_fetch_land(item)
+            return
         options = self._fetch_land_options(
             item.controller,
             item.context.get("land_types", []),
@@ -181,6 +185,7 @@ class HiddenSearchOwnerMixin:
             allowed_actions=["choose"],
             payload_by_actor={
                 item.controller: {
+                    **self._bounded_library_search_view(item.controller),
                     "stack": item.ref,
                     "instruction": (
                         "Choose a legal land to find, or omit search_card "
@@ -348,8 +353,8 @@ class HiddenSearchOwnerMixin:
         else:
             self._log(
                 seat,
-                "library.search",
-                f"{seat} did not find a card.",
+                'library.search.prohibited' if library_search_constraint(self,seat).prohibited else "library.search",
+                f"{seat} could not search." if library_search_constraint(self,seat).prohibited else f"{seat} did not find a card.",
                 {"source": item.ref},
                 importance=1,
                 changed_players=[seat],
@@ -485,7 +490,7 @@ class HiddenSearchOwnerMixin:
                 "name": self.state.cards[object_id].printed_name,
             }
             for zone in zones
-            for object_id in self.state.players[seat].zones[zone]
+            for object_id in library_search_object_ids(self,seat,zone)
             if self._search_candidate_matches(self.state.cards[object_id], selector)
         ]
 
@@ -575,6 +580,15 @@ class HiddenSearchOwnerMixin:
         self._validate_counted_search_effect(effect)
         seat = str(effect.get("searching_player") or item.controller)
         self._require_seat(seat, in_game=True)
+        raw_zone=effect.get('zone','library')
+        zones=[raw_zone] if isinstance(raw_zone,str) else list(raw_zone)
+        if 'library' in zones and library_search_constraint(self,seat).prohibited:
+            others=[zone for zone in zones if zone!='library']
+            if not others:
+                self._finish_prohibited_library_search(item=item,effect=effect,remaining=remaining,destination=destination,
+                    note=note,instruction_pointer=instruction_pointer,seat=seat)
+                return
+            effect={**effect,'zone':others}
         options = self._semantic_search_options(seat, effect)
         count = dict(effect.get("count") or {})
         minimum = max(0, int(count.get("minimum", 1)))
@@ -629,6 +643,7 @@ class HiddenSearchOwnerMixin:
                         effect.get("instruction")
                         or "Choose card(s) matching the search specification."
                     ),
+                    **(self._bounded_library_search_view(seat) if 'library' in search_zones else {}),
                     "search_cards": options,
                     "search_spec": {
                         "zone": copy.deepcopy(raw_search_zone),
@@ -679,6 +694,19 @@ class HiddenSearchOwnerMixin:
                 legal_refs=tuple(option["id"] for option in options),
             ).to_dict()
         )
+
+    def _bounded_library_search_view(self,seat):
+        constraint=library_search_constraint(self,seat)
+        if constraint.prohibited or constraint.top_count is None:return {}
+        return {'search_window':[{'id':self.state.cards[oid].ref,'name':self.state.cards[oid].printed_name}
+            for oid in library_search_object_ids(self,seat,'library')]}
+
+    def _finish_prohibited_library_search(self,*,item,effect,remaining,destination,note,instruction_pointer,seat):
+        self._log(seat,'library.search.prohibited',f'{seat} could not search their library.',{'source':item.ref},importance=1)
+        if not effect.get('optional',False) and (effect.get('shuffle_after',True) or effect.get('shuffle_before_placement',False)):
+            self.shuffle_library(seat,reason=f'{item.label} resolved')
+        self._continue_resolution(stack_ref=item.ref,effects=[dict(value) for value in remaining],destination=destination,
+            note=note,instruction_pointer=instruction_pointer+1)
 
     def _semantic_search_completion_context(
         self,

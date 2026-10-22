@@ -7493,6 +7493,39 @@
         "test_kicker_rules",
         "test_nonmana_buyback_costs"
       ]
+    },
+    {
+      "id": "library-search-restrictions",
+      "patterns": [
+        "quorune/compiler/library_search_rule_templates.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/compiler/temporary_player_rule_templates.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/declaration_rule_effects.py",
+        "quorune/library_search_model.py",
+        "quorune/rules/library_search_rule_shapes.py",
+        "quorune/rules/library_search_rules.py",
+        "quorune/selection/searching.py",
+        "quorune/semantic_choices/context.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/optional_effect.py",
+        "quorune/semantic_runtime/__init__.py",
+        "quorune/semantic_runtime/action_permissions.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/semantic_runtime/library_search_rules.py",
+        "tests/fixtures/library-search-rules-cards.json",
+        "tests/test_library_search_rules.py"
+      ],
+      "test_modules": [
+        "test_library_search_rules",
+        "test_fixed_library_searches",
+        "test_counted_library_searches",
+        "test_semantic_searches",
+        "test_static_action_permissions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

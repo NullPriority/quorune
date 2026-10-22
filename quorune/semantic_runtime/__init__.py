@@ -360,6 +360,7 @@ from .whole_hand_discard import WholeHandDiscardHandler
 from .random_discard import RandomDiscardHandler
 from .random_graveyard_returns import RandomGraveyardReturnHandler
 from .temporary_cast_restrictions import TemporaryCastRestrictionHandler
+from .library_search_rules import ProhibitLibrarySearchHandler
 from .station_handlers import STATION_HANDLERS, StationCounterPlacementHandler
 from .zone_object_keyword_handlers import (
     GrantZoneObjectKeywordHandler,
@@ -400,6 +401,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             RandomDiscardHandler(),
             RandomGraveyardReturnHandler(),
             TemporaryCastRestrictionHandler(),
+            ProhibitLibrarySearchHandler(),
             *TAP_STATE_HANDLERS,
             *DESTRUCTION_HANDLERS,
             *REGENERATION_HANDLERS,

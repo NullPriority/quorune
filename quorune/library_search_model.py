@@ -8,9 +8,70 @@ from typing import Any, Mapping
 from .creature_subtypes import CREATURE_SUBTYPES
 from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import FrozenMap, thaw_value
+from .continuous_effect_model import ContinuousEffectDuration,ContinuousEffectError
 
 FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID = "fixed-counted-library-search"
 FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.fixed_counted"
+LIBRARY_SEARCH_RULE_CAPABILITY='library.search.restriction.static'
+LIBRARY_SEARCH_TEMP_CAPABILITY='library.search.prohibition.resolution_until_end_of_turn'
+LIBRARY_SEARCH_RULE_HANDLER='permission.action.library-search-rule.v1'
+LIBRARY_SEARCH_TEMP_OPERATION='prohibit_library_search_until_end_of_turn'
+LIBRARY_SEARCH_TEMP_KIND='resolution_library_search_prohibition'
+
+
+@dataclass(frozen=True,slots=True)
+class LibrarySearchRuleSpec:
+    mode:str
+    player_scope:str='all'
+    top_count:int|None=None
+
+    def __post_init__(self):
+        if self.mode not in {'prohibit','top'} or self.player_scope not in {'all','opponents'}:
+            raise ValueError('Library search rule mode or player scope is unsupported')
+        if self.mode=='top':
+            if type(self.top_count) is not int or self.top_count<1:raise ValueError('Library search window must be a positive fixed integer')
+        elif self.top_count is not None:raise ValueError('Search prohibition cannot carry a window')
+
+    def to_dict(self):return {'schema_version':1,'mode':self.mode,'player_scope':self.player_scope,'top_count':self.top_count}
+
+    @classmethod
+    def from_dict(cls,value):
+        if not isinstance(value,Mapping) or set(value)!={'schema_version','mode','player_scope','top_count'}:
+            raise ValueError('Library search rule fields are closed')
+        if type(value['schema_version']) is not int or value['schema_version']!=1:raise ValueError('Library search rule version is unsupported')
+        return cls(value['mode'],value['player_scope'],value['top_count'])
+
+
+@dataclass(frozen=True,slots=True)
+class ProhibitLibrarySearchIntent:
+    actor:str
+    source_id:str
+
+    def __post_init__(self):
+        if any(type(v) is not str or not v for v in (self.actor,self.source_id)):raise ValueError('Search prohibition requires an actor and resolving source')
+
+
+@dataclass(frozen=True,slots=True)
+class ResolvedLibrarySearchProhibition:
+    effect_id:str
+    source_id:str
+    timestamp:int
+    controller:str
+    duration:ContinuousEffectDuration=ContinuousEffectDuration.UNTIL_END_OF_TURN
+
+    def __post_init__(self):
+        if (any(type(v) is not str or not v for v in (self.effect_id,self.source_id,self.controller))
+            or type(self.timestamp) is not int or self.timestamp<0 or self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN):
+            raise ContinuousEffectError('Resolved library prohibition requires identity and end-of-turn duration')
+
+    def to_dict(self):return {'effect_kind':LIBRARY_SEARCH_TEMP_KIND,'effect_id':self.effect_id,'source_id':self.source_id,
+        'timestamp':self.timestamp,'controller':self.controller,'duration':self.duration.value}
+
+    @classmethod
+    def from_dict(cls,value):
+        if not isinstance(value,Mapping) or set(value)!={'effect_kind','effect_id','source_id','timestamp','controller','duration'} or value['effect_kind']!=LIBRARY_SEARCH_TEMP_KIND:
+            raise ContinuousEffectError('Resolved library prohibition fields are closed')
+        return cls(value['effect_id'],value['source_id'],value['timestamp'],value['controller'],ContinuousEffectDuration(value['duration']))
 _PERMANENT_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
 )

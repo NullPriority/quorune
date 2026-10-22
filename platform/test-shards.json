@@ -202,6 +202,7 @@
       "test_history_entry_characteristics",
       "test_history_entry_counters",
       "test_leveler_bands",
+      "test_library_search_rules",
       "test_main_phase_rules",
       "test_mass_destruction_effect_clauses",
       "test_modular_rules",
