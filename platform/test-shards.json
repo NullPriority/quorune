@@ -197,6 +197,7 @@
       "test_fixed_prowess_tokens",
       "test_fixed_query_quoted_ability_grants",
       "test_fixed_token_production",
+      "test_global_alternative_costs",
       "test_hand_entry_expansion",
       "test_history_entry_characteristics",
       "test_history_entry_counters",

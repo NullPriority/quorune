@@ -416,6 +416,7 @@ def _initial_options(
     force_without_mana_cost: bool,
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
+    cast_type_line: str | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -491,6 +492,10 @@ def _initial_options(
     )
     base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
         enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
+    from .global_alternatives import battlefield_alternative_base_options
+    base.extend(battlefield_alternative_base_options(host,seat,card,cast_type_line=cast_type_line,
+        enabled=not(cast_without_mana or suppress_source_costs or alternative_base is not None or intrinsic_disturb),
+        has_mana_x=has_x,x_value=x_value,commander_tax=commander_tax,temporary_permission=temporary_permission))
     for raw in [] if cast_without_mana else schema.get("alternate_costs", []):
         alternative = dict(raw)
         if (
@@ -1481,6 +1486,7 @@ def build_cast_cost_options(
         force_without_mana_cost=force_without_mana_cost,
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
+        cast_type_line=cast_type_line,
     )
     if initial is None:
         return ()

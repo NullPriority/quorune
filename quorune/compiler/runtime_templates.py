@@ -154,11 +154,22 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
     )
 
 
+def _global_alternative_template(text):
+    from .global_alternative_cost_templates import fixed_global_alternative_cost_handler
+    compiled=fixed_global_alternative_cost_handler(text)
+    if compiled is None:return None
+    return StaticRuntimeTemplate(compiled=compiled,kind='static_ability',event='cast.cost',
+        active_zone='battlefield',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+        dependency_reason='Battlefield alternative mana costs require a complete current source and existing cast payment owners')
+
+
 def _source_permanent_participation_template(
     text: str,
     *,
     source_name: str | None,
 ) -> StaticRuntimeTemplate | None:
+    if global_alternative := _global_alternative_template(text):
+        return global_alternative
     goad_prohibition = static_goad_prohibition_handler(text)
     if goad_prohibition is not None:
         return StaticRuntimeTemplate(

@@ -18912,6 +18912,126 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Job select creates a1/1 Hero attached to Greatsword at4/1; the paid nonmana Equip moves to another controlled creature, whose power becomes5 and whose existing subtypes gain Knight. Once-per-turn payment and pending-load replay preserve the new recipient characteristics."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.alternative_cost.fixed_public"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.alternative_cost.fixed_public"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Fist offers a WUBRG price while preserving an ordinary printed payment, and both casts pay their complete chosen price."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.casting.alternative_cost.fixed_battlefield_grant"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "casting.alternative_cost.fixed_battlefield_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "A zero alternative mana price preserves the separately chosen X hand-discard cost and Sphere increase, before native Sickening Dreams damages every player by that paid X."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "Sphere of Resistance adds one generic to the zero base price while the full announced-X hand-discard cost remains mandatory and paid."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_preserves_optional_kicker_price_and_effect",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.kicker.fixed_mana"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.kicker.fixed_mana"
+      ],
+      "interaction_order": 2,
+      "assertion": "A free base alternative combines with one paid optional Kicker, preserving the complete increased damage result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual zero base alternative pays four life for Buyback, returns the physical Slaughter card to hand, and a later ordinary alternate cast does not keep Buyback or pay life."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copied_source_grants_its_own_current_alternative",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Mirrormade copies an opposing Fist, then grants its current controller a separately identified WUBRG method; copied source definition and pending-load replay preserve payment and Bolt damage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.zone.impulse_access.fixed"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "zone.impulse_access.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Reckless Impulse supplies exile permission; Fist can replace that spell mana price while hand-only Omniscience cannot, and the resulting spell keeps its complete outcome."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_flashback_only_permission_excludes_other_alternatives",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.lifecycle.fixed_zone_cast"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.lifecycle.fixed_zone_cast"
+      ],
+      "interaction_order": 2,
+      "assertion": "A Flashback-only graveyard permission permits its own paid method and excludes the source-granted alternative; Think Twice draws privately and finishes in exile."
     }
   ]
 }

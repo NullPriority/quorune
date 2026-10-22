@@ -7468,6 +7468,31 @@
         "test_fixed_source_counter_activation_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-battlefield-alternative-mana-costs",
+      "patterns": [
+        "quorune/compiler/global_alternative_cost_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/global_alternatives.py",
+        "quorune/rules/casting/option_expansion.py",
+        "quorune/rules/global_alternative_cost_model.py",
+        "quorune/semantic_runtime/cast_costs.py",
+        "quorune/semantic_runtime/global_alternative_costs.py",
+        "tests/fixtures/global-alternative-cost-cards.json",
+        "tests/test_global_alternative_costs.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_casting_spells_rules",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_public_alternative_costs",
+        "test_global_alternative_costs",
+        "test_kicker_rules",
+        "test_nonmana_buyback_costs"
+      ]
     }
   ],
   "symbol_rules": [
