@@ -1397,6 +1397,7 @@ def default_continuous_effect_component_registry(
     from .soulbond import SoulbondPairedGrantHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
+    from .quantified_anthems import QuantifiedAnthemHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
@@ -1448,6 +1449,7 @@ def default_continuous_effect_component_registry(
             ConditionalCharacteristicSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),
+            QuantifiedAnthemHandler(),
         )
     )
     registry.require_registered_capabilities(

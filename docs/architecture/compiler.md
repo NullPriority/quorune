@@ -9,6 +9,23 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/live_modifier_quantities.py` lowers represented live player values,
+attached-recipient colors and mana value, attachment unions, and public-set
+power/toughness modifiers. It uses the existing source, attachment, public
+query, and layer owners. Characteristic quantity version four reserves closed
+nonnegative life, opponent-poison, and attached-object references; earlier
+quantity encodings retain their fields. These new references do not define
+characteristic values in layer seven a.
+
+The quantified anthem production validates its creature subject through the
+existing fixed-query anthem owner. An “other” quantity proves that every
+affected recipient belongs to the counted set before excluding one member.
+It continues to count correctly when the ability source is outside that set.
+Fixed keyword grants remain separate components, so a zero numeric quantity
+does not remove an unconditional keyword. Ambiguous attachment pronouns,
+private identity predicates and later-layer characteristic reads remain
+residual.
+
 `compiler/fuse_faces.py` binds the printed Fuse declarations across both faces
 of a split card after their ordinary spell bodies lower. The existing ability
 component registry validates one complete-source declaration. Neither an

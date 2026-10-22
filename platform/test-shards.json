@@ -343,6 +343,7 @@
       "test_fixed_public_alternative_costs",
       "test_flashback_rules",
       "test_live_battlefield_quantities",
+      "test_live_modifier_quantities",
       "test_manifest",
       "test_morph_rules",
       "test_multisentence_effect_components",

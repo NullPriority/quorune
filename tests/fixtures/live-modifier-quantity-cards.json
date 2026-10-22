@@ -1,0 +1,1710 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned complete live quantity modifier originals, canonical rulings and public registered controls.",
+  "cards": [
+    {
+      "oracle_id": "e08722b3-0f79-4c82-b298-603e04a37857",
+      "name": "Death's Shadow",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Creature — Avatar",
+      "oracle_text": "This creature gets -X/-X, where X is your life total.",
+      "power": "13",
+      "toughness": "13",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "79441673-6e43-41bc-936c-958dbb9d92da",
+      "name": "Civic Saber",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature gets +1/+0 for each of its colors.\nEquip {1}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "dc748941-fd91-4a0e-b0c4-04c9092ff158",
+      "name": "Hedron Matrix",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature gets +X/+X, where X is its mana value.\nEquip {4}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-08-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0904cc0e-e2c9-4a85-89c7-4254fd423bf8",
+      "name": "Blessing of the Nephilim",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 for each of its colors.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-05-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e7c4bc25-806c-4a75-85bf-a0e66308d5d8",
+      "name": "Mycosynth Fiend",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Phyrexian Horror",
+      "oracle_text": "This creature gets +1/+1 for each poison counter your opponents have.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7e6fcbc0-691a-4bd7-b063-debc86f4506a",
+      "name": "Hold the Gates",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Creatures you control get +0/+1 for each Gate you control and have vigilance.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-02-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "47657df2-0e58-46c8-87e2-cc752708a612",
+      "name": "Sliver Legion",
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Sliver",
+      "oracle_text": "All Sliver creatures get +1/+1 for each other Sliver on the battlefield.",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d9dbe40f-38e9-460a-b84f-4aa22650017e",
+      "name": "Champion of the Flame",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "Trample\nThis creature gets +2/+2 for each Aura and Equipment attached to it.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3b8eea0b-6f8c-449c-9ab8-a22a035465d6",
+      "name": "Meishin, the Mind Cage",
+      "mana_cost": "{4}{U}{U}{U}",
+      "cmc": 7.0,
+      "type_line": "Legendary Enchantment",
+      "oracle_text": "All creatures get -X/-0, where X is the number of cards in your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "a152674f-be29-40ab-8dd9-376fd4eb3bb8",
+      "name": "Fusion Elemental",
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "",
+      "power": "8",
+      "toughness": "8",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-09-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "273b339c-964b-4a18-8eb5-ceb8abcdfd9e",
+      "name": "Divination",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Draw two cards.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "047e761e-7bbe-403b-86d7-cb9fb0b20b21",
+      "name": "Plague Stinger",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Phyrexian Insect Horror",
+      "oracle_text": "Flying\nInfect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Infect"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "name": "Control Magic",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+      "name": "Confiscate",
+      "mana_cost": "{4}{U}{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant permanent\nYou control enchanted permanent.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0,
+      "rulings": [
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "Gaining control of an Aura or Equipment doesn't change what it's attached to."
+        },
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "Gaining control of a permanent doesn't cause you to gain control of any Auras or Equipment attached to it."
+        },
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "Gaining control of a permanent doesn't cause you to gain control of any Auras or Equipment attached to it."
+        },
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "Gaining control of an Aura or Equipment doesn't change what it's attached to."
+        }
+      ]
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Azorius Guildgate",
+      "oracle_id": "ad1712d8-809f-410c-8b91-ffe6fb8a69a1",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {U}.",
+      "power": null,
+      "produced_mana": [
+        "U",
+        "W"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Land — Gate"
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "name": "Turn // Burn",
+      "mana_cost": "{2}{U} // {1}{R}",
+      "cmc": 5.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Turn: Until end of turn, target creature loses all abilities and becomes a red Weird with base power and toughness 0/1.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nBurn: Burn deals 2 damage to any target.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{U}",
+          "name": "Turn",
+          "oracle_text": "Until end of turn, target creature loses all abilities and becomes a red Weird with base power and toughness 0/1.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Burn",
+          "oracle_text": "Burn deals 2 damage to any target.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Raise the Alarm",
+      "oracle_id": "5b2364d7-a811-4595-a1b4-224c70555ffa",
+      "oracle_text": "Create two 1/1 white Soldier creature tokens.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Cackling Counterpart",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "oracle_text": "Create a token that's a copy of target creature you control.\nFlashback {5}{U}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Haste",
+        "Prototype"
+      ],
+      "layout": "prototype",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{7}",
+      "name": "Blitz Automaton",
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "oracle_text": "Prototype {2}{R} — 3/2 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\nHaste",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2022-11-18",
+      "toughness": "4",
+      "type_line": "Artifact Creature — Construct"
+    },
+    {
+      "oracle_id": "2dfafd63-83fb-4783-8e12-30018680a905",
+      "name": "Metallic Sliver",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact Creature — Sliver",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-05-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7d592d5b-95cf-4416-9ade-1c23a8ba01d1",
+      "name": "Sliver Construct",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact Creature — Sliver Construct",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "af32757c-9d3c-4f6c-a6fa-d5729a440382",
+      "name": "Spreading Seas",
+      "mana_cost": "{1}{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant land\nWhen this Aura enters, draw a card.\nEnchanted land is an Island.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fbbc3acb-c917-44ff-ac6f-9dd6ebe3f4ad",
+      "name": "Kird Ape",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Creature — Ape",
+      "oracle_text": "This creature gets +1/+2 as long as you control a Forest.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e08722b3-0f79-4c82-b298-603e04a37857",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If your life total is negative, X is considered to be 0."
+    },
+    {
+      "oracle_id": "e08722b3-0f79-4c82-b298-603e04a37857",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "Death's Shadow's ability applies only while Death's Shadow is on the battlefield. In all other zones, its power and toughness are 13."
+    },
+    {
+      "oracle_id": "e08722b3-0f79-4c82-b298-603e04a37857",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, your life total is your team's life total."
+    },
+    {
+      "oracle_id": "e08722b3-0f79-4c82-b298-603e04a37857",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "The value of X changes as you gain and lose life. It's not locked in as Death's Shadow enters the battlefield."
+    },
+    {
+      "oracle_id": "79441673-6e43-41bc-936c-958dbb9d92da",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Civic Saber's bonus can range from +0/+0 (for a colorless creature) to +5/+0 (for a creature that's all five colors)."
+    },
+    {
+      "oracle_id": "79441673-6e43-41bc-936c-958dbb9d92da",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If the equipped creature becomes a different number of colors, the bonus will change accordingly."
+    },
+    {
+      "oracle_id": "7e6fcbc0-691a-4bd7-b063-debc86f4506a",
+      "published_at": "2013-01-24",
+      "source": "wotc",
+      "comment": "Creatures you control will have vigilance even if you control no Gates."
+    },
+    {
+      "oracle_id": "47657df2-0e58-46c8-87e2-cc752708a612",
+      "published_at": "2013-07-01",
+      "source": "wotc",
+      "comment": "If the creature type of a Sliver changes so it's no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures."
+    },
+    {
+      "oracle_id": "47657df2-0e58-46c8-87e2-cc752708a612",
+      "published_at": "2013-07-01",
+      "source": "wotc",
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like flying, having more than one instance of the ability doesn't provide any additional benefit."
+    },
+    {
+      "oracle_id": "47657df2-0e58-46c8-87e2-cc752708a612",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If Sliver Legion and two other Slivers are on the battlefield, for example, each of them gets +2/+2."
+    },
+    {
+      "oracle_id": "47657df2-0e58-46c8-87e2-cc752708a612",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to a Sliver may become lethal if another Sliver leaves the battlefield during that turn."
+    },
+    {
+      "oracle_id": "d9dbe40f-38e9-460a-b84f-4aa22650017e",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to Champion of the Flame may become lethal if an Aura or Equipment attached to it leaves the battlefield or becomes attached to another creature during that turn."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "047e761e-7bbe-403b-86d7-cb9fb0b20b21",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "Damage from a source with infect is damage in all respects. If the source with infect also has lifelink, damage dealt by that source also causes its controller to gain that much life. Damage from a source with infect can be prevented or redirected. Abilities that trigger on damage being dealt will trigger if a source with infect deals damage, if appropriate."
+    },
+    {
+      "oracle_id": "047e761e-7bbe-403b-86d7-cb9fb0b20b21",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "Damage from a source with infect affects planeswalkers normally."
+    },
+    {
+      "oracle_id": "047e761e-7bbe-403b-86d7-cb9fb0b20b21",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "If damage from a source with infect that would be dealt to a player is prevented, that player doesn't get poison counters. If damage from a source with infect that would be dealt to a creature is prevented, that creature doesn't get -1/-1 counters."
+    },
+    {
+      "oracle_id": "047e761e-7bbe-403b-86d7-cb9fb0b20b21",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "A player who has ten or more poison counters loses the game. This is a state-based action."
+    },
+    {
+      "oracle_id": "047e761e-7bbe-403b-86d7-cb9fb0b20b21",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "Infect's effect applies to any damage, not just combat damage."
+    },
+    {
+      "oracle_id": "047e761e-7bbe-403b-86d7-cb9fb0b20b21",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "The -1/-1 counters remain on the creature indefinitely. They're not removed if the creature regenerates or the turn ends."
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Gaining control of an Aura or Equipment doesn't change what it's attached to."
+    },
+    {
+      "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Gaining control of a permanent doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Gaining control of a permanent doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Gaining control of an Aura or Equipment doesn't change what it's attached to."
+    },
+    {
+      "oracle_id": "ad1712d8-809f-410c-8b91-ffe6fb8a69a1",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Gate is not a basic land type."
+    },
+    {
+      "oracle_id": "ad1712d8-809f-410c-8b91-ffe6fb8a69a1",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "The subtype Gate has no special rules significance, but other spells and abilities may refer to it."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Turn doesn't counter abilities that have already triggered or been activated. In particular, there is no way to cast this to stop a creature's \"At the beginning of your upkeep\" or \"When this creature enters the battlefield\" abilities from triggering."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Turn will cause the creature lose all other colors and creature types, but it will retain any other card types (such as artifact) it may have."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Effects that modify the targeted creature's power or toughness, such as the effects of Phytoburst or Legion's Initiative, will apply to it no matter when they started to take effect. The same is true for counters that change the creature's power or toughness (such as +1/+1 counters) and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Turn overwrites all previous effects that set the targeted creature's power or toughness to specific values. Effects that set its power or toughness to specific values that start to apply after Turn resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Turn resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Any “enters” triggered ability of the copied creature will trigger when the token enters the battlefield. Any “as [this creature] enters” or “[this creature] enters with” abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, then the token enters the battlefield as whatever that creature copied."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "The token copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, the token that’s created copies the original characteristics of that token as stated by the effect that created the token."
+    },
+    {
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When cast as a prototyped spell, that spell has the mana cost, power, and toughness characteristics shown in its colored, secondary text box rather than the normal values of those characteristics. Its color and mana value are determined by that mana cost. The permanent that spell becomes as it resolves has the same characteristics. If the spell leaves the stack in any other way, or the permanent it becomes leaves the battlefield, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Regardless of how it was cast, a prototype card always has the same name, abilities, types, and so on. Only the mana cost, mana value, color, power, and toughness change depending on whether the card was cast as a prototyped spell."
+    },
+    {
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "A prototype card is a colorless card in every zone except the stack or the battlefield, as well as while on the stack or the battlefield if not cast as a prototyped spell. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Blitz Automaton is a colorless creature card with mana value 7. It can't be the target of Recommission, a spell that targets an artifact or creature card with mana value 3 or less in your graveyard."
+    },
+    {
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a prototyped spell isn't the same as casting it for an alternative cost, and an alternative cost may be applied to a spell cast this way. For example, if an effect allows you to cast an artifact card without paying its mana cost, you could either cast Blitz Automaton normally, or as a prototyped spell."
+    },
+    {
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The prototype ability functions in any zone that the spell could be cast from. For example, if an effect allows you to cast artifact spells from your graveyard, you could cast a prototyped Blitz Automaton from your graveyard."
+    },
+    {
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If an effect copies a prototyped spell, that copy (as well as the token it becomes on the battlefield) will have the same characteristics as the prototyped spell. Similarly, if an effect creates a token that's a copy of a prototyped permanent or causes another permanent to become a copy of it, the copy would have the same characteristics as the prototyped permanent."
+    },
+    {
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When casting a prototyped spell, use only its prototype characteristics to determine whether it's legal to cast it. For example, if Blitz Automaton is exiled with the last ability of Chandra, Dressed to Kill, you would be able to cast it for {2}{R} (because it's a red spell), even though you wouldn't be able to cast it as a colorless spell for its normal cost."
+    },
+    {
+      "oracle_id": "2dfafd63-83fb-4783-8e12-30018680a905",
+      "published_at": "2013-07-01",
+      "source": "wotc",
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like flying, having more than one instance of the ability doesn’t provide any additional benefit."
+    },
+    {
+      "oracle_id": "2dfafd63-83fb-4783-8e12-30018680a905",
+      "published_at": "2013-07-01",
+      "source": "wotc",
+      "comment": "If the creature type of a Sliver changes so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures."
+    },
+    {
+      "oracle_id": "7d592d5b-95cf-4416-9ade-1c23a8ba01d1",
+      "published_at": "2013-07-01",
+      "source": "wotc",
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control."
+    },
+    {
+      "oracle_id": "7d592d5b-95cf-4416-9ade-1c23a8ba01d1",
+      "published_at": "2013-07-01",
+      "source": "wotc",
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like flying, having more than one instance of the ability doesn’t provide any additional benefit."
+    },
+    {
+      "oracle_id": "af32757c-9d3c-4f6c-a6fa-d5729a440382",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The enchanted land loses its existing land types and any abilities printed on it. It now has the land type Island and has the ability to tap to produce {U}. Spreading Seas doesn't change the enchanted land's name or whether it's legendary, basic, or snow."
+    }
+  ]
+}

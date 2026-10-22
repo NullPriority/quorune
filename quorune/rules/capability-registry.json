@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 458,
+  "registry_version": 459,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -42855,6 +42855,370 @@
       "implementation_mutation_rationale": "Fresh compiler, method, target and order omissions are checked by actual native witnesses.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "quantity_expression.current_player_value",
+      "version": 1,
+      "official_rules": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Typed live values preserve the current player, attached recipient or validated creature set under layer7c modifiers without exposing hidden identities.",
+        "inputs": [
+          "closed source-spanned quantity and subject descriptors",
+          "current layer5 object characteristics or canonical player values",
+          "current source control and attachment identities"
+        ],
+        "outputs": [
+          "nonnegative live life/poison or attached color/mana quantities",
+          "source-relative global modifier and fixed independent keyword effects",
+          "exact replay without mutable query caching"
+        ],
+        "exclusions": [
+          "private identity predicates",
+          "late-layer characteristic dependencies",
+          "unproven other-object recipient membership",
+          "unrepresented companion abilities",
+          "new current-value scopes in characteristic-defining abilities",
+          "ambiguous global relative-reference quantities"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.query_count_modifier"
+      ],
+      "implementation_components": [
+        "quorune.characteristic_fragments.CharacteristicQuantitySpec",
+        "quorune.rules.live_modifier_quantities.current_modifier_quantity",
+        "quorune.compiler.live_modifier_quantities.source_modifier_quantity"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed version4 references and subject/exclusion proofs require complete normal source and existing layer/query ownership.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh real source/value omissions are checked by complete native witnesses.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_live_modifier_originals_have_normal_admission",
+        "test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+        "test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+        "test_source_and_attached_compiler_quantities_preserve_their_references",
+        "test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+        "test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+        "test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+        "test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+        "test_a_single_attachment_in_both_categories_is_counted_once",
+        "test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+        "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+        "test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+        "test_actual_mycosynth_control_change_rebinds_opponents_without_caching"
+      ],
+      "negative_tests": [
+        "test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+        "test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+        "test_source_and_attached_compiler_quantities_preserve_their_references",
+        "test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+        "test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+        "test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+        "test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+        "test_a_single_attachment_in_both_categories_is_counted_once",
+        "test_independent_runtime_minima_and_malformed_values_fail_closed",
+        "test_canonically_verified_withdrawal_names_the_actual_quantity_owner",
+        "test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+        "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+        "test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+        "test_actual_mycosynth_control_change_rebinds_opponents_without_caching"
+      ],
+      "interaction_tests": [
+        "test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+        "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+        "test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+        "test_actual_mycosynth_control_change_rebinds_opponents_without_caching"
+      ],
+      "multiplayer_tests": [
+        "test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+        "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+        "test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+        "test_actual_mycosynth_control_change_rebinds_opponents_without_caching"
+      ],
+      "privacy_tests": [
+        "test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+        "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player"
+      ],
+      "replay_tests": [
+        "test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+        "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+        "test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+        "test_actual_mycosynth_control_change_rebinds_opponents_without_caching"
+      ]
+    },
+    {
+      "id": "quantity_expression.attached_object_value",
+      "version": 1,
+      "official_rules": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Typed live values preserve the current player, attached recipient or validated creature set under layer7c modifiers without exposing hidden identities.",
+        "inputs": [
+          "closed source-spanned quantity and subject descriptors",
+          "current layer5 object characteristics or canonical player values",
+          "current source control and attachment identities"
+        ],
+        "outputs": [
+          "nonnegative live life/poison or attached color/mana quantities",
+          "source-relative global modifier and fixed independent keyword effects",
+          "exact replay without mutable query caching"
+        ],
+        "exclusions": [
+          "private identity predicates",
+          "late-layer characteristic dependencies",
+          "unproven other-object recipient membership",
+          "unrepresented companion abilities",
+          "new current-value scopes in characteristic-defining abilities",
+          "ambiguous global relative-reference quantities"
+        ]
+      },
+      "dependencies": [
+        "continuous.attached.fixed_characteristics"
+      ],
+      "implementation_components": [
+        "quorune.characteristic_fragments.CharacteristicQuantitySpec",
+        "quorune.rules.live_modifier_quantities.current_modifier_quantity",
+        "quorune.compiler.live_modifier_quantities.attached_object_quantity"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed version4 references and subject/exclusion proofs require complete normal source and existing layer/query ownership.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh real source/value omissions are checked by complete native witnesses.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_live_modifier_originals_have_normal_admission",
+        "test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+        "test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+        "test_source_and_attached_compiler_quantities_preserve_their_references",
+        "test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+        "test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+        "test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+        "test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+        "test_a_single_attachment_in_both_categories_is_counted_once",
+        "test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+        "test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+        "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+        "test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment"
+      ],
+      "negative_tests": [
+        "test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+        "test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+        "test_source_and_attached_compiler_quantities_preserve_their_references",
+        "test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+        "test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+        "test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+        "test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+        "test_a_single_attachment_in_both_categories_is_counted_once",
+        "test_independent_runtime_minima_and_malformed_values_fail_closed",
+        "test_canonically_verified_withdrawal_names_the_actual_quantity_owner",
+        "test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+        "test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+        "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+        "test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment"
+      ],
+      "interaction_tests": [
+        "test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+        "test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+        "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+        "test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment"
+      ],
+      "multiplayer_tests": [
+        "test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+        "test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+        "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+        "test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment"
+      ],
+      "privacy_tests": [
+        "test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+        "test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients"
+      ],
+      "replay_tests": [
+        "test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+        "test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+        "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+        "test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment"
+      ]
+    },
+    {
+      "id": "continuous.power_toughness.live_quantity",
+      "version": 1,
+      "official_rules": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Typed live values preserve the current player, attached recipient or validated creature set under layer7c modifiers without exposing hidden identities.",
+        "inputs": [
+          "closed source-spanned quantity and subject descriptors",
+          "current layer5 object characteristics or canonical player values",
+          "current source control and attachment identities"
+        ],
+        "outputs": [
+          "nonnegative live life/poison or attached color/mana quantities",
+          "source-relative global modifier and fixed independent keyword effects",
+          "exact replay without mutable query caching"
+        ],
+        "exclusions": [
+          "private identity predicates",
+          "late-layer characteristic dependencies",
+          "unproven other-object recipient membership",
+          "unrepresented companion abilities",
+          "new current-value scopes in characteristic-defining abilities",
+          "ambiguous global relative-reference quantities"
+        ]
+      },
+      "dependencies": [
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "implementation_components": [
+        "quorune.compiler.live_modifier_quantities.quantified_public_modifier_handler",
+        "quorune.semantic_runtime.quantified_anthems.QuantifiedAnthemHandler",
+        "quorune.card_programs.runtime._descriptor_characteristic_quantity",
+        "quorune.semantic_runtime.quantified_anthems.recipient_is_in_quantity_domain"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed version4 references and subject/exclusion proofs require complete normal source and existing layer/query ownership.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh real source/value omissions are checked by complete native witnesses.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_complete_live_modifier_originals_have_normal_admission",
+        "test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+        "test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+        "test_source_and_attached_compiler_quantities_preserve_their_references",
+        "test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+        "test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+        "test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+        "test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+        "test_a_single_attachment_in_both_categories_is_counted_once",
+        "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+        "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+        "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+      ],
+      "negative_tests": [
+        "test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+        "test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+        "test_source_and_attached_compiler_quantities_preserve_their_references",
+        "test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+        "test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+        "test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+        "test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+        "test_a_single_attachment_in_both_categories_is_counted_once",
+        "test_independent_runtime_minima_and_malformed_values_fail_closed",
+        "test_canonically_verified_withdrawal_names_the_actual_quantity_owner",
+        "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+        "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+        "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+      ],
+      "interaction_tests": [
+        "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+        "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+        "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+      ],
+      "multiplayer_tests": [
+        "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+        "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+        "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+      ],
+      "privacy_tests": [
+        "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+      ],
+      "replay_tests": [
+        "test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+        "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+        "test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+        "test_actual_meishin_control_change_uses_new_controllers_private_hand_count"
+      ]
     }
   ]
 }

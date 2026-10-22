@@ -9,6 +9,23 @@ maintenance: "hand-maintained"
 
 # CardProgram runtime components
 
+`rules/live_modifier_quantities.py` reads the current source controller's
+nonnegative life value, current opponents' canonical poison counts, or an
+attached recipient's current colors and mana value. Player elimination and
+control changes update the relation. Attached values use the reciprocal
+incarnation owner and stop after layer five; colorless objects and ordinary
+tokens can produce a known zero, while unavailable information rejects.
+Copied and Prototype mana values retain their existing characteristic owner.
+
+`semantic_runtime/quantified_anthems.py` emits layer-seven-c effects over an
+existing validated creature query. Source eligibility and counted information
+have separate boundaries: intrinsic quantity fragments are selected after
+layer-six ability applicability, while counted object values remain bounded
+to layer five. Removing a creature's own ability removes its modifier without
+removing effects supplied by an independent Aura or Equipment. Unconditional
+keywords accompanying a global modifier use the existing keyword component,
+including when the numeric result is zero. No mutable query cache is added.
+
 Runtime components represent CardProgram behavior that participates outside a
 single immediate resolution instruction. Typical families discover immutable
 replacement effects, prevention effects, draw policies, or continuous effects

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f356912c3d4b533e2a2d3bee458c3aff814c45c5bc7cf8a256a217d26dadf4e5",
-  "declaration_source_fingerprint": "807fb65db35b22bccd5eb06f142cc1741b8e7eade6c94e767b6d67f4b3b341a1",
+  "registry_fingerprint": "a86fbebd5c9c611da3d3bb92741338105468f3cb88cff49ffe0a26ce3eefbc12",
+  "declaration_source_fingerprint": "43cf8942998596efb98bedbfa545f7d2112f2a3ffc4144260ee5087cbeef9457",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -120451,6 +120451,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_champion_counts_aura_equipment_union_and_retains_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One Aura/Equipment union counts each attachment once. Intrinsic quantity fragments respect current layer-six ability loss while independent attached modifiers remain; canonical legacy threshold and new union sources replay through actual Humble."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
       "official_rule_ids": [
         "109.2",
@@ -120750,6 +120773,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "mutation",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_fresh_current_value_and_global_producer_omissions_are_killed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One Aura/Equipment union counts each attachment once. Intrinsic quantity fragments respect current layer-six ability loss while independent attached modifiers remain; canonical legacy threshold and new union sources replay through actual Humble."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "mutation",
       "test_id": "tests.test_shared_characteristic_queries.SharedCharacteristicQueryCompilerTests.test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
       "official_rule_ids": [
         "109.2",
@@ -120861,6 +120907,29 @@
         "commander_review"
       ],
       "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_champion_counts_aura_equipment_union_and_retains_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One Aura/Equipment union counts each attachment once. Intrinsic quantity fragments respect current layer-six ability loss while independent attached modifiers remain; canonical legacy threshold and new union sources replay through actual Humble."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -121022,6 +121091,52 @@
         "commander_review"
       ],
       "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_champion_counts_aura_equipment_union_and_retains_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One Aura/Equipment union counts each attachment once. Intrinsic quantity fragments respect current layer-six ability loss while independent attached modifiers remain; canonical legacy threshold and new union sources replay through actual Humble."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_legacy_kird_ape_quantity_is_removed_with_its_ability",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One Aura/Equipment union counts each attachment once. Intrinsic quantity fragments respect current layer-six ability loss while independent attached modifiers remain; canonical legacy threshold and new union sources replay through actual Humble."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -121275,6 +121390,52 @@
         "commander_review"
       ],
       "applicability_note": "Consume only raw controller hand size and exclude every hidden card identifier and name from opposing principal projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_champion_counts_aura_equipment_union_and_retains_trample",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One Aura/Equipment union counts each attachment once. Intrinsic quantity fragments respect current layer-six ability loss while independent attached modifiers remain; canonical legacy threshold and new union sources replay through actual Humble."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_legacy_kird_ape_quantity_is_removed_with_its_ability",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One Aura/Equipment union counts each attachment once. Intrinsic quantity fragments respect current layer-six ability loss while independent attached modifiers remain; canonical legacy threshold and new union sources replay through actual Humble."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -126365,6 +126526,1167 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip extended affected-set and schema-v2 conditional descriptors, then replay their resulting layer-7c modifiers exactly."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_fresh_recipient_membership_proof_omission_is_killed",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_fresh_current_value_and_global_producer_omissions_are_killed",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_a_single_attachment_in_both_categories_is_counted_once",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_source_and_attached_compiler_quantities_preserve_their_references",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_canonically_verified_withdrawal_names_the_actual_quantity_owner",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_independent_runtime_minima_and_malformed_values_fail_closed",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_a_single_attachment_in_both_categories_is_counted_once",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_source_and_attached_compiler_quantities_preserve_their_references",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_complete_live_modifier_originals_have_normal_admission",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_cast_draw_and_hand_privacy_are_live",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "continuous.power_toughness.live_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_sliver_legion_counts_all_controllers_and_ability_loss_removes_the_anthem",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -217195,6 +218517,2274 @@
         "commander_review"
       ],
       "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_fresh_current_value_and_global_producer_omissions_are_killed",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_a_single_attachment_in_both_categories_is_counted_once",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_source_and_attached_compiler_quantities_preserve_their_references",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_canonically_verified_withdrawal_names_the_actual_quantity_owner",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_independent_runtime_minima_and_malformed_values_fail_closed",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_a_single_attachment_in_both_categories_is_counted_once",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_source_and_attached_compiler_quantities_preserve_their_references",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_complete_live_modifier_originals_have_normal_admission",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_blessing_uses_recipient_colors_and_turn_changes_the_live_value",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_civic_saber_moves_between_five_color_red_and_colorless_recipients",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_does_not_treat_an_ordinary_token_as_its_equipment",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.attached_object_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_control_change_rebinds_opponents_without_caching",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_control_change_rebinds_opponents_without_caching",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_fresh_current_value_and_global_producer_omissions_are_killed",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_a_single_attachment_in_both_categories_is_counted_once",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_source_and_attached_compiler_quantities_preserve_their_references",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_control_change_rebinds_opponents_without_caching",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_canonically_verified_withdrawal_names_the_actual_quantity_owner",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "negative",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_independent_runtime_minima_and_malformed_values_fail_closed",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_a_single_attachment_in_both_categories_is_counted_once",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_attached_values_distinguish_empty_missing_and_current_layer_five_information",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_life_has_the_pinned_negative_floor_and_poison_uses_active_opponents",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_current_value_models_are_closed_and_legacy_wire_is_unchanged",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_global_quantities_reject_ambiguous_references_and_reserved_definition_values",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_other_count_uses_recipient_membership_even_when_source_is_not_a_sliver",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_public_quantified_anthem_keeps_keyword_and_proves_relative_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityModelTests.test_source_and_attached_compiler_quantities_preserve_their_references",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_control_change_rebinds_opponents_without_caching",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "positive",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_complete_live_modifier_originals_have_normal_admission",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_control_change_rebinds_opponents_without_caching",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_at_thirteen_life_dies_and_other_zones_restore_printed_stats",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
+    },
+    {
+      "capability_id": "quantity_expression.current_player_value",
+      "evidence_class": "replay",
+      "test_id": "tests.test_live_modifier_quantities.LiveModifierQuantityRuntimeTests.test_actual_shadow_cast_reads_current_life_and_damage_updates_the_modifier",
+      "official_rule_ids": [
+        "105.2",
+        "105.2c",
+        "107.1b",
+        "202.3",
+        "202.3e",
+        "301.5",
+        "303.4",
+        "402.3",
+        "613.1a",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "613.8",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned complete sources and current layer/subject contracts. Actual cast, Equip, Aura, copy, type/color, private hand, poison elimination and source-control consequences preserve normal owners, four-seat projection, rollback and pending/pre-action replay. Canonical withdrawal and fresh value/source/proof omissions bound trust."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -328409,5 +331999,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "16cd1dd268cc193cdf69a5d75ffdee04f42f88ce4b2da6a66f94c23a46bdee82"
+  "fingerprint": "e8692686c293885550cd304cd7dd485a8016ef1f405cfd464b64ceaa8970a472"
 }
