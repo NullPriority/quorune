@@ -7,6 +7,7 @@ from ...activation_cost_modifiers import ACTIVATION_GENERIC_COST_EVENT, ACTIVATI
 from ...card_program_faces import program_matches_face
 from ...object_query import object_matches_query
 from ...semantic_runtime.current_ability_components import program_has_current_ability_fragments
+from .ability_kinds import activation_matches_cost_scope
 
 
 def current_activation_cost_modifiers(host, seat, source, ability):
@@ -33,7 +34,7 @@ def current_activation_cost_modifiers(host, seat, source, ability):
                 if descriptor.get('handler_id') != ACTIVATION_GENERIC_COST_HANDLER:
                     continue
                 spec, = registry.lower(descriptor, None)
-                if spec.ability_scope == 'nonmana' and ability.mana_ability:
+                if not activation_matches_cost_scope(host,source,ability,spec.ability_scope):
                     continue
                 same_controller = seat == permanent.controller
                 if (spec.controller_relation == 'source_controller' and not same_controller

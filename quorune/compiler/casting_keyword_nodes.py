@@ -13,6 +13,11 @@ from .conspire_nodes import conspire_static_node
 
 
 def casting_keyword_node(*, record, face_id, printed_power, **values):
+    if values['mechanics'] == ('equip',):
+        from .nonmana_equip_nodes import fixed_nonmana_equip_keyword_node
+        node = fixed_nonmana_equip_keyword_node(record=record, **values)
+        if node is not None:
+            return node
     from .undaunted_nodes import undaunted_keyword_node
     undaunted = undaunted_keyword_node(**values)
     if undaunted is not None:

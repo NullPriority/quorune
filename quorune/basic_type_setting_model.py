@@ -14,12 +14,15 @@ class BasicTypeSettingSpec:
     basic_types:tuple[str,...]
 
     def __post_init__(self):
-        if type(self.scope) is not str or self.scope not in {'nonbasic_lands','controller_lands','attached_land'}:
+        if type(self.scope) is not str or self.scope not in {'nonbasic_lands','controller_lands','attached_land','attached_colorless_forest_permanent',
+                'all_plains','all_islands','all_swamps','all_mountains','all_forests'}:
             raise ValueError('Basic type setting requires a fixed land scope')
         if (not isinstance(self.basic_types,tuple) or not self.basic_types
             or any(type(t) is not str or t not in BASIC_LAND_MANA for t in self.basic_types)
             or self.basic_types!=tuple(sorted(set(self.basic_types)))):
             raise ValueError('Basic type setting requires canonical distinct basic types')
+        if self.scope=='attached_colorless_forest_permanent' and self.basic_types!=('forest',):
+            raise ValueError('The bounded colorless permanent conversion requires Forest')
 
     def to_dict(self):return {'scope':self.scope,'basic_types':list(self.basic_types)}
 

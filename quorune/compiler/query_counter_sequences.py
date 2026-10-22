@@ -3,15 +3,24 @@ from __future__ import annotations
 """Ordered existing leaf owners around independently evaluated result quantities."""
 
 import re
+from functools import partial
 from .closed_effect_programs import ClosedEffectProgramTemplate, _candidate_partitions, _NESTED_SEQUENCE_MECHANICS
 from .public_query_effect_amounts import public_query_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
+from .declared_effect_amounts import declared_effect_amount_template
+
+
+def _fixed_quantity_component(body, *, compile_fixed, compile_atomic):
+    """Preserve existing fixed payloads before the complete closed leaf owner."""
+    compiled = compile_fixed(body)
+    return compile_atomic(body) if compiled[0] is None else compiled
 
 
 def ordered_quantity_sequence_template(text: str, *, source_name: str, compile_atomic, compile_fixed):
     normalized = text.strip()
     if re.search(r'\b(?:if|unless|may|random|repeat|this way|that much|different target)\b', normalized, re.I):
         return None
+    complete_fixed = partial(_fixed_quantity_component,compile_fixed=compile_fixed,compile_atomic=compile_atomic)
     for clauses in _candidate_partitions(normalized):
         components = []
         scaled = 0
@@ -19,9 +28,11 @@ def ordered_quantity_sequence_template(text: str, *, source_name: str, compile_a
             material = re.sub(r'^Then\s+', '', clause, flags=re.I)
             compiled = compile_atomic(material)
             if compiled[0] is None:
-                compiled = public_query_effect_amount_template(material, source_name=source_name, compile_fixed=compile_fixed)
+                compiled = public_query_effect_amount_template(material, source_name=source_name, compile_fixed=complete_fixed)
             if compiled is None or compiled[0] is None:
-                compiled = scalar_effect_amount_template(material,source_name=source_name,compile_fixed=compile_fixed)
+                compiled = scalar_effect_amount_template(material,source_name=source_name,compile_fixed=complete_fixed)
+            if compiled is None or compiled[0] is None:
+                compiled = declared_effect_amount_template(material,source_name=source_name,compile_fixed=complete_fixed)
             if compiled is None or compiled[0] is None or not compiled[1] or not compiled[3]:
                 break
             if {'public-query-effect-amount','scalar-effect-amount'}.intersection(compiled[3]):

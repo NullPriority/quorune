@@ -17386,6 +17386,351 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rabbit_attach_and_unattach_pay_separately_and_preserve_tapped_state",
+      "piece_ids": [
+        "capability.attachment.reconfigure.fixed_mana",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "attachment.reconfigure.fixed_mana",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Rabbit Battery separately pays to attach and unattach, loses creature type while attached, gives the receiver +1/+1 and Haste only while attached, preserves tapped state, and retains four-seat privacy through pending load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_seven_originals_register_two_complete_actions_and_apply_all_characteristics",
+      "piece_ids": [
+        "capability.attachment.reconfigure.fixed_mana",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.reconfigure.fixed_mana",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Blade of the Oni Reconfigure pays2BB, makes the original source noncreature, and gives the receiver base5/5, black, Demon and Menace. Separate paid unattachment restores the source and receiver characteristics. All seven complete pinned bodies execute both actions through normal registration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_ardenvale_cast_counts_three_paid_white_and_enters_with_one_counter",
+      "piece_ids": [
+        "capability.casting.payment.mana_unit_counts",
+        "capability.counter.producer.paid_color_self_entry"
+      ],
+      "capability_ids": [
+        "casting.payment.mana_unit_counts",
+        "counter.producer.paid_color_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Ardenvale cast consumes3W plus1C, retains original-incarnation concrete units through pending load, enters with one counter and preserves principal rollback, four-seat privacy and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_entry_counter_is_modified_by_hardened_scales",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.paid_color_self_entry"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.paid_color_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "The paid-color as-enters amount creates the existing affected-object counter event; actual Hardened Scales changes one entry counter into two with pending load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_clone_uses_its_own_payment_after_acquiring_the_entry_ability",
+      "piece_ids": [
+        "capability.counter.producer.paid_color_self_entry",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "counter.producer.paid_color_self_entry",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Clone pays3W2U under Sphere of Resistance before choosing a copy source. It acquires the entry ability and gets one counter from its own payment, independently of the original seven counters, with unauthorized-choice rollback, private projection and pending/pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_foreboding_fruit_gives_caster_food_and_target_private_draw",
+      "piece_ids": [
+        "capability.casting.payment.mana_unit_counts",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "capability_ids": [
+        "casting.payment.mana_unit_counts",
+        "resolution.effect.paid_mana_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Foreboding Fruit pays three black units, draws and loses life for target B, then creates Food only for caster A. Foreign-principal rollback, private projection, pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rally_counts_created_humans_after_its_prefix",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "resolution.effect.paid_mana_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Rally creates two Humans before evaluating the single conditional life query; one existing creature plus both new Humans gives three life, with pending load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_slaying_fire_selects_four_instead_of_three_plus_four",
+      "piece_ids": [
+        "capability.resolution.effect.fixed_same_target_self_replacement",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "capability_ids": [
+        "resolution.effect.fixed_same_target_self_replacement",
+        "resolution.effect.paid_mana_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Slaying Fire pays two versus three red units and selects one same-target three/four damage result. It never applies both results; pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
+      "piece_ids": [
+        "capability.resolution.effect.paid_mana_condition",
+        "capability.resolution.target_controller_information"
+      ],
+      "capability_ids": [
+        "resolution.effect.paid_mana_condition",
+        "resolution.target_controller_information"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Searing Barrage damages the creature and adds three only to current controller C, distinct from owner B and caster A, with private pending/pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_own_matching_destruction_and_destination_replacement_preserve_the_protected_incarnation",
+      "piece_ids": [
+        "capability.target.protection.hexproof_qualified",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.protection.hexproof_qualified",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Strict original Knight of Grace rejects opposing black Murder, accepts its own matching black spell, then uses the existing reviewed Dauthi destination-replacement controls. The affected controller selects separately for destruction and spell disposal; both cards reach exile with one void counter each. Wrong-principal rollback, pending load, private projection, exact costs and pre-cast replay retain both choices. This does not claim strict whole-card Dauthi support or a state-based lethal-damage replacement result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_colorless_steppe_protection_is_an_independent_instance_that_removes_white_ward",
+      "piece_ids": [
+        "capability.protection.attachment.source_aura_exception",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_aura_exception",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "A normally cast original White Ward survives its own grant, but the normally played original Sejiri Steppe gives an independent ordinary white-protection instance. Its colorless land ability can target the protected creature; the separate instance removes the white Aura. Pending choices and replay preserve the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bounce_and_recast_binds_the_returned_aura_instead_of_its_old_incarnation",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.protection.attachment.source_aura_exception"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "protection.attachment.source_aura_exception"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Blue Boomerang removes original White Ward, ending its live grant. Recasting the same card creates a new Aura incarnation and rebinds only the new grant; the old captured protection instance cannot exempt the returned Aura. Pending load and pre-cast replay retain the distinction."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Pentarch Ward chooses before entry for the Aura controller despite another creature controller, retains its own Aura while granting chosen white protection, draws once privately only for its trigger controller, rejects matching white Humble and allows nonmatching blue Boomerang. Wrong-principal rollback, pending reload and pre-cast replay retain the complete result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Pentarch Ward chooses before entry for the Aura controller despite another creature controller, retains its own Aura while granting chosen white protection, draws once privately only for its trigger controller, rejects matching white Humble and allows nonmatching blue Boomerang. Wrong-principal rollback, pending reload and pre-cast replay retain the complete result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pentarch_entry_choice_belongs_to_aura_controller_and_draw_remains_private",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Pentarch Ward chooses before entry for the Aura controller despite another creature controller, retains its own Aura while granting chosen white protection, draws once privately only for its trigger controller, rejects matching white Humble and allows nonmatching blue Boomerang. Wrong-principal rollback, pending reload and pre-cast replay retain the complete result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "piece_ids": [
+        "capability.protection.attachment.source_aura_fixed_type",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_aura_fixed_type",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Tattoo Ward retains its own Aura, grants +1/+1 and protection from enchantments, rejects both own and opposing enchantment-source targets before sacrifice costs, then pays and resolves the legal original sacrifice ability with pending reload, four-player privacy and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.protection.attachment.source_aura_fixed_type"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "protection.attachment.source_aura_fixed_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Tattoo Ward retains its own Aura, grants +1/+1 and protection from enchantments, rejects both own and opposing enchantment-source targets before sacrifice costs, then pays and resolves the legal original sacrifice ability with pending reload, four-player privacy and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_tattoo_retains_itself_and_rejects_illegal_target_before_sacrifice",
+      "piece_ids": [
+        "capability.protection.attachment.source_aura_exception",
+        "capability.protection.attachment.source_aura_fixed_type"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_aura_exception",
+        "protection.attachment.source_aura_fixed_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Tattoo Ward retains its own Aura, grants +1/+1 and protection from enchantments, rejects both own and opposing enchantment-source targets before sacrifice costs, then pays and resolves the legal original sacrifice ability with pending reload, four-player privacy and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.zone.discard.fixed_random"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "zone.discard.fixed_random"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_random_payment_retains_one_subset_across_competing_replacement_choices",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_random_discard",
+        "capability.damage.result.player_life"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_random_discard",
+        "damage.result.player_life"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal original Sonic Burst pays one random other hand card after mana, excludes the casting source, preserves four damage, rejects forged choices and wrong-principal commands, and retains one sealed subset through competing destination replacements, pending load and pre-cast replay with private surviving hands."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sonic_burst_pays_one_random_other_hand_card_and_preserves_private_hands",
+      "piece_ids": [
+        "capability.target.public.player_or_damageable_permanent",
+        "capability.zone.discard.fixed_random"
+      ],
+      "capability_ids": [
+        "target.public.player_or_damageable_permanent",
+        "zone.discard.fixed_random"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual fully admitted Sonic Burst targets the opponent and deals its original four damage after paying exactly one other private random hand card. Wrong-principal, forged selection and inadequate mana reject before payment; pending load and replay retain both cost and targeted result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "tests.test_state_based_destination_replacements.StateBasedDestinationReplacementTests.test_actual_umbra_then_destination_choices_retain_both_domains_before_any_commit",
       "piece_ids": [
         "capability.permanent.destroy.umbra_armor",
@@ -17397,6 +17742,1566 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Flame Slash reaches the affected controller choice between current Aura-owned Umbra protections. The chosen Aura destination then suspends separately for existing reviewed Dauthi effects before damage clearing or movement. Pending load retains the first choice; the body survives with cleared damage, only the selected Aura moves to exile with one void counter, and replay preserves the whole command sequence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_aura_families_finish_independent_protection_destination_choices_before_any_move",
+      "piece_ids": [
+        "capability.protection.attachment.source_aura_exception",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_aura_exception",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal White Ward, Pentarch Ward and Tattoo Ward retain themselves through their own grants. An independent legal colorless Steppe grants white protection; two complete generic destination replacements suspend the Aura SBA before movement. Pending load keeps the live attachment and grant. In the chosen case B controls the creature and plays Steppe on B actual next turn while Aura-owner A chooses its destination. Wrong-principal/unoffered choices roll back; exile adds one replacement counter, ends the Aura grant and preserves private hands/pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_aura_families_finish_independent_protection_destination_choices_before_any_move",
+      "piece_ids": [
+        "capability.protection.attachment.source_chosen_color",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_chosen_color",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal White Ward, Pentarch Ward and Tattoo Ward retain themselves through their own grants. An independent legal colorless Steppe grants white protection; two complete generic destination replacements suspend the Aura SBA before movement. Pending load keeps the live attachment and grant. In the chosen case B controls the creature and plays Steppe on B actual next turn while Aura-owner A chooses its destination. Wrong-principal/unoffered choices roll back; exile adds one replacement counter, ends the Aura grant and preserves private hands/pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_protection_exceptions.AttachedProtectionExceptionTests.test_actual_aura_families_finish_independent_protection_destination_choices_before_any_move",
+      "piece_ids": [
+        "capability.protection.attachment.source_aura_fixed_type",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "protection.attachment.source_aura_fixed_type",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal White Ward, Pentarch Ward and Tattoo Ward retain themselves through their own grants. An independent legal colorless Steppe grants white protection; two complete generic destination replacements suspend the Aura SBA before movement. Pending load keeps the live attachment and grant. In the chosen case B controls the creature and plays Steppe on B actual next turn while Aura-owner A chooses its destination. Wrong-principal/unoffered choices roll back; exile adds one replacement counter, ends the Aura grant and preserves private hands/pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "casting.additional_cost.zone_change.fixed_discard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete originals keep one X across mana, exact owned creature/land discards and distinct original targets. Costs precede resolution; zero, partial/all target loss, countering and rejected selections retain their independent meanings. Sequential destination choices preserve earlier typed discards through transactional rollback, private pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aether_tide_pays_two_creatures_and_returns_two_distinct_opponent_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.target.cardinality.mana_announced_x"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "target.cardinality.mana_announced_x"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete originals keep one X across mana, exact owned creature/land discards and distinct original targets. Costs precede resolution; zero, partial/all target loss, countering and rejected selections retain their independent meanings. Sequential destination choices preserve earlier typed discards through transactional rollback, private pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_two_declared_discards_keep_prior_destination_choices_across_pending_load",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete originals keep one X across mana, exact owned creature/land discards and distinct original targets. Costs precede resolution; zero, partial/all target loss, countering and rejected selections retain their independent meanings. Sequential destination choices preserve earlier typed discards through transactional rollback, private pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.quantity_expression.declared_effect_amount"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_graveyard_exile",
+        "capability.quantity_expression.declared_effect_amount"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_graveyard_exile",
+        "quantity_expression.declared_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.target.cardinality.mana_announced_x"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "target.cardinality.mana_announced_x"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+      "piece_ids": [
+        "capability.casting.cost.targeted_fixed_generic",
+        "capability.target.cardinality.mana_announced_x"
+      ],
+      "capability_ids": [
+        "casting.cost.targeted_fixed_generic",
+        "target.cardinality.mana_announced_x"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original represented-price X supplies existing typed amount or target owners without charging X as fixed mana. Normal return/damage, exact paid resource counts, free casts, copies, tax-compatible bounds, private/public known-card distinctions and pending pre-cast replay preserve one source declaration."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Craterhoof enters through its real cast. B returns it before the original A trigger resolves; the two remaining A creatures receive one +2/+2 and trample, while B stays outside the set. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Dragon Throne is cast and equipped, retaining Defender. Its equipped creature pays the granted tap/mana activation after a real power change; a real opponent bounce removes it before resolution, and its last-known four power gives the other A creature +4/+4 and trample. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Dragon Throne is cast and equipped, retaining Defender. Its equipped creature pays the granted tap/mana activation after a real power change; a real opponent bounce removes it before resolution, and its last-known four power gives the other A creature +4/+4 and trample. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Dragon Throne is cast and equipped, retaining Defender. Its equipped creature pays the granted tap/mana activation after a real power change; a real opponent bounce removes it before resolution, and its last-known four power gives the other A creature +4/+4 and trample. Pending load, private hand projection and pre-cast replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.resolution.effect_program.closed_components"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "resolution.effect_program.closed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Bogbeast attacks after actual gain, equal loss and opponent gain. Its first instruction gains two life before the group reads five gained life. Locked current recipients, cleanup, privacy, pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Essence Pulse is cast after actual prior gain/loss and opponent gain. Its own gain precedes a negative-five modifier to creatures on every seat; two die by zero toughness while six-toughness bodies survive as one-toughness objects. Private loaded replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.resolution.effect_program.closed_components"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "resolution.effect_program.closed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Essence Pulse with two complete generic destination replacements suspends simultaneous zero-toughness moves before mutation. Life gain remains exactly once across both choice actors, wrong-principal and unoffered rejection, repeated pending load and pre-cast replay. Synthetic controls are excluded from card gains."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_nostalgic_dreams_pays_hand_price_after_selecting_old_graveyard_targets",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full original Nostalgic Dreams pays fixedGG andXhand cards after selecting old own graveyard targets, then returns only those targets and exiles its physical source. Wrong owner/price-card targets and wrong principal roll back; public known returns and unrelated hidden hands, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copied_nostalgic_dreams_retargets_for_its_controller_without_exiling_original_or_repaying",
+      "piece_ids": [
+        "capability.stack.copy.fixed_instant_or_sorcery",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "stack.copy.fixed_instant_or_sorcery",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Twincast preservesX and retargets the original Nostalgic body forB without another hand price. Its transient spell-copy object ceases and cannot move the original source while that source remains on the stack; the original later returnsA targets and self-exiles. Native known/private projection and pending replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_partial_targets_still_self_exile_but_all_illegal_targets_go_to_graveyard",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual opponent Cremate removes original graveyard targets. A partially legal Restock still returns its legal target and self-exiles; all-illegal Wildest/Nostalgic/Treasured sources instead go to graveyard with every paid price retained. Pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_zero_x_and_zero_optional_targets_resolve_and_self_exile",
+      "piece_ids": [
+        "capability.target.cardinality.mana_announced_x",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "target.cardinality.mana_announced_x",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Wildest Dreams and Nostalgic Dreams announceXzero, pay their unchanged printed/known additional prices, select no targets and still resolve to self exile. Wrong-principal and foreign-target rejection, known/private hand projection, pending load and pre-action replay agree; original Seeds of Renewal also resolves with zero optional targets."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "piece_ids": [
+        "capability.zone.exile.resolving_spell",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "zone.exile.resolving_spell",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Reap paysXRG with no targets, returns two distinct current own cards and then self-exiles; normal offers, wrong-principal rollback, known-hand privacy, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_reap_the_past_pays_announced_x_then_returns_random_cards_and_self_exiles",
+      "piece_ids": [
+        "capability.quantity_expression.declared_effect_amount",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "quantity_expression.declared_effect_amount",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Reap announcesXtwo and pays its ordinary mana-X amount; the untargeted return count reads that same declaration, preserving current own eligibility and loaded replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fengraf_pays_tap_sacrifice_and_mana_before_random_creature_return",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Haunted Fengraf pays three mana, taps and sacrifices before its random eligible creature return. Its land card and a noncreature card cannot be selected; wrong actor rollback, known-hand privacy, pending load and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_viconia_background_pair_casts_both_commanders_and_keeps_random_upkeep",
+      "piece_ids": [
+        "capability.format.commander.pairing.choose_background",
+        "capability.zone.return.random_own_graveyard"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.choose_background",
+        "zone.return.random_own_graveyard"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Viconia and Flaming Fist form a valid two-commander deck, cast normally from command with their printed prices, retain designation/background presence and allow Viconia's four-creature upkeep to return exactly one eligible own creature. Known-hand privacy and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_orims_chant_preserves_target_and_kicked_attack_scope",
+      "piece_ids": [
+        "capability.casting.prohibition.resolution_until_end_of_turn",
+        "capability.resolution.effect.fixed_cast_fact"
+      ],
+      "capability_ids": [
+        "casting.prohibition.resolution_until_end_of_turn",
+        "resolution.effect.fixed_cast_fact"
+      ],
+      "interaction_order": 2,
+      "assertion": "Paid kicker alone governs the attack prohibition while the targeted casting rule resolves in both modes; actual combat consequences, source departure, rollback and loaded replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_calamitys_wake_exiles_graveyards_and_itself_but_allows_creatures_lands_and_abilities",
+      "piece_ids": [
+        "capability.casting.prohibition.resolution_until_end_of_turn",
+        "capability.zone.exile.resolving_spell"
+      ],
+      "capability_ids": [
+        "casting.prohibition.resolution_until_end_of_turn",
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Calamity exiles all four graveyards then creates an all-player noncreature prohibition and self-exiles; creature casts, land plays and mana abilities remain legal through pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_ranger_captain_searches_then_sacrifices_before_restriction_resolves",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Ranger-Captain preserves optional revealed low-mana creature search and shuffle, pays source sacrifice before responses, and creates its opponent noncreature rule after a response resolves; private projections and loaded replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_current_adjustments_add_clamp_at_zero_and_preserve_no_maximum",
+      "piece_ids": [
+        "capability.hand.cleanup.fixed_adjustment",
+        "capability.hand.cleanup.no_maximum"
+      ],
+      "capability_ids": [
+        "hand.cleanup.fixed_adjustment",
+        "hand.cleanup.no_maximum"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual current original components add across controller/opponent scopes, clamp finite limits at zero and discard the full affected hand in canonical cleanup. Spellbooks existing no-maximum permission remains unbounded under all finite reductions through an actual turn, with private projection, pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_six_more_originals_keep_each_full_body_entry_choice_and_one_cleanup_batch",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Six complete originals create six delayed abilities at accepted casts. Pending entry choice, source departure through illegal enchantment, source-bound modifiers and one APNAP cleanup batch remain correct through save/load, private projections and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_intrinsic_timing_cannot_override_a_resolved_casting_prohibition",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "casting.prohibition.resolution_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Silence removes the intrinsic-timing cast offer and rejects an explicit intrinsic request before any mana, stack or delayed-trigger mutation; pending replay and principal privacy remain exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_countered_original_retains_one_noop_delayed_trigger_and_cleanup_priority",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Counterspell removes the original Aura while retaining its cast-created delayed ability, which grants cleanup priority and resolves once without moving any card; loaded replay and private projections agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
+      "piece_ids": [
+        "capability.casting.permission.classic_flash_cleanup",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "casting.permission.classic_flash_cleanup",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full RelicWard grants shroud to a noncreature artifact while its intrinsic cast-created cleanup consequence later sacrifices only the Aura; the existing grant ends immediately, with private pending load and replay preserved."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.trigger.keyword.ward.fixed_generic"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "trigger.keyword.ward.fixed_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full Hardlight preserves artifact-you-control legality and entry linked exile, grants a real Ward instance to the noncreature artifact, permits targeting, then counters the targeting spell on declined payment; removing the Aura ends the grant and returns the linked creature."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.permanent.indestructible.ordinary"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "permanent.indestructible.ordinary"
+      ],
+      "interaction_order": 2,
+      "assertion": "Whole Indestructibility prevents actual Naturalize destruction of the enchanted artifact while leaving a later exile legal; the linked Aura then leaves through normal state actions, with principal-private loaded replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.target.protection.shroud_permanent"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "target.protection.shroud_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual RelicWard blocks its artifact controller targeting the noncreature artifact, preserves its mana ability, and allows Aura removal to restore targeting before a real bounce; advertised and committed legality, rollback and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_devour_entry_counter_order_survives_private_pending_load_and_replay",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.external_additional_entry"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.external_additional_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full Bloodspore Devour creates its counter instruction before actual Grumgully and Doubling Season modifications. Both legal orders preserve expected three/four counters, no partial sacrifice, private pending load, unauthorized rollback and exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bloodspore_devours_then_uses_its_current_counter_count",
+      "piece_ids": [
+        "capability.counter.producer.external_additional_entry",
+        "capability.zone.entry.devour"
+      ],
+      "capability_ids": [
+        "counter.producer.external_additional_entry",
+        "zone.entry.devour"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Bloodspore cast pays mana, selects and sacrifices two public controlled creatures, enters with two Devour counters and adds that current count to a later creature entry, with pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_spirit_shackle_tap_trigger_adds_counter_then_state_actions_kill_creature",
+      "piece_ids": [
+        "capability.counter.producer.fixed_effect",
+        "capability.counter.producer.fixed_event_object"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_effect",
+        "counter.producer.fixed_event_object"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Spirit Shackle counter placement addresses the tapped incarnation and applies -0/-2 before canonical zero-toughness state actions; original cast, private projections and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_brink_trigger_survives_aura_departure_but_does_not_destroy_blinked_incarnation",
+      "piece_ids": [
+        "capability.permanent.destroy.effect",
+        "capability.resolution.event_object.fixed_result"
+      ],
+      "capability_ids": [
+        "permanent.destroy.effect",
+        "resolution.event_object.fixed_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Brink trigger survives Aura removal, while Cloudshift creates another incarnation that the old trigger cannot destroy; untargeted results and private replay preserve identity."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_putrescence_reads_current_controller_and_departure_lki_after_control_change",
+      "piece_ids": [
+        "capability.resolution.event_object.fixed_result",
+        "capability.resolution.target_controller_information"
+      ],
+      "capability_ids": [
+        "resolution.event_object.fixed_result",
+        "resolution.target_controller_information"
+      ],
+      "interaction_order": 2,
+      "assertion": "Relic Putrescence targets no player and reads current or departure controller D independently from Aura controller A and artifact owner B; stacked pending load and replay preserve the original occurrence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Viridian Harvest and its artifact leave simultaneously; one before-event attachment occurrence retains locked Aura controller A and resolves six life after pending batch load."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_pooling_venom_keeps_tap_life_loss_and_paid_attached_destruction",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pooling Venom preserves its real tap life-loss trigger and pays full3B to destroy its current enchanted land through the ordinary destruction owner; unauthorized commands roll back and replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_corrupted_roots_reads_current_controller_instead_of_tap_event_player",
+      "piece_ids": [
+        "capability.life.change.effect",
+        "capability.resolution.target_controller_information"
+      ],
+      "capability_ids": [
+        "life.change.effect",
+        "resolution.target_controller_information"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Corrupted Roots uses currentD instead of eventB or AuraA for its untargeted two-life loss, with pending load and private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
+      "piece_ids": [
+        "capability.resolution.target_controller_information",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "resolution.target_controller_information",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Chronic Flooding mills three cards from currentD rather than eventB; sealed occurrence and private replay retain distinct principals."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
+      "piece_ids": [
+        "capability.damage.result.player_life",
+        "capability.resolution.target_controller_information"
+      ],
+      "capability_ids": [
+        "damage.result.player_life",
+        "resolution.target_controller_information"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Psychic Venom deals two damage to currentD while its triggered ability remains controlled byA; prior event controllerB does not become an information recipient."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_conversion_and_glaciers_change_all_mountains_and_keep_full_upkeep_price",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Full Conversion and Glaciers convert current Mountains across controllers to Plains, expose only intrinsic white mana, preserve Snow, leave Island unchanged and retain their complete upkeep payment, pending load and private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_partial_upkeep_mana_cannot_pay_conversion_and_rejection_is_atomic",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.trigger.source.fixed_maintenance"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "trigger.source.fixed_maintenance"
+      ],
+      "interaction_order": 2,
+      "assertion": "Conversion remains after full WW payment; attempting upkeep with onlyW rejects atomically, and declining sacrifices the source and restores Mountain types."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_song_turns_an_aura_into_unattached_land_then_restored_aura_dies",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.basic_land_type.fixed_setting"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.basic_land_type.fixed_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Song turns an attached Aura into an unattached Forest land without killing it; removing Song restores the unattached Aura and canonical state actions move it to graveyard, while its former artifact stays present."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_song_replaces_printed_types_and_abilities_but_keeps_supertypes_and_later_grants",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.continuous.basic_land_type.fixed_setting"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "continuous.basic_land_type.fixed_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Fixed conversion replaces card types/subtypes/colors and printed Trample, preserves legendary/snow/name, derivesForest mana and allows an independent layer6 Flying grant."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_old_and_new_animated_land_mana_actions_use_continuous_control_age",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.mana.intrinsic.basic_land_type"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Animated old lands retain their actual mana action while a newly played creature land has no legal tap action; forged equivalent action rejects atomically, with private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_song_removes_kormus_printed_animation_and_source_removal_restores_it",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Song of the Dryads removes KormusBells printed animation by making its source a Forest; animated Swamp becomes only land, and removing Song restores the same continuous source ability."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_natures_revolt_sets_two_two_and_counters_modify_after_base",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.counter.producer.fixed_effect"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "counter.producer.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "NaturesRevolt animates all lands to base2/2 while a preexisting +1/+1 counter still modifies its land to3/3 without being copied or removed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_kormus_membership_tracks_urborg_departure_and_restores_non_swamp",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_addition",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_addition",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "KormusBell observes current Swamp membership fromUrborg, makes the Island black creature, then ends that animation/color whenUrborg is bounced, retaining Island/Snow and private replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw",
+      "piece_ids": [
+        "capability.activation.cycling.hand",
+        "capability.activation.mana_cost.static_generic"
+      ],
+      "capability_ids": [
+        "activation.cycling.hand",
+        "activation.mana_cost.static_generic"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Fluctuator makes Cycling2free whilediscard stillpays beforestack and private drawresolves; wrongprincipalrollsback andpendingload/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_fluctuator_reduces_typecycling_but_does_not_discount_another_seat",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.activation.typecycling.hand"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "activation.typecycling.hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Typecycling is a Cycling variant: Fluctuator makesAshBarrens mana0 but keepsdiscard/private searchcontinuation, while anotherseatCycling retainsitsfull price."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_steelshaper_equip_discount_exists_before_its_equipped_soldier_anthem",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.attachment.equip.fixed_mana"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "attachment.equip.fixed_mana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Steelshaper givesEquip1zero beforebeing equipped; acceptedEquip thenattachesBonesplitter andturnson itsSoldieranthem, retaining nonmatchingBearstats."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_headmaster_discounts_equipment_cast_then_equip_only",
+      "piece_ids": [
+        "capability.activation.mana_cost.static_generic",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.static_generic",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "Headmaster keepsitsEquipmentspellcostdiscount andseparately discountsEquip; actualBonesplittercastandequipbothpayzero generic withoutsharingartifactcreatureactivation discounts."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
+      "piece_ids": [
+        "capability.damage.prevention.static_fixed",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "damage.prevention.static_fixed",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual untargeted red sweeper prevents damage to Oversoul while an ordinary white creature dies through state-based actions."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+      "piece_ids": [
+        "capability.combat.attack.vigilance",
+        "capability.protection.typed.debt"
+      ],
+      "capability_ids": [
+        "combat.attack.vigilance",
+        "protection.typed.debt"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Elite attacks untapped, rejects Vampire/Werewolf/Zombie blockers, accepts a Human blocker and kills it with first strike without taking combat damage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+      "piece_ids": [
+        "capability.protection.typed.debt",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "protection.typed.debt",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual all-green hybrid Oversoul cast rejects three matching source colors; a white targeted cantrip resolves its buff and private draw with principal rollback and pending-load replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_guide_revalidates_own_target_and_reads_current_blocker_power",
+      "piece_ids": [
+        "capability.combat.declaration.temporary_blocker_predicate",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "combat.declaration.temporary_blocker_predicate",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Guide rejects a foreign target before payment and the resolved rule reads blocker power after a real Giant Growth."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_tower_blocks_walls_but_accepts_an_ordinary_blocker",
+      "piece_ids": [
+        "capability.combat.declaration.temporary_blocker_predicate",
+        "capability.continuous.resolution.declaration_rules_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.declaration.temporary_blocker_predicate",
+        "continuous.resolution.declaration_rules_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Accepted Tower activation creates a target-anchored rule; a Wall block rejects atomically while an ordinary blocker is accepted, deals combat damage and dies."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_firefright_pays_discard_and_permits_artifact_or_red_blockers",
+      "piece_ids": [
+        "capability.combat.declaration.temporary_blocker_predicate",
+        "capability.combat.declaration.typed_components"
+      ],
+      "capability_ids": [
+        "combat.declaration.temporary_blocker_predicate",
+        "combat.declaration.typed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Firefright pays mana, taps and discards before resolving; artifact or red blockers remain legal and an ordinary white blocker is prohibited."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_selected_blocker_blink_before_or_after_resolution_never_restricts_the_new_blocker",
+      "piece_ids": [
+        "capability.combat.declaration.source_block_pair",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "combat.declaration.source_block_pair",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "A chosen blocker blink before resolution makes all targets illegal; after resolution the new incarnation does not inherit the resolved pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_four_actual_casts_and_pairs_restrict_only_the_selected_match",
+      "piece_ids": [
+        "capability.combat.declaration.source_block_pair",
+        "capability.combat.declaration.typed_components"
+      ],
+      "capability_ids": [
+        "combat.declaration.source_block_pair",
+        "combat.declaration.typed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual full-source casts, Expedite and paid activation prohibit exactly the selected source/blocker pair while the same blocker blocks another attacker and an unselected blocker remains eligible."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pathfinder_requires_colorless_and_self_targeting_remains_legal",
+      "piece_ids": [
+        "capability.activation.mana_cost.fixed_complex",
+        "capability.combat.declaration.source_block_pair"
+      ],
+      "capability_ids": [
+        "activation.mana_cost.fixed_complex",
+        "combat.declaration.source_block_pair"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pathfinder rejects a colored substitute for its actualC activation cost; a validC payment can target itself without forbidding an ordinary opposing blocker."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_rewards_pays_land_before_return_and_normal_recast_does_not_keep_buyback",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real land is sacrificed before Rewards resolves; the paid cast returns to hand while a fresh normal cast resolves to graveyard."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_forbid_discards_two_before_countering_and_returns_to_hand",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_discard",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Forbid pays selected own hand cards before countering a real Bolt and returns only the actual paid source card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_flowstone_pays_life_then_random_hand_card_and_destroys_land",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_life_random",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_life_random",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Flowstone pays life then server-selected random hand cost, destroys an opposing land, and returns through the existing Buyback owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_targets_illegal_does_not_return_the_paid_buyback_spell",
+      "piece_ids": [
+        "capability.casting.buyback.fixed_nonmana",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "casting.buyback.fixed_nonmana",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real target blink leaves all targets illegal; Slaughter does not resolve or return despite its paid life cost."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_wizardry_tokens_trigger_once_per_own_noncreature_cast_and_expire",
+      "piece_ids": [
+        "capability.token.creation.prowess_definition",
+        "capability.trigger.keyword.prowess"
+      ],
+      "capability_ids": [
+        "token.creation.prowess_definition",
+        "trigger.keyword.prowess"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real Wizardry tokens do not trigger for their creating/opponent/creature spell; one own noncreature cast gives exactly one+1/+1 instance each and cleanup restores base stats."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_eruption_storm_copies_create_flying_prowess_definitions_without_casting_copies",
+      "piece_ids": [
+        "capability.token.creation.prowess_definition",
+        "capability.trigger.keyword.storm"
+      ],
+      "capability_ids": [
+        "token.creation.prowess_definition",
+        "trigger.keyword.storm"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Eruption after a prior cast creates two complete flying Dragon Elementals; copies do not cast and a later real noncreature cast triggers each token once."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hauberk_can_pay_its_target_then_leave_the_cost_paid",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Hauberk may sacrifice its target; the cost stays paid and target revalidation leaves the Equipment unattached."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sigil_spends_charge_counters_and_updates_equipped_bonus",
+      "piece_ids": [
+        "capability.activation.source_counter_removal.fixed",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.source_counter_removal.fixed",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual announced X entry and Equip charge-counter spending preserve dynamic equipped bonus and zero-counter unavailability."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_inventor_pays_entry_energy_to_move_its_attachment",
+      "piece_ids": [
+        "capability.activation.energy.fixed_payment",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.energy.fixed_payment",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual energy entry and initial attach followed by Equip spend both energy before reattaching and leave no unpaid activation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_shredder_excludes_self_and_lands_and_is_once_each_turn",
+      "piece_ids": [
+        "capability.activation.usage.once_per_turn",
+        "capability.attachment.equip.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "activation.usage.once_per_turn",
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Shredder cost excludes self and lands, moves its attachment, and shares its once-per-turn restriction between offers and commit."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_greatsword_job_select_and_life_equip_keep_knight_and_limit",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_nonmana",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_nonmana",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Job select creates a1/1 Hero attached to Greatsword at4/1; the paid nonmana Equip moves to another controlled creature, whose power becomes5 and whose existing subtypes gain Knight. Once-per-turn payment and pending-load replay preserve the new recipient characteristics."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fist_offers_optional_wubrg_and_keeps_printed_payment",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.alternative_cost.fixed_public"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.alternative_cost.fixed_public"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Fist offers a WUBRG price while preserving an ordinary printed payment, and both casts pay their complete chosen price."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "piece_ids": [
+        "capability.casting.additional_cost.announced_x_hand_discard",
+        "capability.casting.alternative_cost.fixed_battlefield_grant"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.announced_x_hand_discard",
+        "casting.alternative_cost.fixed_battlefield_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "A zero alternative mana price preserves the separately chosen X hand-discard cost and Sphere increase, before native Sickening Dreams damages every player by that paid X."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_keeps_mandatory_declared_x_cost_and_increase",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "Sphere of Resistance adds one generic to the zero base price while the full announced-X hand-discard cost remains mandatory and paid."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_preserves_optional_kicker_price_and_effect",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.kicker.fixed_mana"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.kicker.fixed_mana"
+      ],
+      "interaction_order": 2,
+      "assertion": "A free base alternative combines with one paid optional Kicker, preserving the complete increased damage result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_alternative_preserves_nonmana_buyback_payment_and_return",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.buyback.fixed_nonmana"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.buyback.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual zero base alternative pays four life for Buyback, returns the physical Slaughter card to hand, and a later ordinary alternate cast does not keep Buyback or pay life."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copied_source_grants_its_own_current_alternative",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Mirrormade copies an opposing Fist, then grants its current controller a separately identified WUBRG method; copied source definition and pending-load replay preserve payment and Bolt damage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_impulse_exile_uses_fist_and_not_hand_only_omniscience",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.zone.impulse_access.fixed"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "zone.impulse_access.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Reckless Impulse supplies exile permission; Fist can replace that spell mana price while hand-only Omniscience cannot, and the resulting spell keeps its complete outcome."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_flashback_only_permission_excludes_other_alternatives",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.lifecycle.fixed_zone_cast"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.lifecycle.fixed_zone_cast"
+      ],
+      "interaction_order": 2,
+      "assertion": "A Flashback-only graveyard permission permits its own paid method and excludes the source-granted alternative; Think Twice draws privately and finishes in exile."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mindcensor_flash_restricts_opponent_to_four_private_cards",
+      "piece_ids": [
+        "capability.library.search.fixed_counted",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.fixed_counted",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual flashed Mindcensor limits a real Tutor to four private cards, rejects the fifth and preserves authorized result movement and full-library shuffle."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_search_activation_cost_is_paid_even_when_search_is_prohibited",
+      "piece_ids": [
+        "capability.library.search.fixed_to_battlefield",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.fixed_to_battlefield",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Evolving Wilds still pays tap and source sacrifice, cannot perform its library search, moves no land, and completes the independent full-library shuffle."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_shadow_draws_privately_blocks_search_and_expires_at_cleanup",
+      "piece_ids": [
+        "capability.library.search.prohibition.resolution_until_end_of_turn",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.prohibition.resolution_until_end_of_turn",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real Shadow creates the all-player turn rule, draws privately, blocks an already queued mandatory search while preserving shuffle, and expires through ordinary cleanup."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_optional_search_cannot_be_chosen_and_does_not_shuffle",
+      "piece_ids": [
+        "capability.library.search.fixed_type_to_hand",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.search.fixed_type_to_hand",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual optional Borderland Ranger search to hand cannot be chosen under prohibition; no private search or contingent shuffle occurs and the creature enters normally."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_scry_and_private_draw_remain_available_under_prohibition",
+      "piece_ids": [
+        "capability.library.scry.fixed_controller",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "library.scry.fixed_controller",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Opt retains its private Scry choice and draw under a prohibition affecting only library searches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_current_ability_loss_restores_searching_and_prohibition_overrides_bounds",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.library.search.restriction.static"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "library.search.restriction.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Song of the Dryads removes the Orb prohibition through ordinary layer-four ability consequences while an opposing Mindcensor still limits the resulting search window."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_free_and_wubrg_prices_combine_with_fuse_and_one_tax",
+      "piece_ids": [
+        "capability.casting.alternative_cost.fixed_battlefield_grant",
+        "capability.casting.method.fuse"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_battlefield_grant",
+        "casting.method.fuse"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual complete fused spells accept Omniscience and Fist prices, apply one Sphere tax, consume the full price, retain one cast and resolve both bodies."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_target_revalidation_preserves_legal_half_and_fizzles_all_illegal",
+      "piece_ids": [
+        "capability.casting.method.fuse",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "casting.method.fuse",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual opponent bounce before resolution preserves the legal half, skips an illegal half and prevents both bodies when all targets become illegal; rollback and pending replay retain target incarnations."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_fused_copy_retains_combined_characteristics_and_target_roles",
+      "piece_ids": [
+        "capability.casting.method.fuse",
+        "capability.stack.copy.fixed_instant_or_sorcery"
+      ],
+      "capability_ids": [
+        "casting.method.fuse",
+        "stack.copy.fixed_instant_or_sorcery"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Reverberate copies the whole fused spell with combined characteristics and independent half targets, preserves private consequences and adds no third cast occurrence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_toil_and_trouble_keep_different_player_roles",
+      "piece_ids": [
+        "capability.casting.method.fuse",
+        "capability.quantity_expression.target_player_hand_count"
+      ],
+      "capability_ids": [
+        "casting.method.fuse",
+        "quantity_expression.target_player_hand_count"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Toil and Trouble target different players; the explicit right-half group reads its own current hand count after the left draw and life result without disclosing card identities."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mycosynth_counts_opponent_poison_and_elimination_removes_that_player",
+      "piece_ids": [
+        "capability.damage.result.infect",
+        "capability.quantity_expression.current_player_value"
+      ],
+      "capability_ids": [
+        "damage.result.infect",
+        "quantity_expression.current_player_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Infect damage eliminates an opponent at ten poison; the live quantity stops counting that player, continues counting the other opponents, and excludes the controller."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mycosynth_control_change_rebinds_opponents_without_caching",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.quantity_expression.current_player_value"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "quantity_expression.current_player_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Control Magic rebinds the creature's current opponents and canonical poison totals through pending replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "piece_ids": [
+        "capability.casting.prototype.characteristics",
+        "capability.quantity_expression.attached_object_value"
+      ],
+      "capability_ids": [
+        "casting.prototype.characteristics",
+        "quantity_expression.attached_object_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Matrix Equip reads the prototyped permanent's current mana value, preserves Haste and ordinary payment, and rebinds to its copied token."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hedron_uses_prototype_and_copied_token_mana_values",
+      "piece_ids": [
+        "capability.quantity_expression.attached_object_value",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "quantity_expression.attached_object_value",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real token copy retains the copied Prototype mana cost and value rather than being treated as a zero-mana ordinary token."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_champion_counts_aura_equipment_union_and_retains_trample",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_count_modifier",
+        "capability.quantity_expression.attached_object_value"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_count_modifier",
+        "quantity_expression.attached_object_value"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Aura casting and Equip movement update the union. Humble removes the intrinsic quantity modifier and Trample while preserving the independent attached color bonus."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_meishin_control_change_uses_new_controllers_private_hand_count",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.continuous.power_toughness.live_quantity"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "continuous.power_toughness.live_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Confiscate changes the source controller; the global modifier uses the new controller's live public hand cardinality without disclosing identities."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "piece_ids": [
+        "capability.combat.attack.vigilance",
+        "capability.continuous.power_toughness.live_quantity"
+      ],
+      "capability_ids": [
+        "combat.attack.vigilance",
+        "continuous.power_toughness.live_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "The real global source grants Vigilance at zero Gates, after a Gate land play and after the land loses its Gate subtype."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_hold_gates_keeps_vigilance_at_zero_and_tracks_live_gate_types",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.continuous.power_toughness.live_quantity"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "continuous.power_toughness.live_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Spreading Seas changes the counted land to an Island and draws; the quantity updates through layer five while the independent Vigilance grant remains."
     }
   ]
 }

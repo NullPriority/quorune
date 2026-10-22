@@ -10,6 +10,7 @@ from ..ability_fragments import parse_protection_line
 from ..characteristic_fragments import characteristic_quantity_capabilities
 from ..rules.attachment_actions import fixed_equip_ability_spec
 from .ward_cost_templates import fixed_ward_spec
+from .keyword_templates import printed_keyword_parts
 from ..death_return import PERSIST_KEYWORD, UNDYING_KEYWORD
 from ..rules.capabilities import (
     CapabilityClosure,
@@ -156,7 +157,7 @@ def _ward_dependency_gate(
         return None
     ward_parts = tuple(
         part.strip()
-        for part in re.split(r"[,;]", material_line.rstrip("."))
+        for part in printed_keyword_parts(material_line)
         if part.strip().casefold().startswith("ward")
     )
     specs = tuple(fixed_ward_spec(part) for part in ward_parts)
@@ -176,8 +177,14 @@ def _ward_dependency_gate(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
-    other_gate = dependency_gate(
-        mechanics=(mechanic for mechanic in mechanics if mechanic != "ward"),
+    other_mechanics = tuple(mechanic for mechanic in mechanics if mechanic != "ward")
+    other_gate = _protection_dependency_gate(
+        material_line, other_mechanics,
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    ) or dependency_gate(
+        mechanics=other_mechanics,
         effects=(),
         target_schema=None,
         trusted_mechanics=trusted_mechanics,
@@ -260,7 +267,7 @@ def _protection_dependency_gate(
 ) -> DependencyGate | None:
     protection_parts = tuple(
         part.strip()
-        for part in re.split(r"[,;]", material_line.rstrip("."))
+        for part in printed_keyword_parts(material_line)
         if part.strip().casefold().startswith("protection from ")
     )
     if (
@@ -322,6 +329,9 @@ def keyword_dependency_gate(
 
     equip = fixed_equip_ability_spec(material_line)
     if mechanics == ("equip",) and equip is not None:
+        if equip.nonmana:
+            return DependencyGate(blockers=('mechanic:equip-nonmana-dedicated-lowering-required',),
+                capabilities=(equip.capability_id,))
         return explicit_capability_gate(
             equip.capability_id,
             capability_registry=capability_registry,

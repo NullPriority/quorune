@@ -32,6 +32,7 @@ _LIBRARY_DEFINITION = re.compile(
 )
 _X = re.compile(r"\bX\b")
 _RESULT_FIELDS = {
+    'return_random_graveyard_cards': ('count',),
     "damage": ("amount",), "damage_fixed_set": ("amount",),
     "draw": ("count",), "draw_each_player": ("count",),
     "mill": ("count",), "scry": ("count",),
@@ -148,15 +149,52 @@ def contains_declared_effect_amount(value: Any) -> bool:
     return isinstance(value, (list,tuple)) and any(contains_declared_effect_amount(child) for child in value)
 
 
+def _additional_price_declares_x(oracle_text: str) -> bool:
+    from .spell_additional_cost_templates import announced_x_additional_cost_template
+    prices=[announced_x_additional_cost_template(line) for line in oracle_text.splitlines()]
+    return sum(price is not None for price in prices)==1
+
+
+def closed_additional_cost_x_result(program: Any, *, recognizers) -> bool:
+    """Check the complete known price before its independent result owner."""
+    schema=program.cost_schema
+    if not isinstance(schema,Mapping) or set(schema)!={'additional_costs'} or not isinstance(schema['additional_costs'],list) or len(schema['additional_costs'])!=1:return False
+    # Component-only views cannot establish a whole spell's cost context.
+    if getattr(program,'event',None)!='resolve' or not str(getattr(program,'ability_id','')).startswith('spell:'):return False
+    from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies,AnnouncedXLifeAdditionalCost
+    from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
+    from .spell_additional_cost_templates import FixedZoneChangeAdditionalCostTemplate
+    try:
+        required=announced_additional_cost_dependencies(schema)
+        if not required or not set(required)<=set(program.capability_dependencies):return False
+        raw=schema['additional_costs'][0]
+        if raw.get('kind')=='announced_x_life':
+            AnnouncedXLifeAdditionalCost.from_descriptor(raw);prefix='spell-additional-cost-announced-x-life-v1+'
+        else:
+            cost=FixedZoneChangeAdditionalCost.from_descriptor(raw)
+            prefix=FixedZoneChangeAdditionalCostTemplate(cost.operation,cost.predicate).template_id+'-announced-x-v3+'
+    except (TypeError,ValueError):return False
+    template=str(program.provenance.get('template_id') or '')
+    if not template.startswith(prefix):return False
+    result=replace(program,cost_schema=None,provenance={**program.provenance,'template_id':template[len(prefix):]},
+        coverage=[value for value in program.coverage if value!='cr-601-casting-spells'])
+    return any(recognizer(result) for recognizer in recognizers)
+
+
 def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: str,
                                    compile_effect: Callable[..., Any]) -> Callable[..., Any]:
-    """Select announced cost-X context through the canonical mana parser."""
+    """Select X only from an ordinary mana cost or one represented price."""
     _, symbols = mana_cost_to_vector(record.mana_cost)
     available = bool(is_spell and not record.faces and symbols and set(symbols) == {"X"})
-    return partial(compile_effect,
-        cast_x_available=available and re.search(r"\bX (?:is|can't|cannot)\b",oracle_text) is None,
+    if not available and 'X' not in symbols and is_spell and not record.faces and re.search(r'\bX\b',oracle_text,re.I):
+        available=_additional_price_declares_x(oracle_text)
+    selected = partial(compile_effect,
+        cast_x_available=available and re.search(r"\bX (?:is|can't|cannot)\b",oracle_text,re.I) is None,
         forbid_public_x=available,
         kicked_self_replacement_available=bool(is_spell and not record.faces))
+    from .spell_self_exile import spell_self_exile_effect_compiler
+    return spell_self_exile_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
+        ordinary_spell=bool(is_spell and not record.faces))
 
 
 def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:

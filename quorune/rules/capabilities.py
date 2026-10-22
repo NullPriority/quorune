@@ -13,6 +13,9 @@ from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
+from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS,QUALIFIED_HEXPROOF_CAPABILITY
+from .source_protection_choice_shapes import source_protection_choice_capabilities
+from .source_fixed_protection_shapes import source_fixed_protection_capabilities
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
 )
@@ -297,6 +300,10 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    'temporary-cast-prohibition': ('casting.prohibition.resolution_until_end_of_turn',),
+    'temporary-library-search-prohibition': ('library.search.prohibition.resolution_until_end_of_turn',),
+    'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
+    'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
@@ -401,6 +408,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "activation.tap_untap_cost.haste",
     ),
     _HEXPROOF_MECHANIC: ("target.protection.hexproof_permanent",),
+    **{keyword:(QUALIFIED_HEXPROOF_CAPABILITY,) for keyword in QUALIFIED_HEXPROOF_KEYWORDS},
     _SHROUD_MECHANIC: ("target.protection.shroud_permanent",),
     _REACH_MECHANIC: ("combat.block.reach",),
     _TRAMPLE_MECHANIC: ("combat.damage.assignment.trample",),
@@ -492,6 +500,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'temporary-cast-prohibition',
+        'temporary-library-search-prohibition',
+        'random-own-graveyard-return',
         'commander-learn',
         'paid-entry-copy-offspring',
         'paid-entry-copy-squad',
@@ -1097,97 +1108,9 @@ def load_default_capability_registry() -> CapabilityRegistry:
     return _load_verified_default_capability_registry(DEFAULT_CAPABILITY_REGISTRY)
 
 
-def _targeted_effect_capabilities(
-    *,
-    effects: Sequence[Mapping[str, Any]],
-    target_schema: Mapping[str, Any] | None,
-    mechanics: set[str],
-) -> set[str]:
-    from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
-    dependencies: set[str] = set()
-    for resolver in (
-        fixed_stack_spell_copy_node_capabilities,
-        fixed_extra_turn_node_capabilities,
-        ascend_spell_node_capabilities,
-        public_event_counter_set_node_capabilities,
-        unchosen_hand_discard_node_capabilities,
-        fixed_connive_node_capabilities, fixed_goad_node_capabilities, exploit_instruction_node_capabilities,
-        fixed_control_node_capabilities,
-        fixed_attachment_action_node_capabilities,
-        all_counter_removal_node_capabilities,
-        fixed_counter_placement_batch_node_capabilities,
-        fixed_counter_placement_group_node_capabilities,
-        fixed_counter_placement_node_capabilities,
-        fixed_counter_removal_node_capabilities,
-        fixed_counter_placement_set_node_capabilities,
-        fixed_counter_placement_target_set_node_capabilities,
-        fixed_homogeneous_target_set_node_capabilities,
-        announced_target_set_node_capabilities,
-        fixed_player_counter_placement_node_capabilities,
-        optional_fixed_counter_event_trigger_node_capabilities,
-        fixed_target_characteristics_node_capabilities, temporary_target_interaction_node_capabilities,
-        fixed_source_characteristics_node_capabilities, source_keyword_choice_capabilities,
-        temporary_declaration_restriction_node_capabilities,
-        fixed_target_effect_sequence_node_capabilities,
-        fixed_source_effect_sequence_node_capabilities,
-        fixed_creature_power_damage_node_capabilities,
-        fixed_damage_node_capabilities,
-        mass_destruction_node_capabilities,
-        fixed_next_turn_draw_node_capabilities,
-        fixed_draw_node_capabilities,
-        fixed_affected_player_discard_node_capabilities,
-        fixed_controller_discard_node_capabilities,
-        fixed_context_player_discard_node_capabilities,
-        fixed_affected_player_sacrifice_node_capabilities,
-        fixed_entry_return_node_capabilities,
-        fixed_mill_node_capabilities, tap_state_event_player_node_capabilities, scheduled_player_node_capabilities,fixed_event_player_result_node_capabilities,
-        fixed_impulse_access_node_capabilities,
-        fixed_monarch_node_capabilities,
-        source_transform_node_capabilities,
-        class_level_node_capabilities,
-        fixed_library_search_node_capabilities,
-        fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
-        fixed_library_selection_node_capabilities, fixed_hand_inspection_node_capabilities,
-        fixed_life_node_capabilities,
-        fixed_controller_effect_sequence_node_capabilities,
-        fixed_counter_controller_effect_sequence_node_capabilities,
-        fixed_effect_clause_sequence_node_capabilities,
-        fixed_optional_mana_payment_node_capabilities,
-        fixed_optional_effect_node_capabilities,
-        closed_effect_program_node_capabilities,
-        fixed_scry_node_capabilities,
-        fixed_surveil_node_capabilities,
-        fixed_self_return_node_capabilities,
-        fixed_resolution_characteristic_set_node_capabilities,
-        single_explore_node_capabilities,
-        single_proliferate_node_capabilities,
-        self_regeneration_node_capabilities,
-        fixed_self_counter_keyword_action_node_capabilities,
-        graft_node_capabilities,
-        soulbond_node_capabilities,
-        enlist_reflexive_capabilities,
-        fixed_resolution_mana_capabilities,
-        fixed_bolster_node_capabilities,
-        fixed_amass_node_capabilities,
-        targeted_counter_node_capabilities,
-        targeted_destruction_node_capabilities,
-        targeted_exile_node_capabilities,
-        targeted_return_to_hand_node_capabilities,
-        targeted_own_graveyard_return_node_capabilities, fixed_target_reanimation_node_capabilities,
-        public_graveyard_card_exile_node_capabilities,
-        fixed_owner_zone_move_node_capabilities,
-        fixed_public_zone_move_set_node_capabilities,
-        targeted_tap_state_node_capabilities,
-        fixed_token_creation_node_capabilities,
-    ):
-        dependencies.update(
-            resolver(
-                effects=effects,
-                target_schema=target_schema,
-                mechanic_ids=mechanics,
-            )
-        )
-    return dependencies
+def _targeted_effect_capabilities(*, effects, target_schema, mechanics):
+    from .effect_node_capabilities import effect_node_capabilities
+    return effect_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics)
 
 
 def capability_dependencies_for_node(
@@ -1223,6 +1146,8 @@ def capability_dependencies_for_node(
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
     shape_effects, shape_mechanics = shape_context
     dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
+    from .random_discard_additional_cost import random_spell_cost_dependencies
+    dependencies.update(random_spell_cost_dependencies(cost_schema))
     from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
     if WATERBEND_COMPOSITION_MECHANIC in mechanics:dependencies.add(WATERBEND_COMPOSITION_CAPABILITY)
     if PAYMENT_COMPOSITION_MECHANIC in mechanics:dependencies.add(PAYMENT_COMPOSITION_CAPABILITY)
@@ -1353,6 +1278,9 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',
         'trigger.event.normalized_counter_placement': 'trigger-event-normalized-counter-placement',
         'resolution.effect.fixed_cast_fact': 'fixed-cast-fact-condition',
+        'resolution.effect.paid_mana_condition': 'fixed-paid-mana-resolution-condition',
+        'resolution.target_controller_information': 'fixed-target-controller-information',
+        'trigger.keyword.provoke.fixed': 'provoke',
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
@@ -1363,6 +1291,8 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
         "continuous.resolution.source_keyword_choice": "temporary-source-keyword-choice",
+        "continuous.resolution.source_protection_choice": "temporary-source-protection-choice",
+        "continuous.resolution.source_fixed_protection": "temporary-source-fixed-protection",
         "resolution.effect_program.bound_references": "bound-effect-program",
     }
     return {
@@ -1480,6 +1410,7 @@ def capability_covered_mechanics(
             "continuous.power_toughness.fixed_anthem",
             "continuous.resolution.fixed_characteristics_until_end_of_turn",
             "continuous.resolution.declaration_rules_until_end_of_turn",
+            "combat.declaration.source_block_pair",
             "continuous.resolution.fixed_keyword_zone_object",
         }
     ):

@@ -10,6 +10,7 @@ from .attachment_actions import (
     LIVING_WEAPON_CAPABILITY,
     JOB_SELECT_CAPABILITY,
 )
+from .reconfigure import RECONFIGURE_CAPABILITY
 
 
 def attachment_action_covered_mechanics(
@@ -31,6 +32,8 @@ def attachment_action_covered_mechanics(
         mechanics.append("for mirrodin!")
     if JOB_SELECT_CAPABILITY in capabilities:
         mechanics.append("job select")
+    if RECONFIGURE_CAPABILITY in capabilities:
+        mechanics.append('reconfigure')
     return tuple(mechanics)
 
 
@@ -41,6 +44,8 @@ def fixed_attachment_action_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if 'reconfigure' in mechanics:
+        return reconfigure_node_capabilities(effects=effects, target_schema=target_schema)
     if (
         "cr-701-3-attach" not in mechanics
         or len(effects) != 1
@@ -84,6 +89,20 @@ def fixed_attachment_action_node_capabilities(
         FIXED_SOURCE_ATTACHMENT_CAPABILITY,
         "target.revalidate_resolution",
     )
+
+
+def reconfigure_node_capabilities(*, effects, target_schema):
+    if len(effects) != 1:
+        return ()
+    effect = effects[0]
+    attach = {'op':'attach', 'attachment_kind':'equipment',
+        'source':'$source.zone_object', 'target':'$target.0'}
+    schema = {'zones':['battlefield'], 'categories':['permanent'], 'controller':'you',
+        'creature':True, 'count':1, 'source_exclusion':True}
+    if (dict(effect) == attach and target_schema == schema and type(target_schema.get('count')) is int
+            or dict(effect) == {'op':'unattach', 'source':'$source.zone_object'} and target_schema is None):
+        return (RECONFIGURE_CAPABILITY,)
+    return ()
 
 
 __all__ = [

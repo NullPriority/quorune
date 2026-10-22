@@ -15,13 +15,102 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Return untargeted random subsets from the resolving controller's graveyard
+  through shared keyed selection and simultaneous zone transitions, retaining
+  type filters, printed costs, trigger timing, replacements and replay privacy.
+
+- Execute terminal spell-self exile after independently closed spell bodies,
+  retaining printed costs, targets, counter and all-illegal exits, copied-spell
+  identity, pending commander choices and known-hand privacy.
+
+- Compose independently scoped quantity instructions with closed public-set
+  results, retaining printed order, life-history timing, pending state actions
+  and independent ordered-program runtime authority.
+
+- Compile combined keyword-first and stat-first temporary creature grants
+  through the same resolution owner, preserving quantity timing, source
+  information, fixed recipients, cleanup and independent runtime authority.
+
+- Bind spell results and target counts to represented additional-cost X even
+  when the mana cost has no X, retaining free-cast, copy, privacy and exact
+  target-price boundaries through the existing owners.
+
+- Pay mandatory announced-X hand-discard spell prices through the existing
+  discard owner, retaining linked target counts, zero casts, private selectors
+  and pending destination choices.
+
 - Suspend competing graveyard-destination replacements for state-based damage
   and zero-toughness moves before mutation, retaining prior Umbra choices,
   simultaneous source departures, principal privacy and pending replay.
 
+- Bind source-chosen Aura protection to its retained entry color and current
+  incarnation, preserving controller-correct entry choices, Flash, paid return,
+  private draw and ordinary protection consumers.
+
 - Preserve Boast's intrinsic attack prerequisite and once-per-turn usage limit
   during compilation, including when reminder text is absent. Offers and
   accepted commands enforce the same restrictions before costs are paid.
+
+- Grant fixed-color Aura protection through the existing attachment owner,
+  retaining the granting Aura per protection instance while preserving other
+  protection instances, DEBT checks and exact source incarnations.
+
+- Compile unconditional all-colors source definitions into an all-zone typed
+  layer-5 fragment and live all-colors settings through the existing query owner.
+
+- Preserve qualified Hexproof keyword values and current source-quality target
+  restrictions through ordinary grants, removal, queries, copying and replay.
+- Reject nonactivation inputs before reading Reconfigure catalog fields, so
+  ordinary composed spell components retain their own closure recognizers.
+
+- Resolve printed Provoke through exact defending-player targets, optional
+  untapping and combat-bound requirements in the existing declaration solver.
+- Supply the canonical public source predicate for fixed self-prevention of
+  combat damage in both directions.
+
+- Lower complete paid-mana spell results through the existing condition owner,
+  preserving added versus replacement damage, after-prefix quantities, private
+  selections and whole-spell target revalidation.
+- Retain current or departure controller information for a bound target
+  incarnation without adding another target or following a returned object.
+
+- Record versioned actual mana-unit payments for current casts and lower fixed
+  paid-color self-entry counters through the existing replacement owner,
+  including acquired copy abilities and historical no-count execution.
+- Preserve exact core permanent-spell-copy provenance during current replay
+  while retaining the older no-runtime-trust lookup contract.
+
+- Add two separately paid fixed-mana Reconfigure abilities and attachment-bound
+  type changes that survive ability loss, preserve object continuity and end
+  through canonical unattachment and state-based stabilization.
+
+- Add printed self-graveyard casting methods with fixed hand-discard payments,
+  preserving ordinary permission provenance, complete mana costs, atomic
+  selected-card payment and repeatable ordinary resolution destinations.
+
+- Lower fixed subtype unions in current public conditions through one shared
+  query, preserving individual permanent counts, tapped status, control and
+  noncreature Kindred membership at the self-graveyard casting boundary.
+
+- Lower fixed current power and toughness creature-count discounts through the
+  existing public query and intrinsic price owners, preserving chosen X and
+  target-controller payments after Growth, Humble and a zero generic payment.
+
+- Price represented intrinsic counter reductions from every current public
+  player and battlefield counter, retaining phasing, zone scope, colored costs
+  and the locked price when a counter-bearing mana source leaves during payment.
+
+- Price source spell reductions from complete public current-turn death,
+  opponent-cast and actual draw counts, preserving generic floors, colored
+  payments, Flashback and the locked cost before mana activation.
+
+- Resolve fixed-color source protection through the existing typed ability
+  bundle after complete activation costs, retaining printed abilities, exact
+  source identity, ordinary protection consequences and cleanup.
+
+- Enforce represented intrinsic prior-spell and current Snow-land casting
+  conditions through shared offers and accepted commands, preserving actual
+  caster binding, the legality boundary before payment, and ordinary resolution.
 
 - Extend typed activation prices with announced X, fixed mana alternatives,
   current generic modifiers, selected creature counters and complete source

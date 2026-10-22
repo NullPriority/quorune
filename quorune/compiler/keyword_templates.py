@@ -5,6 +5,7 @@ from typing import Sequence
 
 from ..commander_pairing import partner_with_spec_for_material_line
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
+from .qualified_hexproof_keywords import qualified_hexproof_keywords
 from ..rules.attachment_actions import fixed_equip_ability_spec
 
 
@@ -29,6 +30,13 @@ _TYPECYCLING = re.compile(
     r"wizard|sliver)cycling\s+(?:\{[^{}]+\})+$",
     re.IGNORECASE,
 )
+
+
+def printed_keyword_parts(material_line: str) -> tuple[str, ...]:
+    """Retain explicit Protection continuations within one printed ability."""
+
+    return tuple(part.strip() for part in re.split(
+        r";|,(?!\s*(?:and\s+)?from\b)", material_line.rstrip("."), flags=re.I))
 
 
 def keyword_mechanics(
@@ -78,17 +86,23 @@ def keyword_mechanics(
         # Escape's comma separates its alternative mana payment from the
         # fixed other-card exile payment inside one keyword declaration.
         return ("escape",)
+    if 'buyback' in known and re.match(r'Buyback[—–-]', material, re.I):
+        return ('buyback',)
     if (
         "partner with" in known
         and partner_with_spec_for_material_line(material) is not None
     ):
         return ("partner with",)
-    parts = [part.strip() for part in re.split(r"[,;]", material)]
+    parts = printed_keyword_parts(material)
     if not parts:
         return None
     mechanics: list[str] = []
     for part in parts:
         lower = part.casefold()
+        if lower.startswith('hexproof from ') and 'hexproof' in known:
+            qualified=qualified_hexproof_keywords(part)
+            if qualified is None:return None
+            mechanics.extend(qualified);continue
         if lower == "proliferate":
             # Proliferate is a keyword action whose imperative instruction
             # executes during resolution, not a keyword ability carried by

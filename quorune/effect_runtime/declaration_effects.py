@@ -22,6 +22,12 @@ from ..rules.temporary_declaration_restrictions import (
 OPERATIONS = effect_family_contract("declaration-effects.v1").operations
 
 
+def _apply_require_blocking_this_combat(host,effect,*,actor,operation,reason):
+    from ..rules.blocking_requirements import resolve_blocking_requirement
+    try:return resolve_blocking_requirement(host,effect,actor=actor,reason=reason)
+    except (TypeError,ValueError) as exc:raise GameRuleError(str(exc)) from exc
+
+
 def _apply_grant_declaration_restriction_until_end_of_turn(
     host: Any,
     effect: Mapping[str, Any],
@@ -40,6 +46,10 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
         )
     if sum(key in effect for key in ("card", "cards", "set")) != 1:
         raise GameRuleError("Declaration rule requires exactly one recipient mode")
+    from ..source_block_pair_model import SOURCE_BLOCK_PAIR_KIND
+    if isinstance(effect.get('restriction'), Mapping) and effect['restriction'].get('kind') == SOURCE_BLOCK_PAIR_KIND:
+        from ..rules.source_block_pairs import apply_source_block_pair
+        return apply_source_block_pair(host, effect, actor=actor, reason=reason)
     if "cards" in effect or "set" in effect:
         query = None
         try:
@@ -89,7 +99,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
                 effect,
                 fallback_card=card,
             ),
-            kind=str(effect.get("restriction") or ""),
+            kind=effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
         )
     except TemporaryDeclarationRestrictionError as exc:
         raise GameRuleError(str(exc)) from exc
@@ -99,7 +109,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
         f"{card.ref} is subject to a combat declaration restriction until end of turn.",
         {
             "object": card.ref,
-            "restriction": str(effect.get("restriction") or ""),
+            "restriction": effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
             "continuous_effect": committed.effect_id,
             "reason": reason,
         },
@@ -110,6 +120,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
 
 
 HANDLERS = {
+    'require_blocking_this_combat':_apply_require_blocking_this_combat,
     "grant_declaration_restriction_until_end_of_turn": (
         _apply_grant_declaration_restriction_until_end_of_turn
     ),

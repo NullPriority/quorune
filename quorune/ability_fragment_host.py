@@ -94,6 +94,8 @@ class AbilityFragmentHostMixin:
         if prepare_spell is not None:base[PREPARE_SPELL_FIELD]=prepare_spell.to_dict()
         from .rules.prototype import prototype_characteristic_values
         base.update(prototype_characteristic_values(card))
+        from .rules.fuse import fuse_characteristic_values
+        base.update(fuse_characteristic_values(card))
         from .rules.current_face_keywords import current_printed_face_keywords
         base['keywords']=current_printed_face_keywords(self,card,record,base)
         base["ability_fragments"] = self._compiled_ability_fragment_dicts(

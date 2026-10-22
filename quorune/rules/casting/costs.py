@@ -6,7 +6,7 @@ from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
-from .additional_zone_costs import _fixed_zone_change_selection
+from .additional_zone_costs import select_zone_change_additional_cost
 from ...casting_payment_keywords import (
     AffinitySpec,
     CastingPaymentKeywordError,
@@ -48,7 +48,6 @@ from ..casting_additional_costs import (
     AdditionalCostError,
     fixed_counter_additional_cost,
     fixed_counter_cost_candidates,
-    fixed_zone_change_additional_cost,
     legacy_additional_cost_candidates,
 )
 from ..casting_additional_cost_groups import (
@@ -417,6 +416,7 @@ def _initial_options(
     force_without_mana_cost: bool,
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
+    cast_type_line: str | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -492,6 +492,10 @@ def _initial_options(
     )
     base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
         enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
+    from .global_alternatives import battlefield_alternative_base_options
+    base.extend(battlefield_alternative_base_options(host,seat,card,cast_type_line=cast_type_line,
+        enabled=not(cast_without_mana or suppress_source_costs or alternative_base is not None or intrinsic_disturb),
+        has_mana_x=has_x,x_value=x_value,commander_tax=commander_tax,temporary_permission=temporary_permission))
     for raw in [] if cast_without_mana else schema.get("alternate_costs", []):
         alternative = dict(raw)
         if (
@@ -1240,24 +1244,10 @@ def _apply_additional_costs(
                 }
             )
             continue
-        try:
-            zone_change_cost = fixed_zone_change_additional_cost(additional)
-        except AdditionalCostError:
-            return False
-        if zone_change_cost is not None:
-            if len(mandatory_costs) != 1:
-                return False
-            valid, selected = _fixed_zone_change_selection(
-                host,
-                seat=seat,
-                source_object_id=card.object_id,
-                cost=zone_change_cost,
-                cost_position=index,
-                response=response,
-                hint=hint,
-                choice_schema=choice_schema,
-                option=option,
-            )
+        zone_selection=select_zone_change_additional_cost(host,seat,card,option,mandatory_costs,response,
+            position=index,hint=hint,choice_schema=choice_schema)
+        if zone_selection is not None:
+            valid,selected=zone_selection
             if not valid:
                 return False
             if selected is not None:
@@ -1268,7 +1258,8 @@ def _apply_additional_costs(
         except AdditionalCostError:
             return False
         if life_cost is not None:
-            if len(mandatory_costs) != 1:
+            from ..random_discard_additional_cost import fixed_life_random_costs
+            if len(mandatory_costs) != 1 and not fixed_life_random_costs(mandatory_costs):
                 return False
             if host.state.players[seat].life < life_cost.amount:
                 return False
@@ -1495,6 +1486,7 @@ def build_cast_cost_options(
         force_without_mana_cost=force_without_mana_cost,
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
+        cast_type_line=cast_type_line,
     )
     if initial is None:
         return ()
@@ -1505,10 +1497,11 @@ def build_cast_cost_options(
         _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
         if target_mana_x:
             expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
+    declared_cost_x=bool(announced_additional_cost_dependencies(getattr(program,'cost_schema',None))) if not target_mana_x else False
     result = []
     for option in expanded:
         from .target_cardinality import bind_target_count_option
-        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x)
+        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x)
         if option is None:
             continue
         option_cast_type_line = (

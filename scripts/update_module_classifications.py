@@ -51,6 +51,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative in {
         "quorune/additional_cost_vocabulary.py",
         "quorune/activated_ability_descriptor.py",
+        "quorune/attachment_duration.py",
+        "quorune/spell_mana_counts.py",
+        "quorune/spell_mana_conditions.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
         "quorune/ability_line_normalization.py",
@@ -68,6 +71,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/cast_cost_modifiers.py",
         "quorune/activation_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
+        "quorune/all_colors.py",
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
         "quorune/counter_snapshot.py",
@@ -77,6 +81,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/damage_modifier_state.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
+        "quorune/fixed_blocker_restrictions.py",
+        "quorune/source_block_pair_model.py",
+        "quorune/blocking_requirement_model.py",
         "quorune/power_up_model.py",
         "quorune/as_unblocked.py",
         "quorune/public_characteristic_aggregate_model.py",
@@ -89,8 +96,12 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/block_capacity_model.py",
         "quorune/landwalk_permission_model.py",
         "quorune/external_entry_state_model.py",
+        "quorune/external_entry_counter_model.py",
         "quorune/landwalk_vocabulary.py",
+        "quorune/qualified_hexproof.py",
+        "quorune/protection_attachment_exceptions.py",
         "quorune/block_capacity_rule_model.py",
+        "quorune/temporary_cast_rule_model.py",
         "quorune/prototype_model.py",
         "quorune/enlist_model.py",
         "quorune/reflexive_trigger_model.py",
@@ -207,6 +218,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         )
     ) or relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/target_controller_information.py",
         "quorune/activation_x.py",
         "quorune/whole_hand_discard.py",
         "quorune/random_discard.py",
@@ -267,6 +279,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/conspire.py",
         "quorune/self_graveyard_exile_model.py",
         "quorune/continuous_effects.py",
+        "quorune/continuous_type_dependencies.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
         "quorune/zone_object_subtype_grants.py",
@@ -440,6 +453,10 @@ def _owner(relative: str, layer: str) -> str:
     if relative == "quorune/preparation.py":
         return "permanent_designations"
     if relative in {"quorune/rules/casting/targeted_costs.py", "quorune/rules/casting/waterbend_costs.py",
+                    "quorune/rules/self_cost_turn_counts.py",
+                    "quorune/rules/self_cost_public_counters.py",
+                    "quorune/rules/self_cost_numeric_counts.py",
+                    "quorune/rules/self_graveyard_discard.py",
                     "quorune/rules/waterbend_payments.py"}:
         return "casting_activation_and_costs"
     if relative in {"quorune/target_restrictions.py", "quorune/target_source.py"}:
@@ -534,15 +551,31 @@ def _owner(relative: str, layer: str) -> str:
         return "casting_flashback"
     if relative in {"quorune/defender_permission.py", "quorune/rules/defender_permission_effect.py", "quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/rules/as_unblocked_effect.py", "quorune/toughness_assignment.py", "quorune/toughness_assignment_model.py", "quorune/toughness_assignment_rule.py", "quorune/rules/toughness_assignment_effect.py"}:
         return "combat_declaration"
+    if relative in {'quorune/blocking_requirement_model.py','quorune/rules/blocking_requirements.py','quorune/rules/provoke_shapes.py'}:
+        return 'combat_declaration'
     if relative in {"quorune/power_up.py", "quorune/power_up_model.py"}:
         return "activated_abilities"
+    if relative == 'quorune/rules/reconfigure.py':
+        return 'attachments'
+    if relative == 'quorune/attachment_duration.py':
+        return 'continuous_effects'
+    if relative == 'quorune/spell_mana_counts.py':
+        return 'mana_rules'
+    if relative == 'quorune/spell_mana_conditions.py':
+        return 'semantic_choices'
+    if relative in {'quorune/rules/paid_mana_resolution.py','quorune/target_controller_information.py'}:
+        return 'targets_and_choices'
+    if relative == 'quorune/rules/paid_color_entry.py':
+        return 'counter_placement'
     if relative.startswith("quorune/rules/"):
         return "rules_capabilities"
     if relative.startswith("quorune/aura/"):
         return "aura_rules"
     if relative in {
         "quorune/ability_fragment_host.py",
+        "quorune/all_colors.py",
         "quorune/ability_fragments.py",
+        "quorune/protection_attachment_exceptions.py",
         "quorune/characteristic_fragments.py",
         "quorune/compiled_ability_fragments.py",
         "quorune/static_component_scope.py",
@@ -838,6 +871,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/target_numeric.py",
         "quorune/target_predicates.py",
         "quorune/targets.py",
+        "quorune/qualified_hexproof.py",
     }:
         return "targeting"
     if relative == "quorune/replacement_decisions.py":

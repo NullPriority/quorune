@@ -18,6 +18,8 @@ from .trigger_batches import PendingTriggerBatch, TriggerBatchError
 from .util import normalize_mana_bundle, stable_json
 from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
+from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
+from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 
 CONTROL_HISTORY_VERSION = 2
 _COLORED_MANA_SYMBOLS = tuple("WUBRG")
@@ -617,9 +619,11 @@ class StackItem:
     # CR 609.7a source choices. This is deliberately separate from arbitrary
     # semantic context so private implementation data is never searched.
     referred_object_ids: list[str] = field(default_factory=list)
+    mana_spent_counts: SpellManaSpentCounts | None = None
 
     def __post_init__(self) -> None:
         mana_colors = self.mana_colors_spent
+        self.mana_spent_counts=normalize_stack_mana_counts(self.kind,self.card_object_id,self.mana_spent_counts)
         if not isinstance(mana_colors, (list, tuple)) or any(
             type(value) is not str or value not in _COLORED_MANA_SYMBOLS
             for value in mana_colors
@@ -651,6 +655,8 @@ class StackItem:
         if not self.referred_object_ids:
             # Preserve historical Game Record v3 checkpoint payloads.
             payload.pop("referred_object_ids")
+        if self.mana_spent_counts is None:payload.pop('mana_spent_counts')
+        else:payload['mana_spent_counts']=self.mana_spent_counts.to_dict()
         return payload
 
     @classmethod
@@ -745,6 +751,10 @@ class CombatState:
     ordinary_second_damage_combatants: list[str] = field(
         default_factory=list
     )
+    blocking_requirements:tuple[ResolvedBlockingRequirement,...]=()
+
+    def __post_init__(self):
+        self.blocking_requirements=normalize_blocking_requirements(self.blocking_requirements)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -752,6 +762,8 @@ class CombatState:
         # Omitting the empty value preserves their canonical serialization.
         if self.damage_sequence_id is None:
             payload.pop("damage_sequence_id")
+        if self.blocking_requirements:payload['blocking_requirements']=[v.to_dict() for v in self.blocking_requirements]
+        else:payload.pop('blocking_requirements')
         return payload
 
     @classmethod
@@ -953,6 +965,7 @@ class GameState:
     state_version: int = 3
     mulligan_round: int = 0
     ref_counters: dict[str, int] = field(default_factory=dict)
+    spell_mana_counts_version: int | None = 1
 
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
@@ -988,6 +1001,7 @@ class GameState:
                 if self.control_history_version is not None
                 else {}
             ),
+            **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1066,6 +1080,7 @@ class GameState:
             turn_order=list(data["turn_order"]),
             current_turn=(TurnEntry.from_dict(data["current_turn"]) if data.get("current_turn") else None),
             last_normal_turn_player=data.get("last_normal_turn_player"),
+            spell_mana_counts_version=spell_mana_counts_version(data.get('spell_mana_counts_version')),
             commander_damage_identity_version=(
                 int(data["commander_damage_identity_version"])
                 if data.get("commander_damage_identity_version") is not None

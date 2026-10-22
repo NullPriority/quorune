@@ -612,11 +612,12 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_token_creation_node_capabilities,
             fixed_target_characteristics_node_capabilities,
             fixed_source_characteristics_node_capabilities,
+            fixed_resolution_characteristic_set_node_capabilities,
             fixed_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
               if {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC}.intersection(program.coverage) else ()),
-            *((fixed_controller_effect_sequence_node_capabilities, fixed_resolution_characteristic_set_node_capabilities)
+            *((fixed_controller_effect_sequence_node_capabilities,)
               if MANA_COLOR_AMOUNT_MECHANIC in program.coverage else ()),
         )
     )

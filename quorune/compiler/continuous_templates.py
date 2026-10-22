@@ -52,6 +52,10 @@ _ATTACHED_FIXED_CHARACTERISTICS = re.compile(
     rf"^(?P<subject>{_ATTACHED_SUBJECT}) (?P<body>.+?)\.?$",
     re.IGNORECASE,
 )
+_ATTACHED_OBJECT_KEYWORD_GRANT = re.compile(
+    r"^(?P<subject>Enchanted (?:artifact|battle|enchantment|land|permanent|planeswalker)) "
+    r"(?P<body>has .+?)\.?$", re.IGNORECASE,
+)
 _ATTACHED_FIXED_PT = re.compile(
     r"^gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
     r"(?: and has (?P<abilities>.+))?$",
@@ -753,11 +757,14 @@ def _attached_dynamic_modifier(
         body,
         re.IGNORECASE,
     )
+    if variable is None:
+        variable=re.fullmatch(r'gets (?P<power>[+-](?:X|\d+))/(?P<toughness>[+-](?:X|\d+)), where X is (?P<quantity>its mana value)',body,re.I)
     match = fixed or variable
     if match is None:
         return None
     quantity_text = match.group("quantity")
-    quantity = recipient_attachment_quantity(quantity_text)
+    from .live_modifier_quantities import attached_object_quantity
+    quantity = attached_object_quantity(quantity_text) or recipient_attachment_quantity(quantity_text)
     if re.search(
         r"(?:attached to (?:it|this creature)|\bits controller's\b|"
         r"\bof its\b|\bon it\b)",
@@ -964,8 +971,13 @@ def attached_fixed_characteristics_handler(
     quoted rules text, and unrepresented mechanics remain residual.
     """
 
+    from .attached_protection_exceptions import attached_protection_exception_handler
+    special=attached_protection_exception_handler(oracle_line,source_name=source_name)
+    if special is not None:return special
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     match = _ATTACHED_FIXED_CHARACTERISTICS.fullmatch(text)
+    object_keyword = _ATTACHED_OBJECT_KEYWORD_GRANT.fullmatch(text) if match is None else None
+    if object_keyword is not None:match=object_keyword
     if match is None:
         return None
     subject_types_all = (
@@ -973,6 +985,9 @@ def attached_fixed_characteristics_handler(
         if match.group("subject").casefold() == "fortified land"
         else ["creature"]
     )
+    if object_keyword is not None:
+        kind=match.group('subject').casefold().split()[-1]
+        subject_types_all=[] if kind=='permanent' else [kind]
     body = match.group("body")
     modifier = (
         _attached_dynamic_modifier(body, source_name=source_name)

@@ -62,7 +62,7 @@ class FixedActivationCostModifierSpec:
             raise ValueError('Unsupported activation-cost source relation')
         if self.controller_relation not in {'any', 'source_controller', 'source_opponents'}:
             raise ValueError('Unsupported activation-cost controller relation')
-        if self.ability_scope not in {'all', 'nonmana'}:
+        if self.ability_scope not in {'all', 'nonmana','equip','cycling'}:
             raise ValueError('Unsupported activation-cost ability scope')
         if not isinstance(self.predicate, ObjectQuerySpec):
             raise ValueError('Activation-cost source predicates must be typed')

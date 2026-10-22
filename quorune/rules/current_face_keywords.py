@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..card_program_faces import program_matches_face
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
+from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS
 
 
 def current_printed_face_keywords(host,card,record,base):
@@ -21,16 +22,18 @@ def current_printed_face_keywords(host,card,record,base):
                 and host.semantic_program_is_current_trusted(program)):
             current.update(str(value).casefold() for value in program.coverage if str(value).casefold() in known)
             qualified.update(str(value).casefold() for value in program.coverage
-                if str(value).casefold() in QUALIFIED_LANDWALK_KEYWORDS)
+                if str(value).casefold() in frozenset(QUALIFIED_LANDWALK_KEYWORDS)|QUALIFIED_HEXPROOF_KEYWORDS)
     result = ([keyword for keyword in base.get('keywords',())
         if str(keyword).casefold() not in known or str(keyword).casefold() in current]
         if record.faces else list(base.get('keywords',())))
     present={str(value).casefold() for value in result}
+    if qualified.intersection(QUALIFIED_HEXPROOF_KEYWORDS) and 'hexproof' not in current:
+        result=[value for value in result if str(value).casefold()!='hexproof']
     if 'flash' in present:
         from ..compiled_cast_timing import conditional_flash_authorship
         conditional,printed=conditional_flash_authorship(host,card)
         if conditional and not printed:
             result=[value for value in result if str(value).casefold()!='flash']
-    # Some pinned keyword indexes omit a printed compound Landwalk label.
-    # Only the exact trusted compiled declaration supplies the missing fact.
+    # Pinned indexes can omit Landwalk variants or collapse qualified Hexproof.
+    # Exact trusted declarations retain the actual printed keyword values.
     return result + [keyword.title() for keyword in sorted(qualified) if keyword not in present]

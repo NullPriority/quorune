@@ -10,6 +10,14 @@ class CombatRelationshipStateError(ValueError):
     """A combat relationship mutation request is malformed."""
 
 
+def commit_blocking_requirement(combat,*,requirement):
+    from .blocking_requirement_model import ResolvedBlockingRequirement
+    if not isinstance(requirement,ResolvedBlockingRequirement):raise CombatRelationshipStateError('Blocking requirement must be typed')
+    if any(v.requirement_id==requirement.requirement_id for v in combat.blocking_requirements):
+        raise CombatRelationshipStateError('Blocking requirement is already committed')
+    combat.blocking_requirements=(*combat.blocking_requirements,requirement)
+
+
 @dataclass(frozen=True, slots=True)
 class CombatRelationshipRemoval:
     was_attacker: bool

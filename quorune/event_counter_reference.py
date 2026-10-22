@@ -12,10 +12,11 @@ def event_counter_recipient_context(program,event,context):
     def contains(value):
         if isinstance(value,Mapping):return any(contains(v) for v in value.values())
         if isinstance(value,(list,tuple)):return any(contains(v) for v in value)
-        return value==EVENT_COUNTER_OBJECT
+        return value in (EVENT_COUNTER_OBJECT,'$event.permanent_object')
     if not contains(program.effects):return {}
     reference=context.get('card');identity=None
     if event=='damage.dealt':identity=context.get('source_logical_object_id')
+    elif event in {'permanent.tap','permanent.untap'}:identity=context.get('card_object_identity')
     elif event=='creature.attacks':
         from .attack_transition_model import AttackTransitionEvent
         transition=AttackTransitionEvent.from_dict(context.get('attack_transition'))

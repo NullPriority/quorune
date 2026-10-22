@@ -1,0 +1,172 @@
+{"cards":[
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {"cmc":2.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{U}{U}","name":"Counterspell","oracle_id":"cc187110-1148-4090-bbb8-e205694a39f5","oracle_text":"Counter target spell.","power":null,"produced_mana":[],"released_at":"2024-09-27","toughness":null,"type_line":"Instant"},
+    {"cmc":5.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":["Scry"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{4}{U}","name":"Delightful Discovery","oracle_id":"705cc928-d6d4-4294-979b-a385d1b07dc6","oracle_text":"This spell costs {1} less to cast for each spell your opponents have cast this turn.\nScry 2, then draw two cards. (To scry 2, look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)","power":null,"produced_mana":[],"released_at":"2024-11-15","toughness":null,"type_line":"Instant"},
+    {"cmc":5.0,"color_identity":["B","G"],"colors":["B","G"],"defense":null,"keywords":["Flashback"],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{3}{B}{G}","name":"Diregraf Rebirth","oracle_id":"1920254f-0f65-4426-aabc-f3807476b67b","oracle_text":"This spell costs {1} less to cast for each creature that died this turn.\nReturn target creature card from your graveyard to the battlefield.\nFlashback {5}{B}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)","power":null,"produced_mana":[],"released_at":"2021-09-24","toughness":null,"type_line":"Sorcery"},
+    {
+      "oracle_id": "273b339c-964b-4a18-8eb5-ceb8abcdfd9e",
+      "name": "Divination",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Draw two cards.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {"cmc":2.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{G}","name":"Grizzly Bears","oracle_id":"14c8f55d-d177-4c25-a931-ebeb9e6062a0","oracle_text":"","power":"2","produced_mana":[],"released_at":"2007-07-13","toughness":"2","type_line":"Creature — Bear"},
+    {"cmc":4.0,"color_identity":["R"],"colors":["R"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"not_legal","pioneer":"not_legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{3}{R}","name":"Inspired Fire","oracle_id":"7f43b15b-b5d4-4ec6-bd5b-9cf56b2a6bde","oracle_text":"This spell costs {1} less to cast for each card you've drawn this turn.\nInspired Fire deals 4 damage to target creature.","power":null,"produced_mana":[],"released_at":"2026-06-26","toughness":null,"type_line":"Instant"},
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {"cmc":2.0,"color_identity":["G"],"colors":["G"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"legal","vintage":"legal"},"loyalty":null,"mana_cost":"{1}{G}","name":"Naturalize","oracle_id":"bdb3ca68-ec1f-4e16-81cc-d23f8f52c728","oracle_text":"Destroy target artifact or enchantment.","power":null,"produced_mana":[],"released_at":"2018-07-13","toughness":null,"type_line":"Instant"},
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R/G}",
+      "name": "Wild Cantor",
+      "oracle_id": "24472823-d33c-4d96-add1-233116f6f4f7",
+      "oracle_text": "({R/G} can be paid with either {R} or {G}.)\nSacrifice this creature: Add one mana of any color.",
+      "power": "1",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2024-01-12",
+      "toughness": "1",
+      "type_line": "Creature — Human Druid"
+    }
+  ],"fixture_kind":"public_exact-list_card_data","rulings":[
+    {"comment":"\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"","oracle_id":"1920254f-0f65-4426-aabc-f3807476b67b","published_at":"2021-09-24","source":"wotc"},
+    {"comment":"A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.","oracle_id":"1920254f-0f65-4426-aabc-f3807476b67b","published_at":"2021-09-24","source":"wotc"},
+    {"comment":"If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.","oracle_id":"1920254f-0f65-4426-aabc-f3807476b67b","published_at":"2021-09-24","source":"wotc"},
+    {"comment":"To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.","oracle_id":"1920254f-0f65-4426-aabc-f3807476b67b","published_at":"2021-09-24","source":"wotc"},
+    {"comment":"You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.","oracle_id":"1920254f-0f65-4426-aabc-f3807476b67b","published_at":"2021-09-24","source":"wotc"},
+    {"comment":"You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.","oracle_id":"1920254f-0f65-4426-aabc-f3807476b67b","published_at":"2021-09-24","source":"wotc"},
+    {"comment":"Delightful Discovery's first ability can't reduce its cost below {U}.","oracle_id":"705cc928-d6d4-4294-979b-a385d1b07dc6","published_at":"2024-11-08","source":"wotc"},
+    {"comment":"To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was.","oracle_id":"705cc928-d6d4-4294-979b-a385d1b07dc6","published_at":"2024-11-08","source":"wotc"},
+    {
+      "comment": "While casting a spell with convoke, if you sacrifice Wild Cantor to add mana, Wild Cantor won't be on the battlefield when you pay that spell's costs. It can't be tapped to help cast that spell using convoke.",
+      "oracle_id": "24472823-d33c-4d96-add1-233116f6f4f7",
+      "published_at": "2006-02-01",
+      "source": "wotc"
+    }
+  ],"schema_version":1,"source":"Scryfall Oracle/rulings subset for offline tests"}

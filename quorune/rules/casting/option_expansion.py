@@ -19,15 +19,18 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
             combined = host._mana_vector(base_option["requirements"])
             for symbol, amount in additional_vector.items():
                 combined[symbol] += amount
+            metadata = {key: copy.deepcopy(value) for key, value in additional.items() if key not in {'requirements', 'id'}}
+            if base_option.get('_additional_option_costs') and additional.get('_additional_option_costs'):
+                metadata['_additional_option_costs'] = [*copy.deepcopy(base_option['_additional_option_costs']),
+                    *copy.deepcopy(additional['_additional_option_costs'])]
             expanded.append(
                 {
                     **base_option,
-                    **{
-                        key: copy.deepcopy(value)
-                        for key, value in additional.items()
-                        if key not in {"requirements", "id"}
-                    },
-                    "id": str(additional["id"]),
+                    **metadata,
+                    **({'label': str(base_option.get('label') or '')+' + '+str(additional.get('label') or additional['id'])}
+                       if base_option.get('battlefield_alternative_cost') else {}),
+                    "id": (str(base_option['id'])+'+'+str(additional['id'])
+                           if base_option.get('battlefield_alternative_cost') else str(additional["id"])),
                     "kind": str(
                         additional.get("kind") or "optional_additional"
                     ),

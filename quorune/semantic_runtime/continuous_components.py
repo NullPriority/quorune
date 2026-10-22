@@ -1365,7 +1365,8 @@ class ContinuousEffectComponentRegistry(
         handler = self._handlers.get(str(descriptor.get('handler_id') or ''))
         if handler is None:
             return Layer.ABILITY
-        layer = getattr(handler, 'source_component_layer', Layer.ABILITY)
+        descriptor_layer=getattr(handler,'descriptor_source_component_layer',None)
+        layer=descriptor_layer(descriptor) if descriptor_layer is not None else getattr(handler, 'source_component_layer', Layer.ABILITY)
         if not isinstance(layer, Layer):
             raise SemanticNodeError('Continuous source participation requires a typed layer')
         if layer < Layer.ABILITY:
@@ -1392,9 +1393,11 @@ def default_continuous_effect_component_registry(
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
+    from .chosen_aura_protection import SourceChosenAuraProtectionHandler
     from .soulbond import SoulbondPairedGrantHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
+    from .quantified_anthems import QuantifiedAnthemHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
@@ -1440,11 +1443,13 @@ def default_continuous_effect_component_registry(
             GraveyardStaticCharacteristicsHandler(),
             ConditionalTypedKeywordHandler(),
             AttachedFixedCharacteristicsHandler(),
+            SourceChosenAuraProtectionHandler(),
             SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
             ConditionalCharacteristicSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),
+            QuantifiedAnthemHandler(),
         )
     )
     registry.require_registered_capabilities(

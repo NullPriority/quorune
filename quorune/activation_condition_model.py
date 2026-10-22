@@ -31,6 +31,7 @@ class ActivationConditionKind(str, Enum):
     PUBLIC_QUERY_COUNT = "public_query_count"
     CLASS_LEVEL_EQUALS = "class_level_equals"
     SOURCE_ATTACKED_THIS_TURN = 'source_attacked_this_turn'
+    SOURCE_ATTACHED_TO_CREATURE = "source_attached_to_creature"
     CONTROLLER_HAS_CITYS_BLESSING = 'controller_has_citys_blessing'
     UNSUPPORTED = "unsupported"
 

@@ -49,6 +49,13 @@ remains on the source incarnation through the existing activation owner.
 Pending load preserves both facts. Earlier ability payloads retain their key
 sets and constructor order when the optional marker is absent.
 
+`CombatState.blocking_requirements` is an optional version-one array of resolved
+block-specific-attacker requirements. Each entry retains a unique requirement
+identity and both physical/logical combatant incarnations. Pending load keeps
+the current combat relation; ordinary combat reset expires it. Empty books are
+omitted so historical combat payloads retain their original bytes. Malformed or
+duplicate requirement identities reject during decoding.
+
 Authoritative JSON uses deterministic serialization and strict schema
 validation. State hashes cover canonical authoritative state, including
 versioned rules-relevant fields and continuations. They exclude presentation
@@ -117,6 +124,36 @@ payment; the fixed reservation distinguishes those resources when validating
 Delve and mana remainders. Save/load revalidates the original reservation rather
 than replacing it with a new selection. Existing casting options omit this
 frame and retain their serialized form.
+
+Fixed random spell prices use the closed `random_discard` additional-cost
+descriptor with schema one and count one. Suspended payments reuse the private
+`_random_discard_cost_refs` response field and server payment identity. The
+continuation accepts one distinct current payment reference, excluding the
+casting spell, for a hand-to-graveyard discard event. It still validates the
+affected object, event identity and original source cost before resuming. The
+client cannot submit this internal field or choose the random card. Ordinary
+selected costs and older continuations retain their payloads.
+
+Random own-graveyard return instructions serialize a version-one closed subject
+descriptor and fixed or declared-X count. They use the existing seed, stack
+reference and instruction-pointer identity with a separate random-return
+namespace. The simultaneous replacement continuation keeps the original
+public candidate event until choices finish; it adds no mutable RNG stream or
+optimization cache. Historical random-discard identities and selected-order
+behavior remain unchanged.
+
+Declared-X hand discard reuses the version-three `zone_change` cost descriptor:
+`operation` is `discard_one`, `choice_field` is `discard_cards`, and
+`count_parameter` is `x`. Its closed predicate selects unrestricted, creature or
+land cards in the caster's hand. Graveyard-exile and fixed-count payloads keep
+their original keys and meaning. The current proposal, stack X and dependent
+private selector share one declaration; pending payments retain the original
+selected refs and destination journal without adding a Game Record field.
+The same stack X may originate from one represented additional price on a
+fixed-mana spell. Copies retain it without paying again. The historical
+`target.cardinality.mana_announced_x` capability identifier remains stable;
+its existing count descriptor carries the same `x` parameter for these price
+sources. No alternate target binder or additional persisted X field is added.
 
 Fixed Waterbend activation descriptors omit `waterbend` unless present. A
 `waterbend_payment` records its closed cost and selected physical objects,
@@ -202,6 +239,30 @@ fields use explicit versioned shapes, and absence preserves the older hash and
 meaning where the schema allows it. A current runtime never silently recompiles
 or reinterprets an old record as if it used current Oracle, rules, or
 CardPrograms.
+
+Current games pin `spell_mana_counts_version: 1` in the initial checkpoint.
+Each original cast stores an optional version-one `mana_spent_counts` stack
+fact with its physical/logical incarnation and exact concrete WUBRGC amounts.
+It is separate from casting decisions and the distinct-color set; spell copies
+omit it. A checkpoint without the execution marker retains historical
+no-count casting, so later replay does not add payment fields to its hashes.
+The decoder rejects malformed versions, Boolean counts and copy-owned facts.
+
+Current runtime-trust provenance also identifies a core permanent-spell copy's
+empty resolution through its pinned spell record. It retains the copy-specific
+fallback kind and original Oracle identity, independently of whether the
+original spell is still on the stack. Records without runtime-trust metadata
+retain their earlier fallback-lookup behavior. This does not admit an
+unsupported copy-producing card or alter copied casting decisions.
+
+Paid-mana result instructions retain a closed threshold and an original-spell
+mana-unit reference. The bound count and selected branch use the existing
+resolution continuation; private Scry still uses its ordinary principal-scoped
+selection frame. An optional `target_controller_information_lki` context book
+stores version-one physical identity, zone-change counter and departure
+controller only for a represented target-information reference. Loading keeps
+that original incarnation; re-entry does not replace it. Earlier records omit
+the book, and earlier resolution-condition schemas keep their payloads.
 
 Upkeep-relative control history is one such additive boundary. New records pin
 its version in both the initial checkpoint and manifest; records without the
@@ -375,3 +436,20 @@ snapshots omit that designation while retaining resulting copiable values.
 Version-five entry-copy selectors add a closed `conditional_exception`; prior
 selector and recipe versions retain their original keys. Physical and token
 entry results share copied-value validation and commit before observers.
+
+Version-three fixed-color or fixed-card-type Protection fragments add a required
+`exempt_aura_incarnation` for one granting Aura. CardProgram attached definitions
+carry the closed source marker; live evaluation binds the current source
+incarnation before producing the layer-six value. Schemas one and two retain
+their original key sets and omit the new field. Other definition owners,
+resolution effects, stale or unrelated incarnation pins, and incomplete
+version-three payloads fail closed at their respective validation boundary.
+Fixed card-type source exceptions require their additional capability at
+runtime; the codec and existing attached handler introduce no further record
+field or state. Target selection still precedes sacrifice payment.
+
+Source-chosen Aura components reuse the existing public `chosen_color` entry
+designation and emit that same version-three fixed-color value. No additional
+designation or private-choice state is introduced. Pending entry reload
+reissues the entering Aura controller's capability; return and a later entry
+retain ordinary new-incarnation semantics and a fresh choice.

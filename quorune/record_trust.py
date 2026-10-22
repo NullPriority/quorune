@@ -97,6 +97,7 @@ def implicit_semantic_execution_provenance(
     semantic_key: str,
     *,
     stack_item: Any | None = None,
+    include_spell_copies: bool = False,
 ) -> dict[str, Any] | None:
     """Describe a core generic spell fallback without inventing a program."""
 
@@ -108,7 +109,7 @@ def implicit_semantic_execution_provenance(
     for item in candidates:
         if item is None or item.semantic_key != semantic_key:
             continue
-        if item.kind != "spell" or not item.card_object_id:
+        if (item.kind != 'spell' and not (include_spell_copies and item.kind == 'spell_copy')) or not item.card_object_id:
             continue
         record = physical_stack_record(engine, item)
         if record is None:
@@ -163,6 +164,7 @@ def semantic_execution_provenance_row(
         engine,
         semantic_key,
         stack_item=stack_item,
+        include_spell_copies=True,
     )
     if implicit is not None:
         return {"key": semantic_key, **implicit}

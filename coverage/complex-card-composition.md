@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "2f6ff7fb016e025146b594f020f42cb660aae8129c5a840c7fc92b576cbf8638"
+verified: "5778dfefbc5905224d2bd5f3e8f51b2233de1e40f3c1c114ff4282d75026e721"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -27,10 +27,11 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Legend of Kyoshi // Avatar Kyoshi | 222 | 28 | 8 | 6 | 6 | 14 | `blocked` |
 | Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 217 | 18 | 7 | 5 | 12 | 21 | `blocked` |
 | Jugan Defends the Temple // Remnant of the Rising Star | 217 | 27 | 8 | 7 | 8 | 9 | `blocked` |
+| The Kami War // O-Kagachi Made Manifest | 217 | 29 | 8 | 7 | 8 | 6 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 217 | 33 | 8 | 5 | 6 | 6 | `blocked` |
-| The Kami War // O-Kagachi Made Manifest | 216 | 28 | 8 | 7 | 9 | 6 | `blocked` |
 | Vorinclex // The Grand Evolution | 216 | 26 | 8 | 7 | 10 | 4 | `blocked` |
 | Esper Origins // Summon: Esper Maduin | 213 | 24 | 7 | 5 | 6 | 20 | `blocked` |
+| Garruk Relentless // Garruk, the Veil-Cursed | 212 | 32 | 6 | 6 | 13 | 6 | `blocked` |
 | Rowan Kenrith | 212 | 29 | 5 | 6 | 5 | 21 | `blocked` |
 | Teachings of the Kirin // Kirin-Touched Orochi | 211 | 28 | 7 | 7 | 9 | 6 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 208 | 26 | 7 | 4 | 5 | 22 | `blocked` |
@@ -47,10 +48,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 199 | 29 | 6 | 6 | 11 | 10 | `blocked` |
 | Gossip's Talent | 197 | 31 | 6 | 8 | 2 | 11 | `blocked` |
-| Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
+| Hunter's Talent | 195 | 36 | 6 | 8 | 0 | 8 | `exact` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | Tovolar, Dire Overlord // Tovolar, the Midnight Scourge | 194 | 32 | 6 | 6 | 2 | 12 | `blocked` |
-| Hunter's Talent | 193 | 30 | 7 | 8 | 2 | 8 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 192 | 21 | 5 | 5 | 11 | 18 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 191 | 24 | 4 | 7 | 9 | 19 | `blocked` |
 | The Modern Age // Vector Glider | 191 | 26 | 7 | 5 | 6 | 6 | `blocked` |

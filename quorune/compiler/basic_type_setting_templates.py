@@ -7,6 +7,14 @@ from ..basic_type_setting_model import BASIC_TYPE_SETTING_CAPABILITY,BASIC_TYPE_
 
 def fixed_basic_type_setting_handler(text):
     material=' '.join(text.strip().split())
+    converted=re.fullmatch(r'Enchanted permanent is a colorless Forest land\.?',material,re.I)
+    global_type=re.fullmatch(r'All (?P<from>Plains|Islands|Swamps|Mountains|Forests) are (?P<to>Plains|Islands|Swamps|Mountains|Forests)\.?',material,re.I)
+    if converted is not None or global_type is not None:
+        plural={'plains':'plains','islands':'island','swamps':'swamp','mountains':'mountain','forests':'forest'}
+        spec=BasicTypeSettingSpec('attached_colorless_forest_permanent',('forest',)) if converted else BasicTypeSettingSpec(
+            'all_'+global_type['from'].casefold(),(plural[global_type['to'].casefold()],))
+        return ('fixed-basic-type-setting-v1',{'handler_id':BASIC_TYPE_SETTING_HANDLER,'schema_version':1,
+            'event':'characteristics.evaluate','setting':spec.to_dict()},BASIC_TYPE_SETTING_CAPABILITY)
     match=re.fullmatch(r'(?P<subject>Nonbasic lands|Lands you control|Enchanted land) (?P<verb>are|is) (?P<types>.+?)\.?',material,re.I)
     if match is None:return None
     subject=match['subject'].casefold();attached=subject=='enchanted land'

@@ -9,11 +9,35 @@ maintenance: "hand-maintained"
 
 # CardProgram runtime components
 
+`rules/live_modifier_quantities.py` reads the current source controller's
+nonnegative life value, current opponents' canonical poison counts, or an
+attached recipient's current colors and mana value. Player elimination and
+control changes update the relation. Attached values use the reciprocal
+incarnation owner and stop after layer five; colorless objects and ordinary
+tokens can produce a known zero, while unavailable information rejects.
+Copied and Prototype mana values retain their existing characteristic owner.
+
+`semantic_runtime/quantified_anthems.py` emits layer-seven-c effects over an
+existing validated creature query. Source eligibility and counted information
+have separate boundaries: intrinsic quantity fragments are selected after
+layer-six ability applicability, while counted object values remain bounded
+to layer five. Removing a creature's own ability removes its modifier without
+removing effects supplied by an independent Aura or Equipment. Unconditional
+keywords accompanying a global modifier use the existing keyword component,
+including when the numeric result is zero. No mutable query cache is added.
+
 Runtime components represent CardProgram behavior that participates outside a
 single immediate resolution instruction. Typical families discover immutable
 replacement effects, prevention effects, draw policies, or continuous effects
 from live source descriptors. Components participate in a subsystem-owned
 transaction; they do not commit state.
+
+The source-chosen Aura protection component reads the existing immutable
+`chosen_color` source designation and current attached-object identity. It
+emits ordinary layer-six Protection values with one granting-Aura incarnation
+exception. Entry choice, source control, private draw and zone movement retain
+their existing owners. A live attached source without a represented color or
+incarnation fails closed; an unattached source emits no grant.
 
 Public power/toughness aggregates use the immutable
 `PublicCharacteristicAggregateSpec` and the read-only owner in
@@ -276,6 +300,14 @@ The setting handler and the existing attached-characteristic handler share
 one pure layer emission owner. It produces the represented layer 4, 5, 6, 7b
 and 7c operations for the existing evaluator. Ability removal precedes the
 same setting's keyword additions; base settings precede modifiers and counters.
+
+Closed Hexproof variants use the same keyword grant and removal operations.
+Qualified values retain their source-quality distinction for targeting while
+shared keyword predicates recognize their Hexproof type. Removing or
+prohibiting Hexproof affects all qualified variants. Independent ordinary
+Hexproof and later grants remain separate current values; no additional
+duration journal or runtime component registry is introduced. The
+[target legality reference](target-legality.md) owns source information timing.
 The ordinary timestamp and component-presence owners determine current source
 participation. Source departure or phasing ends a static effect, and reciprocal
 attachment identities prevent it from following a different incarnation.
@@ -477,6 +509,87 @@ text. The ordinary payment and usage owners commit together after validation.
 Historical descriptors without this field retain their original shape;
 historical record execution still requires compatible runtime trust provenance.
 
+Fixed ordinary-mana Reconfigure uses two independent source-spanned activation
+programs in the same catalog. Both require complete-card admission and sorcery
+timing; attaching targets another controlled creature, while unattachment
+requires a current creature attachment. Each action pays its own cost.
+Current typed activation markers identify Reconfigure at the shared attachment
+boundary, independently of Equip pricing and timing.
+Runtime binding independently requires the Reconfigure capability when that
+typed activation marker is present.
+
+Attaching commits a layer-4 creature-type removal with an explicit
+`until_unattached` duration. Its optional `attachment_duration` facts lock the
+source and receiver incarnations and attachment timestamp. Losing abilities
+does not end it. Control changes and phasing retain the relation; departure,
+unattachment or a later attachment expires its applicability. Later animation
+still uses ordinary state-based detachment. The zone/attachment family's
+`unattach` operation delegates reciprocal mutation to the existing owner.
+Older duration and activation payloads omit these new facts. Variable and
+nonordinary Reconfigure costs and uncompiled attachment providers remain
+residual. [ADR 0120](../adr/0120-attachment-bound-reconfigure-effects.md) records
+the duration and operation boundary.
+
+Dynamic self-entry counters also accept a fixed threshold of actual mana units
+of one ordinary color spent on the original spell. An optional `mana_color`
+qualifier belongs only to that amount source; other amount payloads retain
+their existing shape. The handler requires complete-card admission and runtime
+binding independently requires `casting.payment.mana_unit_counts` and
+`counter.producer.paid_color_self_entry`.
+
+The casting owner records a versioned immutable payment fact for every original
+cast in current execution, so an entry-copy effect can acquire the ability
+after payment. Counts use concrete paid mana types, including mana spent on
+generic or additional costs. Noncast entries and spell copies supply no paid
+cast; a current cast missing its required fact fails closed. The resulting
+amount enters the existing self-entry and counter-replacement pipeline.
+Ability-word labels add no behavior. [ADR 0121](../adr/0121-spell-payment-counts-and-entry-conditions.md)
+records the payment, copy and historical-execution boundaries.
+
+Resolution-condition schema six adds results selected by actual units of one
+concrete mana type paid for the original spell. Schema seven selects a fixed
+same-target replacement before either damage result is applied. Both use the
+existing condition and child-effect registries and require independent payment,
+condition, prefix and branch capabilities. Older condition schemas retain
+their shapes. Copies have no paid mana; missing original facts fail closed.
+
+Mandatory prefixes execute first. A represented single controller-life query
+reads the resulting current battlefield, and a private selection starts only
+after earlier draws finish. An information-derived target controller uses the
+existing announced incarnation, current effective control or controller facts
+captured at the canonical departure boundary. It adds no player target and
+never follows a returned incarnation. Initial target invalidity still prevents
+the whole spell from resolving. [ADR 0122](../adr/0122-paid-mana-resolution-and-target-information.md)
+records the ordered program and information-reference boundaries.
+
+Attached tap and graveyard occurrences retain their ordinary event owners.
+Both `When` and `Whenever` introduce a tap-state trigger. Fixed destruction
+and counter results on `it` use the event's sealed public incarnation;
+removing or moving the Aura does not redirect that result, and a returned
+incarnation is a different recipient. A fixed attached destruction instruction
+instead reads the existing current attachment relation, with the attachment
+owner's source-departure LKI behavior.
+
+Tap-state life, mill, damage and bounded poison results that name the occurring
+permanent's controller use a distinct occurrence-controller information value.
+It reads current effective control of that incarnation or
+the controller captured at its departure. The existing controller-information
+owner captures that LKI for both stacked abilities and immutable pending
+trigger batches through the canonical zone transaction. Aura controller,
+artifact owner, and affected controller remain separate. Existing target-index
+information codecs and genuinely locked occurrence-player results keep their
+contracts. Newly compiled object-controller instructions use the typed
+information value; historical `$context.controller` values retain their
+serialized event-time meaning. A new incarnation never replaces the referenced
+object's departure information. The result adds no player target, and source
+departure does not change the locked trigger controller.
+
+Enchanted-permanent graveyard subscriptions inspect before-event attachment
+and type facts. They still trigger if the Aura and permanent leave together;
+the locked Aura trigger controller receives its represented result. Unknown
+antecedents, aggregate occurrences, unsupported player-counter results and
+unowned linked reattachment or return instructions remain residual.
+
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
 source-controller, source-opponent, or global battlefield queries into
@@ -566,6 +679,16 @@ represented layer-6 Morph removal blocks payment. Arbitrary static ability
 addition/removal, copy, dynamic counts, Megamorph, other face-down methods,
 variable and nonmana costs, and residual turn-up behavior remain outside
 trust; no family-specific Oracle interpretation supplies them.
+
+An unconditional source-self all-colors definition uses a separate closed
+all-zone fragment. It emits a characteristic-defining layer-5 operation before
+ordinary color effects, including after copying. Later-layer ability removal
+does not undo a color effect that has already applied. Face-down values suppress
+the printed definition. A live all-colors grant to other battlefield permanents
+uses the existing fixed-setting component instead: current controller, nonland
+membership and timestamps determine its affected objects. Its land-type sibling
+retains the existing type and intrinsic-mana owners. Conditional or selected
+definitions and color-identity exceptions remain residual.
 
 `ability.activated.unearth.v1` owns the bounded ordinary fixed-mana Unearth
 activation descriptor, and `generic.unearth.v1` lowers its return and delayed-
@@ -685,6 +808,16 @@ immutable source view. The ordinary casting proposal still owns timing, cost,
 target and current-zone checks. The earlier controlled-subtype permission
 descriptor retains its existing schema and behavior.
 
+Controller-count conditions also accept a closed pair of canonical subtypes
+joined by “or” or “and/or”, with one shared tapped or untapped qualifier. One
+public query counts each matching permanent once, including a permanent with
+both subtypes. Bare creature-subtype nouns include noncreature Kindred
+permanents; they do not add a creature-type requirement. Current control and
+phasing govern membership. Changing the condition revokes a later graveyard
+cast offer. Casting checks the condition before mana abilities; payment retains
+the legal cast's locked cost and ordinary resolution when a qualifying mana
+source departs.
+
 `permission.cast.self-public-zones.v1` adds only the card owner's explicitly
 declared graveyard or face-up exile origins. The descriptor contains typed zone
 data and requires complete CardProgram admission and the current selected-face
@@ -693,6 +826,16 @@ and resolution destinations. It supplies no Flashback exile replacement or
 temporary designation. New incarnations use their own printed permission;
 face-down cards and unrepresented condition, cost or restriction tails fail
 closed. Existing conditional self-graveyard schemas retain their gates.
+
+`permission.cast.self-graveyard-discard.v1` supplies a separate paid graveyard
+method. Its sealed fixed count adds selected-hand discards to the ordinary
+printed mana cost through the canonical additional-cost owner. Current owner,
+source face, whole-program admission and ability-component presence gate that
+method. Normal hand casting and an independent ordinary zone permission retain
+their own costs. Revalidation binds the selected method to its normalized
+discard descriptor before payment; replacements and atomic movement remain
+with the existing zone-cost transaction. The permission is repeatable and
+retains ordinary resolution destinations and timing.
 
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
@@ -877,6 +1020,27 @@ Direct creature targets use ordinary resolution revalidation; an optional fixed
 power/toughness modifier remains a separate characteristic component. Cleanup
 expires both components through the existing journal owner. Blocking capacity
 does not waive evasion, tapped-state or other declaration restrictions.
+
+### Combat-bound blocking requirements
+
+Printed Provoke lowers through the existing keyword event production, creature
+target authority and optional-effect choice. The attack event binds the exact
+defending player. Tapped creatures remain eligible targets; ordinary target
+revalidation checks their current controller and incarnation at resolution.
+
+Choosing apply commits an immutable attacker/blocker relation in the current
+`CombatState` and delegates untapping to the canonical tap-state owner. Stun
+can replace the untap. The existing declaration solver maximizes current
+requirements while retaining evasion, capacity, tapped-state and optional-cost
+rules. Re-tapping may make the required block impossible. Later ability loss
+does not remove the resolved rule; departure or a new incarnation cannot
+substitute a combatant. Resetting combat expires all such relations.
+
+Closed runtime shapes independently require the Provoke, optional-choice,
+requirement, untap and target-revalidation capabilities. Unsupported keyword
+parameters, riders and unrepresented grants remain residual.
+[ADR 0123](../adr/0123-combat-bound-blocking-requirements.md) records the operation
+and persistence decision.
 
 ### Conditional chosen characteristics
 

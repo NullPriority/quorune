@@ -310,6 +310,8 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    'prohibit_casting_until_end_of_turn',
+    'return_random_graveyard_cards',
     "copy_stack_item",
     'create_role_token',
     "gain_control",
@@ -431,6 +433,7 @@ def _activated_effect_dependency_gate(
                 "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
+                "temporary-source-protection-choice",
             }.intersection(mechanics)
         )
         or (

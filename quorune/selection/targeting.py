@@ -870,7 +870,8 @@ class TargetSelectionOwnerMixin:
     ) -> Mapping[str, Any] | None:
         if "target_schema_override" in item.context:
             return dict(item.context["target_schema_override"])
-        return program.target_schema if program is not None else None
+        from ..rules.blocking_requirements import bound_defending_controller_schema
+        return bound_defending_controller_schema(program.target_schema,item.context) if program is not None else None
 
     def _stack_source_ref(self, item: StackItem) -> str:
         if (

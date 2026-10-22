@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .reconfigure_nodes import is_closed_reconfigure_program
 from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
@@ -6,9 +7,10 @@ from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bo
 from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 from ..rules.source_keyword_choice_shapes import is_closed_source_keyword_choice_program
+from ..rules.source_protection_choice_shapes import is_closed_source_protection_program
 
 from collections import Counter
-from dataclasses import asdict, replace
+from dataclasses import asdict
 import hashlib
 from typing import Any, Iterable, Mapping, TYPE_CHECKING
 
@@ -34,7 +36,7 @@ from ..rules.fixed_resolution_mana_shapes import is_closed_fixed_resolution_mana
 from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_program
 from ..rules.stack_controller_payment_shapes import is_closed_stack_controller_payment_program
 from .declared_effect_amounts import is_closed_declared_amount_program
-from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE, is_closed_permanent_additional_cost_program
+from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE
 from .public_query_effect_amounts import (
     AMOUNT_MECHANIC_CAPABILITIES,
     public_query_amount_program_is_closed,
@@ -48,9 +50,6 @@ from ..rules.creature_power_damage_capability_shapes import (
 )
 from ..rules.delayed_draw_capability_shapes import (
     fixed_next_turn_draw_node_capabilities,
-)
-from ..rules.graveyard_card_targets import (
-    targeted_own_graveyard_return_node_capabilities,
 )
 from ..rules.public_zone_move_capability_shapes import (
     fixed_public_zone_move_set_node_capabilities,
@@ -1277,7 +1276,11 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 
 def _closed_effect_recognizers():
+    from ..rules.fuse_shapes import closed_fused_program
+    from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     return (
+        closed_fused_program,
+        is_closed_library_search_prohibition_program,
         is_closed_announced_target_set_program,
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
@@ -1308,7 +1311,7 @@ def _closed_effect_recognizers():
         _is_closed_composed_effect_program,
         _is_closed_fixed_controller_effect_sequence_program,
         _is_closed_fixed_counter_controller_effect_sequence_program,
-        _is_closed_single_explore_program,
+        _is_closed_single_explore_program, is_closed_reconfigure_program,
         _is_closed_single_proliferate_program,
         _is_closed_fixed_counter_placement_program,
         _is_closed_fixed_counter_removal_program,
@@ -1322,6 +1325,7 @@ def _closed_effect_recognizers():
         is_closed_resolution_characteristic_program,
         _is_closed_temporary_target_interaction_program,
         is_closed_source_keyword_choice_program,
+        is_closed_source_protection_program,
         _is_closed_fixed_source_characteristics_program,
         _is_closed_temporary_declaration_restriction_program,
         _is_closed_fixed_target_effect_sequence_program,
@@ -1370,18 +1374,9 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
-
-    if is_closed_permanent_additional_cost_program(program):
-        return True
-    from .nonleaf_effect_closure import nonleaf_effect_program_is_closed
-    if nonleaf_effect_program_is_closed(program,recognizers=_closed_effect_recognizers()):return True
-    if is_closed_composed_spell_effect_program(
-        program,
-        component_recognizers=_closed_effect_recognizers(),
-    ):
-        return True
-    recognizers = _closed_effect_recognizers()
-    return any(recognizer(program) for recognizer in recognizers)
+    from .nonleaf_effect_closure import effect_program_is_closed
+    return effect_program_is_closed(program,recognizers=_closed_effect_recognizers(),
+        recursive_is_closed=_is_closed_effect_program,composed_is_closed=is_closed_composed_spell_effect_program)
 
 
 def generated_programs(

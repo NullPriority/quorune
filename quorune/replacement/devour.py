@@ -46,8 +46,13 @@ def apply_devour_entry_operation(event,payload,children,scope,operation,*,effect
     payload['devour_proposals']=[*prior,proposal.to_dict()]
     reserved=scope.reserve_zone_changes(o.object_id for o in proposal.objects)
     if proposal.counter_amount:
-        from .operations import CreateAffectedObjectCounter
+        from .operations import CreateAffectedObjectCounter,AddAffectedObjectCounter
         from .application import _create_affected_object_counter_event
-        _create_affected_object_counter_event(event,payload,children,CreateAffectedObjectCounter(counter_name='+1/+1',amount=proposal.counter_amount,
-            placing_player=operation.controller,source_ref=str(payload.get('object_ref') or ''),sequence=len(prior)),effect_id=effect_id)
+        counter_type=AddAffectedObjectCounter if payload.get('additional_entry_counter_instruction') is True else CreateAffectedObjectCounter
+        counter=counter_type(counter_name='+1/+1',amount=proposal.counter_amount,
+            placing_player=operation.controller,source_ref=str(payload.get('object_ref') or ''),sequence=len(prior))
+        if isinstance(counter,AddAffectedObjectCounter):
+            from .entry_counter_application import add_entry_counters
+            add_entry_counters(event,payload,children,counter,effect_id=effect_id)
+        else:_create_affected_object_counter_event(event,payload,children,counter,effect_id=effect_id)
     return reserved

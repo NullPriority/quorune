@@ -54,7 +54,8 @@ def replacement_tree_choice(
     def visit(
         current: ReplaceableEvent, path: tuple[int, ...]
     ) -> ReplacementTreeChoice | None:
-        choice = replacement_choice(current, all_effects)
+        from .entry_counter_ordering import entry_counter_order_effects
+        choice = replacement_choice(current, entry_counter_order_effects(current, all_effects))
         if choice is not None:
             return ReplacementTreeChoice(path=path, choice=choice)
         for index, child in enumerate(current.children):
@@ -107,9 +108,9 @@ def apply_tree_replacement(
         raise ReplacementEffectError(
             "Replacement tree choice is stale or out of order"
         )
-    changed = apply_replacement(
-        pending.choice, all_effects, selected_effect_id,objects=objects
-    )
+    from .entry_counter_ordering import entry_counter_order_effects
+    adapted=entry_counter_order_effects(pending.choice.event, all_effects)
+    changed=apply_replacement(pending.choice,adapted,selected_effect_id,objects=objects)
     return _replace_event_at_path(event, pending.path, changed)
 
 

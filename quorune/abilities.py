@@ -316,8 +316,11 @@ class ActivatedAbility:
     fixed_mana_result: FixedManaResultSpec | None = None
     announced_x_symbols: int | None = None
     boast: bool = False
+    reconfigure: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.reconfigure) is not bool:
+            raise ValueError('Reconfigure marker must be boolean')
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
         if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
@@ -395,6 +398,7 @@ class ActivatedAbility:
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
         if self.boast:result['boast']=True
+        if self.reconfigure:result['reconfigure']=True
         return result
 
     @classmethod
@@ -404,6 +408,7 @@ class ActivatedAbility:
             ability_id=value["ability_id"],
             announced_x_symbols=value.get('announced_x_symbols'),
             boast=value.get('boast',False),
+            reconfigure=value.get('reconfigure', False),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],
@@ -888,6 +893,7 @@ def _fixed_equip_keyword_ability(
         sorcery_speed=True,
         builtin_semantic_key="builtin:equip",
         target_schema=FrozenMap(spec.target_schema),
+        source_counter_removal_cost=cost.source_counter_removal_cost,
         activation_limit=(
             ActivationLimit.ONCE_PER_TURN if spec.once_per_turn else None
         ),

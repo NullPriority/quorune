@@ -10,7 +10,7 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..object_predicate import ObjectQuerySpec
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.graveyard_card_targets import OwnGraveyardCardTargetSpec
-from .dependency_gate import explicit_capability_gate
+from .dependency_gate import explicit_capability_gate,explicit_capabilities_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 
 
@@ -23,6 +23,7 @@ _KEYWORDS = {
     "mobilize",
     "soulshift",
     "exploit",
+    "provoke",
 }
 _PARAMETERIZED = re.compile(
     r"^(?P<keyword>Afflict|Annihilator|Firebending|Mobilize|Soulshift) "
@@ -69,6 +70,8 @@ class FixedKeywordEventEffectSpec:
             raise ValueError("Keyword event-effect amount is unsupported")
         if self.keyword in {"ingest", "exploit"} and self.amount != 1:
             raise ValueError("Ingest has no numeric parameter")
+        if self.keyword=='provoke' and self.amount!=1:
+            raise ValueError('Provoke has no numeric parameter')
 
     @property
     def capability_id(self) -> str:
@@ -78,6 +81,7 @@ class FixedKeywordEventEffectSpec:
     @property
     def event(self) -> str:
         return {
+            "provoke":"creature.attacks",
             "afflict": "creature.becomes_blocked",
             "annihilator": "creature.attacks",
             "firebending": "creature.attacks",
@@ -89,6 +93,7 @@ class FixedKeywordEventEffectSpec:
 
     @property
     def event_condition(self) -> Mapping[str, Any] | None:
+        if self.keyword=='provoke':return {'field':'card','op':'eq','value':'$source.ref'}
         if self.keyword == "ingest":
             return {
                 "all": [
@@ -107,6 +112,10 @@ class FixedKeywordEventEffectSpec:
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
+        if self.keyword=='provoke':
+            from .optional_effect_templates import OPTIONAL_EFFECT_OPERATION
+            return ({'op':OPTIONAL_EFFECT_OPERATION,'player':'$controller','effects':[
+                {'op':'require_blocking_this_combat','attacker':'$source.zone_object','blocker':'$target.0','untap_blocker':True}]},)
         if self.keyword=='exploit':return ({'op':'exploit','player':'$controller','source':'$source'},)
         if self.keyword == "afflict":
             return (
@@ -179,6 +188,9 @@ class FixedKeywordEventEffectSpec:
 
     @property
     def target_schema(self) -> Mapping[str, Any] | None:
+        if self.keyword=='provoke':
+            return {'zones':['battlefield'],'categories':['permanent'],'types_any':['creature'],'count':1,
+                'controller_seat':'$context.defending_player'}
         if self.keyword != "soulshift":
             return None
         return OwnGraveyardCardTargetSpec(
@@ -192,7 +204,7 @@ def fixed_keyword_event_effect_spec(
     material_line: str,
 ) -> FixedKeywordEventEffectSpec | None:
     normalized = " ".join(material_line.strip().split())
-    if re.fullmatch(r"(?:Ingest|Exploit)\.?", normalized, re.IGNORECASE):
+    if re.fullmatch(r"(?:Ingest|Exploit|Provoke)\.?", normalized, re.IGNORECASE):
         return FixedKeywordEventEffectSpec(normalized.rstrip('.').casefold())
     match = _PARAMETERIZED.fullmatch(normalized)
     if match is None:
@@ -227,6 +239,9 @@ def fixed_keyword_event_effect_node(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
+    if spec.keyword=='provoke':
+        gate=explicit_capabilities_gate((spec.capability_id,'combat.block.requirement_this_combat','effect.choice.optional_fixed',
+            'permanent.untap.effect','target.revalidate_resolution'),capability_registry=capability_registry,capability_profile=capability_profile)
     residual_ids = (
         (
             append_residual(

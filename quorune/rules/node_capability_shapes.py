@@ -6,7 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .counter_placement_capability_shapes import fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities
 
 from .casting_additional_costs import (
-    AdditionalCostError, ANNOUNCED_X_EXILE_CAPABILITY,
+    AdditionalCostError, announced_zone_cost_capabilities,
     FixedCounterPlacementAdditionalCost,
     FixedSacrificeAdditionalCost,
     FixedZoneChangeAdditionalCost,
@@ -110,7 +110,7 @@ def fixed_zone_change_additional_cost_node_capabilities(
         cost = FixedZoneChangeAdditionalCost.from_descriptor(raw_costs[0])
     except (AdditionalCostError, TypeError):
         return ()
-    return (fixed_zone_change_additional_cost_capability(cost), *((ANNOUNCED_X_EXILE_CAPABILITY,) if cost.count_parameter else ()))
+    return (fixed_zone_change_additional_cost_capability(cost), *announced_zone_cost_capabilities(cost))
 
 
 _DRAW_TARGET_SCHEMAS: tuple[Mapping[str, Any], ...] = (
@@ -1090,6 +1090,13 @@ def temporary_declaration_restriction_node_capabilities(
         return ()
     effect = effects[0]
     kind = effect.get("restriction")
+    if isinstance(kind, Mapping):
+        from ..source_block_pair_model import SOURCE_BLOCK_PAIR_KIND
+        if kind.get('kind') == SOURCE_BLOCK_PAIR_KIND:
+            from .source_block_pairs import source_block_pair_node_capabilities
+            return source_block_pair_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+        from .fixed_blocker_restriction_shapes import fixed_blocker_restriction_node_capabilities
+        return fixed_blocker_restriction_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     group_target = set(effect) == {"op", "cards", "restriction"} and effect.get("cards") == "$targets"
     live_group = set(effect) == {"op", "set", "restriction"}
     if group_target or live_group:

@@ -637,6 +637,9 @@ def _component_public_state_snapshot(
 ):
     """Keep early-layer settings separate from characteristic query conditions."""
     handler_id = descriptor.get('handler_id')
+    from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
+    if handler_id==QUANTIFIED_ANTHEM_HANDLER and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
+        return True,None
     if handler_id == 'continuous.characteristics.conditional-creature-type-removal.v1':
         from ..semantic_runtime.fixed_characteristic_settings import ConditionalCreatureTypeRemovalHandler
         ConditionalCreatureTypeRemovalHandler().validate(descriptor)
@@ -668,6 +671,18 @@ def _component_public_state_snapshot(
         return True, None
     return False, (public_state_resolver.snapshot(source,
         FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])) if is_conditional else None)
+
+
+def _descriptor_characteristic_quantity(source,descriptor,*,quantity_resolver,maximum_layer):
+    """Project supported continuous quantities once through the layer-safe owner."""
+    from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
+    modifier=descriptor.get('modifier')
+    raw=modifier.get('quantity') if isinstance(modifier,Mapping) else None
+    if (descriptor.get('handler_id') in {ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,QUANTIFIED_ANTHEM_HANDLER}
+            and isinstance(raw,Mapping) and quantity_resolver is not None
+            and (maximum_layer is None or maximum_layer>=Layer.POWER_TOUGHNESS)):
+        return quantity_resolver(source,CharacteristicQuantitySpec.from_dict(raw))
+    return None
 
 
 def collect_card_program_continuous_effects(
@@ -741,29 +756,8 @@ def collect_card_program_continuous_effects(
                         setting_state_resolver=setting_state_resolver)
                     if skip:
                         continue
-                    resolved_quantity = None
-                    modifier = descriptor.get("modifier")
-                    raw_quantity = (
-                        modifier.get("quantity")
-                        if isinstance(modifier, Mapping)
-                        else None
-                    )
-                    if (
-                        descriptor.get("handler_id")
-                        == ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID
-                        and isinstance(raw_quantity, Mapping)
-                        and quantity_resolver is not None
-                        and (
-                            maximum_layer is None
-                            or maximum_layer >= Layer.POWER_TOUGHNESS
-                        )
-                    ):
-                        resolved_quantity = quantity_resolver(
-                            source,
-                            CharacteristicQuantitySpec.from_dict(
-                                raw_quantity
-                            ),
-                        )
+                    resolved_quantity = _descriptor_characteristic_quantity(source,descriptor,
+                        quantity_resolver=quantity_resolver,maximum_layer=maximum_layer)
                     from ..soulbond_model import SOULBOND_GRANT_HANDLER
                     paired_object = None
                     if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:

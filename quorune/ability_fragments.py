@@ -55,6 +55,7 @@ from .static_component_scope import (
     StaticComponentScopeSpec,
 )
 from .util import stable_json
+from .all_colors import AllColorsCharacteristicDefinitionSpec
 
 
 class ProtectionQualityKind(str, Enum):
@@ -310,17 +311,21 @@ class ProtectionSpec:
     quality: str | None = None
     schema_version: int = 1
     source_predicate: ProtectionSourcePredicateSpec | None = None
+    exempt_aura_incarnation: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version not in {
             1,
             2,
+            3,
         }:
             raise AbilityFragmentError(
                 "Unsupported protection fragment schema version"
             )
         if not isinstance(self.quality_kind, ProtectionQualityKind):
             raise AbilityFragmentError("Unsupported protection quality kind")
+        from .protection_attachment_exceptions import validate_protection_attachment_exception
+        validate_protection_attachment_exception(self)
         if self.quality_kind is ProtectionQualityKind.PREDICATE:
             if (
                 self.schema_version != 2
@@ -334,7 +339,7 @@ class ProtectionSpec:
                     "Protection predicates require schema version 2 and a typed source predicate"
                 )
             return
-        if self.schema_version != 1 or self.source_predicate is not None:
+        if self.schema_version not in {1, 3} or self.source_predicate is not None:
             raise AbilityFragmentError(
                 "Legacy Protection qualities require schema version 1"
             )
@@ -377,6 +382,8 @@ class ProtectionSpec:
         if self.schema_version == 2:
             assert self.source_predicate is not None
             value["source_predicate"] = self.source_predicate.to_dict()
+        if self.schema_version == 3:
+            value["exempt_aura_incarnation"] = self.exempt_aura_incarnation
         return value
 
     @classmethod
@@ -411,6 +418,8 @@ class ProtectionSpec:
         expected_fields = set(base_fields)
         if schema_version == 2:
             expected_fields.add("source_predicate")
+        if schema_version == 3:
+            expected_fields.add("exempt_aura_incarnation")
         if set(value) != expected_fields:
             raise AbilityFragmentError(
                 "Protection fragment fields are incomplete or unknown"
@@ -425,6 +434,7 @@ class ProtectionSpec:
             quality_kind=quality_kind,
             quality=value["quality"],
             source_predicate=predicate,
+            exempt_aura_incarnation=value.get('exempt_aura_incarnation'),
         )
 
     @property
@@ -725,6 +735,7 @@ StaticAbilityFragment: TypeAlias = (
     | WardSpec
     | AllCreatureTypesCharacteristicDefinitionSpec
     | ColorlessCharacteristicDefinitionSpec
+    | AllColorsCharacteristicDefinitionSpec
     | ConditionalKeywordSpec
     | DynamicPowerToughnessSpec
     | QueryCharacteristicModifierSpec
@@ -783,6 +794,8 @@ def ability_fragment_to_dict(
         kind = "all_creature_types_characteristic_definition"
     elif isinstance(fragment, ColorlessCharacteristicDefinitionSpec):
         kind = "colorless_characteristic_definition"
+    elif isinstance(fragment, AllColorsCharacteristicDefinitionSpec):
+        kind = 'all_colors_characteristic_definition'
     elif isinstance(fragment, ConditionalKeywordSpec):
         kind = "conditional_keyword"
     elif isinstance(fragment, DynamicPowerToughnessSpec):
@@ -884,6 +897,9 @@ def ability_fragment_from_dict(
             )
         except CharacteristicFragmentError as exc:
             raise AbilityFragmentError(str(exc)) from exc
+    if value['kind']=='all_colors_characteristic_definition':
+        try:return AllColorsCharacteristicDefinitionSpec.from_dict(value['value'])
+        except ValueError as exc:raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "conditional_keyword":
         try:
             return ConditionalKeywordSpec.from_dict(value["value"])
@@ -968,6 +984,7 @@ def canonical_ability_fragments(
                 WardSpec,
                 AllCreatureTypesCharacteristicDefinitionSpec,
                 ColorlessCharacteristicDefinitionSpec,
+                AllColorsCharacteristicDefinitionSpec,
                 ConditionalKeywordSpec,
                 DynamicPowerToughnessSpec,
                 QueryCharacteristicModifierSpec,
@@ -1171,12 +1188,12 @@ def _protection_quality_spec(quality: str) -> ProtectionSpec | None:
 def parse_protection_line(line: str) -> tuple[ProtectionSpec, ...] | None:
     """Compile one closed printed protection keyword line.
 
-    Compound qualities are deliberately residual until their Oracle grammar is
-    represented explicitly; runtime code never reparses the printed line.
+    Explicit repeated "from" clauses become independent typed qualities;
+    runtime code never reparses the printed line.
     """
 
     match = re.fullmatch(
-        r"protection from (?P<quality>[^.,]+)\.?",
+        r"protection from (?P<quality>[^.;]+)\.?",
         " ".join(str(line).strip().split()),
         re.IGNORECASE,
     )
@@ -1185,10 +1202,9 @@ def parse_protection_line(line: str) -> tuple[ProtectionSpec, ...] | None:
     quality = match.group("quality").casefold().strip()
     qualities = tuple(
         value.strip()
-        for value in re.split(r"\s+and from\s+", quality)
-        if value.strip()
+        for value in re.split(r",\s*(?:and\s+)?from\s+|\s+and from\s+", quality)
     )
-    if not qualities or any(" and " in value for value in qualities):
+    if not qualities or any(not value or ',' in value or " and " in value for value in qualities):
         return None
     specs = tuple(_protection_quality_spec(value) for value in qualities)
     if any(spec is None for spec in specs):
@@ -1344,6 +1360,7 @@ def counter_maximum_values(
 
 
 __all__ = [
+    "AllColorsCharacteristicDefinitionSpec",
     "AllCreatureTypesCharacteristicDefinitionSpec",
     "AbilityFragmentError",
     "CombatKeywordTriggerKind",

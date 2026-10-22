@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...spell_mana_counts import capture_spell_mana_counts
 
 from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
 from .reveal_costs import commit_reveal_additional_costs
@@ -696,6 +697,10 @@ def _commit_additional_costs(
     changes = []
     for selected in selections:
         kind = str(selected["kind"])
+        from ..random_discard_additional_cost import RANDOM_SPELL_COST_KIND,ordinary_random_spell_cost_selection
+        if kind==RANDOM_SPELL_COST_KIND:
+            normalized,selection=ordinary_random_spell_cost_selection(host,proposal,response,selected_option,selected)
+            changes.extend(_fixed_zone_change_commit_entries(host,proposal,response,normalized,selection));continue
         if kind==REVEAL_ADDITIONAL_COST_KIND:continue
         if kind == "counter_placement":
             result.paid_refs.append(
@@ -905,8 +910,8 @@ def _create_spell_item(
     card.zone = "stack"
     card.controller = proposal.seat
     card.active_face = proposal.face
-    from ..prototype import commit_prototype_cast
-    commit_prototype_cast(card,details.get('prototype'))
+    from .characteristic_methods import commit_cast_characteristics,characteristic_stack_context
+    commit_cast_characteristics(card,details)
     if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
         mark_card_kicked(card)
     from ...zone_object_state import mark_multikicker_paid
@@ -965,6 +970,7 @@ def _create_spell_item(
             for color in "WUBRG"
             if type(spent.get(color, 0)) is int and spent.get(color, 0) > 0
         ),
+        mana_spent_counts=capture_spell_mana_counts(host.state.spell_mana_counts_version,card,spent),
         context={
             **_cast_provenance_context(proposal, spent),
             **paid_entry_copy_cast_context(selected_option),
@@ -991,7 +997,7 @@ def _create_spell_item(
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
             'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
-            **({'cast_method':'prototype','prototype':details['prototype']} if details.get('cast_method')=='prototype' else {}),
+            **characteristic_stack_context(details),
             **lifecycle_context,
             **_fixed_cast_lifecycle_cost_context(costs),
             **(
@@ -1244,6 +1250,12 @@ def _revalidate_fixed_lifecycle_contract(
     card: Any,
     selected_option: Mapping[str, Any],
 ) -> None:
+    from ..self_graveyard_discard import validate_self_graveyard_discard_option
+    try:
+        validate_self_graveyard_discard_option(host,proposal.seat,prospective_cast_card(host,card,proposal.face),
+            selected_option,origin=proposal.origin)
+    except ValueError as exc:
+        raise CastProposalError(str(exc),reason='stale_self_graveyard_discard_contract') from exc
     lifecycle_raw = selected_option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if lifecycle_raw is None:
         return
@@ -1271,6 +1283,9 @@ def _revalidate_fixed_lifecycle_contract(
     if proposed.kind is FixedCastLifecycleKind.AFTERMATH:valid_id=True
     elif proposed.kind is FixedCastLifecycleKind.RETRACE:valid_id=option_id=='retrace'
     else:valid_id=option_id==proposed.kind.value
+    if not valid_id and proposed.kind is FixedCastLifecycleKind.BUYBACK:
+        from .global_alternatives import is_battlefield_optional_cost_option
+        valid_id=is_battlefield_optional_cost_option(selected_option,proposed.kind.value)
     if (
         current != proposed
         or selected_option.get("fixed_cast_lifecycle_fingerprint")
@@ -1446,6 +1461,9 @@ def _commit_cast_costs_and_stack(
     from ..prototype import revalidate_prototype_cast
     try:revalidate_prototype_cast(host,card,details)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_prototype_contract') from exc
+    from ..fuse import revalidate_fuse_cast
+    try:revalidate_fuse_cast(host,card,details)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_fuse_contract') from exc
     selected_option = _revalidate_cast_contracts(
         host,
         proposal,
@@ -1514,6 +1532,8 @@ def _commit_cast_costs_and_stack(
         proposal.seat,
     )
     host.state.stack.append(item)
+    from ..classic_flash import commit_classic_flash_permission
+    commit_classic_flash_permission(host,proposal,card)
     from ...preparation import consume_prepared_cast
     consume_prepared_cast(host,card)
     if 'waterbend_payment' in selected_option:

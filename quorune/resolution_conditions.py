@@ -11,6 +11,7 @@ from .continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from .replacement.immutable import FrozenMap
+from .spell_mana_conditions import ManaSpentCondition
 
 
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
@@ -120,9 +121,12 @@ def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> 
 
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
-) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition, tuple[Mapping[str, Any], ...]]:
+) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get('schema_version') in {6,7}:
+        from .spell_mana_conditions import validate_paid_mana_instruction
+        return validate_paid_mana_instruction(effect)
     expected_fields = {
         "op", "player", "condition", "effects",
         "mechanic_ids", "prefix_mechanic_ids",

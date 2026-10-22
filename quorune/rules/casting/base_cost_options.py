@@ -7,6 +7,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, TYPE_CHECKING
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec, compiled_ordinary_zone_cast_permission
 from .lifecycle_costs import retrace_base_options, zone_lifecycle_base_options
+from ..self_graveyard_discard import self_graveyard_discard_base_options
 
 
 if TYPE_CHECKING:
@@ -77,6 +78,7 @@ def _zone_cast_base_options(
         "suppress_source_costs": suppress_source_costs,
     }
     base.extend(retrace_base_options(host, card, printed, **common))
+    base.extend(self_graveyard_discard_base_options(host,seat,card,printed,**common))
     base.extend(
         zone_lifecycle_base_options(host, seat, card, printed, **common)
     )

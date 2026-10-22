@@ -1,0 +1,815 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned classic conditional-Flash sources; existing canonical fixtures are reused and no accepted gain is claimed before whole native proof.",
+  "cards": [
+    {
+      "oracle_id": "2636aafa-83f9-4b72-b729-04e1c3aa0eec",
+      "name": "Spider Climb",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant creature\nEnchanted creature gets +0/+3 and has reach. (It can block creatures with flying.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-02-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "rulings": [
+        {
+          "oracle_id": "2636aafa-83f9-4b72-b729-04e1c3aa0eec",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "2b0c82f1-078a-4e8b-8e43-407f5c5d8549",
+      "name": "Lightning Reflexes",
+      "mana_cost": "{1}{R}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant creature\nEnchanted creature gets +1/+0 and has first strike.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "2b0c82f1-078a-4e8b-8e43-407f5c5d8549",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "31ead5a5-aa01-4601-8d3e-267b65fce3bb",
+      "name": "Armor of Thorns",
+      "mana_cost": "{1}{G}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant nonblack creature\nEnchanted creature gets +2/+2.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "31ead5a5-aa01-4601-8d3e-267b65fce3bb",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "43c88fcd-aac9-4741-8fd6-31ac81c5bb6f",
+      "name": "Mystic Veil",
+      "mana_cost": "{1}{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant creature\nEnchanted creature has shroud. (It can't be the target of spells or abilities.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-02-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "43c88fcd-aac9-4741-8fd6-31ac81c5bb6f",
+          "published_at": "2005-08-01",
+          "source": "wotc",
+          "comment": "Does not destroy Auras which are already on the creature."
+        },
+        {
+          "oracle_id": "43c88fcd-aac9-4741-8fd6-31ac81c5bb6f",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "4e73634a-9df8-4c36-b1d2-f366eae902fc",
+      "name": "Parapet",
+      "mana_cost": "{1}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nCreatures you control get +0/+1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-02-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "4e73634a-9df8-4c36-b1d2-f366eae902fc",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "6f54e7ea-bb87-4ce0-96b6-4fc82605ed2a",
+      "name": "Grave Servitude",
+      "mana_cost": "{1}{B}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant creature\nEnchanted creature gets +3/-1 and is black.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-10-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "6f54e7ea-bb87-4ce0-96b6-4fc82605ed2a",
+          "published_at": "2004-10-04",
+          "source": "wotc",
+          "comment": "The color change lasts only while this card is on the creature."
+        },
+        {
+          "oracle_id": "6f54e7ea-bb87-4ce0-96b6-4fc82605ed2a",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "acee6f4f-8b66-495d-bb0e-71c339e7dc49",
+      "name": "Soar",
+      "mana_cost": "{1}{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant creature\nEnchanted creature gets +0/+1 and has flying.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-10-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "acee6f4f-8b66-495d-bb0e-71c339e7dc49",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "c6321de2-80b0-4679-93cf-97df75344e97",
+      "name": "Relic Ward",
+      "mana_cost": "{1}{W}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant artifact\nEnchanted artifact has shroud. (It can't be the target of spells or abilities.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-02-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "c6321de2-80b0-4679-93cf-97df75344e97",
+          "published_at": "2005-08-01",
+          "source": "wotc",
+          "comment": "Does not destroy Auras which are on the artifact, and it does not prevent Auras from being moved onto the artifact."
+        },
+        {
+          "oracle_id": "c6321de2-80b0-4679-93cf-97df75344e97",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "edc05b33-2bfa-4692-bb3b-26b7cf111ce8",
+      "name": "Ward of Lights",
+      "mana_cost": "{W}{W}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant creature\nAs this Aura enters, choose a color.\nEnchanted creature has protection from the chosen color. This effect doesn't remove this Aura.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-10-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "edc05b33-2bfa-4692-bb3b-26b7cf111ce8",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "The sacrifice occurs only if you cast it using its own ability. If you cast it using some other effect (for example, if another effect allowed you to cast it as though it had flash), then it won't be sacrificed."
+        }
+      ]
+    },
+    {
+      "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+      "name": "Confiscate",
+      "mana_cost": "{4}{U}{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant permanent\nYou control enchanted permanent.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0,
+      "rulings": [
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "Gaining control of an Aura or Equipment doesn't change what it's attached to."
+        },
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2022-12-08",
+          "source": "wotc",
+          "comment": "Gaining control of a permanent doesn't cause you to gain control of any Auras or Equipment attached to it."
+        },
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "Gaining control of a permanent doesn't cause you to gain control of any Auras or Equipment attached to it."
+        },
+        {
+          "oracle_id": "d599a38c-7719-443e-bb59-55bd43a8fee6",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "Gaining control of an Aura or Equipment doesn't change what it's attached to."
+        }
+      ]
+    },
+    {
+      "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+      "name": "Copy Enchantment",
+      "mana_cost": "{2}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may have this enchantment enter as a copy of any enchantment on the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "Copy Enchantment copies exactly what was printed on the original permanent and nothing more (unless that permanent is itself copying something or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether it has any counters on it or Auras attached to it, or any noncopy effects that have changed its power, toughness, types, color, and so on."
+        },
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "If Copy Enchantment copies an Aura this way, you choose what the Aura will enchant just before it enters the battlefield. You can't choose any permanents entering the battlefield at the same time as that Aura. This doesn't target the player or permanent it will enchant, so an opponent's permanent with hexproof may be chosen this way. The chosen recipient must be able to legally be enchanted by the Aura, so a player or permanent with protection from one of the Aura's qualities can't be chosen this way. If there's nothing legal for the Aura to enchant, Copy Enchantment stays in its current zone (unless it's a spell, in which case it's put into its owner's graveyard)."
+        },
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "If Copy Enchantment somehow enters the battlefield at the same time as another permanent, Copy Enchantment can't become a copy of that permanent. You may choose only a permanent that's already on the battlefield."
+        },
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when Copy Enchantment enters the battlefield. Any \"as [this enchantment] enters the battlefield\" or \"[this enchantment] enters the battlefield with\" abilities of the chosen permanent will also work."
+        },
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "If the chosen permanent has {X} in its mana cost, X is 0."
+        },
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "If the chosen permanent is a token, Copy Enchantment copies the original characteristics of that token as stated by the effect that created the token. Copy Enchantment does not become a token."
+        },
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "If the chosen permanent is copying something else (for example, if the chosen permanent is another Copy Enchantment), then your Copy Enchantment enters the battlefield as whatever the chosen permanent copied."
+        },
+        {
+          "oracle_id": "87bc0b1f-49ef-4c06-9049-2c148b467882",
+          "published_at": "2023-09-01",
+          "source": "wotc",
+          "comment": "You can choose not to copy anything. In that case, Copy Enchantment simply enters the battlefield as an enchantment with an irrelevant ability. We're sure you had your reasons."
+        }
+      ]
+    },
+    {
+      "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+      "name": "Violent Outburst",
+      "mana_cost": "{1}{R}{G}",
+      "type_line": "Instant",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nCreatures you control get +1/+0 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Cascade"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-04-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "You exile the cards face up. All players will be able to see them."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+        },
+        {
+          "oracle_id": "c0f69063-9079-4e7a-98dc-c29da8171d33",
+          "published_at": "2021-06-18",
+          "source": "wotc",
+          "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+        }
+      ]
+    }
+  ]
+}

@@ -126,6 +126,29 @@ unrepresented exile, cast, or play destinations, and any unowned preceding or tr
 effect. These exclusions remain material compiler residuals rather than
 runtime prose interpretation.
 
+## Library search restrictions
+
+`LibrarySearchRuleSpec` represents current source prohibitions and fixed
+opponent search windows. The existing action-permission registry supplies
+typed participation; the search owner applies it before inspecting or exposing
+library candidates. A bounded search exposes its complete permitted window
+privately to the searcher, separately from the cards that match the selector.
+One multi-card search retains one window, and normal completion shuffles the
+entire library. Other zones and non-search procedures remain independent.
+
+A prohibited mandatory search issues no choice or private inspection and
+preserves an independent shuffle instruction. An optional search cannot be
+chosen when prohibited, so its contingent shuffle does not occur. Cast and
+activation costs remain paid. Semantic searches and historical fetch searches
+use the same constraint query and retain their existing movement owners.
+
+Resolved turn prohibitions use a typed entry in the existing continuous-effect
+journal. Its decoder, ordinary cleanup and pre-action replay preserve the
+duration after the resolving spell leaves the stack. Static participation
+instead follows current source ability, face, controller and phasing state.
+Causal-controller restrictions, payments to ignore a source, and unrepresented
+replacement forms remain explicit compiler boundaries.
+
 ## Deliberate boundary
 
 The current family excludes simultaneous instructions for multiple players,

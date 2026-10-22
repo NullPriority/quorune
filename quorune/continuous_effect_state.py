@@ -18,6 +18,9 @@ from .declaration_rule_effects import (
 from .as_unblocked_rule import AsUnblockedAssignmentRule
 from .toughness_assignment_rule import ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import ResolvedBlockCapacityRule
+from .temporary_cast_rule_model import ResolvedCastRestriction
+from .source_block_pair_model import ResolvedSourceBlockPair
+from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .object_predicate import ObjectQuerySpec
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
@@ -171,7 +174,7 @@ def commit_continuous_effect(
 
     if not isinstance(
         effect,
-        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule),
+        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -466,6 +469,8 @@ def active_resolution_effects(
         for effect in journal
         if isinstance(effect, ContinuousEffect)
         and identity in effect.locked_objects
+        and (effect.attachment_duration is None
+            or effect.attachment_duration.is_current(state.cards))
     )
 
 

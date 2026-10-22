@@ -20,7 +20,7 @@ from ..additional_cost_vocabulary import (
 from .reveal_additional_cost import FixedRevealAdditionalCost,REVEAL_ADDITIONAL_COST_CAPABILITY,fixed_reveal_additional_cost
 from .tap_additional_cost import FixedTapAdditionalCost,TAP_ADDITIONAL_COST_CAPABILITY,fixed_tap_additional_cost
 from .casting_additional_costs import (
-    AdditionalCostError, announced_cost_x, ANNOUNCED_X_EXILE_CAPABILITY, ANNOUNCED_X_LIFE_CAPABILITY,
+    AdditionalCostError, announced_cost_x, ANNOUNCED_X_EXILE_CAPABILITY, ANNOUNCED_X_LIFE_CAPABILITY,announced_zone_cost_capabilities,
     FixedZoneChangeAdditionalCost,
     fixed_zone_change_additional_cost,
 )
@@ -121,8 +121,8 @@ def announced_additional_cost_dependencies(cost_schema):
             AnnouncedXLifeAdditionalCost.from_descriptor(raw)
             required.update((ANNOUNCED_X_LIFE_CAPABILITY, 'casting.additional_cost.fixed_life_payment'))
         if raw.get('kind') == 'zone_change' and raw.get('schema_version') == 3:
-            FixedZoneChangeAdditionalCost.from_descriptor(raw)
-            required.update((ANNOUNCED_X_EXILE_CAPABILITY, 'casting.additional_cost.zone_change.fixed_exile'))
+            cost=FixedZoneChangeAdditionalCost.from_descriptor(raw)
+            required.update((*announced_zone_cost_capabilities(cost),fixed_zone_change_additional_cost_capability(cost)))
     return tuple(sorted(required))
 
 

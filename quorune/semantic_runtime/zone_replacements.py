@@ -79,6 +79,8 @@ from .entry_state import (
     FixedEntryConditionReplacementHandler,
 )
 from .external_entry_state import ExternalEntryStateHandler
+from .external_entry_counters import ExternalEntryCounterHandler
+from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_HANDLER
 from .zone_replacement_model import (
     PreparedZoneChange,
     SUPPORTED_ZONE_DESTINATIONS,
@@ -367,7 +369,8 @@ class ZoneChangeReplacementRegistry(
         source_ref: str,
         source_controller: str,
         component_id: str,
-    ) -> ReplacementEffect:
+        source_context: Any = None,
+    ) -> ReplacementEffect | None:
         handler = self._handler(descriptor)
         compiler = getattr(handler, "source_replacement_effect", None)
         if compiler is None:
@@ -380,6 +383,7 @@ class ZoneChangeReplacementRegistry(
             source_ref=source_ref,
             source_controller=source_controller,
             component_id=component_id,
+            **({'source_context':source_context} if source_context is not None else {}),
         )
 
     def subject_replacement_effect(
@@ -443,6 +447,7 @@ def default_zone_change_replacement_registry(
             ConditionalSelfEntryCounterHandler(),
             EntryStateReplacementHandler(),
             ExternalEntryStateHandler(),
+            ExternalEntryCounterHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
             ExcludedColorEntryDesignationHandler(),
@@ -586,14 +591,18 @@ def collect_zone_change_replacement_effects(
             for descriptor_index, descriptor in enumerate(program.handlers):
                 if descriptor.get('handler_id') == SELF_GRAVEYARD_EXILE_HANDLER:
                     continue
-                effects.append(
-                    registry.source_replacement_effect(
+                source_context=None
+                if descriptor.get('handler_id')==EXTERNAL_ENTRY_COUNTER_HANDLER:
+                    from ..rules.external_entry_counters import snapshot_external_entry_counter_source
+                    source_context=snapshot_external_entry_counter_source(host,source,descriptor)
+                effect=registry.source_replacement_effect(
                         descriptor,
                         source_ref=source.ref,
                         source_controller=source.controller,
                         component_id=f"{program.key}:{descriptor_index}",
+                        source_context=source_context,
                     )
-                )
+                if effect is not None:effects.append(effect)
     effects.extend(
         collect_counter_placement_replacement_effects(
             host,

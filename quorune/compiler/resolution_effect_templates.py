@@ -77,6 +77,8 @@ from .temporary_declaration_templates import (
 )
 from .temporary_target_interactions import temporary_target_interaction_effect_template
 from .source_keyword_choices import source_keyword_choice_template
+from .source_protection_choices import source_protection_choice_template
+from .source_fixed_protection import source_fixed_protection_template
 
 
 CompiledEffectTemplate = tuple[
@@ -93,7 +95,8 @@ def _attachment_or_owner_zone_move(
     source_is_permanent: bool | None,
     source_attachment_relation: AttachmentReferenceKind | None,
 ):
-    return fixed_source_attachment_effect_template(
+    from .attached_destruction import attached_destruction_template
+    return attached_destruction_template(text,source_attachment_relation=source_attachment_relation) or fixed_source_attachment_effect_template(
         text,
         source_attachment_relation=source_attachment_relation,
     ) or fixed_owner_zone_move_effect_template(
@@ -166,6 +169,12 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .temporary_player_rule_templates import temporary_player_rule_template
+    cast_restriction=temporary_player_rule_template(text)
+    if cast_restriction is not None:return cast_restriction
+    from .random_graveyard_returns import random_graveyard_return_template
+    random_return=random_graveyard_return_template(text)
+    if random_return is not None:return random_return
     from .manifest_templates import manifest_effect_template
     manifest = manifest_effect_template(text)
     if manifest is not None:
@@ -242,6 +251,14 @@ def typed_resolution_effect_template(
     fixed_counter_removal = fixed_counter_removal_effect_template(text)
     if fixed_counter_removal is not None:
         return fixed_counter_removal.compiled()
+    protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if protection_choice is not None:
+        return protection_choice
+    fixed_protection = source_fixed_protection_template(text, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types), source_name=card_name)
+    if fixed_protection is not None:
+        return fixed_protection
     source_choice = source_keyword_choice_template(text, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types), source_name=card_name)
     if source_choice is not None:

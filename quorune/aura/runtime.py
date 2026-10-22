@@ -88,6 +88,7 @@ def _protection_allows_attachment(
     verdict = protection_verdict(
         host._effective_card_data(target),
         ProtectionSource.from_characteristics(aura_data),
+        retaining_aura=aura.logical_object_id if aura.zone=='battlefield' and aura.attached_to==target.object_id else None,
     )
     return verdict is ProtectionVerdict.ALLOWED
 

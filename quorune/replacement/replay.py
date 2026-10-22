@@ -723,6 +723,10 @@ def _casting_zone_cost_event_is_valid(
         if response.get(field) is not None:
             raw_refs = response[field]
             break
+    if raw_refs is None:
+        from ..rules.random_discard_additional_cost import random_spell_cost_reference
+        ref=random_spell_cost_reference(response,origin=origin,destination=destination,object_ref=payload.get('object_ref'))
+        if ref is not None:raw_refs=(ref,)
     # Historical fixed-sacrifice continuations used cost_cards before the
     # typed zone-change cost vocabulary was introduced.
     if (

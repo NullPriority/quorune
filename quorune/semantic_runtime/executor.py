@@ -10,6 +10,12 @@ from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from .whole_hand_discard import execute_whole_hand_discard
 from ..random_discard import RandomDiscardIntent
 from .random_discard import execute_random_discard
+from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
+from .random_graveyard_returns import execute_random_graveyard_return
+from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
+from ..library_search_model import ProhibitLibrarySearchIntent
+from ..rules.library_search_rules import apply_library_search_prohibition
 from .stack_execution import STACK_INTENT_TYPES, execute_stack_intent
 
 from dataclasses import dataclass
@@ -597,8 +603,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | RandomDiscardIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, RandomDiscardIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -617,8 +623,14 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent,ProhibitLibrarySearchIntent):return intent.actor,apply_library_search_prohibition(sink,actor=intent.actor,source_id=intent.source_id)
     if isinstance(intent, RandomDiscardIntent):
         return intent.actor, execute_random_discard(sink, intent)
+    if isinstance(intent, RandomGraveyardReturnIntent):
+        return intent.actor, execute_random_graveyard_return(sink,intent)
+    if isinstance(intent, TemporaryCastRestrictionIntent):
+        return intent.actor,apply_temporary_cast_restriction(sink,actor=intent.actor,restriction=intent.restriction,
+            target_player=intent.target_player,source_id=intent.source_id)
     if isinstance(intent, DiscardWholeHandsIntent):
         return intent.actor, execute_whole_hand_discard(sink, intent)
     if isinstance(intent, BecomeMonarchIntent):

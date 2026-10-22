@@ -1,0 +1,910 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned actual-mana resolution originals and owned neighboring controls.",
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Adamant",
+        "Food"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Foreboding Fruit",
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "oracle_text": "Target player draws two cards and loses 2 life.\nAdamant — If at least three black mana was spent to cast this spell, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+      "name": "Mind Stone",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-09",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Adamant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Rally for the Throne",
+      "oracle_id": "0a557383-596b-4b8f-b81f-21706fef7b63",
+      "oracle_text": "Create two 1/1 white Human creature tokens.\nAdamant — If at least three white mana was spent to cast this spell, you gain 1 life for each creature you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Adamant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}",
+      "name": "Searing Barrage",
+      "oracle_id": "26c17025-1123-46d9-a8bd-edbad01c4b6e",
+      "oracle_text": "Searing Barrage deals 5 damage to target creature.\nAdamant — If at least three red mana was spent to cast this spell, Searing Barrage deals 3 damage to that creature's controller.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Adamant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Silverflame Ritual",
+      "oracle_id": "d511573b-35c7-4934-aa46-906e14101664",
+      "oracle_text": "Put a +1/+1 counter on each creature you control.\nAdamant — If at least three white mana was spent to cast this spell, creatures you control gain vigilance until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "name": "Slaying Fire",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Slaying Fire deals 3 damage to any target.\nAdamant — If at least three red mana was spent to cast this spell, it deals 4 damage instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Adamant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-10-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Sphere of Resistance",
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-06-16",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Adamant",
+        "Food"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Turn into a Pumpkin",
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "oracle_text": "Return target nonland permanent to its owner's hand. Draw a card.\nAdamant — If at least three blue mana was spent to cast this spell, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Adamant",
+        "Scry"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}",
+      "name": "Unexplained Vision",
+      "oracle_id": "9f693483-f4df-497a-a6c7-fc269fc60ea8",
+      "oracle_text": "Draw three cards.\nAdamant — If at least three blue mana was spent to cast this spell, scry 3.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana \"as though it were mana\" of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If at least three black mana was spent to cast Foreboding Fruit, you'll create a Food, even if you have another player draw two cards and lose 2 life."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Food tokens may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Food tokens."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "33a162f3-e781-494f-ab8f-12a84801a694",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
+    },
+    {
+      "oracle_id": "0a557383-596b-4b8f-b81f-21706fef7b63",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "0a557383-596b-4b8f-b81f-21706fef7b63",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "You create Humans and gain life all while Rally for the Throne is resolving. Nothing can happen between the two, and no player may choose to take actions."
+    },
+    {
+      "oracle_id": "0a557383-596b-4b8f-b81f-21706fef7b63",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana “as though it were mana” of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "0a557383-596b-4b8f-b81f-21706fef7b63",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "0a557383-596b-4b8f-b81f-21706fef7b63",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    },
+    {
+      "oracle_id": "26c17025-1123-46d9-a8bd-edbad01c4b6e",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Searing Barrage's adamant ability causes it to deal additional damage. It doesn't replace the damage dealt to the target creature."
+    },
+    {
+      "oracle_id": "26c17025-1123-46d9-a8bd-edbad01c4b6e",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the target creature is an illegal target by the time Searing Barrage tries to resolve, the spell won't resolve. No player will be dealt damage, even if you spent three red mana."
+    },
+    {
+      "oracle_id": "26c17025-1123-46d9-a8bd-edbad01c4b6e",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana “as though it were mana” of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "26c17025-1123-46d9-a8bd-edbad01c4b6e",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "26c17025-1123-46d9-a8bd-edbad01c4b6e",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    },
+    {
+      "oracle_id": "26c17025-1123-46d9-a8bd-edbad01c4b6e",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "d511573b-35c7-4934-aa46-906e14101664",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana “as though it were mana” of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "d511573b-35c7-4934-aa46-906e14101664",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "d511573b-35c7-4934-aa46-906e14101664",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "d511573b-35c7-4934-aa46-906e14101664",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana “as though it were mana” of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana \"as though it were mana\" of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the target nonland permanent is an illegal target by the time Turn into a Pumpkin tries to resolve, the spell won't resolve. You won't draw a card, and you won't create a Food if you spent three blue mana to cast the spell."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "cfda6f65-3755-40e5-8061-a21941c4b1bd",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Food tokens may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Food tokens."
+    },
+    {
+      "oracle_id": "9f693483-f4df-497a-a6c7-fc269fc60ea8",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If you copy a spell that has an adamant ability, no mana was spent to cast the copy at all, so that ability won't apply."
+    },
+    {
+      "oracle_id": "9f693483-f4df-497a-a6c7-fc269fc60ea8",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Adamant effects check what mana was actually spent to cast a spell. If an effect allows you to spend mana “as though it were mana” of any color or type, that allows you to spend mana you couldn't otherwise spend, but it doesn't change what mana you spent to cast the spell."
+    },
+    {
+      "oracle_id": "9f693483-f4df-497a-a6c7-fc269fc60ea8",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an instant or sorcery spell has an adamant ability, you perform the spell's instructions in order. You don't perform the adamant instruction before the spell resolves or before any other effects printed above it."
+    },
+    {
+      "oracle_id": "9f693483-f4df-497a-a6c7-fc269fc60ea8",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell without paying its mana cost, you can't choose to cast it and pay unless another rule or effect allows you to cast that spell for a cost. Similarly, you can't waive a cost reduction unless that effect says you may."
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 title: "CI pipeline and two-slot development"
 status: "current"
 authoritative_source: "GitHub workflows, platform/test-shards.json, and local gate scripts"
-verified: "2026-09-04"
+verified: "2026-10-20"
 audience: "contributors and maintainers"
 maintenance: "hand-maintained"
 ---
@@ -20,6 +20,20 @@ the elapsed critical path before changing the pipeline. Measure queue, setup,
 generation, and tests separately; overlapping jobs do not add to elapsed time,
 and workflow timestamps do not measure active development hours. Preserve the
 observation locally and compare the same workload after a change.
+
+Before freezing a consolidated batch, check its newly declared mutation witnesses
+and directly affected compiler grammar boundaries against the final owner set.
+A later owner can provide a complete alternate lowering when an earlier helper
+is removed. Mutation evidence must omit the actual semantic contribution while
+retaining an executable route, and independent native consequences must detect
+that omission. Preserve supported alternate admission and the nearest meaningful
+unsupported cases. Keep remaining broad regressions in public CI.
+
+Before correcting a failed attempt, inspect every failed job and the available
+output of started canceled jobs. Cancellation can leave real assertion failures
+in those logs. A missing log is not execution evidence: distinguish jobs with
+no runner and no steps from jobs whose output still needs inspection. Retain
+published attempts in elapsed-time observations.
 
 Refresh the manifest's launch order when observed shard durations change. Keep
 generated validation first and prioritize functional shards by the larger
@@ -571,6 +585,11 @@ the final commit. A successful write stores a worktree-local receipt in Git
 metadata. The pre-push hook verifies that receipt and blocks publication on
 either generated drift or architecture-policy failure without repeating the
 full corpus when the finalized inputs and outputs are identical.
+
+Both ordinary receipt-based pushes and source checkpoints run the same cheap
+pre-corpus sentinels against the branch's main base. A current generated receipt
+cannot bypass explicit UTF-8 text-I/O, compiler-identity or source-policy checks.
+Source checkpoints still require a clean tracked worktree before the sentinels.
 
 The worktree readiness command installs and verifies the tracked pre-push hook.
 The hook-only installer remains available when repairing an existing setup:
