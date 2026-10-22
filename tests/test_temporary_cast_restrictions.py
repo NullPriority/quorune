@@ -292,7 +292,7 @@ class TemporaryCastRestrictionTests(unittest.TestCase):
 
     def test_actual_silence_kills_producer_and_journal_commit_omissions(self):
         method='test_actual_silence_preserves_response_spell_then_blocks_opponents_and_expires'
-        for owner,omission in (('quorune.compiler.temporary_cast_restrictions.temporary_cast_restriction_template',lambda *a:None),
+        for owner,omission in (('quorune.compiler.temporary_player_rule_templates.temporary_cast_restriction_template',lambda *a:None),
                 ('quorune.rules.temporary_cast_restrictions.commit_continuous_effect',lambda *a:None)):
             with patch(owner,omission):
                 with self.assertRaises(AssertionError):getattr(type(self)(method),method)()

@@ -121,7 +121,7 @@ class AllCounterSelfCostTests(unittest.TestCase):
                     CastReductionMetric.from_dict({**metric.to_dict(), **change})
                 modified = json.loads(json.dumps(descriptor))
                 modified['reduction']['terms'][0]['metric'].update(change)
-                candidate = SimpleNamespace(handlers=(modified,), effects=(), target_schema=None,
+                candidate = SimpleNamespace(provenance={}, handlers=(modified,), effects=(), target_schema=None,
                     coverage=(), cost_schema=None, event_condition=None, event='cast.cost.modify', active_zone='all')
                 _, blockers = program_dynamic_runtime_requirements(candidate)
                 self.assertTrue(any('self_cost_public_counters:invalid' in b for b in blockers), blockers)

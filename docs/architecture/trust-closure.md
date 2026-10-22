@@ -134,6 +134,10 @@ throughout effects, handlers, target and cost data. Explicit instruction
 bindings additionally require declared-amount authority. These requirements
 come from decoding the stored value, including its schema and binding identity,
 and do not depend on its surrounding operation or declared capability list.
+Characteristic producer discovery distinguishes versioned public-state
+conditions from activation conditions that share a `kind` value. A city-blessing
+activation requires its activation owner independently; its distinct condition
+schema does not acquire a characteristic-only dependency.
 Validated public-quantity mana descriptors delegate their nested producer to
 the mana-production owner. Their codec forbids result declaration bindings and
 scalar arithmetic; a similar-looking result value cannot use that delegation.

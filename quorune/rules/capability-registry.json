@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 459,
+  "registry_version": 460,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1445,7 +1445,7 @@
     },
     {
       "id": "activation.condition.citys_blessing",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "109.5",
         "602.2",
@@ -1480,14 +1480,18 @@
       "implementation_components": [
         "quorune.activation_condition_model.activation_restriction_spec",
         "quorune.rules.activation.conditions.activation_condition_status",
-        "quorune.compiler.activated_costs.activated_ability_cost_capabilities"
+        "quorune.compiler.activated_costs.activated_ability_cost_capabilities",
+        "quorune.rules.city_blessing_shapes.city_activation_runtime_dependencies"
       ],
       "positive_tests": [
-        "test_original_city_activation_guards_are_exact_and_round_trip"
+        "test_original_city_activation_guards_are_exact_and_round_trip",
+        "test_original_activation_guards_bind_without_a_spurious_characteristic_minimum"
       ],
       "negative_tests": [
         "test_city_activation_guard_has_no_parameters_and_uses_activator_not_owner",
-        "test_withdrawn_city_activation_capability_prevents_guarded_ability_promotion"
+        "test_withdrawn_city_activation_capability_prevents_guarded_ability_promotion",
+        "test_original_activation_guards_bind_without_a_spurious_characteristic_minimum",
+        "test_activation_and_characteristic_conditions_keep_distinct_dependency_schemas"
       ],
       "interaction_tests": [
         "test_actual_arch_guard_rejects_before_blessing_and_drawing_uses_private_replay",
@@ -1514,7 +1518,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The exact recognized condition derives its independent designation dependency. Missing or withdrawn activation ownership prevents promotion; parameters and foreign player facts cannot satisfy the condition.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting activation-only city restriction parsing leaves both complete original Arch and Relic compiler witnesses residual. Native Arch must reject before acquisition without spending costs and Relic must preserve its already-owned designation after sacrifice.",
+      "implementation_mutation_rationale": "Omitting activation-only city restriction parsing leaves both complete original Arch and Relic compiler witnesses residual. Native Arch must reject before acquisition without spending costs and Relic must preserve its already-owned designation after sacrifice. A fresh normal original binding also kills omission of the independent runtime activation minimum; shared kind strings cannot manufacture a characteristic-only requirement.",
       "blockers": [],
       "status": "trusted"
     },
@@ -1570,7 +1574,8 @@
       ],
       "positive_tests": [
         "test_original_simple_ascend_condition_cards_and_spell_keyword_are_exact",
-        "test_designation_is_not_a_counter_and_old_absent_state_remains_unchanged"
+        "test_designation_is_not_a_counter_and_old_absent_state_remains_unchanged",
+        "test_activation_and_characteristic_conditions_keep_distinct_dependency_schemas"
       ],
       "negative_tests": [
         "test_unknown_ascend_parameters_and_unestablished_status_stay_residual",

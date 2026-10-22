@@ -945,7 +945,7 @@ class QualifiedDeclarationCompilerTests(unittest.TestCase):
         text = "{T}: Target creature with power 2 or less can't be blocked this turn."
         self.assertEqual("exact", self.compile(text).status)
         for body in ("Target creature with power X or less can't be blocked this turn.",
-                     "Target creature can't block this creature this turn.",
+                     "Target creature can't block this creature until your next turn.",
                      "Target creature can't be blocked until your next turn."):
             with self.subTest(body=body):
                 self.assertNotEqual("exact", self.compile("{1}: " + body).status)

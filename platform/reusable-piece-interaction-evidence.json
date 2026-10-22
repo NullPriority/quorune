@@ -10399,7 +10399,7 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "test_original_typed_aura_return_with_unsupported_tap_sibling_rejects_runtime_admission",
+      "test_id": "test_original_typed_aura_return_closes_tap_sibling_and_unsupported_mana_events_reject",
       "piece_ids": [
         "capability.zone.return.fixed_event_card",
         "residual.event_binding.normalized-event-binding"
@@ -10408,7 +10408,7 @@
         "zone.return.fixed_event_card"
       ],
       "interaction_order": 2,
-      "assertion": "Original pinned Spreading Algae retains its typed enchantment and exact event return beside an unsupported tap-destruction sibling; actual whole CardProgram runtime binding rejects the composition without granting gameplay trust."
+      "assertion": "Original Spreading Algae has complete tap-destruction and event-card-return admission. A constructed Swamp Aura with an unrepresented tap-for-black-mana event retains its exact return sibling and normalized-event-binding residual, and remains blocked at whole-program admission."
     },
     {
       "evidence_class": "interaction",

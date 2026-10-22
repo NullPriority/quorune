@@ -23,6 +23,50 @@ import test_self_public_zone_casting as zone_actions
 
 
 class AscendCompilerTests(unittest.TestCase):
+    def test_activation_and_characteristic_conditions_keep_distinct_dependency_schemas(self):
+        from quorune.activation_condition_model import ActivationCondition, ActivationConditionKind
+        from quorune.characteristic_fragments import characteristic_quantity_capabilities
+        from quorune.continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+        activation = ActivationCondition(ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING).to_dict()
+        characteristic = FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.CONTROLLER_HAS_CITYS_BLESSING).to_dict()
+        self.assertEqual(activation['kind'], characteristic['kind'])
+        self.assertEqual((), characteristic_quantity_capabilities(activation))
+        self.assertEqual(('player.designation.citys_blessing',),
+            characteristic_quantity_capabilities(characteristic))
+        self.assertEqual(('player.designation.citys_blessing',),
+            characteristic_quantity_capabilities({'conditions': [activation, characteristic]}))
+
+    def test_original_activation_guards_bind_without_a_spurious_characteristic_minimum(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.semantics import SemanticRegistry
+        cap = 'activation.condition.citys_blessing'
+        registry = load_default_capability_registry()
+        with _fixture_database() as db:
+            for name in ('Arch of Orazca', 'Orazca Relic'):
+                card = db.lookup(name, fuzzy=False)
+                program = compile_best_available_card_program(db, card, semantic_registry=SemanticRegistry(),
+                    capability_registry=registry, capability_profile='commander_review')
+                binding = bind_card_program_runtime(program, capability_registry=registry, profile='commander_review')
+                self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+                guarded = [p for p in program.abilities if cap in p.capability_dependencies]
+                self.assertTrue(guarded)
+                for ability in guarded:
+                    dependencies = tuple(c for c in ability.capability_dependencies if c != cap)
+                    missing = replace(ability, capability_dependencies=dependencies,
+                        capability_closure=registry.closure(dependencies, profile='commander_review').to_dict())
+                    rejected = bind_semantic_program_runtime(missing, capability_registry=registry, profile='commander_review')
+                    self.assertFalse(rejected['strict'])
+                    self.assertIn('capability:undeclared_runtime_dependency:' + cap, rejected['blockers'])
+
+    def test_city_activation_minimum_omission_is_killed_by_fresh_original_binding(self):
+        method = 'test_original_activation_guards_bind_without_a_spurious_characteristic_minimum'
+        with patch('quorune.card_programs.runtime_requirements.city_activation_runtime_dependencies', return_value=()):
+            with self.assertRaises(AssertionError):
+                getattr(type(self)(method), method)()
+
     def test_city_activation_guard_has_no_parameters_and_uses_activator_not_owner(self):
         from quorune.compiler.activated_ability_catalog import compile_activated_ability_catalog
         from quorune.rules.activation.conditions import activation_condition_status

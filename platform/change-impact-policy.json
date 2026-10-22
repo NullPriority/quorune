@@ -7600,6 +7600,23 @@
         "test_fixed_nonmana_equip",
         "test_all_colors"
       ]
+    },
+    {
+      "id": "city-activation-condition-dependency-contract",
+      "patterns": [
+        "quorune/activation_condition_model.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/rules/city_blessing_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/activated_costs.py",
+        "tests/test_ascend_city_blessing.py",
+        "tests/fixtures/ascend-city-blessing-cards.json"
+      ],
+      "test_modules": [
+        "test_ascend_city_blessing",
+        "test_live_modifier_quantities",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

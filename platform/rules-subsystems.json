@@ -7206,7 +7206,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v534-batched-reusable-card-closure",
-      "compiler_version": "oracle-ir-v534",
+      "compiler_version": "oracle-ir-v535",
       "bundle_id": "bundle:batched-reusable-card-closure-v534",
       "candidate_ids": [
         "compiler:batched-reusable-card-closure-v534"

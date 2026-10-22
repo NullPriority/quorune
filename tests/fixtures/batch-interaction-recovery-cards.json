@@ -2186,6 +2186,20 @@
         "residual.replacement.replacement-applicability",
         "residual.replacement.self-replacement-and-prevention-ordering"
       ]
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "name": "Slaying Fire",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "residual_witness_id": "variable-life-entry-damage-boundary",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
     }
   ],
   "admission_boundaries": [
@@ -2217,15 +2231,6 @@
     {
       "oracle_id": "1a840210-204d-41cd-afc0-46abf7ea5f87",
       "name": "Apocalypse Hydra",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
-      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
-      "name": "Slaying Fire",
       "piece_ids": [
         "capability.damage.source.stack_current_or_lki",
         "residual.replacement.replacement-applicability",

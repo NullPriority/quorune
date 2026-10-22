@@ -15,3 +15,16 @@ def ascend_spell_node_capabilities(*,effects,target_schema,mechanic_ids,**_unuse
 def ascend_program_is_closed(program):
     required=ascend_spell_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
     return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
+def city_activation_runtime_dependencies(program):
+    from ..activation_condition_model import ActivationConditionKind
+    from ..semantic_runtime.activated_abilities import (
+        activated_abilities_from_descriptors, is_structural_activated_ability_catalog_program,
+    )
+    if program.event != 'activate' or is_structural_activated_ability_catalog_program(program):
+        return ()
+    abilities = activated_abilities_from_descriptors(program.handlers)
+    return ('activation.condition.citys_blessing',) if any(
+        condition.kind is ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING
+        for ability in abilities for condition in ability.activation_conditions) else ()

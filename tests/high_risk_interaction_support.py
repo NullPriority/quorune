@@ -199,6 +199,7 @@ _WITNESSES = {
         "As this Aura enters, choose two colors.\n"
         "Enchanted creature has protection from the chosen color. This "
         "effect doesn't remove this Aura.\n"
+        "Enchanted creature has all activated abilities of creature cards in your graveyard.\n"
         "{1}: Attach this Aura to target creature.\n"
         "Sacrifice this Aura: Target creature gains protection from the "
         "chosen color until end of turn.",
@@ -231,6 +232,7 @@ _WITNESSES = {
         "As this Aura enters, choose two colors.\n"
         "Enchanted creature has protection from the chosen color. This "
         "effect doesn't remove this Aura.\n"
+        "Enchanted creature has all activated abilities of creature cards in your graveyard.\n"
         "Sacrifice this Aura: Target creature gains protection from the "
         "chosen color until end of turn.",
         "{2}{W}",

@@ -1173,7 +1173,7 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 "X is the number of creatures you control with power 4 or greater."
             ),
             "{1}: This creature gets +1/+1.",
-            "{1}: This creature gains protection from red until end of turn.",
+            "{1}: This creature gains protection from red until your next turn.",
         ):
             with self.subTest(text=text):
                 ir = compile_oracle_card(

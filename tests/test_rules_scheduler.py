@@ -3524,12 +3524,13 @@ class RulesSchedulerTests(unittest.TestCase):
             "Domain — This spell costs {1} less to cast for each basic land type among lands you control.",
             "This spell costs {G} less to cast for each green creature you control.",
             "This spell costs {X} less to cast, where X is the total power of creatures you control.",
+            "This spell costs {1} less to cast for each card you've drawn this turn.",
         ):
             with self.subTest(source=source):
                 self.assertTrue(_matches_probe(probe_id, source))
         for source in (
             "This spell costs {2} less to cast if it targets a tapped creature.",
-            "This spell costs {1} less to cast for each card you've drawn this turn.",
+            "This spell costs {1} less to cast for each card you've scried this turn.",
             "This spell costs {X} less to cast, where X is the total power of creature cards in your graveyard.",
             "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
             "The first spell you cast each turn costs {1} less to cast.",

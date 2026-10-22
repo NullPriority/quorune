@@ -594,7 +594,7 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
             "This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control last turn.",
             "This creature enters with X +1/+1 counters on it, where X is the amount of life opponents have lost this turn.",
             "This creature enters with your choice of a flying counter, a reach counter, or a vigilance counter on it.",
-            "Each other creature you control enters with an additional +1/+1 counter on it.",
+            "Each other creature you control enters with an additional shield counter on it.",
             "This creature enters with a +1/+1 counter and a shield counter on it.",
         )
         for text in unsupported:

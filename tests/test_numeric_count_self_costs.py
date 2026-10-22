@@ -170,7 +170,7 @@ class NumericCountSelfCostTests(unittest.TestCase):
             elif change in {'power_or_toughness','total_power_and_toughness'}:
                 row['query']['numeric_characteristic']['characteristic'] = change
             else: row['query']['numeric_characteristic']['future'] = True
-            candidate = SimpleNamespace(handlers=(modified,), effects=(), target_schema=None,
+            candidate = SimpleNamespace(provenance={}, handlers=(modified,), effects=(), target_schema=None,
                 coverage=(), cost_schema=None, event_condition=None, event='cast.cost.modify', active_zone='all')
             _, blockers = program_dynamic_runtime_requirements(candidate)
             self.assertTrue(any('runtime_self_cost_numeric_count:invalid' in b for b in blockers), (change, blockers))

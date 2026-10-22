@@ -765,7 +765,9 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
             if value['scope']=='attached_object':own=(*own,'quantity_expression.attached_object_value')
         if value.get('kind')=='live_battlefield_quantity':own=(*own,'quantity_expression.live_battlefield_count')
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
-        if value.get('kind')=='controller_has_citys_blessing':own=(*own,'player.designation.citys_blessing')
+        if (value.get('kind')=='controller_has_citys_blessing'
+                and {'schema_version','amount','counter_name'}<=set(value)):
+            own=(*own,'player.designation.citys_blessing')
         if value.get('kind')=='controller_max_speed':own=(*own,'variant.speed.player')
         if value.get('origin')=='public_characteristic_aggregate' or (value.get('kind')=='public_characteristic_aggregate' and 'aggregate' in value):own=(*own,'quantity_expression.public_characteristic_aggregate')
         return tuple(sorted({*own, *(cap for child in value.values() for cap in characteristic_quantity_capabilities(child))}))

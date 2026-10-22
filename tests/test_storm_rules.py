@@ -200,6 +200,7 @@ class StormCompilerTests(unittest.TestCase):
                 "Brain Freeze",
                 "Chatterstorm",
                 "Dragonstorm",
+                "Elemental Eruption",
                 "Empty the Warrens",
                 "Flusterstorm",
                 "Grapeshot",

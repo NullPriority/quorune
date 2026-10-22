@@ -313,11 +313,12 @@ class AnnouncedTargetCardinalityRuntimeTests(unittest.TestCase):
     def test_wrong_announced_binding_is_killed_by_a_fresh_original_gridlock(self):
         from quorune.rules.casting import target_cardinality
         original=target_cardinality.bind_target_count_option
-        def choose_one(program,option,response,*,has_mana_x):
-            return original(program,option,{**response,'x':1},has_mana_x=has_mana_x)
+        def choose_one(program,option,response,*,has_mana_x,has_declared_cost_x=False):
+            return original(program,option,{**response,'x':1},has_mana_x=has_mana_x,
+                has_declared_cost_x=has_declared_cost_x)
         with patch.object(target_cardinality,'bind_target_count_option',side_effect=choose_one):
             method='test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets'
-            with self.assertRaises((AssertionError,StopIteration)):
+            with self.assertRaises(AssertionError):
                 getattr(type(self)(method),method)()
 
     def test_restored_fixed_six_handler_bound_is_killed_by_a_fresh_original_by_force(self):

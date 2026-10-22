@@ -14,7 +14,7 @@ from quorune.ability_fragments import (
     ability_fragment_to_dict,
 )
 from quorune.abilities import ActivationLimit, parse_activated_abilities
-from quorune.attachments import attach_objects
+from quorune.attachments import AttachmentTransition, attach_objects
 from quorune.carddb import CardRecord
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckLoader
@@ -1644,9 +1644,13 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             self.assertEqual(target.object_id, source.attached_to)
 
         assert_runtime_attaches(7013017)
+        def omit_attachment(cards, source, target, *, source_timestamp, players):
+            return AttachmentTransition(source.object_id, source.attached_to,
+                source.attached_to, False, source_timestamp)
+
         with mock.patch(
             "quorune.effect_runtime.zones_and_attachments.attach_objects",
-            return_value=None,
+            side_effect=omit_attachment,
         ):
             with self.assertRaises(AssertionError):
                 assert_runtime_attaches(7013018)

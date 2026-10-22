@@ -951,9 +951,8 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
             )
 
         assert_draw_ability_is_capability_closed()
-        with patch.object(
-            capabilities_module,
-            "fixed_draw_node_capabilities",
+        with patch(
+            "quorune.rules.effect_node_capabilities.fixed_draw_node_capabilities",
             return_value=(),
         ):
             with self.assertRaises(AssertionError):
