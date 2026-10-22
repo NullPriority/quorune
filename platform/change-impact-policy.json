@@ -7586,6 +7586,20 @@
         "test_oracle_ir",
         "test_card_program_v2"
       ]
+    },
+    {
+      "id": "delivery-interaction-boundaries",
+      "patterns": [
+        "tests/test_delivery_interaction_boundaries.py",
+        "tests/fixtures/delivery-interaction-boundary-cards.json"
+      ],
+      "test_modules": [
+        "test_delivery_interaction_boundaries",
+        "test_card_program_trust",
+        "test_reconfigure",
+        "test_fixed_nonmana_equip",
+        "test_all_colors"
+      ]
     }
   ],
   "symbol_rules": [

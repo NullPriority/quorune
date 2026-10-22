@@ -19302,6 +19302,91 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Spreading Seas changes the counted land to an Island and draws; the quantity updates through layer five while the independent Vigilance grant remains."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_natures_embrace_land_and_animated_land_keep_two_mana_grant",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.ability.fixed_public_state_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.ability.fixed_public_state_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Nature's Embrace targets a land and a land creature through ordinary Aura casting. Its granted tap ability pays UU for a real Counterspell in both cases; the animated land also receives+2/+2. Ordinary targeting, payment, foreign rollback and pending replay remain authoritative."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_partial_pact_weapon_cannot_admit_or_activate_its_nonmana_equip",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_nonmana",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned Pact Weapon retains unowned continuous no-loss and companion semantics. Normal registration has a material residual and no strict whole-card admission; complete-source Equip cannot appear or consume a private discard resource. The forged activation rejects without mutation and the pending state replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_partial_reconfigure_companions_cannot_admit_or_attach",
+      "piece_ids": [
+        "capability.attachment.reconfigure.fixed_mana",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies"
+      ],
+      "capability_ids": [
+        "attachment.reconfigure.fixed_mana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned Reality Chip and Cloudsteel Kirin retain unowned continuous companion clauses. Their exact Reconfigure recognition does not provide trusted whole-card admission or activation catalogs. Both sources withhold attachment actions and reject before mutation under trusted-only play."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement",
+      "piece_ids": [
+        "capability.continuous.characteristics.all_colors_definition",
+        "residual.card_form.ordinary-saga-chapter-event-binding"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.all_colors_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "The Kami War's exact back-face all-colors definition cannot admit the full unowned Saga and transformed-return source. Original pinned siblings remain material and the whole-card binding remains non-strict, including the represented back-face fixture."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement",
+      "piece_ids": [
+        "capability.continuous.characteristics.all_colors_definition",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.all_colors_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normal full-source binding keeps the Kami War's replacement/applicability residual beside its exact all-colors leaf; no whole-card runtime support or unavailable cast is manufactured. Rejection preserves authoritative state and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_all_colors_fragment_does_not_admit_unowned_saga_and_replacement",
+      "piece_ids": [
+        "capability.continuous.characteristics.all_colors_definition",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.all_colors_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "The pinned Kami War source retains unresolved replacement ordering and Saga semantics. An exact characteristic fragment never clears those siblings or provides strict gameplay admission; unavailable commands reject before mutation and the saved state replays."
     }
   ]
 }

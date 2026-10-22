@@ -16458,11 +16458,11 @@
       "applicable_high_risk_pairs": 497,
       "applicable_piece_pairs": 135821,
       "available": true,
-      "covered_high_risk_pairs": 491,
-      "covered_piece_pairs": 1722,
+      "covered_high_risk_pairs": 497,
+      "covered_piece_pairs": 1728,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "d929811edc7f94813d3c440d976ca55d5a4a6bde70e1c48b4732b4ab9df9a775",
-      "uncovered_high_risk_pairs": 6
+      "source_fingerprint": "103f7565affa2925c2b1f30acb3eeeb2e90ea2434539f3ce6bf1125bec4e5e98",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -41089,7 +41089,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 491,
+        "primary_test_count": 492,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_word_event_triggers",
@@ -43228,7 +43228,7 @@
             "visibility": "private"
           }
         ],
-        "primary_test_count": 426,
+        "primary_test_count": 427,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_word_event_triggers",
@@ -43658,7 +43658,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 447,
+        "primary_test_count": 448,
         "primary_tests": [
           "test_ability_kind_cost_modifiers",
           "test_ability_word_event_triggers",
@@ -47240,7 +47240,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "a1b4fe55b288d9fe1f20909993a0a2a766fa155f826c9132b3da1a3f60ebc4f9",
+      "fingerprint": "ae9e720401ab2cd0ade82703c1458d25736c83b5a37f7b0ea465501a9e1e324e",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -48098,8 +48098,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 8403,
-      "discovered_total": 11712,
+      "conventional_ast_cases": 8408,
+      "discovered_total": 11717,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 305,
@@ -48109,7 +48109,7 @@
         "server_named": 58
       },
       "reconciles": true,
-      "test_files": 605
+      "test_files": 606
     }
   }
 }
