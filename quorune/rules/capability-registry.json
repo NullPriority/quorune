@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 477,
+  "registry_version": 478,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -19344,7 +19344,7 @@
     },
     {
       "id": "resolution.effect_program.closed_components",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "608.2b",
         "608.2c",
@@ -19395,63 +19395,91 @@
         "quorune.rules.closed_effect_program_shapes.closed_effect_program_runtime_dependencies"
       ],
       "positive_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
         "test_closed_program_compiles_across_contexts_and_component_shapes",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
         "test_independent_multisentence_selection_keeps_complete_component_and_printed_order",
         "test_independent_query_results_share_ordered_program_owner",
         "test_measured_corpus_lower_bound_is_capability_closed",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_ordered_modal_scope_uses_the_branch_and_requires_every_sibling_owner",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
-        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
+        "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
+        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
       ],
       "negative_tests": [
+        "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
+        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
         "test_conditional_linked_and_ambiguous_sequences_remain_residual",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
         "test_multisentence_component_omission_and_dependency_withdrawal_fail_closed",
-        "test_parser_shape_and_compiler_fail_closed",
-        "test_stale_target_fizzles_every_three_component_effect",
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
         "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
-        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
-        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
+        "test_ordered_modal_scope_uses_the_branch_and_requires_every_sibling_owner",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
+        "test_parser_shape_and_compiler_fail_closed",
+        "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
+        "test_stale_target_fizzles_every_three_component_effect",
+        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
       ],
       "interaction_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_mind_unbound_counter_is_counted_by_later_draw",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
         "test_actual_union_counts_hand_after_its_draw_and_replays",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
         "test_original_augury_resumes_into_current_proliferate_choice_once",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
         "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_target_characteristics_commit_before_private_scry",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_target_characteristics_commit_before_private_scry"
       ],
       "multiplayer_tests": [
-        "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
-        "test_original_augury_resumes_into_current_proliferate_choice_once",
-        "test_private_scry_suspends_draw_and_life_then_replays",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_original_augury_resumes_into_current_proliferate_choice_once",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
+        "test_private_scry_suspends_draw_and_life_then_replays"
       ],
       "privacy_tests": [
-        "test_actual_union_counts_hand_after_its_draw_and_replays",
-        "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
-        "test_private_scry_suspends_draw_and_life_then_replays",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_actual_union_counts_hand_after_its_draw_and_replays",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
+        "test_private_scry_suspends_draw_and_life_then_replays"
       ],
       "replay_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
         "test_original_augury_resumes_into_current_proliferate_choice_once",
         "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
         "test_pending_counter_replacement_resumes_once_before_later_quantity",
-        "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_private_scry_suspends_draw_and_life_then_replays"
       ],
       "required_evidence": [
         "positive",
@@ -24574,24 +24602,126 @@
     },
     {
       "id": "choice.modal.fixed_nonrepeating",
-      "version": 1,
-      "official_rules": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "601.2b",
+        "601.2c",
+        "602.2b",
+        "603.3d",
+        "700.2",
+        "700.2a",
+        "700.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile one bounded ordered selection of distinct modes across complete spells, normalized triggered abilities, and supported activated abilities, then resolve only the selected branches through their existing typed owners.",
-        "inputs": ["one complete source-spanned modal block", "an exact Choose one, Choose one or both, Choose one or more, or Choose two header", "two through five ordered bullet modes", "a bounded selection of distinct stable mode IDs in printed order", "independently capability-closed effects and targets for every mode", "an exact whole-spell, normalized-trigger, or supported activated-ability wrapper"],
-        "outputs": ["one authoritative modal semantic program", "mode-specific public target projection with globally unique group IDs", "announcement-time mode and target commitment", "printed-order resolution of only selected modes", "exact child and wrapper capability closure"],
-        "exclusions": ["repeatable or random modes", "conditional or state-derived selection counts", "Entwine, Escalate, Spree, and other selection-linked additional costs", "hasn't-been-chosen state tracking", "cross-mode target-difference constraints", "unsupported trigger events or activation costs", "nonbullet, nested, linked, optional, or otherwise unsupported mode grammar", "any branch lacking an existing trusted compiler and runtime owner"]
+        "inputs": [
+          "one complete source-spanned modal block",
+          "an exact Choose one, Choose one or both, Choose one or more, or Choose two header",
+          "two through five ordered bullet modes",
+          "a bounded selection of distinct stable mode IDs in printed order",
+          "independently capability-closed effects and targets for every mode",
+          "an exact whole-spell, normalized-trigger, or supported activated-ability wrapper"
+        ],
+        "outputs": [
+          "one authoritative modal semantic program",
+          "mode-specific public target projection with globally unique group IDs",
+          "announcement-time mode and target commitment",
+          "printed-order resolution of only selected modes",
+          "exact child and wrapper capability closure"
+        ],
+        "exclusions": [
+          "repeatable or random modes",
+          "conditional or state-derived selection counts",
+          "Entwine, Escalate, Spree, and other selection-linked additional costs",
+          "hasn't-been-chosen state tracking",
+          "cross-mode target-difference constraints",
+          "unsupported trigger events or activation costs",
+          "nonbullet, nested, linked, optional, or otherwise unsupported mode grammar",
+          "any branch lacking an existing trusted compiler and runtime owner"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.modal_templates.FixedNonrepeatingModalTemplate", "quorune.compiler.modal_templates.fixed_nonrepeating_modal_template", "quorune.compiler.modal_context_nodes.fixed_nonrepeating_modal_context_blocks", "quorune.compiler.modal_program_closure.is_closed_fixed_modal_program", "quorune.rules.modal_capability_shapes.fixed_nonrepeating_modal_branches", "quorune.rules.capabilities.capability_dependencies_for_node", "quorune.targets.available_modes", "quorune.targets.target_plan", "quorune.targets.mode_effects", "quorune.selection.targeting.TargetSelectionOwnerMixin._public_target_schema", "CommanderEngine._cast", "CommanderEngine._activate", "CommanderEngine._continue_resolution"],
-      "positive_tests": ["test_fixed_modal_programs_compile_across_shared_contexts"],
-      "negative_tests": ["test_modal_selection_grammar_and_shape_fail_closed", "test_modal_dependency_and_compiler_mutations_fail_closed"],
-      "interaction_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays", "test_modal_activation_pays_cost_resolves_selected_mode_and_replays", "test_modal_entry_trigger_selects_target_resolves_and_replays"],
-      "multiplayer_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays"],
-      "privacy_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays"],
-      "replay_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays", "test_modal_activation_pays_cost_resolves_selected_mode_and_replays", "test_modal_entry_trigger_selects_target_resolves_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "CommanderEngine._activate",
+        "CommanderEngine._cast",
+        "CommanderEngine._continue_resolution",
+        "quorune.card_programs.modal_catalog_equivalence.shadowed_reviewed_modal_catalog_keys",
+        "quorune.compiler.modal_context_nodes.fixed_nonrepeating_modal_context_blocks",
+        "quorune.compiler.modal_program_closure.is_closed_fixed_modal_program",
+        "quorune.compiler.modal_templates.FixedNonrepeatingModalTemplate",
+        "quorune.compiler.modal_templates.fixed_nonrepeating_modal_template",
+        "quorune.rules.capabilities.capability_dependencies_for_node",
+        "quorune.rules.modal_capability_shapes.fixed_nonrepeating_modal_branches",
+        "quorune.rules.modal_node_capabilities.modal_schema_runtime_dependencies",
+        "quorune.selection.targeting.TargetSelectionOwnerMixin._public_target_schema",
+        "quorune.targets.available_modes",
+        "quorune.targets.mode_effects",
+        "quorune.targets.target_plan"
+      ],
+      "positive_tests": [
+        "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
+        "test_fixed_modal_programs_compile_across_shared_contexts",
+        "test_ordered_modal_scope_uses_the_branch_and_requires_every_sibling_owner",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
+        "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
+        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
+      ],
+      "negative_tests": [
+        "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
+        "test_modal_dependency_and_compiler_mutations_fail_closed",
+        "test_modal_selection_grammar_and_shape_fail_closed",
+        "test_ordered_modal_scope_uses_the_branch_and_requires_every_sibling_owner",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
+        "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
+        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
+      ],
+      "interaction_tests": [
+        "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_modal_activation_pays_cost_resolves_selected_mode_and_replays",
+        "test_modal_entry_trigger_selects_target_resolves_and_replays",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land"
+      ],
+      "multiplayer_tests": [
+        "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land"
+      ],
+      "privacy_tests": [
+        "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land"
+      ],
+      "replay_tests": [
+        "test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+        "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
+        "test_modal_activation_pays_cost_resolves_selected_mode_and_replays",
+        "test_modal_entry_trigger_selects_target_resolves_and_replays",
+        "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
+        "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The modal shape reconstructs every branch and its exact target group, validates fixed selection bounds and wrapper mechanics, and requires the complete child and wrapper capability union; malformed bounds, duplicate or renamed groups, missing child ownership, or a blocked modal capability rejects exact trust.",
       "implementation_mutation_status": "killed",

@@ -887,6 +887,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/card_programs/modal_catalog_equivalence.py",
+      "layer": "semantics",
+      "owning_subsystem": "card_programs",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/card_programs/model.py",
       "layer": "semantics",
       "owning_subsystem": "card_programs",
@@ -19120,5 +19135,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "2b0126995f9ce1dea2631c4dcd6a97bbe369f73d7294d4da9fb5dd325130cf6b"
+  "fingerprint": "27cc469b734361c66aebfc2ec2634e5ebfc163b912b33b2a6ca54884f20f38b7"
 }

@@ -1701,6 +1701,13 @@ cross-mode-target, unsupported-wrapper, and untyped-branch forms remain
 source-spanned residuals. See ADR 0071 for the preserved strict compatibility
 shape and ADR 0082 for the expanded owner.
 
+Runtime ownership follows each modal branch's own instruction scope. An ordered
+draw-and-entry branch validates its two-to-eight effects independently of the
+outer modal ability, whose effect list may be empty. The typed mode schema also
+derives the modal capability and every sibling's dependency without relying on
+the producer's annotations. Unknown sibling operations and malformed mode
+cardinality reject complete admission before an action is offered.
+
 `compiler/cumulative_upkeep_nodes.py` owns the closed printed
 cumulative-upkeep grammar. It lowers one fixed positive ordinary-mana cost or
 one em-dash-delimited fixed positive life cost to a source-spanned upkeep

@@ -637,8 +637,8 @@ class InteractionKernelTests(unittest.TestCase):
         )
         self.assertEqual(
             {
-                "destroy_artifact",
-                "proliferate",
+                "mode_1",
+                "mode_3",
             },
             set(action["target_schema"]["legal_modes"]),
         )
@@ -647,7 +647,7 @@ class InteractionKernelTests(unittest.TestCase):
             {
                 "source": canker.ref,
                 "ability": "ab1",
-                "modes": ["proliferate"],
+                "modes": ["mode_3"],
                 "targets": [],
             },
         )

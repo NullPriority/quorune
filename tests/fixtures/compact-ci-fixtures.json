@@ -195,6 +195,7 @@
     "tests/fixtures/mana-color-result-cards.json",
     "tests/fixtures/manifest-cards.json",
     "tests/fixtures/mayhem-cards.json",
+    "tests/fixtures/modal-activation-admission-cards.json",
     "tests/fixtures/modal-token-program-cards.json",
     "tests/fixtures/multikicker-entry-counter-cards.json",
     "tests/fixtures/multikicker-result-cards.json",

@@ -37,6 +37,16 @@ source data, unknown dependencies, material residuals, or fingerprint drift
 fail closed. Historical semantic-pack records remain compatibility inputs, not
 a second current runtime authority.
 
+Current typed modal activations can supersede catalog-only reviewed views only
+through `modal_catalog_equivalence.py`. It requires matching source hashes,
+ability identity and runtime role, exact catalog cost fields, one-mode
+cardinality, and equivalent target/result bodies in source order. Historical
+mode identifiers and serialized reviewed payloads stay intact; only current
+assembly precedence changes. Typed modal schemas independently require every
+branch owner, and an ordered branch retains its own instruction-list scope.
+The comparison copies payloads before normalization and never mutates either
+snapshot.
+
 Compiler-declared complete-source boundaries can also belong to ordinary
 effect programs. Their provenance explicitly requires the generated whole-card
 admission certificate. Source validation rejects missing, malformed or partial
