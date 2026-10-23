@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 488,
+  "registry_version": 489,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -47771,6 +47771,144 @@
       "dependency_fail_closed_rationale": "Closed new payload and fine-grained runtime minimum bind exact amount/color domain, parent payer and source; canonical withdrawal rejects independently of evidence freshness.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh native Manamorphose full effect and spend witness kills omitted produced mana despite a following draw.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "token.creation.post_creation_counter",
+      "version": 1,
+      "official_rules": [
+        "111.3",
+        "122.1",
+        "608.2c",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Create one ordinary token instruction, then apply separately instructed counters to every actual created result through existing canonical owners.",
+        "inputs": [
+          "complete fixed token definition",
+          "actual immutable created references",
+          "closed fixed or owned typed counter amount read after creation",
+          "locked parent/controller/source"
+        ],
+        "outputs": [
+          "separate entry and counter events",
+          "all replaced/additional creation results receive the following instruction",
+          "principal-correct pending replacement save/load and replay"
+        ],
+        "exclusions": [
+          "invented targets or selected recipients",
+          "entry-counter substitution",
+          "unrepresented attachment or linked results",
+          "independent unsupported source material"
+        ]
+      },
+      "dependencies": [
+        "token.creation.fixed_definition",
+        "counter.producer.fixed_effect",
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.created_token_counter_model.validate_created_token_counter",
+        "quorune.compiler.created_token_counters.created_token_counter_effect_template",
+        "quorune.semantic_choices.created_token_counters.CreatedTokenCounterHandler",
+        "quorune.semantic_choices.model.IntentResultObjects"
+      ],
+      "positive_tests": [
+        "test_real_fractal_summoning_pays_announced_x_and_puts_counters_after_entry",
+        "test_real_leyline_count_and_sage_hand_count_use_their_separate_producers",
+        "test_created_object_result_binding_is_closed_and_preserves_amount_binding",
+        "test_nine_originals_have_complete_admission_and_independent_runtime_minimum",
+        "test_entry_observer_sees_zero_base_before_separately_instructed_counters",
+        "test_public_count_is_read_after_creation_and_additional_creatures_receive_counters",
+        "test_additional_noncreature_token_is_also_a_counter_recipient",
+        "test_token_and_counter_replacement_choices_resume_without_repeated_creation",
+        "test_real_wild_hypothesis_counters_precede_private_surveil",
+        "test_real_history_and_source_counter_definitions_use_their_instruction_time",
+        "test_real_fixed_entry_sources_keep_counter_base_and_existing_siblings",
+        "test_real_berta_activation_and_increment_mana_siblings_remain_exact",
+        "test_closed_schemas_and_hybrid_x_preserve_unowned_boundaries"
+      ],
+      "negative_tests": [
+        "test_real_fractal_summoning_pays_announced_x_and_puts_counters_after_entry",
+        "test_real_leyline_count_and_sage_hand_count_use_their_separate_producers",
+        "test_created_object_result_binding_is_closed_and_preserves_amount_binding",
+        "test_nine_originals_have_complete_admission_and_independent_runtime_minimum",
+        "test_entry_observer_sees_zero_base_before_separately_instructed_counters",
+        "test_public_count_is_read_after_creation_and_additional_creatures_receive_counters",
+        "test_additional_noncreature_token_is_also_a_counter_recipient",
+        "test_token_and_counter_replacement_choices_resume_without_repeated_creation",
+        "test_real_wild_hypothesis_counters_precede_private_surveil",
+        "test_real_history_and_source_counter_definitions_use_their_instruction_time",
+        "test_real_fixed_entry_sources_keep_counter_base_and_existing_siblings",
+        "test_real_berta_activation_and_increment_mana_siblings_remain_exact",
+        "test_closed_schemas_and_hybrid_x_preserve_unowned_boundaries"
+      ],
+      "interaction_tests": [
+        "test_real_fractal_summoning_pays_announced_x_and_puts_counters_after_entry",
+        "test_real_leyline_count_and_sage_hand_count_use_their_separate_producers",
+        "test_entry_observer_sees_zero_base_before_separately_instructed_counters",
+        "test_public_count_is_read_after_creation_and_additional_creatures_receive_counters",
+        "test_additional_noncreature_token_is_also_a_counter_recipient",
+        "test_token_and_counter_replacement_choices_resume_without_repeated_creation",
+        "test_real_wild_hypothesis_counters_precede_private_surveil",
+        "test_real_history_and_source_counter_definitions_use_their_instruction_time",
+        "test_real_fixed_entry_sources_keep_counter_base_and_existing_siblings",
+        "test_real_berta_activation_and_increment_mana_siblings_remain_exact"
+      ],
+      "multiplayer_tests": [
+        "test_real_fractal_summoning_pays_announced_x_and_puts_counters_after_entry",
+        "test_real_leyline_count_and_sage_hand_count_use_their_separate_producers",
+        "test_entry_observer_sees_zero_base_before_separately_instructed_counters",
+        "test_public_count_is_read_after_creation_and_additional_creatures_receive_counters",
+        "test_additional_noncreature_token_is_also_a_counter_recipient",
+        "test_token_and_counter_replacement_choices_resume_without_repeated_creation",
+        "test_real_wild_hypothesis_counters_precede_private_surveil",
+        "test_real_history_and_source_counter_definitions_use_their_instruction_time",
+        "test_real_fixed_entry_sources_keep_counter_base_and_existing_siblings",
+        "test_real_berta_activation_and_increment_mana_siblings_remain_exact"
+      ],
+      "privacy_tests": [
+        "test_real_fractal_summoning_pays_announced_x_and_puts_counters_after_entry",
+        "test_real_leyline_count_and_sage_hand_count_use_their_separate_producers",
+        "test_entry_observer_sees_zero_base_before_separately_instructed_counters",
+        "test_public_count_is_read_after_creation_and_additional_creatures_receive_counters",
+        "test_additional_noncreature_token_is_also_a_counter_recipient",
+        "test_token_and_counter_replacement_choices_resume_without_repeated_creation",
+        "test_real_wild_hypothesis_counters_precede_private_surveil",
+        "test_real_history_and_source_counter_definitions_use_their_instruction_time",
+        "test_real_fixed_entry_sources_keep_counter_base_and_existing_siblings",
+        "test_real_berta_activation_and_increment_mana_siblings_remain_exact"
+      ],
+      "replay_tests": [
+        "test_real_fractal_summoning_pays_announced_x_and_puts_counters_after_entry",
+        "test_real_leyline_count_and_sage_hand_count_use_their_separate_producers",
+        "test_entry_observer_sees_zero_base_before_separately_instructed_counters",
+        "test_public_count_is_read_after_creation_and_additional_creatures_receive_counters",
+        "test_additional_noncreature_token_is_also_a_counter_recipient",
+        "test_token_and_counter_replacement_choices_resume_without_repeated_creation",
+        "test_real_wild_hypothesis_counters_precede_private_surveil",
+        "test_real_history_and_source_counter_definitions_use_their_instruction_time",
+        "test_real_fixed_entry_sources_keep_counter_base_and_existing_siblings",
+        "test_real_berta_activation_and_increment_mana_siblings_remain_exact"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed payload/registered owners bind the parent and actual creation result; runtime minima and verified withdrawal reject independently of stale evidence.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual X token creation fails if separately instructed counters are omitted.",
       "blockers": [],
       "status": "trusted"
     }

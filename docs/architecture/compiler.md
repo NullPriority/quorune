@@ -3020,6 +3020,13 @@ An explicit creature definition payload independently requires its existing
 token-definition capability. The canonical Afterlife definition retains its
 specific producer requirement. Copy recipes and legacy references without a
 definition retain their separate ownership paths.
+The complete create-token/put-counters followup production preserves those as
+separate instructions. Only the closed token definition is created first;
+the following counter amount stays deferred until the actual creation results
+are bound. Its own capability requires the token and counter owners, including
+replacement-aware placement. Unsupported attachment and linked-result clauses
+remain residual. Announced X also retains ordinary colored-hybrid mana choices;
+the represented casting-cost owner still validates and pays the selected price.
 Independent quantity expressions retain their separate execution-time reads.
 One fixed counter placement may consume that existing public-query amount
 beside independently closed ordered components. The compiler preserves the

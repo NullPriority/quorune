@@ -17,6 +17,17 @@ Gain replacement choices preserve that total across load and resume without
 repeating opponent losses. Fixed printed gains remain their own life effect;
 this result never substitutes damage or a presumed multiplayer total.
 
+Created-token counter followups use two automatic instructions in the existing
+semantic-choice registry. The first commits one canonical creation intent;
+`IntentResultObjects` binds its actual returned references to the next
+instruction. This includes replacement-created additional tokens. The second
+reads its numeric producer after creation and commits ordinary counter intents.
+It exposes no target or recipient choice. Entry observers see the printed
+creation definition before these counters, and SBA stays deferred through the
+resolving instruction and its replacement choices. Pending creation and counter
+choices retain their separate canonical intent identities and replay owners.
+The automatic result binding adds no record field or mutable gameplay cache.
+
 Intrinsic Exploit uses a public zero-or-one creature choice issued to the
 locked entry-trigger controller. The typed sacrifice intent retains both
 incarnations and delegates to the canonical replacement-aware zone owner.

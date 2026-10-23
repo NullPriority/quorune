@@ -74,6 +74,9 @@ def encode_preparation_after_commit(continuation,actor,preparation,intents,resul
         binding=preparation.auto_continue.amount_from_result
         if binding.intent_index not in results:
             raise SemanticChoiceError('Conditional preparation requires its remaining result-bound intents')
+    if preparation.auto_continue is not None and preparation.auto_continue.objects_from_result is not None:
+        if preparation.auto_continue.objects_from_result.intent_index not in results:
+            raise SemanticChoiceError('Conditional preparation requires its committed object result')
     if preparation.auto_continue is not None:
         completion=SemanticChoiceCompletion(intents=tuple(intents),
             prepend_effects=preparation.auto_continue.resolved_effects(results))

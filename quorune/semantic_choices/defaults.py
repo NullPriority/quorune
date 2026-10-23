@@ -3,6 +3,7 @@ from __future__ import annotations
 from functools import lru_cache
 
 from .registry import SemanticChoiceRegistry
+from .created_token_counters import CREATED_TOKEN_COUNTER_HANDLERS
 from .extort import ExtortChoiceHandler
 from .actual_life_transfer import ActualLifeTransferHandler
 from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
@@ -52,6 +53,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
         (
             ExtortChoiceHandler(),
             ActualLifeTransferHandler(),
+            *CREATED_TOKEN_COUNTER_HANDLERS,
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,

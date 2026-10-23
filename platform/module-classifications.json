@@ -2978,6 +2978,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/created_token_counters.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/creature_power_damage_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7526,6 +7541,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/created_token_counter_model.py",
+      "layer": "rules",
+      "owning_subsystem": "token_creation",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/creature_power_damage.py",
@@ -12353,6 +12382,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/created_token_counter_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/creature_power_damage_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -15027,6 +15070,21 @@
     },
     {
       "file": "quorune/semantic_choices/counter_coordination.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_choices/created_token_counters.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
       "allowed_dependency_layers": [
@@ -19323,5 +19381,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b490c38f4d544d66df82faf1f20d4c05f5ade75f8d24caa37714c643e29bebf9"
+  "fingerprint": "2f6c3c370971f2e847e53615abfb1b1ff98e53f485534a34515f4efd5d6352aa"
 }

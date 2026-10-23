@@ -101,6 +101,13 @@ def _resolve_typed_numeric_amount(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get('op')=='create_token_then_counters':
+        from ..created_token_counter_model import validate_created_token_counter
+        try:validate_created_token_counter(value)
+        except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+        return {**value,'controller':resolve_semantic_value(host,value['controller'],item),
+            'source':resolve_semantic_value(host,value['source'],item),
+            'token':resolve_semantic_value(host,value['token'],item)}
     if value.get('op')=='apply_if_public_condition' and value.get('schema_version') in {10,11}:
         from ..resolution_conditions import validate_resolution_condition_instruction
         validate_resolution_condition_instruction(value)

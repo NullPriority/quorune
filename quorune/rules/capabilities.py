@@ -359,6 +359,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "self-zone-move": ("zone.self_move.activated",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
     'public-quantity-mana': ('mana.production.public_quantity',),
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
+    'created-token-counter-followup':('token.creation.post_creation_counter',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     'whole-hand-discard': ('zone.discard.whole_hand',),
     **{
@@ -504,6 +505,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'created-token-counter-followup',
         'temporary-cast-prohibition',
         'temporary-library-search-prohibition',
         'random-own-graveyard-return',

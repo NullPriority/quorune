@@ -154,6 +154,7 @@
     "quorune/resolution_characteristic_model.py",
     "quorune/fixed_effect_payment.py",
     "quorune/resolution_mana_model.py",
+    "quorune/created_token_counter_model.py",
     "quorune/continuous_effects.py",
     "quorune/continuous_effect_model.py",
     "quorune/control_history.py",

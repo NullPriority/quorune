@@ -845,6 +845,7 @@ def _owner(relative: str, layer: str) -> str:
         return "combat_damage"
     if relative in {
         "quorune/fixed_token_production.py",
+        "quorune/created_token_counter_model.py",
         "quorune/standard_token_abilities.py",
         "quorune/token_creation.py",
     }:

@@ -35,6 +35,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *compound_payment_payload_dependencies(value))
         from ..resolution_mana_model import resolution_mana_choice_dependencies
         own = (*own, *resolution_mana_choice_dependencies(value))
+        from ..created_token_counter_model import created_token_counter_payload_dependencies
+        own = (*own, *created_token_counter_payload_dependencies(value))
         from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
         own = (*own, *token_definition_payload_dependencies(value,mechanics))
         from ..conditional_recipient_model import conditional_recipient_capabilities

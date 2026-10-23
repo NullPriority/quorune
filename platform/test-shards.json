@@ -81,6 +81,7 @@
       "test_counted_permanent_costs",
       "test_counter_state",
       "test_counter_target_predicates",
+      "test_created_token_counters",
       "test_deck_loader",
       "test_defender_declaration_numeric",
       "test_defender_permission",

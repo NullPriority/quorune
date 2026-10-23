@@ -46,6 +46,7 @@ from .graft_capability_shapes import graft_node_capabilities
 from .soulbond_capability_shapes import soulbond_node_capabilities
 from .enlist_shapes import enlist_reflexive_capabilities
 from .fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
+from .created_token_counter_shapes import created_token_counter_node_capabilities
 from .fixed_controller_effect_shapes import fixed_counter_controller_effect_sequence_node_capabilities, fixed_controller_effect_sequence_node_capabilities, fixed_life_node_capabilities
 from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities, fixed_optional_mana_payment_node_capabilities, fixed_optional_effect_node_capabilities
 from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities, announced_target_set_node_capabilities
@@ -65,6 +66,7 @@ def effect_node_capabilities(
     from .occurrence_object_results import occurrence_object_node_capabilities
     dependencies: set[str] = set()
     for resolver in (
+        created_token_counter_node_capabilities,
         temporary_library_search_node_capabilities,
         occurrence_object_node_capabilities,
         temporary_cast_node_capabilities,

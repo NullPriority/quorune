@@ -32,6 +32,7 @@ _LIBRARY_DEFINITION = re.compile(
 )
 _X = re.compile(r"\bX\b")
 _RESULT_FIELDS = {
+    'create_token_then_counters': ('amount',),
     'return_random_graveyard_cards': ('count',),
     "damage": ("amount",), "damage_fixed_set": ("amount",),
     "draw": ("count",), "draw_each_player": ("count",),
@@ -185,7 +186,8 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
                                    compile_effect: Callable[..., Any]) -> Callable[..., Any]:
     """Select X only from an ordinary mana cost or one represented price."""
     _, symbols = mana_cost_to_vector(record.mana_cost)
-    available = bool(is_spell and not record.faces and symbols and set(symbols) == {"X"})
+    available = bool(is_spell and not record.faces and 'X' in symbols
+        and all(symbol=='X' or re.fullmatch(r'[WUBRG]/[WUBRG]',symbol) for symbol in symbols))
     if not available and 'X' not in symbols and is_spell and not record.faces and re.search(r'\bX\b',oracle_text,re.I):
         available=_additional_price_declares_x(oracle_text)
     selected = partial(compile_effect,

@@ -310,6 +310,7 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    'create_token_then_counters',
     'prohibit_casting_until_end_of_turn',
     'return_random_graveyard_cards',
     "copy_stack_item",

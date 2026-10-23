@@ -746,15 +746,29 @@ class IntentResultAmount:
         if self.field_name not in {'amount','count','quantity'}:raise SemanticChoiceError('Intent result amount field is unsupported')
 
 
+@dataclass(frozen=True,slots=True)
+class IntentResultObjects:
+    intent_index: int
+    effect_index: int
+    field_name: str = 'cards'
+
+    def __post_init__(self):
+        _integer(self.intent_index,field_name='object result intent index')
+        _integer(self.effect_index,field_name='object result effect index')
+        if self.field_name!='cards':raise SemanticChoiceError('Object results bind only an explicit object collection')
+
+
 @dataclass(frozen=True, slots=True)
 class AutoContinue:
     reason: str
     prepend_effects: tuple[FrozenMap, ...] = ()
     amount_from_result: IntentResultAmount | None = None
+    objects_from_result: IntentResultObjects | None = None
 
     def __post_init__(self) -> None:
         _string(self.reason, field_name="auto-continue reason")
         if self.amount_from_result is not None and not isinstance(self.amount_from_result,IntentResultAmount):raise SemanticChoiceError('Automatic result amount binding must be typed')
+        if self.objects_from_result is not None and not isinstance(self.objects_from_result,IntentResultObjects):raise SemanticChoiceError('Automatic object result binding must be typed')
         object.__setattr__(
             self,
             "prepend_effects",
@@ -768,13 +782,20 @@ class AutoContinue:
 
 
     def resolved_effects(self,results):
-        if self.amount_from_result is None:return self.prepend_effects
+        effects=list(self.prepend_effects)
+        if self.objects_from_result is not None:
+            spec=self.objects_from_result;refs=results.get(spec.intent_index)
+            if not isinstance(refs,(list,tuple)) or any(type(ref) is not str or not ref for ref in refs) or len(set(refs))!=len(refs):
+                raise SemanticChoiceError('Automatic object result is missing or malformed')
+            if spec.effect_index>=len(effects) or spec.field_name not in effects[spec.effect_index]:raise SemanticChoiceError('Automatic object result destination is missing')
+            effects[spec.effect_index]=FrozenMap({**dict(effects[spec.effect_index]),spec.field_name:list(refs)})
+        if self.amount_from_result is None:return tuple(effects)
         spec=self.amount_from_result;amount=results.get(spec.intent_index)
         if type(amount) is not int or amount<0:
             raise SemanticChoiceError('Automatic result amount is missing or malformed')
         if spec.effect_index>=len(self.prepend_effects) or spec.field_name not in self.prepend_effects[spec.effect_index]:
             raise SemanticChoiceError('Automatic result destination is missing')
-        effects=list(self.prepend_effects);effects[spec.effect_index]=FrozenMap({**dict(effects[spec.effect_index]),spec.field_name:amount})
+        effects[spec.effect_index]=FrozenMap({**dict(effects[spec.effect_index]),spec.field_name:amount})
         return tuple(effects)
 
 

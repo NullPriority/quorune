@@ -41,6 +41,10 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .created_token_counters import created_token_counter_effect_template
+        created=created_token_counter_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
+            forbid_public_x=forbid_public_x,**source_context)
+        if created is not None:return created
         from .temporary_keyword_removal_templates import temporary_keyword_removal_template
         removal=temporary_keyword_removal_template(body,source_name=card_name,
             source_is_permanent=source_context.get('source_is_permanent'),source_card_types=tuple(source_context.get('source_card_types',())))
