@@ -97,9 +97,9 @@ def _resolve_typed_numeric_amount(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
-    if value.get('op')=='apply_if_public_condition' and value.get('schema_version')==10:
-        from ..kicked_target_model import validate_kicked_target_instruction
-        validate_kicked_target_instruction(value)
+    if value.get('op')=='apply_if_public_condition' and value.get('schema_version') in {10,11}:
+        from ..resolution_conditions import validate_resolution_condition_instruction
+        validate_resolution_condition_instruction(value)
         return {**value,'player':resolve_semantic_value(host,value['player'],item),
             'cast_fact':resolve_semantic_value(host,value['cast_fact'],item)}
     from ..rules.stack_damage_sources import bound_stack_damage_source

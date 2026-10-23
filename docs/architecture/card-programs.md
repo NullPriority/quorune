@@ -62,6 +62,13 @@ same key only when source hashes, event, costs, targets and result semantics
 match. The adapter records the superseded key. Persisted reviewed programs
 retain their recorded instructions and compatibility path.
 
+Reviewed optional-Kicker target overrides share one source-pinned equivalence
+check with current typed replacement programs. It compares the complete normal
+and paid target domains, result instructions, fixed price, event, version and
+Oracle/rulings hashes. Only the equivalent current view supersedes the reviewed
+key; historical payloads stay unchanged. A missing or different price, target
+restriction, result or source hash retains the compatibility boundary.
+
 Fixed counted library searches use a shared immutable schema consumed by the
 compiler, capability shapes and private search owner. The compiler admits
 unqualified quantities, closed characteristic qualities, one literal card name

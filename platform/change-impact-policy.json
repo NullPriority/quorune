@@ -7480,12 +7480,15 @@
     {
       "id": "fixed-battlefield-alternative-mana-costs",
       "patterns": [
+        "quorune/card_programs/kicker_view_equivalence.py",
         "quorune/compiler/global_alternative_cost_templates.py",
         "quorune/compiler/kicked_spell_conditions.py",
+        "quorune/compiler/kicked_target_replacements.py",
         "quorune/compiler/kicked_targets.py",
         "quorune/compiler/nonmana_kicker.py",
         "quorune/compiler/runtime_templates.py",
         "quorune/kicked_target_model.py",
+        "quorune/kicked_target_replacement_model.py",
         "quorune/nonmana_kicker.py",
         "quorune/rules/casting/additional_tap_costs.py",
         "quorune/rules/casting/commit.py",
@@ -7494,6 +7497,7 @@
         "quorune/rules/casting/kicked_targets.py",
         "quorune/rules/casting/option_expansion.py",
         "quorune/rules/global_alternative_cost_model.py",
+        "quorune/rules/kicked_target_replacement_shapes.py",
         "quorune/rules/kicked_target_shapes.py",
         "quorune/rules/tap_additional_cost.py",
         "quorune/semantic_choices/engine_coordination.py",
@@ -7503,9 +7507,11 @@
         "quorune/semantic_runtime/nonmana_kicker.py",
         "tests/fixtures/global-alternative-cost-cards.json",
         "tests/fixtures/kicked-target-group-cards.json",
+        "tests/fixtures/kicked-target-replacement-cards.json",
         "tests/fixtures/nonmana-kicker-cards.json",
         "tests/test_global_alternative_costs.py",
         "tests/test_kicked_target_groups.py",
+        "tests/test_kicked_target_replacements.py",
         "tests/test_nonmana_kicker.py"
       ],
       "test_modules": [
@@ -7518,8 +7524,12 @@
         "test_fixed_tap_additional_costs",
         "test_fixed_target_effect_sequences",
         "test_global_alternative_costs",
+        "test_interactions_v070",
+        "test_kicked_same_target_replacements",
+        "test_kicked_self_replacements",
         "test_kicked_spell_conditions",
         "test_kicked_target_groups",
+        "test_kicked_target_replacements",
         "test_kicker_rules",
         "test_nonmana_buyback_costs",
         "test_nonmana_kicker"

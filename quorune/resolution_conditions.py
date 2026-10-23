@@ -146,6 +146,9 @@ def validate_resolution_condition_instruction(
 ) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get('schema_version')==11:
+        from .kicked_target_replacement_model import validate_kicked_target_replacement_instruction
+        return validate_kicked_target_replacement_instruction(effect)
     if effect.get('schema_version')==10:
         from .kicked_target_model import validate_kicked_target_instruction
         return validate_kicked_target_instruction(effect)

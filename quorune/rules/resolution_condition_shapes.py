@@ -33,6 +33,9 @@ def resolution_condition_node_capabilities(
 ) -> tuple[str, ...]:
     from .capabilities import capability_dependencies_for_node
 
+    if effects and effects[-1].get('schema_version')==11:
+        from .kicked_target_replacement_shapes import kicked_target_replacement_capabilities
+        return kicked_target_replacement_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids,cost_schema=cost_schema)
     if effects and effects[-1].get('schema_version')==10:
         from .kicked_target_shapes import kicked_target_capabilities
         return kicked_target_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids,cost_schema=cost_schema)
@@ -126,7 +129,7 @@ def resolution_condition_node_capabilities(
 
 
 def same_target_self_replacement_runtime_dependencies(program):
-    if not any(effect.get('op')==RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') in {5,8,9,10} for effect in program.effects):
+    if not any(effect.get('op')==RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') in {5,8,9,10,11} for effect in program.effects):
         return ()
     dependencies=resolution_condition_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         mechanic_ids=program.coverage,cost_schema=program.cost_schema)

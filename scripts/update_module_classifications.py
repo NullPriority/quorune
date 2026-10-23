@@ -60,6 +60,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/static_player_restriction_model.py",
         "quorune/conditional_recipient_model.py",
         "quorune/kicked_target_model.py",
+        "quorune/kicked_target_replacement_model.py",
         "quorune/recipient_modifier_model.py",
         "quorune/mana_symbol_counts.py",
         "quorune/public_zone_condition_model.py",
@@ -450,6 +451,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 def _owner(relative: str, layer: str) -> str:
     if relative=='quorune/kicked_target_model.py':return 'search_target_and_choice'
+    if relative=='quorune/kicked_target_replacement_model.py':return 'search_target_and_choice'
     if relative == 'quorune/conditional_recipient_model.py':
         return 'continuous_effects'
     if relative == 'quorune/public_zone_condition_model.py':

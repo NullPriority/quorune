@@ -1578,6 +1578,14 @@ replacement, variable counts, source-linked amounts and unrepresented sibling
 results remain residual. Complete target-role closure is checked independently
 from the compiler's declared capabilities.
 
+`compiler/kicked_target_replacements.py` represents a complete fixed target
+predicate or count replacement. Both the original and kicked result compile
+independently with their own full target schemas. The selected cost determines
+which schema is used before choosing targets, and the version-eleven cast-fact
+instruction executes only its matching result program. Exact fixed target
+sets retain their existing distinctness and partial-resolution behavior.
+Variable counts, linked result values and unrepresented siblings remain residual.
+
 `compiler/source_maintenance_nodes.py` recognizes self-entry and fixed upkeep
 or end-step triggers whose only result is sacrificing the source, optionally
 unless the triggering controller pays one existing closed fixed cost. Its v3

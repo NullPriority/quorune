@@ -41,11 +41,12 @@ class PublicResolutionConditionHandler:
             raise SemanticChoiceError(str(exc)) from exc
         if effect["player"] != context.actor or context.actor != context.stack_controller:
             raise SemanticChoiceError("Resolution conditions require the resolving controller")
-        if effect.get('schema_version')==10:
+        if effect.get('schema_version') in {10,11}:
             if type(effect['cast_fact']) is not bool:raise SemanticChoiceError('Kicked target decision is unavailable')
+            branch=effects if effect['cast_fact'] else effect.get('otherwise_effects',())
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue(reason='sealed Kicker target branch',
-                    prepend_effects=tuple(FrozenMap(child) for child in effects) if effect['cast_fact'] else ()))
+                    prepend_effects=tuple(FrozenMap(child) for child in branch)))
         otherwise=effect.get('otherwise_effects',())
         from .resolution_result_validation import validate_resolution_result_children
         validate_resolution_result_children(effect, effects, otherwise, context)

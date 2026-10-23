@@ -44,7 +44,7 @@ class SameTargetKickedCompilerTests(unittest.TestCase):
     def test_new_target_occurrences_changed_domains_and_unrepresented_results_stay_residual(self):
         for body in (
             'Target creature gets +3/+3 until end of turn. If this spell was kicked, target creature gets +5/+5 until end of turn instead.',
-            'Target creature gets +3/+3 until end of turn. If this spell was kicked, two target creatures get +5/+5 until end of turn instead.',
+            'Target creature gets +3/+3 until end of turn. If this spell was kicked, any number of target creatures get +5/+5 until end of turn instead.',
             'Target creature you control gets +3/+3 until end of turn. If this spell was kicked, that creature gets +5/+5 until end of turn instead.',
             'Target creature gets +3/+3 until end of turn. If this spell was kicked, that creature gets +X/+X until end of turn instead.',
             'Target player discards a card. If this spell was kicked, that player discards three cards instead.',

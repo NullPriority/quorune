@@ -872,6 +872,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/card_programs/kicker_view_equivalence.py",
+      "layer": "semantics",
+      "owning_subsystem": "card_programs",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/card_programs/model.py",
       "layer": "semantics",
       "owning_subsystem": "card_programs",
@@ -4404,6 +4419,21 @@
     },
     {
       "file": "quorune/compiler/kicked_spell_conditions.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/kicked_target_replacements.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -8950,6 +8980,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/kicked_target_replacement_model.py",
+      "layer": "domain",
+      "owning_subsystem": "search_target_and_choice",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/kicker.py",
       "layer": "rules",
       "owning_subsystem": "casting_kicker",
@@ -12794,6 +12836,20 @@
     },
     {
       "file": "quorune/rules/keyword_runtime_requirements.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/kicked_target_replacement_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -18906,5 +18962,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "d73f7f8b18b2f21dda041d32c04cf418d5771205d4bb94f197d500cb95333b0c"
+  "fingerprint": "dc6efa7d836efd33865fc23539b077c721387758566b88ef9a1f3bd40e9fc685"
 }

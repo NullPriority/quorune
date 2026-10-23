@@ -93,6 +93,13 @@ mutation owners handle partial target loss, new incarnations and printed
 effect order. A copied spell retains its original role counts and restrictions
 while allowing the usual new-target choice without another Kicker payment.
 
+Fixed Kicker target replacement uses the same binding owner with two complete
+branch schemas. The original target domain or count applies to an unpaid
+spell; the kicked branch replaces it before target validation and pricing.
+Version eleven selects one symbolic result program before ordinary value
+binding, preserving the original target snapshots and existing set-result
+owners. A paid copy retains its selected target predicate and exact count.
+
 Self-cost reductions use the selected spell face and current caster's public
 facts or committed cast history. The total cost locks before mana activation,
 so sacrificing a qualifying permanent while paying does not revoke its

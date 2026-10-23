@@ -17,7 +17,7 @@ from .token_templates import _positive_fixed_number
 
 def is_fixed_kicked_self_replacement(text, source_name, compile_effect):
     return compile_effect(text,card_name=source_name,
-        kicked_self_replacement_available=True)[0]=='fixed-kicked-self-replacement-v1'
+        kicked_self_replacement_available=True)[0] in {'fixed-kicked-self-replacement-v1','fixed-kicked-target-replacement-v1'}
 
 
 def is_fixed_spell_self_replacement(text,source_name,compile_effect,*,has_faces):
