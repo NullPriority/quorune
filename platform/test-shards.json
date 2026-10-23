@@ -120,6 +120,7 @@
       "test_provoke_rules",
       "test_public_condition_self_replacements",
       "test_qualified_hexproof",
+      "test_quantified_counter_targets",
       "test_recipient_modifiers",
       "test_reconfigure",
       "test_resolution_rules",

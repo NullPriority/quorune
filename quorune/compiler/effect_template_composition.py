@@ -112,6 +112,9 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .quantified_counter_targets import quantified_counter_target_template
+    counters=quantified_counter_target_template(text)
+    if counters is not None:return counters
     from .target_characteristic_sets import target_characteristic_set_template
     targeted_set=target_characteristic_set_template(text)
     if targeted_set is not None:return targeted_set

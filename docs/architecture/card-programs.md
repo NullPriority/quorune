@@ -119,6 +119,14 @@ selected-count amount, and cost handler. Source admission requires both the
 complete target result and mandatory price. The ordinary source hashes,
 component registry, and final cost commitment retain their authority.
 
+Version-two counter target sets reuse the registered counter-placement handler
+and canonical counter transaction. Their payload independently requires the
+quantified-set capability; a named relative amount also requires named doubling.
+The target schema retains scalar predicate dependencies and, for unrestricted
+sets, cardinality authority. Original integer-only payloads retain their earlier
+wire shape. Pending named placements seal the original target incarnations and
+quantities, including targets with no named counters, before replacement choices.
+
 ## Trust and replay
 
 Unconditional static Aura control lowers into a closed attached-source

@@ -6,6 +6,9 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if 'any-number-target-set' in mechanics:
         from .any_number_target_shapes import any_number_target_node_capabilities
         return any_number_target_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if 'quantified-counter-target-set' in mechanics:
+        from .counter_target_set_shapes import quantified_counter_target_capabilities
+        return quantified_counter_target_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     if 'spell-resolution-self-exile' in mechanics:
         from .spell_self_exile import spell_self_exile_node_capabilities
         return spell_self_exile_node_capabilities(effects=effects,target_schema=target_schema,

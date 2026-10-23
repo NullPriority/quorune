@@ -250,6 +250,7 @@
     "tests/fixtures/qualified-hexproof-cards.json",
     "tests/fixtures/qualified-landwalk-cards.json",
     "tests/fixtures/qualified-regeneration-cards.json",
+    "tests/fixtures/quantified-counter-target-cards.json",
     "tests/fixtures/quantified-target-keyword-cards.json",
     "tests/fixtures/query-gated-self-characteristics-cards.json",
     "tests/fixtures/query-power-toughness-definition-cards.json",

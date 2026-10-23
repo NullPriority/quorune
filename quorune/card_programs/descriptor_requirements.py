@@ -7,6 +7,10 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..rules.counter_target_set_shapes import quantified_counter_payload_dependencies
+        counter_targets=quantified_counter_payload_dependencies(value)
+        if counter_targets:
+            return tuple(sorted({*counter_targets,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child))}))
         from ..target_count_cost_model import TARGET_COUNT_COST_HANDLER, TARGET_COUNT_COST_CAPABILITY, FixedManaPerTargetCostSpec
         if value.get('handler_id') == TARGET_COUNT_COST_HANDLER:
             FixedManaPerTargetCostSpec.from_dict(value['target_cost'])

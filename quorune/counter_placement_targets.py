@@ -218,7 +218,8 @@ def resolve_counter_placement_targets(
     )
     _nonempty(normalized_counter, field="Counter-target counter")
     _nonempty(reason, field="Counter-target reason")
-    if type(amount) is not int or amount <= 0:
+    from .counter_names import EXISTING_COUNTER_AMOUNT
+    if amount != EXISTING_COUNTER_AMOUNT and (type(amount) is not int or amount <= 0):
         raise CounterPlacementTargetSetError(
             "Counter-target amount must be a positive exact integer"
         )
@@ -230,6 +231,11 @@ def resolve_counter_placement_targets(
         refs=refs,
         maximum_targets=maximum_targets,
     )
+    if amount == EXISTING_COUNTER_AMOUNT:
+        from .counter_doubling import resolve_effect_counters_on_refs
+        try:return resolve_effect_counters_on_refs(host,actor=actor,object_refs=tuple(p.ref for p in snapshot.permanents),
+            counter_name=normalized_counter,amount=amount,reason=reason,source_ref=source_ref,selections=replacement_selections)
+        except CounterPlacementError as exc:raise CounterPlacementTargetSetError(str(exc)) from exc
     try:
         return place_counters(
             host,

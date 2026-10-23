@@ -639,8 +639,7 @@ def _validate_counter_target_set_intent_identity(
         or len(refs) > maximum
         or type(counter_name) is not str
         or not counter_name
-        or type(amount) is not int
-        or amount <= 0
+        or (amount != "existing_named_counter_count" and (type(amount) is not int or amount <= 0))
         or type(reason) is not str
         or not reason
         or (source is not None and (type(source) is not str or not source))

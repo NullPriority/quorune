@@ -5633,6 +5633,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/quantified_counter_targets.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/query_characteristic_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12166,6 +12181,20 @@
     },
     {
       "file": "quorune/rules/counter_removal_capabilities.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/counter_target_set_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -19047,5 +19076,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "2df82c428d92f70764d8badf426219b60dd8cb95ada830bc0da177ba8d885fff"
+  "fingerprint": "af82d9b62d535b83b2e720b41dc98097b21a07fc5f48231f7fce24ec65f39ac5"
 }

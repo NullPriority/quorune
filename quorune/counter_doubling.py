@@ -97,6 +97,13 @@ def named_counter_input_snapshot(host, effect, *, actor):
         spec=AffectedPermanentSetSpec.from_dict(effect.get('set'))
         rows=select_affected_permanents(host.affected_permanent_object_rows(actor),spec,actor=actor,
             active_seats=host.affected_permanent_active_seats(),apnap_order=host.affected_permanent_apnap_order(),source_ref=effect.get('source'))
+    elif effect.get('op')=='place_counters_on_targets':
+        refs=effect.get('cards')
+        if not isinstance(refs,(list,tuple)) or any(type(ref) is not str or not ref for ref in refs) or len(set(refs))!=len(refs):
+            raise CounterDoublingError('Named-counter pending target set is malformed')
+        rows=host.counter_target_object_rows(actor,tuple(refs))
+        if len(rows)!=len(refs) or {row.ref for row in rows}!=set(refs):
+            raise CounterDoublingError('Named-counter pending target knowledge is incomplete')
     else:
         raise CounterDoublingError('Named-counter pending instruction is malformed')
     # This also checks every known-empty versus malformed count before sealing.

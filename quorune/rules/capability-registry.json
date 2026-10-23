@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 475,
+  "registry_version": 476,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -45724,6 +45724,138 @@
       "dependency_fail_closed_rationale": "Payload-owned minimum dependencies reject missing cardinality or mandatory price authority.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh target and mandatory-price omissions are exercised by actual original casts.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.producer.quantified_target_set",
+      "version": 1,
+      "official_rules": [
+        "115.3",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "614.16",
+        "616.1",
+        "701.10e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One complete homogeneous target set receives a fixed named-counter placement or a snapshot of its existing named counter count, using the canonical replacement owner.",
+        "inputs": [
+          "closed target predicates and cardinality",
+          "one fixed amount or existing named count"
+        ],
+        "outputs": [
+          "one preflighted placement batch with original target incarnations"
+        ],
+        "exclusions": [
+          "distributed totals",
+          "multiple independent counter target sets",
+          "arbitrary all-kind doubling",
+          "unknown result companions"
+        ]
+      },
+      "dependencies": [
+        "counter.producer.fixed_permanent_target_set_effect"
+      ],
+      "implementation_components": [
+        "quorune.compiler.quantified_counter_targets.quantified_counter_target_template",
+        "quorune.rules.counter_target_set_shapes.validate_quantified_counter_target_effect",
+        "quorune.rules.counter_target_set_shapes.quantified_counter_target_capabilities",
+        "quorune.counter_placement_targets.resolve_counter_placement_targets"
+      ],
+      "positive_tests": [
+        "test_complete_counter_templates_keep_predicates_quantities_and_fail_closed_boundaries",
+        "test_four_originals_have_complete_normal_admission_and_payload_owned_minima",
+        "test_original_panoply_zero_one_and_nine_targets_pay_strive_and_place_each_counter",
+        "test_original_solidarity_snapshots_each_current_named_count_and_skips_zero",
+        "test_original_solidarity_zero_targets_resolves_without_placing_or_refunding",
+        "test_original_vineshaper_preserves_own_merfolk_target_domain",
+        "test_original_recluse_chooses_only_actual_current_turn_entries_after_cascade",
+        "test_named_replacement_choices_are_per_recipient_private_and_persistent",
+        "test_copy_doubles_current_counts_again_without_repaying_strive",
+        "test_pending_named_target_batch_rejects_a_changed_quantity_before_any_placement",
+        "test_partial_and_all_target_departures_keep_the_paid_price_and_original_incarnations",
+        "test_verified_dependency_withdrawal_blocks_complete_source_without_unverified_evidence"
+      ],
+      "negative_tests": [
+        "test_complete_counter_templates_keep_predicates_quantities_and_fail_closed_boundaries",
+        "test_four_originals_have_complete_normal_admission_and_payload_owned_minima",
+        "test_original_panoply_zero_one_and_nine_targets_pay_strive_and_place_each_counter",
+        "test_original_solidarity_snapshots_each_current_named_count_and_skips_zero",
+        "test_original_solidarity_zero_targets_resolves_without_placing_or_refunding",
+        "test_original_vineshaper_preserves_own_merfolk_target_domain",
+        "test_original_recluse_chooses_only_actual_current_turn_entries_after_cascade",
+        "test_named_replacement_choices_are_per_recipient_private_and_persistent",
+        "test_copy_doubles_current_counts_again_without_repaying_strive",
+        "test_pending_named_target_batch_rejects_a_changed_quantity_before_any_placement",
+        "test_partial_and_all_target_departures_keep_the_paid_price_and_original_incarnations",
+        "test_verified_dependency_withdrawal_blocks_complete_source_without_unverified_evidence"
+      ],
+      "interaction_tests": [
+        "test_original_panoply_zero_one_and_nine_targets_pay_strive_and_place_each_counter",
+        "test_original_solidarity_snapshots_each_current_named_count_and_skips_zero",
+        "test_original_solidarity_zero_targets_resolves_without_placing_or_refunding",
+        "test_original_vineshaper_preserves_own_merfolk_target_domain",
+        "test_original_recluse_chooses_only_actual_current_turn_entries_after_cascade",
+        "test_named_replacement_choices_are_per_recipient_private_and_persistent",
+        "test_copy_doubles_current_counts_again_without_repaying_strive",
+        "test_pending_named_target_batch_rejects_a_changed_quantity_before_any_placement",
+        "test_partial_and_all_target_departures_keep_the_paid_price_and_original_incarnations"
+      ],
+      "multiplayer_tests": [
+        "test_original_panoply_zero_one_and_nine_targets_pay_strive_and_place_each_counter",
+        "test_original_solidarity_snapshots_each_current_named_count_and_skips_zero",
+        "test_original_solidarity_zero_targets_resolves_without_placing_or_refunding",
+        "test_original_vineshaper_preserves_own_merfolk_target_domain",
+        "test_original_recluse_chooses_only_actual_current_turn_entries_after_cascade",
+        "test_named_replacement_choices_are_per_recipient_private_and_persistent",
+        "test_copy_doubles_current_counts_again_without_repaying_strive",
+        "test_pending_named_target_batch_rejects_a_changed_quantity_before_any_placement",
+        "test_partial_and_all_target_departures_keep_the_paid_price_and_original_incarnations"
+      ],
+      "privacy_tests": [
+        "test_original_panoply_zero_one_and_nine_targets_pay_strive_and_place_each_counter",
+        "test_original_solidarity_snapshots_each_current_named_count_and_skips_zero",
+        "test_original_solidarity_zero_targets_resolves_without_placing_or_refunding",
+        "test_original_vineshaper_preserves_own_merfolk_target_domain",
+        "test_original_recluse_chooses_only_actual_current_turn_entries_after_cascade",
+        "test_named_replacement_choices_are_per_recipient_private_and_persistent",
+        "test_copy_doubles_current_counts_again_without_repaying_strive",
+        "test_pending_named_target_batch_rejects_a_changed_quantity_before_any_placement",
+        "test_partial_and_all_target_departures_keep_the_paid_price_and_original_incarnations"
+      ],
+      "replay_tests": [
+        "test_original_panoply_zero_one_and_nine_targets_pay_strive_and_place_each_counter",
+        "test_original_solidarity_snapshots_each_current_named_count_and_skips_zero",
+        "test_original_solidarity_zero_targets_resolves_without_placing_or_refunding",
+        "test_original_vineshaper_preserves_own_merfolk_target_domain",
+        "test_original_recluse_chooses_only_actual_current_turn_entries_after_cascade",
+        "test_named_replacement_choices_are_per_recipient_private_and_persistent",
+        "test_copy_doubles_current_counts_again_without_repaying_strive",
+        "test_pending_named_target_batch_rejects_a_changed_quantity_before_any_placement",
+        "test_partial_and_all_target_departures_keep_the_paid_price_and_original_incarnations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Versioned payloads independently require the target-set and named-count authorities.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original source and counter-quantity omissions are killed by accepted original actions and complete consequences.",
       "blockers": [],
       "status": "trusted"
     }

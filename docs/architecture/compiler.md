@@ -2228,6 +2228,17 @@ closed amount descriptor and the dedicated named-doubling capability. The
 runtime reads current counts at each instruction and uses the ordinary placement
 owner; no new operation or targeting grammar is introduced. Unknown, all-kind,
 chosen, player and independently unsupported sibling forms remain residual.
+`compiler/quantified_counter_targets.py` lifts one complete scalar counter
+result to a homogeneous exact, up-to, or unrestricted target set. It also
+recognizes a closed “choose targets, put counters on each” form. The shared
+scalar predicate owner retains subtype and current public-state qualifications,
+including battlefield entry this turn. The version-two target-set payload
+records one fixed counter amount or the existing named-count descriptor;
+unrestricted cardinality uses the existing selected-target-count descriptor.
+Resolution snapshots each legal target's current named count before quantity
+replacements. A zero named count creates no placement request. Independent
+target groups, divided totals, arbitrary all-kind doubling, and unknown result
+companions remain residual.
 Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the
 represented type conjunctions and canonical disjunctions of up to four

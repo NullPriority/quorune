@@ -786,9 +786,18 @@ cardinality descriptor. Casting, activation, and trigger target selection bind
 its maximum from the authoritative finite object universe; zero remains legal.
 The existing target-plan owner enforces predicates and distinct selections,
 then revalidates each original incarnation at resolution. Homogeneous zone,
-tap-state, and fixed temporary characteristic results reuse their existing
+tap-state, counter-placement, and fixed temporary characteristic results reuse their existing
 mutation owners. Their selected-count amount reads the original target groups,
 so partial target loss cannot change an already chosen count.
+
+Quantified counter results project their target predicates to the scalar counter
+owner and submit one identity-pinned batch through `counter_placement_targets`.
+A fixed amount applies independently to each legal target. Named doubling reads
+each target's current amount before quantity replacements, omits zero placements,
+and uses the existing counter transaction. Pending choices seal the whole named
+quantity input set; an external quantity or incarnation change rejects the
+choice before any placement. Replacement ownership remains per affected object,
+while target selection and Strive pricing retain the original chosen roles.
 
 `rules/casting/target_count_costs.py` prices mandatory fixed mana for every
 chosen target beyond a source-defined threshold. It adds the full colored and

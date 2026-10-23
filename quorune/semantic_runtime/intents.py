@@ -1131,7 +1131,7 @@ class PlaceCountersOnTargetsIntent:
     object_refs: tuple[str, ...]
     maximum_targets: int
     counter_name: str
-    amount: int
+    amount: int | Literal["existing_named_counter_count"]
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
@@ -1160,7 +1160,7 @@ class PlaceCountersOnTargetsIntent:
             raise ValueError(
                 "Counter-target intents require unique refs within a positive maximum"
             )
-        if type(self.amount) is not int or self.amount <= 0:
+        if self.amount != "existing_named_counter_count" and (type(self.amount) is not int or self.amount <= 0):
             raise ValueError(
                 "Counter-target intent amount must be a positive exact integer"
             )

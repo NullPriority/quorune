@@ -306,6 +306,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'any-number-target-set': ('target.cardinality.any_number',),
+    'quantified-counter-target-set': ('counter.producer.quantified_target_set',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
     'commander-learn': ('keyword_action.learn.commander',),
