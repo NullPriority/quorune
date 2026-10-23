@@ -43,6 +43,28 @@ from ..fixed_token_production import (
 
 _TOKEN_MECHANIC = "cr-111-tokens"
 _COLOR_ORDER = "WUBRG"
+
+
+def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
+    """Require the existing owner for an explicit creature definition.
+
+    Copy recipes keep their separate owner. Legacy token references without an
+    explicit definition retain their existing compatibility path.
+    """
+    if (isinstance(value,Mapping) and value.get('op')=='create_token'
+            and isinstance(value.get('characteristics'),Mapping)
+            and {'power','toughness'}<=set(value['characteristics'])
+            and not value.get('copy_of') and not value.get('copy_spec')):
+        quantity=value.get('quantity')
+        if AFTERLIFE_MECHANIC_ID in mechanics and type(quantity) is int:
+            try:
+                from ..replacement.immutable import thaw_value
+                if thaw_value(value)==afterlife_token_effect(quantity):return (AFTERLIFE_CAPABILITY_ID,)
+            except FixedTokenProductionError:pass
+        return ('token.creation.fixed_definition',)
+    return ()
+
+
 _CREATURE_KEYWORDS = frozenset(
     {
         "Deathtouch",

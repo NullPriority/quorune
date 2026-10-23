@@ -99,7 +99,7 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_random_graveyard_return:invalid:{exc}')
     try:required.update(spell_self_exile_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_self_exile:invalid:{exc}')
-    try:required.update(typed_result_amount_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema)))
+    try:required.update(typed_result_amount_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema),mechanics=tuple(program.coverage)))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_typed_result_amount:invalid:{exc}')
     try:required.update(closed_effect_program_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_closed_effect_program:invalid:{exc}')

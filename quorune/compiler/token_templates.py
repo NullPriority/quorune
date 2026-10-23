@@ -78,7 +78,7 @@ _CREATURE_TOKEN_KEYWORDS = frozenset(
     }
 )
 _FIXED_CREATURE_TOKEN = re.compile(
-    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
+    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|an|eleven|twelve|thirteen) "
     r"(?P<tapped>tapped )?"
     r"(?P<power>\d+)/(?P<toughness>\d+) "
     r"(?P<colors>white|blue|black|red|green|colorless)"

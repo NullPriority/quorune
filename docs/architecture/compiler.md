@@ -3011,6 +3011,15 @@ target schemas, and dependencies; only supported result fields may vary. The
 original fixed template identity is retained for runtime admission. Public
 declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
+Creature-token definitions accept the singular articles `a` and `an` as a
+count of one. This also preserves the literal projections used to validate an
+`X/X` definition without changing the original source span. Resolved power and
+toughness become the created token's numeric base characteristics, with a
+separate token quantity; they are neither counters nor a live definition.
+An explicit creature definition payload independently requires its existing
+token-definition capability. The canonical Afterlife definition retains its
+specific producer requirement. Copy recipes and legacy references without a
+definition retain their separate ownership paths.
 Independent quantity expressions retain their separate execution-time reads.
 One fixed counter placement may consume that existing public-query amount
 beside independently closed ordered components. The compiler preserves the

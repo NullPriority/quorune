@@ -149,6 +149,7 @@
       "test_subtype_union_conditions",
       "test_targeted_exile_effect_clauses",
       "test_temporary_keyword_removal",
+      "test_token_article_composition",
       "test_trigger_targeting",
       "test_triggered_abilities",
       "test_turn_cast_grant_riders",

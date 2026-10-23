@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
+def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
@@ -10,15 +10,15 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
         from ..rules.modal_node_capabilities import modal_schema_runtime_dependencies
         modal=modal_schema_runtime_dependencies(value)
         if modal:
-            return tuple(sorted({*modal,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child))}))
+            return tuple(sorted({*modal,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..rules.all_kind_counter_shapes import all_kind_counter_payload_dependencies
         all_kinds=all_kind_counter_payload_dependencies(value)
         if all_kinds:
-            return tuple(sorted({*all_kinds,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child))}))
+            return tuple(sorted({*all_kinds,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..rules.counter_target_set_shapes import quantified_counter_payload_dependencies
         counter_targets=quantified_counter_payload_dependencies(value)
         if counter_targets:
-            return tuple(sorted({*counter_targets,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child))}))
+            return tuple(sorted({*counter_targets,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..target_count_cost_model import TARGET_COUNT_COST_HANDLER, TARGET_COUNT_COST_CAPABILITY, FixedManaPerTargetCostSpec
         if value.get('handler_id') == TARGET_COUNT_COST_HANDLER:
             FixedManaPerTargetCostSpec.from_dict(value['target_cost'])
@@ -35,6 +35,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
         own = (*own, *compound_payment_payload_dependencies(value))
         from ..resolution_mana_model import resolution_mana_choice_dependencies
         own = (*own, *resolution_mana_choice_dependencies(value))
+        from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
+        own = (*own, *token_definition_payload_dependencies(value,mechanics))
         from ..conditional_recipient_model import conditional_recipient_capabilities
         own = (*own, *conditional_recipient_capabilities(value))
         from ..public_zone_condition_model import public_zone_condition_capabilities
@@ -59,7 +61,7 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
             spec = ScalarEffectAmountSpec.from_dict(value)
             return tuple(sorted({SCALAR_AMOUNT_CAPABILITY,
                                  *((DECLARED_AMOUNT_CAPABILITY,) if spec.binding_id is not None else ())}))
-        return tuple(sorted({*own, *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child))}))
+        return tuple(sorted({*own, *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
     if isinstance(value, (list, tuple)):
-        return tuple(sorted({cap for child in value for cap in typed_result_amount_runtime_dependencies(child)}))
+        return tuple(sorted({cap for child in value for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics)}))
     return ()

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 486,
+  "registry_version": 487,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -8492,7 +8492,7 @@
     },
     {
       "id": "token.creation.fixed_definition",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "111.2",
         "111.3",
@@ -8553,7 +8553,8 @@
         "quorune.standard_token_abilities.standard_token_characteristics",
         "quorune.compiled_activated_abilities.compiled_activated_abilities",
         "CommanderEngine.create_token",
-        "quorune.rules.token_prowess_requirements.token_prowess_definition_dependencies"
+        "quorune.rules.token_prowess_requirements.token_prowess_definition_dependencies",
+        "quorune.rules.token_creation_capability_shapes.token_definition_payload_dependencies"
       ],
       "positive_tests": [
         "test_fixed_token_creation_compiles_shared_spell_trigger_and_activation_grammar",
@@ -8566,13 +8567,39 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_originals_admit_normally_and_token_runtime_minimum_is_independent",
+        "test_singular_articles_share_one_closed_definition_and_original_source_span",
+        "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
+        "test_countered_announced_x_spends_cost_without_creating_a_token",
+        "test_current_power_and_toughness_queries_snapshot_the_new_body",
+        "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
+        "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
+        "test_actual_buyback_retains_announced_x_and_returns_the_spell",
+        "test_actual_oviya_and_replacement_snapshot_count_before_each_creation_batch",
+        "test_actual_flesh_carver_uses_death_lki_after_counter_reset",
+        "test_actual_retrace_discards_a_real_land_before_resolving_land_card_count",
+        "test_actual_monument_search_and_paid_sacrifice_keep_greatest_toughness_result",
+        "test_actual_ominous_draws_pay_named_counters_for_one_literal_token"
       ],
       "negative_tests": [
         "test_fixed_token_creation_rejects_dynamic_copy_attached_and_custom_ability_variants",
         "test_fixed_token_capability_shape_rejects_malformed_effects",
         "test_fixed_token_batch_and_clue_shapes_are_exact_and_fail_closed",
-        "test_fixed_token_batch_malformed_effect_rolls_back_atomically"
+        "test_fixed_token_batch_malformed_effect_rolls_back_atomically",
+        "test_originals_admit_normally_and_token_runtime_minimum_is_independent",
+        "test_singular_articles_share_one_closed_definition_and_original_source_span",
+        "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
+        "test_countered_announced_x_spends_cost_without_creating_a_token",
+        "test_current_power_and_toughness_queries_snapshot_the_new_body",
+        "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
+        "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
+        "test_actual_buyback_retains_announced_x_and_returns_the_spell",
+        "test_actual_oviya_and_replacement_snapshot_count_before_each_creation_batch",
+        "test_actual_flesh_carver_uses_death_lki_after_counter_reset",
+        "test_actual_retrace_discards_a_real_land_before_resolving_land_card_count",
+        "test_actual_monument_search_and_paid_sacrifice_keep_greatest_toughness_result",
+        "test_actual_ominous_draws_pay_named_counters_for_one_literal_token"
       ],
       "interaction_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
@@ -8582,7 +8609,18 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
+        "test_countered_announced_x_spends_cost_without_creating_a_token",
+        "test_current_power_and_toughness_queries_snapshot_the_new_body",
+        "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
+        "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
+        "test_actual_buyback_retains_announced_x_and_returns_the_spell",
+        "test_actual_oviya_and_replacement_snapshot_count_before_each_creation_batch",
+        "test_actual_flesh_carver_uses_death_lki_after_counter_reset",
+        "test_actual_retrace_discards_a_real_land_before_resolving_land_card_count",
+        "test_actual_monument_search_and_paid_sacrifice_keep_greatest_toughness_result",
+        "test_actual_ominous_draws_pay_named_counters_for_one_literal_token"
       ],
       "multiplayer_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
@@ -8590,7 +8628,18 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
+        "test_countered_announced_x_spends_cost_without_creating_a_token",
+        "test_current_power_and_toughness_queries_snapshot_the_new_body",
+        "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
+        "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
+        "test_actual_buyback_retains_announced_x_and_returns_the_spell",
+        "test_actual_oviya_and_replacement_snapshot_count_before_each_creation_batch",
+        "test_actual_flesh_carver_uses_death_lki_after_counter_reset",
+        "test_actual_retrace_discards_a_real_land_before_resolving_land_card_count",
+        "test_actual_monument_search_and_paid_sacrifice_keep_greatest_toughness_result",
+        "test_actual_ominous_draws_pay_named_counters_for_one_literal_token"
       ],
       "privacy_tests": [
         "test_compiled_fixed_token_effect_suspends_for_replacement_order",
@@ -8599,7 +8648,18 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
+        "test_countered_announced_x_spends_cost_without_creating_a_token",
+        "test_current_power_and_toughness_queries_snapshot_the_new_body",
+        "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
+        "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
+        "test_actual_buyback_retains_announced_x_and_returns_the_spell",
+        "test_actual_oviya_and_replacement_snapshot_count_before_each_creation_batch",
+        "test_actual_flesh_carver_uses_death_lki_after_counter_reset",
+        "test_actual_retrace_discards_a_real_land_before_resolving_land_card_count",
+        "test_actual_monument_search_and_paid_sacrifice_keep_greatest_toughness_result",
+        "test_actual_ominous_draws_pay_named_counters_for_one_literal_token"
       ],
       "replay_tests": [
         "test_compiled_fixed_token_effect_replays_exactly",
@@ -8607,7 +8667,18 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
         "test_actual_ghave_uses_controlled_foreign_owned_payer_then_its_existing_token_sacrifice",
-        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw"
+        "test_actual_ray_mutagen_produces_the_counter_then_pays_it_for_a_draw",
+        "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
+        "test_countered_announced_x_spends_cost_without_creating_a_token",
+        "test_current_power_and_toughness_queries_snapshot_the_new_body",
+        "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
+        "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
+        "test_actual_buyback_retains_announced_x_and_returns_the_spell",
+        "test_actual_oviya_and_replacement_snapshot_count_before_each_creation_batch",
+        "test_actual_flesh_carver_uses_death_lki_after_counter_reset",
+        "test_actual_retrace_discards_a_real_land_before_resolving_land_card_count",
+        "test_actual_monument_search_and_paid_sacrifice_keep_greatest_toughness_result",
+        "test_actual_ominous_draws_pay_named_counters_for_one_literal_token"
       ],
       "required_evidence": [
         "positive",
