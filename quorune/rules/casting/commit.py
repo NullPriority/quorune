@@ -1552,7 +1552,7 @@ def _commit_cast_costs_and_stack(
     _record_cast(
         host, proposal, card, item, spent, activations, selected_option, costs
     )
-    commit_turn_cast_grant_use(host,selected_option)
+    commit_turn_cast_grant_use(host,selected_option,spell=card,caster=proposal.seat)
     _dispatch_cast_events(
         host,
         proposal,

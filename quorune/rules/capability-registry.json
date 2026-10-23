@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 482,
+  "registry_version": 483,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -46471,7 +46471,7 @@
     },
     {
       "id": "casting.permission.source_once_per_turn",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "113.6",
         "118.8",
@@ -46539,116 +46539,356 @@
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
-        "test_six_originals_have_normal_complete_admission_and_independent_runtime_minimum",
-        "test_closed_source_grammar_preserves_unknown_followups_and_descriptor_boundaries",
-        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
-        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
-        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
         "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
-        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
-        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_closed_source_grammar_preserves_unknown_followups_and_descriptor_boundaries",
         "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
         "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
         "test_real_copied_source_has_its_own_allowance",
-        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
-        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
-        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
-        "test_creature_grant_accepts_actual_face_down_creature_cast",
-        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+        "test_six_originals_have_normal_complete_admission_and_independent_runtime_minimum",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell"
       ],
       "negative_tests": [
-        "test_six_originals_have_normal_complete_admission_and_independent_runtime_minimum",
-        "test_closed_source_grammar_preserves_unknown_followups_and_descriptor_boundaries",
-        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
-        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
-        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
         "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
-        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
-        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_closed_source_grammar_preserves_unknown_followups_and_descriptor_boundaries",
         "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
         "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
         "test_real_copied_source_has_its_own_allowance",
-        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
-        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
-        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
-        "test_creature_grant_accepts_actual_face_down_creature_cast",
-        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+        "test_six_originals_have_normal_complete_admission_and_independent_runtime_minimum",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell"
       ],
       "interaction_tests": [
-        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
-        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
-        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
         "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
-        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
-        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
         "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
         "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
         "test_real_copied_source_has_its_own_allowance",
-        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
-        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
-        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
-        "test_creature_grant_accepts_actual_face_down_creature_cast",
-        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell"
       ],
       "multiplayer_tests": [
-        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
-        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
-        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
         "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
-        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
-        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
         "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
         "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
         "test_real_copied_source_has_its_own_allowance",
-        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
-        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
-        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
-        "test_creature_grant_accepts_actual_face_down_creature_cast",
-        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell"
       ],
       "privacy_tests": [
-        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
-        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
-        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
         "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
-        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
-        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
         "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
         "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
         "test_real_copied_source_has_its_own_allowance",
-        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
-        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
-        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
-        "test_creature_grant_accepts_actual_face_down_creature_cast",
-        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell"
       ],
       "replay_tests": [
-        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
-        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
         "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
-        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
         "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
-        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
-        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
         "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
         "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
         "test_real_copied_source_has_its_own_allowance",
-        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
-        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
-        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
-        "test_creature_grant_accepts_actual_face_down_creature_cast",
-        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell"
+      ]
+    },
+    {
+      "id": "casting.permission.source_graveyard_exile",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "118.9",
+        "400.7",
+        "601.2i",
+        "614.1a",
+        "614.5",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A complete current own-turn graveyard casting grant binds its printed graveyard_exile ordinary replacement to the original granted spell incarnation.",
+        "inputs": [
+          "complete typed granted cast and registered conditional result owner",
+          "sealed original stack identity and caster",
+          "canonical immutable zone-change subject"
+        ],
+        "outputs": [
+          "ordinary replacement candidate and affected-player ordering",
+          "locked result after permission source loss",
+          "expiry at the original spell zone change"
+        ],
+        "exclusions": [
+          "Flashback self-replacement priority",
+          "copied spell inheritance",
+          "new incarnation inheritance",
+          "unrepresented additional payments/shared land/linked results"
+        ]
+      },
+      "dependencies": [
+        "casting.permission.source_once_per_turn",
+        "zone.change.self_graveyard_exile"
+      ],
+      "implementation_components": [
+        "quorune.rules.turn_cast_grant_model.TurnCastGrantSpec",
+        "quorune.compiler.turn_cast_grants.turn_cast_grant_handler",
+        "quorune.semantic_runtime.turn_cast_grants.turn_cast_rider_handlers",
+        "quorune.rules.cast_grant_riders.CastGrantRiderBinding",
+        "quorune.rules.cast_grant_riders.cast_grant_rider_replacements",
+        "quorune.zone_object_state.mark_cast_grant_rider",
+        "quorune.rules.casting.turn_cast_grants.commit_turn_cast_grant_use"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Distinct registered result handler requires its own fine capability, closed schema2, complete source and sealed spell incarnation. Canonically verified withdrawal and unowned/malformed followups reject.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native original witnesses fail if canonical spell follow-up marking is omitted.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_originals_are_complete_and_each_result_has_an_independent_registered_minimum",
+        "test_version_one_wire_is_preserved_and_result_descriptors_fail_closed",
+        "test_actual_kess_graveyard_cast_exiles_original_and_spends_its_quota",
+        "test_actual_normal_hand_cast_has_no_replacement_and_preserves_kess_use",
+        "test_counter_and_source_departure_keep_kess_bound_to_the_original_spell",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_buyback_and_later_discard_do_not_inherit_the_previous_spell_replacement",
+        "test_spell_copy_has_no_created_replacement_or_additional_source_use",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "negative_tests": [
+        "test_originals_are_complete_and_each_result_has_an_independent_registered_minimum",
+        "test_version_one_wire_is_preserved_and_result_descriptors_fail_closed",
+        "test_actual_kess_graveyard_cast_exiles_original_and_spends_its_quota",
+        "test_actual_normal_hand_cast_has_no_replacement_and_preserves_kess_use",
+        "test_counter_and_source_departure_keep_kess_bound_to_the_original_spell",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_buyback_and_later_discard_do_not_inherit_the_previous_spell_replacement",
+        "test_spell_copy_has_no_created_replacement_or_additional_source_use",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "interaction_tests": [
+        "test_actual_kess_graveyard_cast_exiles_original_and_spends_its_quota",
+        "test_actual_normal_hand_cast_has_no_replacement_and_preserves_kess_use",
+        "test_counter_and_source_departure_keep_kess_bound_to_the_original_spell",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_buyback_and_later_discard_do_not_inherit_the_previous_spell_replacement",
+        "test_spell_copy_has_no_created_replacement_or_additional_source_use",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "multiplayer_tests": [
+        "test_actual_kess_graveyard_cast_exiles_original_and_spends_its_quota",
+        "test_actual_normal_hand_cast_has_no_replacement_and_preserves_kess_use",
+        "test_counter_and_source_departure_keep_kess_bound_to_the_original_spell",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_buyback_and_later_discard_do_not_inherit_the_previous_spell_replacement",
+        "test_spell_copy_has_no_created_replacement_or_additional_source_use",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "privacy_tests": [
+        "test_actual_kess_graveyard_cast_exiles_original_and_spends_its_quota",
+        "test_actual_normal_hand_cast_has_no_replacement_and_preserves_kess_use",
+        "test_counter_and_source_departure_keep_kess_bound_to_the_original_spell",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_buyback_and_later_discard_do_not_inherit_the_previous_spell_replacement",
+        "test_spell_copy_has_no_created_replacement_or_additional_source_use",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "replay_tests": [
+        "test_actual_kess_graveyard_cast_exiles_original_and_spends_its_quota",
+        "test_actual_normal_hand_cast_has_no_replacement_and_preserves_kess_use",
+        "test_counter_and_source_departure_keep_kess_bound_to_the_original_spell",
+        "test_flashback_is_an_independent_permission_and_preserves_kess_allowance",
+        "test_buyback_and_later_discard_do_not_inherit_the_previous_spell_replacement",
+        "test_spell_copy_has_no_created_replacement_or_additional_source_use",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ]
+    },
+    {
+      "id": "casting.permission.source_tapped_entry",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "118.9",
+        "400.7",
+        "601.2i",
+        "614.1c",
+        "614.5",
+        "614.12",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A complete current own-turn graveyard casting grant binds its printed tapped_entry ordinary replacement to the original granted spell incarnation.",
+        "inputs": [
+          "complete typed granted cast and registered conditional result owner",
+          "sealed original stack identity and caster",
+          "canonical immutable zone-change subject"
+        ],
+        "outputs": [
+          "ordinary replacement candidate and affected-player ordering",
+          "locked result after permission source loss",
+          "expiry at the original spell zone change"
+        ],
+        "exclusions": [
+          "Flashback self-replacement priority",
+          "copied spell inheritance",
+          "new incarnation inheritance",
+          "unrepresented additional payments/shared land/linked results"
+        ]
+      },
+      "dependencies": [
+        "casting.permission.source_once_per_turn",
+        "zone.entry.tapped_state"
+      ],
+      "implementation_components": [
+        "quorune.rules.turn_cast_grant_model.TurnCastGrantSpec",
+        "quorune.compiler.turn_cast_grants.turn_cast_grant_handler",
+        "quorune.semantic_runtime.turn_cast_grants.turn_cast_rider_handlers",
+        "quorune.rules.cast_grant_riders.CastGrantRiderBinding",
+        "quorune.rules.cast_grant_riders.cast_grant_rider_replacements",
+        "quorune.zone_object_state.mark_cast_grant_rider",
+        "quorune.rules.casting.turn_cast_grants.commit_turn_cast_grant_use"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Distinct registered result handler requires its own fine capability, closed schema2, complete source and sealed spell incarnation. Canonically verified withdrawal and unowned/malformed followups reject.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native original witnesses fail if canonical spell follow-up marking is omitted.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_originals_are_complete_and_each_result_has_an_independent_registered_minimum",
+        "test_version_one_wire_is_preserved_and_result_descriptors_fail_closed",
+        "test_edgar_normal_hand_and_granted_casts_have_distinct_entry_states",
+        "test_edgar_departure_does_not_erase_the_artifacts_bound_tapped_entry",
+        "test_edgar_copy_entry_choice_preserves_the_created_tapped_replacement",
+        "test_edgar_attack_uses_current_own_artifact_maximum_once_at_resolution",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "negative_tests": [
+        "test_originals_are_complete_and_each_result_has_an_independent_registered_minimum",
+        "test_version_one_wire_is_preserved_and_result_descriptors_fail_closed",
+        "test_edgar_normal_hand_and_granted_casts_have_distinct_entry_states",
+        "test_edgar_departure_does_not_erase_the_artifacts_bound_tapped_entry",
+        "test_edgar_copy_entry_choice_preserves_the_created_tapped_replacement",
+        "test_edgar_attack_uses_current_own_artifact_maximum_once_at_resolution",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "interaction_tests": [
+        "test_edgar_normal_hand_and_granted_casts_have_distinct_entry_states",
+        "test_edgar_departure_does_not_erase_the_artifacts_bound_tapped_entry",
+        "test_edgar_copy_entry_choice_preserves_the_created_tapped_replacement",
+        "test_edgar_attack_uses_current_own_artifact_maximum_once_at_resolution",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "multiplayer_tests": [
+        "test_edgar_normal_hand_and_granted_casts_have_distinct_entry_states",
+        "test_edgar_departure_does_not_erase_the_artifacts_bound_tapped_entry",
+        "test_edgar_copy_entry_choice_preserves_the_created_tapped_replacement",
+        "test_edgar_attack_uses_current_own_artifact_maximum_once_at_resolution",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "privacy_tests": [
+        "test_edgar_normal_hand_and_granted_casts_have_distinct_entry_states",
+        "test_edgar_departure_does_not_erase_the_artifacts_bound_tapped_entry",
+        "test_edgar_copy_entry_choice_preserves_the_created_tapped_replacement",
+        "test_edgar_attack_uses_current_own_artifact_maximum_once_at_resolution",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ],
+      "replay_tests": [
+        "test_edgar_normal_hand_and_granted_casts_have_distinct_entry_states",
+        "test_edgar_departure_does_not_erase_the_artifacts_bound_tapped_entry",
+        "test_edgar_copy_entry_choice_preserves_the_created_tapped_replacement",
+        "test_edgar_attack_uses_current_own_artifact_maximum_once_at_resolution",
+        "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
       ]
     }
   ]

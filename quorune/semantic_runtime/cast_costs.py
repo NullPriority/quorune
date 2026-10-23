@@ -557,7 +557,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
     from .global_alternative_costs import GlobalAlternativeCostHandler
     from .target_count_costs import FixedManaPerTargetCostHandler
     from .optional_life_costs import OptionalLifeColorReductionHandler
-    from .turn_cast_grants import TurnCastGrantHandler
+    from .turn_cast_grants import TurnCastGrantHandler, turn_cast_rider_handlers
     registry = CastCostComponentRegistry(
         (
             AffinityCostHandler(),
@@ -581,6 +581,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaPerTargetCostHandler(),
             OptionalLifeColorReductionHandler(),
             TurnCastGrantHandler(),
+            *turn_cast_rider_handlers(),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())

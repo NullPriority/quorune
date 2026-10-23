@@ -2771,6 +2771,17 @@ mana X is zeroed by a free base. Selected face-down characteristics govern
 qualified spell permission. Unrepresented linked results, extra payments,
 arrival qualifiers and shared land-use clauses remain material residuals.
 
+Version-two grant data also represents a fixed follow-up on an ordinary
+graveyard cast: exile the original spell instead of putting it in its caster's
+graveyard, or have the granted artifact enter tapped. Separate registered
+handlers require the corresponding fine-grained capability; the original
+schema-one descriptor remains unchanged. The chosen cast binds the follow-up
+to its stack incarnation. The existing zone-replacement snapshot receives an
+ordinary replacement candidate, so ordering and entry-copy choices remain with
+the canonical coordinator. A later source departure does not erase it, while
+the spell's zone change ends it. Extra payment and other linked clauses still
+require their complete owners.
+
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
 engine does not yet evaluate exact ability additions or removals outside the

@@ -13,6 +13,7 @@ from ...object_query import object_matches_query, object_query_result
 from ...util import stable_json
 from ..turn_cast_grant_model import (
     TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_FIELD, TURN_CAST_GRANT_HANDLER,
+    TURN_CAST_GRANT_HANDLERS,
     TurnCastGrantSpec, validate_turn_cast_grant_use,
 )
 
@@ -31,7 +32,7 @@ def current_turn_cast_grants(host, seat, card, *, cast_type_line=None):
             continue
         for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,
                 active_zone='battlefield', event=TURN_CAST_GRANT_EVENT):
-            if not any(d.get('handler_id') == TURN_CAST_GRANT_HANDLER for d in program.handlers):
+            if not any(d.get('handler_id') in TURN_CAST_GRANT_HANDLERS for d in program.handlers):
                 continue
             if (host.semantic_program_is_current_trusted(program) and program_has_complete_card_program_admission(program)
                     and program_matches_face(record, program, source)
@@ -50,7 +51,7 @@ def current_turn_cast_grants(host, seat, card, *, cast_type_line=None):
         if CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage or program.key not in current.get(source.object_id, ()):
             continue
         for descriptor in program.handlers:
-            if descriptor.get('handler_id') != TURN_CAST_GRANT_HANDLER:
+            if descriptor.get('handler_id') not in TURN_CAST_GRANT_HANDLERS:
                 continue
             for spec in registry.lower(descriptor, None):
                 origins = set(spec.origins)
@@ -83,6 +84,8 @@ def free_turn_grant_base_options(host, seat, card, *, cast_type_line, enabled, h
 
 
 def with_turn_cast_grant_choices(host, seat, card, options, *, cast_type_line, force_without_mana_cost=False):
+    if force_without_mana_cost:
+        return [option for option in options if TURN_CAST_GRANT_FIELD not in option]
     providers = current_turn_cast_grants(host, seat, card, cast_type_line=cast_type_line)
     from ..zone_action_permissions import compiled_zone_cast_permission
     from ...preparation import preparation_cast_permission
@@ -103,11 +106,30 @@ def with_turn_cast_grant_choices(host, seat, card, options, *, cast_type_line, f
             if selected in providers:
                 result.append(option)
             continue
-        if independent:
+        own_zone_method = _has_own_graveyard_cast_method(option, card.zone)
+        if independent or own_zone_method:
             result.append(option)
+        if own_zone_method:
+            continue
         for use in normal:
             result.append({**deepcopy(option), TURN_CAST_GRANT_FIELD: deepcopy(use)})
     return result
+
+
+def _has_own_graveyard_cast_method(option, origin):
+    """A zone-bearing method supplies its own permission, unlike a mana base."""
+    if origin != 'graveyard':
+        return False
+    if option.get('source_zone') == 'graveyard' or option.get('disturb') is not None or option.get('flashback_fingerprint') is not None:
+        return True
+    from ...cast_lifecycles import FIXED_CAST_LIFECYCLE_CONTEXT_FIELD, FixedCastLifecycleSpec, FixedCastLifecycleKind
+    value = option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
+    if value is None:
+        return False
+    return FixedCastLifecycleSpec.from_dict(value).kind in {
+        FixedCastLifecycleKind.AFTERMATH, FixedCastLifecycleKind.ESCAPE, FixedCastLifecycleKind.JUMP_START,
+        FixedCastLifecycleKind.MAYHEM, FixedCastLifecycleKind.RETRACE,
+    }
 
 
 def _price_id(use):
@@ -151,13 +173,20 @@ def is_turn_grant_optional_cost_option(option, optional_id):
     return original == optional_id or original == 'normal+' + optional_id
 
 
-def commit_turn_cast_grant_use(host, option):
+def commit_turn_cast_grant_use(host, option, *, spell=None, caster=None):
     use = option.get(TURN_CAST_GRANT_FIELD)
     if use is None:
         return
     underlying_cast_cost_option_id(option)
+    spec = validate_turn_cast_grant_use(use)
     if use['turn'] != host.state.turn_sequence:
         raise ValueError('Turn casting permission epoch changed')
     source = host.state.cards.get(use['source'])
     if source is not None and source.logical_object_id == use['logical']:
         commit_cast_grant_usage(source, ability_id=use['program'], turn_sequence=use['turn'])
+    if spec.cast_rider != 'none':
+        from ...zone_object_state import mark_cast_grant_rider
+        from ..cast_grant_riders import CastGrantRiderBinding
+        if spell is None:
+            raise ValueError('Granted casting follow-up needs the actual stack incarnation')
+        mark_cast_grant_rider(spell, CastGrantRiderBinding(spec.cast_rider, spell.logical_object_id, caster, use['source_ref']))

@@ -191,6 +191,15 @@ loss and control changes preserve the usage data. A new incarnation, a separate
 copied permanent or a new turn has its own allowance. Canonical zone reset,
 save/load and replay retain their existing ownership.
 
+Flashback, Disturb and other methods supplying their own zone permission are
+independent routes and never consume a separate source grant's quota. A
+mana-only alternative can still combine with a source's ordinary graveyard
+permission. A represented grant follow-up is sealed on the original spell by
+the object-state owner and lowered into ordinary zone replacements. It does
+not gain Flashback self-replacement priority, get copied to a spell copy, or
+remain on a later incarnation. A tapped-entry follow-up participates before
+entry rather than tapping the resulting permanent afterward.
+
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,
   replacements, runtime operations, and the selected rules profile.

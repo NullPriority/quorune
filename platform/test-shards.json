@@ -148,6 +148,7 @@
       "test_temporary_keyword_removal",
       "test_trigger_targeting",
       "test_triggered_abilities",
+      "test_turn_cast_grant_riders",
       "test_turn_cast_grants",
       "test_turn_priority_owner",
       "test_unleash_rules"

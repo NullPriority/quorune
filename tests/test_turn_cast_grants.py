@@ -91,9 +91,11 @@ class TurnCastGrantTests(unittest.TestCase):
         for key,value in (('schema_version',True),('origins',['exile']),('without_mana_cost',1)):
             raw=template[1]['grant'].copy();raw[key]=value
             with self.assertRaises(ValueError):TurnCastGrantSpec.from_dict(raw)
-        for name in ('Kess, Dissident Mage','Serra Paragon'):
+        for name in ('Serra Paragon',):
             ir=compile_oracle_card(self.db.lookup(name),capability_registry=self.registry,capability_profile='commander_review')
             self.assertNotEqual('exact',ir.status);self.assertTrue(ir.material_residuals)
+        kess=compile_oracle_card(self.db.lookup('Kess, Dissident Mage'),capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',kess.status,kess.material_residuals)
 
     def test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it(self):
         s=self.session(801010);source=self.add(s.engine,'Zaffai and the Tempests')
@@ -294,20 +296,24 @@ class TurnCastGrantTests(unittest.TestCase):
         self.assertEqual('Creature',s.engine._effective_card_data(current)['type_line']);self.private_replay(s,private)
 
     def test_disturb_self_permission_remains_separate_from_source_grant_use(self):
-        for spend_quota in (False,True):
-            s=self.session(801160+spend_quota);self.add(s.engine,'Karador, Ghost Chieftain')
+        for available_quota in (False,True):
+            s=self.session(801160+available_quota);self.add(s.engine,'Karador, Ghost Chieftain')
             spell=self.add(s.engine,'Baithook Angler // Hook-Haunt Drifter',zone='graveyard')
-            other=self.add(s.engine,'Generic Bound Body',zone='graveyard');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
-            self.prepare(s,mana={'C':1,'U':1,'W':1});self.checkpoint(s)
+            other=self.add(s.engine,'Generic Bound Body',zone='graveyard',ref='disturb-other')
+            spent=self.add(s.engine,'Generic Bound Body',zone='graveyard',ref='disturb-spent')
+            private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
+            self.prepare(s,mana={'C':1,'U':1,'W':2});self.checkpoint(s)
+            if not available_quota:
+                self.use(s,spent,self.grants(s,spent)[0],{'W':1});self.assertIsNone(self.resolve(s))
             action=next((a for a in self.actions(s) if a['id']=='cast:'+spell.ref+':face:Hook-Haunt Drifter'),None)
             self.assertIsNotNone(action)
-            options=[o for o in action['cost_options'] if bool(o.get('permission_source'))==spend_quota]
-            self.assertEqual(1,len(options),action['cost_options'])
+            self.assertTrue(all(not o.get('permission_source') for o in action['cost_options']))
+            options=action['cost_options'];self.assertEqual(1,len(options),options)
             result=s.act('pilot:A',{'action_id':action['id'],'face':'Hook-Haunt Drifter','cost_option':options[0]['id'],
                 'pay':'manual','payment':{'C':1,'U':1}})
             self.assertTrue(result.ok,result.summary);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
             self.assertEqual('Hook-Haunt Drifter',s.engine.display_name(spell.object_id))
-            self.assertEqual(not spend_quota,bool(self.grants(s,other)));self.private_replay(s,private)
+            self.assertEqual(available_quota,bool(self.grants(s,other)));self.private_replay(s,private)
 
     def test_verified_grant_withdrawal_and_fresh_compiler_and_quota_omissions_reject(self):
         from quorune.rules.capabilities import CapabilityRegistry

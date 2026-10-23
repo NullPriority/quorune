@@ -5,6 +5,7 @@ import re
 from ..object_predicate import ObjectQuerySpec
 from ..rules.turn_cast_grant_model import (
     TURN_CAST_GRANT_CAPABILITY, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_HANDLER, TurnCastGrantSpec,
+    TURN_CAST_RIDER_HANDLERS,
 )
 
 _CLAUSE = re.compile(r'^Once during each of your turns, you may cast (?P<subject>.+?) spell '
@@ -23,7 +24,16 @@ def _spell_predicate(subject):
 
 
 def turn_cast_grant_handler(text):
-    match = _CLAUSE.fullmatch(' '.join(text.strip().split()))
+    material = ' '.join(text.strip().split())
+    rider = 'none'
+    for suffix, kind in (
+            (' If a spell cast this way would be put into your graveyard, exile it instead.', 'graveyard_exile'),
+            (' If you cast a spell this way, that artifact enters tapped.', 'tapped_entry')):
+        if material.casefold().endswith(suffix.casefold()):
+            material = material[:-len(suffix)]
+            rider = kind
+            break
+    match = _CLAUSE.fullmatch(material)
     if match is None:
         return None
     subject = re.sub(r'^(?:a|an) ', '', match['subject'], flags=re.I).casefold()
@@ -38,9 +48,9 @@ def turn_cast_grant_handler(text):
     origins = {'your hand': ('hand',), 'your graveyard': ('graveyard',),
         'your hand or the top of your library': ('hand', 'library_top')}[match['origin'].casefold()]
     try:
-        spec = TurnCastGrantSpec(origins, predicates, match['free'] is not None)
+        spec = TurnCastGrantSpec(origins, predicates, match['free'] is not None, rider)
     except (TypeError, ValueError):
         return None
-    return ('once-own-turn-cast-grant-v1', {'handler_id': TURN_CAST_GRANT_HANDLER,
+    return ('once-own-turn-cast-grant-v1', {'handler_id': TURN_CAST_RIDER_HANDLERS[spec.cast_rider],
         'schema_version': 1, 'event': TURN_CAST_GRANT_EVENT, 'requires_complete_card_program': True, 'grant': spec.to_dict()},
-        TURN_CAST_GRANT_CAPABILITY)
+        spec.capability_dependencies)

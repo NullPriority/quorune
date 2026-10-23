@@ -912,6 +912,7 @@ def _zone_change_snapshot_effects(
     active_sources: Sequence[Any],
     prospective_objects: Mapping[str, Any],
 ) -> tuple[ReplacementEffect, ...]:
+    from ..rules.cast_grant_riders import cast_grant_rider_replacements
     ambient_effects = collect_zone_change_replacement_effects(
         host,
         sources=active_sources, source_zones={source.object_id: "battlefield" for source in active_sources},
@@ -1024,6 +1025,7 @@ def _zone_change_snapshot_effects(
                     subject_cards,
                     tuple(subject.object_id for subject in subjects),
                 ),
+                *cast_grant_rider_replacements(subject_cards, subjects),
                 *intrinsic_effects,
                 *generated_effects,
                 *self_entry_effects,
