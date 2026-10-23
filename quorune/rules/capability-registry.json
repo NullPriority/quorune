@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 487,
+  "registry_version": 488,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -9188,24 +9188,123 @@
     },
     {
       "id": "token.creation.additional_replacement",
-      "version": 2,
-      "official_rules": ["111.2", "614.1", "614.1a", "614.4", "614.5", "614.6", "614.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Apply a reviewed mandatory replacement that adds a fixed token definition to one nonempty token-creation event controlled by the replacement source's controller.",
-        "inputs": ["source controller", "token event controller", "created token card types and subtypes", "fixed additional token definition"],
-        "outputs": ["immutable transformed token specification event", "exact replacement journal", "shared creation timestamp", "ordinary token enter events"],
-        "exclusions": ["optional replacement wording", "effects that change or double the original token quantity", "effects whose output depends on mutable state", "modified token entry instructions", "replacement-created counter placement"]
+        "inputs": [
+          "source controller",
+          "token event controller",
+          "created token card types and subtypes",
+          "fixed additional token definition",
+          "uniform shared tapped and temporary-keyword creation status"
+        ],
+        "outputs": [
+          "immutable transformed token specification event",
+          "exact replacement journal",
+          "shared creation timestamp",
+          "ordinary token enter events"
+        ],
+        "exclusions": [
+          "optional replacement wording",
+          "effects that change or double the original token quantity",
+          "effects whose output depends on mutable state",
+          "conflicting per-definition creation status in one batch",
+          "replacement-created counter placement"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.token_templates.static_additional_token_replacement_handler", "quorune.semantic_runtime.token_replacements.AdditionalTokenReplacementHandler", "quorune.semantic_runtime.token_replacements.GenericAdditionalTokenReplacementHandler", "quorune.semantic_runtime.token_replacements.resolve_token_creation_replacements", "quorune.replacement.operations.CreateAdditionalToken", "quorune.replacement.application._apply_additional_token", "quorune.token_creation.create_tokens", "CommanderEngine.create_token"],
-      "positive_tests": ["test_registered_additional_token_components_replace_without_name_dispatch", "test_generic_compiler_program_drives_runtime_without_name_dispatch", "test_pinned_family_emits_exact_source_spanned_runtime_nodes"],
-      "negative_tests": ["test_additional_token_component_rejects_malformed_or_nonmatching_events", "test_nearby_unsupported_wording_remains_residual", "test_additional_token_operation_rejects_wrong_event_without_mutation"],
-      "interaction_tests": ["test_multiple_additional_token_components_share_one_creation_timestamp", "test_additional_token_does_not_inherit_original_entry_modifiers", "test_source_created_by_event_does_not_replace_its_own_creation", "test_resolution_suspends_for_seat_scoped_replacement_order", "test_replacement_created_token_rediscovery_uses_same_event", "test_additional_token_operation_is_immutable_roundtrippable_and_atomic", "test_generated_and_reviewed_equivalent_handler_is_not_registered_twice"],
-      "multiplayer_tests": ["test_four_player_replacement_choice_is_affected_seat_scoped"],
-      "privacy_tests": ["test_resolution_suspends_for_seat_scoped_replacement_order"],
-      "replay_tests": ["test_additional_token_component_replays_exactly", "test_generic_additional_token_program_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.token_templates.static_additional_token_replacement_handler",
+        "quorune.semantic_runtime.token_replacements.AdditionalTokenReplacementHandler",
+        "quorune.semantic_runtime.token_replacements.GenericAdditionalTokenReplacementHandler",
+        "quorune.semantic_runtime.token_replacements.resolve_token_creation_replacements",
+        "quorune.replacement.operations.CreateAdditionalToken",
+        "quorune.replacement.application._apply_additional_token",
+        "quorune.token_creation.create_tokens",
+        "CommanderEngine.create_token",
+        "quorune.replacement.application._shared_token_creation_status"
+      ],
+      "positive_tests": [
+        "test_registered_additional_token_components_replace_without_name_dispatch",
+        "test_generic_compiler_program_drives_runtime_without_name_dispatch",
+        "test_pinned_family_emits_exact_source_spanned_runtime_nodes",
+        "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
+        "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
+        "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
+        "test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics",
+        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back"
+      ],
+      "negative_tests": [
+        "test_additional_token_component_rejects_malformed_or_nonmatching_events",
+        "test_nearby_unsupported_wording_remains_residual",
+        "test_additional_token_operation_rejects_wrong_event_without_mutation",
+        "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
+        "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
+        "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
+        "test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics",
+        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back"
+      ],
+      "interaction_tests": [
+        "test_multiple_additional_token_components_share_one_creation_timestamp",
+        "test_additional_token_inherits_shared_creation_status_without_copying_definition",
+        "test_source_created_by_event_does_not_replace_its_own_creation",
+        "test_resolution_suspends_for_seat_scoped_replacement_order",
+        "test_replacement_created_token_rediscovery_uses_same_event",
+        "test_additional_token_operation_is_immutable_roundtrippable_and_atomic",
+        "test_generated_and_reviewed_equivalent_handler_is_not_registered_twice",
+        "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
+        "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
+        "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
+        "test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics",
+        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_replacement_choice_is_affected_seat_scoped",
+        "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
+        "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
+        "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load"
+      ],
+      "privacy_tests": [
+        "test_resolution_suspends_for_seat_scoped_replacement_order",
+        "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
+        "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
+        "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load"
+      ],
+      "replay_tests": [
+        "test_additional_token_component_replays_exactly",
+        "test_generic_additional_token_program_replays_exactly",
+        "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
+        "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
+        "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This capability has no capability dependencies.",
       "implementation_mutation_status": "killed",

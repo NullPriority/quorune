@@ -54,6 +54,7 @@
       "test_activation_restriction_material",
       "test_activation_restrictions",
       "test_additional_token_compiler",
+      "test_additional_token_status",
       "test_all_colors",
       "test_all_kind_counter_doubling",
       "test_alternative_activation_mana",

@@ -422,6 +422,27 @@ def _retarget_zone_counter_children(
         )
 
 
+def _shared_token_creation_status(tokens):
+    """Keep instruction status distinct from the replaced token definition."""
+    status={}
+    for field,default in (('tapped',False),('temporary_keywords',())):
+        values=[]
+        for token in tokens:
+            if not isinstance(token,Mapping):raise ReplacementEffectError('Token creation specification must be an object')
+            value=token.get(field,default)
+            if field=='tapped':
+                if type(value) is not bool:raise ReplacementEffectError('Token tapped status must be boolean')
+            else:
+                if not isinstance(value,(list,tuple)) or any(type(keyword) is not str for keyword in value):
+                    raise ReplacementEffectError('Token temporary keywords must be an array of strings')
+                value=tuple(value)
+            values.append(value)
+        if values and any(value!=values[0] for value in values[1:]):
+            raise ReplacementEffectError('Mixed token creation status requires an explicit per-definition scope')
+        if values and values[0]!=default:status[field]=list(values[0]) if field=='temporary_keywords' else values[0]
+    return status
+
+
 def _apply_additional_token(
     event: ReplaceableEvent,
     payload: dict[str, Any],
@@ -442,6 +463,7 @@ def _apply_additional_token(
     payload["tokens"] = [
         *list(payload.get("tokens", ())),
         {
+            **_shared_token_creation_status(payload.get('tokens',())),
             "name": operation.name,
             "quantity": operation.quantity,
             "characteristics": thaw_value(operation.characteristics),

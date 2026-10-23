@@ -6229,6 +6229,7 @@
         "quorune/fixed_effect_payment.py",
         "quorune/milling.py",
         "quorune/model.py",
+        "quorune/replacement/application.py",
         "quorune/replacement/replay.py",
         "quorune/resolution_mana_model.py",
         "quorune/rules/action_catalog.py",
@@ -6282,6 +6283,7 @@
         "quorune/target_count_cost_model.py",
         "quorune/turn_history.py",
         "quorune/zone_object_state.py",
+        "tests/fixtures/additional-token-status-cards.json",
         "tests/fixtures/all-kind-counter-cards.json",
         "tests/fixtures/announced-target-cardinality-cards.json",
         "tests/fixtures/any-number-target-cards.json",
@@ -6296,6 +6298,7 @@
         "tests/fixtures/token-article-cards.json",
         "tests/fixtures/turn-cast-grant-cards.json",
         "tests/fixtures/turn-cast-rider-cards.json",
+        "tests/test_additional_token_status.py",
         "tests/test_all_kind_counter_doubling.py",
         "tests/test_announced_target_cardinality.py",
         "tests/test_any_number_targets.py",
@@ -6314,6 +6317,7 @@
         "web/unit/choices.test.ts"
       ],
       "test_modules": [
+        "test_additional_token_status",
         "test_all_kind_counter_doubling",
         "test_announced_activation_x",
         "test_announced_target_cardinality",

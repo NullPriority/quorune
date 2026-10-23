@@ -7,6 +7,7 @@
     "tests/fixtures/activation-restriction-material-cards.json",
     "tests/fixtures/additional-conditional-modifier-cards.json",
     "tests/fixtures/additional-draw-step-cards.json",
+    "tests/fixtures/additional-token-status-cards.json",
     "tests/fixtures/affinity-rules-cards.json",
     "tests/fixtures/aftermath-cards.json",
     "tests/fixtures/aggregated-zone-event-triggers.json",

@@ -1025,6 +1025,12 @@ replacement batch before committing one timestamped batch and dispatching
 enter events. The closed mandatory fixed additional-token family transforms
 that same event with a typed operation, extends its type/subtype subject for
 replacement rediscovery, and cannot apply one source twice.
+Additional tokens retain their own definition while inheriting uniform tapped
+and separately instructed temporary-keyword creation status. Intrinsic keyword
+abilities remain part of the original definition. Conflicting per-definition
+status in one batch rejects before creation until an explicit scope is owned.
+The creation result continues to include every actual created token for later
+instructions; it does not filter out additional tokens by definition.
 Fixed Investigate, Afterlife, named and predefined definitions, exact targeted
 copies, and next-end-step creation all converge on that same transaction.
 Token Changeling and declaration restrictions are serialized as typed
