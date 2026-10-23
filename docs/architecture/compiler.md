@@ -256,8 +256,16 @@ existing draw, typed discard, destination replacement and counter owners.
 the existing mana effect, one instruction per represented color or colorless
 quantity. A represented spending restriction remains attached to every unit.
 Spell, entry-trigger and loyalty-ability classification retain their normal
-stack timing and separately compiled costs. Unknown conditional replacements,
-color choices, linked effects and spending clauses remain residuals.
+stack timing and separately compiled costs. Fixed positive outputs of any color
+use a closed version-two instruction in the existing mana chooser. One-color
+outputs select exactly one of the five colors; combinations submit an exact
+nonnegative allocation. The existing mana-bundle form exposes that allocation
+without enumerating every possible vector. The payload carries an independent
+runtime capability minimum and binds the resolving controller and source.
+Ordered result composition resumes the remaining instructions once after the
+choice. Genuine mana abilities retain their immediate activation owner.
+Variable or restricted color choices, unknown conditional replacements, linked
+effects and unsupported spending clauses remain residuals.
 
 `compiler/player_speed_nodes.py` lowers Start Your Engines to a current trusted
 static marker. Max Speed fixed characteristic bodies use the public-state

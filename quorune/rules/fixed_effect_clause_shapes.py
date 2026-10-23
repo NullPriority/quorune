@@ -27,6 +27,7 @@ from .counter_removal_capabilities import (
     fixed_counter_removal_node_capabilities,
 )
 from .fixed_controller_effect_shapes import fixed_life_node_capabilities
+from .fixed_resolution_mana_shapes import fixed_resolution_mana_choice_capabilities
 from .linked_exile_return_shapes import linked_exile_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
     fixed_resolution_characteristic_set_node_capabilities,
@@ -112,6 +113,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_resolution_mana_choice_capabilities,
     all_kind_counter_component_capabilities,
     temporary_cast_node_capabilities,
     fixed_goad_node_capabilities,

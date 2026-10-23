@@ -130,6 +130,7 @@
       "test_quantified_counter_targets",
       "test_recipient_modifiers",
       "test_reconfigure",
+      "test_resolution_mana_choices",
       "test_resolution_rules",
       "test_scheduled_player_triggers",
       "test_selected_counter_costs",

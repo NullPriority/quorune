@@ -333,6 +333,25 @@ class SearchChoice:
 
 
 @dataclass(frozen=True, slots=True)
+class ManaBundleChoice:
+    field_name: str
+    colors: tuple[str, ...]
+    amount: int
+
+    def __post_init__(self):
+        object.__setattr__(self,'colors',tuple(self.colors))
+        _string(self.field_name,field_name='mana field_name')
+        if (not self.colors or len(set(self.colors))!=len(self.colors)
+                or any(type(color) is not str or color not in ('W','U','B','R','G') for color in self.colors)
+                or type(self.amount) is not int or not 1<=self.amount<=10):
+            raise SemanticChoiceError('Mana bundle choice requires fixed positive output in colors')
+
+    def choice_schema(self):
+        return {'field':self.field_name,'type':'mana_bundle','allowed_colors':list(self.colors),
+            'total':self.amount,'single_color':False}
+
+
+@dataclass(frozen=True, slots=True)
 class DistributionChoice:
     field_name: str
     legal_refs: tuple[str, ...]
@@ -430,6 +449,7 @@ ChoiceModel = (
     | LibraryPartitionChoice
     | SearchChoice
     | DistributionChoice
+    | ManaBundleChoice
     | DecisionMapChoice
     | ReferenceSetChoice
 )

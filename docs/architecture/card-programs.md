@@ -213,6 +213,13 @@ incarnation journal while excluding battlefield-origin moves. It keeps its own
 registered handler and capability requirement; a death cannot acquire this
 permission from being in the graveyard alone.
 
+Current closed fixed-color land-entry triggers supersede an exact matching
+legacy output view and its empty permanent spell view only when Oracle and
+rulings hashes, output amount, source identity and timing agree. The canonical
+trigger owns its controller predicate and five-color domain. Historical
+compatibility payloads remain available; unrelated or changed views remain
+independent.
+
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,
   replacements, runtime operations, and the selected rules profile.

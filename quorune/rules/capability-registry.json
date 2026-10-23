@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 485,
+  "registry_version": 486,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -47474,6 +47474,135 @@
         "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
         "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
       ]
+    },
+    {
+      "id": "mana.production.fixed_resolution_choice",
+      "version": 1,
+      "official_rules": [
+        "106.1a",
+        "106.1b",
+        "106.3",
+        "106.4",
+        "605.1a",
+        "605.1b",
+        "608.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A fixed positive resolution output chooses one of five colors or an exact allocation among colors through the existing mana intent owner.",
+        "inputs": [
+          "closed fixed one-color or combination output",
+          "locked resolving parent/source and controller",
+          "principal-authorized color or exact total vector"
+        ],
+        "outputs": [
+          "ordinary mana production with exact colors and amount",
+          "once-only ordered consequences and private replayable choice"
+        ],
+        "exclusions": [
+          "colorless as a color",
+          "variable or restricted production",
+          "dynamic output color sets",
+          "guessed mana-ability stack classification",
+          "independently unsupported sibling material"
+        ]
+      },
+      "dependencies": [
+        "mana.production.fixed_resolution"
+      ],
+      "implementation_components": [
+        "quorune.resolution_mana_model.ResolutionManaChoiceSpec",
+        "quorune.compiler.fixed_resolution_mana.fixed_resolution_mana_effect_template",
+        "quorune.semantic_choices.resolution_mana.prepare_resolution_mana",
+        "quorune.semantic_choices.resolution_mana.complete_resolution_mana",
+        "quorune.card_programs.resolution_mana_overlay.shadowed_reviewed_resolution_mana_keys"
+      ],
+      "positive_tests": [
+        "test_originals_have_normal_complete_admission_and_independent_runtime_minimum",
+        "test_closed_payloads_colors_and_existing_fixed_symbol_bundles_are_distinct",
+        "test_independent_siblings_and_genuine_activation_rules_remain_held",
+        "test_actual_sentinel_entry_chooses_each_color_and_can_spend_the_result",
+        "test_actual_manamorphose_allocates_then_draws_exactly_once_and_spends_mana",
+        "test_invalid_partial_unknown_and_colorless_allocations_roll_back",
+        "test_actual_landfall_uses_stack_and_locked_controller_after_source_returns_to_hand",
+        "test_actual_vestige_enters_tapped_and_retains_normal_colorless_ability",
+        "test_current_land_entry_views_require_exact_source_and_preserve_legacy_payloads",
+        "test_foreign_land_does_not_trigger_and_real_stifle_counters_own_land_trigger",
+        "test_actual_greed_preserves_control_untap_haste_then_adds_one_chosen_color",
+        "test_actual_trailblazer_retains_power_trigger_and_mana_entry_result"
+      ],
+      "negative_tests": [
+        "test_originals_have_normal_complete_admission_and_independent_runtime_minimum",
+        "test_closed_payloads_colors_and_existing_fixed_symbol_bundles_are_distinct",
+        "test_independent_siblings_and_genuine_activation_rules_remain_held",
+        "test_actual_sentinel_entry_chooses_each_color_and_can_spend_the_result",
+        "test_actual_manamorphose_allocates_then_draws_exactly_once_and_spends_mana",
+        "test_invalid_partial_unknown_and_colorless_allocations_roll_back",
+        "test_actual_landfall_uses_stack_and_locked_controller_after_source_returns_to_hand",
+        "test_actual_vestige_enters_tapped_and_retains_normal_colorless_ability",
+        "test_current_land_entry_views_require_exact_source_and_preserve_legacy_payloads",
+        "test_foreign_land_does_not_trigger_and_real_stifle_counters_own_land_trigger",
+        "test_actual_greed_preserves_control_untap_haste_then_adds_one_chosen_color",
+        "test_actual_trailblazer_retains_power_trigger_and_mana_entry_result"
+      ],
+      "interaction_tests": [
+        "test_actual_sentinel_entry_chooses_each_color_and_can_spend_the_result",
+        "test_actual_manamorphose_allocates_then_draws_exactly_once_and_spends_mana",
+        "test_invalid_partial_unknown_and_colorless_allocations_roll_back",
+        "test_actual_landfall_uses_stack_and_locked_controller_after_source_returns_to_hand",
+        "test_actual_vestige_enters_tapped_and_retains_normal_colorless_ability",
+        "test_foreign_land_does_not_trigger_and_real_stifle_counters_own_land_trigger",
+        "test_actual_greed_preserves_control_untap_haste_then_adds_one_chosen_color",
+        "test_actual_trailblazer_retains_power_trigger_and_mana_entry_result"
+      ],
+      "multiplayer_tests": [
+        "test_actual_sentinel_entry_chooses_each_color_and_can_spend_the_result",
+        "test_actual_manamorphose_allocates_then_draws_exactly_once_and_spends_mana",
+        "test_invalid_partial_unknown_and_colorless_allocations_roll_back",
+        "test_actual_landfall_uses_stack_and_locked_controller_after_source_returns_to_hand",
+        "test_actual_vestige_enters_tapped_and_retains_normal_colorless_ability",
+        "test_foreign_land_does_not_trigger_and_real_stifle_counters_own_land_trigger",
+        "test_actual_greed_preserves_control_untap_haste_then_adds_one_chosen_color",
+        "test_actual_trailblazer_retains_power_trigger_and_mana_entry_result"
+      ],
+      "privacy_tests": [
+        "test_actual_sentinel_entry_chooses_each_color_and_can_spend_the_result",
+        "test_actual_manamorphose_allocates_then_draws_exactly_once_and_spends_mana",
+        "test_invalid_partial_unknown_and_colorless_allocations_roll_back",
+        "test_actual_landfall_uses_stack_and_locked_controller_after_source_returns_to_hand",
+        "test_actual_vestige_enters_tapped_and_retains_normal_colorless_ability",
+        "test_foreign_land_does_not_trigger_and_real_stifle_counters_own_land_trigger",
+        "test_actual_greed_preserves_control_untap_haste_then_adds_one_chosen_color",
+        "test_actual_trailblazer_retains_power_trigger_and_mana_entry_result"
+      ],
+      "replay_tests": [
+        "test_actual_sentinel_entry_chooses_each_color_and_can_spend_the_result",
+        "test_actual_manamorphose_allocates_then_draws_exactly_once_and_spends_mana",
+        "test_invalid_partial_unknown_and_colorless_allocations_roll_back",
+        "test_actual_landfall_uses_stack_and_locked_controller_after_source_returns_to_hand",
+        "test_actual_vestige_enters_tapped_and_retains_normal_colorless_ability",
+        "test_foreign_land_does_not_trigger_and_real_stifle_counters_own_land_trigger",
+        "test_actual_greed_preserves_control_untap_haste_then_adds_one_chosen_color",
+        "test_actual_trailblazer_retains_power_trigger_and_mana_entry_result"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Closed new payload and fine-grained runtime minimum bind exact amount/color domain, parent payer and source; canonical withdrawal rejects independently of evidence freshness.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Manamorphose full effect and spend witness kills omitted produced mana despite a following draw.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

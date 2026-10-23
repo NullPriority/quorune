@@ -29,8 +29,12 @@ class FixedResolutionManaCompilerTests(unittest.TestCase):
 
     def test_dynamic_restricted_and_malformed_mana_remain_closed(self):
         registry=load_default_capability_registry()
-        for text in ('Add {X}.','Add {R} for each unknown thing.','Add {R}{R}. Spend this mana only to cast imaginary spells.','Add one mana of any color.','Add three mana of any one color.','Add one mana of any color combination.','Add one mana of any color. Spend this mana only to cast creature spells.'):
+        for text in ('Add {X}.','Add {R} for each unknown thing.','Add {R}{R}. Spend this mana only to cast imaginary spells.','Add one mana of any color combination.','Add one mana of any color. Spend this mana only to cast creature spells.'):
             self.assertNotEqual('exact',compile_oracle_card(replace(query_record(text),type_line='Instant'),capability_registry=registry).status,text)
+        for text in ('Add one mana of any color.','Add three mana of any one color.'):
+            ir=compile_oracle_card(replace(query_record(text),type_line='Instant'),capability_registry=registry)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertIn('mana.production.fixed_resolution_choice',ir.faces[0].nodes[0].capability_dependencies)
         shape={'op':'mana','player':'$controller','color':'B','amount':3,'source':'$source'}
         for change in ({'amount':True},{'amount':0},{'color':'secret'},{'extra':1}):
             self.assertFalse(fixed_resolution_mana_capabilities(effects=({**shape,**change},),target_schema=None,mechanic_ids=('fixed-resolution-mana',)))
