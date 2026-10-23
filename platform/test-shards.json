@@ -72,6 +72,7 @@
       "test_casting_activation_metadata",
       "test_choice_forms",
       "test_chosen_aura_protection",
+      "test_colorless_nonland_targets",
       "test_combat_declaration_constraints",
       "test_combat_phase_rules",
       "test_compound_activation_restrictions",

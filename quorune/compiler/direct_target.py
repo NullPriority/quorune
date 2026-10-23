@@ -305,6 +305,13 @@ def _simple_direct_type_fields(phrase: str) -> dict[str, Any] | None:
     return None
 
 
+def _excluded_direct_type_fields(phrase: str) -> dict[str, Any] | None:
+    match=re.fullmatch(r'non(?P<excluded>artifact|creature|enchantment|land) (?P<body>.+)',phrase)
+    if match is None:return None
+    fields=_simple_direct_type_fields(match['body'])
+    return {**fields,'types_none':(match['excluded'],)} if fields is not None else None
+
+
 def _closed_direct_characteristic_fields(
     phrase: str,
 ) -> dict[str, Any] | None:
@@ -438,28 +445,17 @@ def _closed_direct_characteristic_fields(
         )
 
     if phrase.startswith("colorless "):
-        fields = _simple_direct_type_fields(phrase[len("colorless ") :])
+        body=phrase[len("colorless ") :]
+        fields = _simple_direct_type_fields(body)
+        if fields is None:fields=_excluded_direct_type_fields(body)
         return (
             {**fields, "colorless": True, **keyword_fields}
             if fields is not None
             else None
         )
 
-    negative_type_match = re.fullmatch(
-        r"non(?P<excluded>artifact|creature|enchantment|land) (?P<body>.+)",
-        phrase,
-    )
-    if negative_type_match is not None:
-        fields = _simple_direct_type_fields(negative_type_match.group("body"))
-        return (
-            {
-                **fields,
-                "types_none": (negative_type_match.group("excluded"),),
-                **keyword_fields,
-            }
-            if fields is not None
-            else None
-        )
+    excluded_fields=_excluded_direct_type_fields(phrase)
+    if excluded_fields is not None:return {**excluded_fields,**keyword_fields}
 
     fields = _simple_direct_type_fields(phrase)
     if fields is not None:

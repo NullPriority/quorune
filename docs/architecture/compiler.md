@@ -2258,6 +2258,13 @@ Resolution snapshots each legal target's current named count before quantity
 replacements. A zero named count creates no placement request. Independent
 target groups, divided totals, and unknown result
 companions remain residual.
+The positive colorless qualifier can conjoin one excluded card type through
+the closed type grammar. “Colorless nonland permanent” lowers to the existing
+`colorless: true` and `types_none: [land]` fields. Current effective colors
+govern eligibility independently of printed mana symbols and Commander color
+identity. Artifact lands still fail the nonland predicate, and a color change
+revalidates the original target before its selected result resolves.
+
 Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the
 represented type conjunctions and canonical disjunctions of up to four

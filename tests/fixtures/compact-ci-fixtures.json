@@ -50,6 +50,7 @@
     "tests/fixtures/classic-flash-cards.json",
     "tests/fixtures/classified-interaction-assurance-cards.json",
     "tests/fixtures/closed-effect-program-cards.json",
+    "tests/fixtures/colorless-nonland-target-cards.json",
     "tests/fixtures/combat-goad-prohibition-cards.json",
     "tests/fixtures/combined-tap-activation-costs.json",
     "tests/fixtures/commander-characteristic-grants.json",
