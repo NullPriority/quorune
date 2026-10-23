@@ -31,6 +31,27 @@ _ONCE_PER_TURN_FIELD = "once_per_turn_activations"
 _EXHAUST_FIELD = "exhaust_activations"
 _ONCE_PER_OBJECT_FIELD='once_per_object_activations'
 _TRIGGER_ONCE_PER_TURN_FIELD = "once_per_turn_triggers"
+_CAST_GRANT_ONCE_PER_TURN_FIELD = "once_per_turn_cast_grants"
+
+
+def cast_grant_usage_available(source: Any, *, ability_id: str, turn_sequence: int) -> bool:
+    """Read a static casting permission's allowance for this source incarnation."""
+    identity = _ability_id(ability_id)
+    if type(turn_sequence) is not int or turn_sequence < 0:
+        raise ActivationUsageError("Casting permission usage requires a nonnegative turn")
+    raw = _annotations(source).get(_CAST_GRANT_ONCE_PER_TURN_FIELD, {})
+    if not isinstance(raw, Mapping) or any(type(k) is not str or not k or type(v) is not int or v < 0 for k, v in raw.items()):
+        raise ActivationUsageError("Once-per-turn casting permission usage is malformed")
+    return raw.get(identity) != turn_sequence
+
+
+def commit_cast_grant_usage(source: Any, *, ability_id: str, turn_sequence: int) -> None:
+    """Consume one successfully used permission through the existing usage owner."""
+    if not cast_grant_usage_available(source, ability_id=ability_id, turn_sequence=turn_sequence):
+        raise ActivationUsageError("Casting permission usage was already consumed")
+    values = dict(source.annotations.get(_CAST_GRANT_ONCE_PER_TURN_FIELD, {}))
+    values[ability_id] = turn_sequence
+    source.annotations[_CAST_GRANT_ONCE_PER_TURN_FIELD] = values
 
 
 def trigger_usage_available(source: Any, *, ability_id: str, turn_sequence: int) -> bool:
@@ -173,4 +194,6 @@ __all__ = [
     "commit_activation_usage",
     "trigger_usage_available",
     "commit_trigger_usage",
+    "cast_grant_usage_available",
+    "commit_cast_grant_usage",
 ]

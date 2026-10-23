@@ -2760,6 +2760,17 @@ granted prices remain residual.
 Optional additions retain the selected base alternative identity through
 lifecycle validation, including paid nonmana Buyback and its resolution return.
 
+`compiler/turn_cast_grants.py` lowers a complete once-during-own-turn casting
+permission into the existing cast-cost component registry. A closed source can
+grant an ordinary-cost cast from its controller's graveyard or an optional free
+base from hand or the current library top. Public spell predicates retain
+their exact type, subtype and exclusion meaning. The normal hand cast and
+independent zone permissions remain separate choices. A source-bound grant
+price preserves additional costs, Kicker, taxes and reductions; only printed
+mana X is zeroed by a free base. Selected face-down characteristics govern
+qualified spell permission. Unrepresented linked results, extra payments,
+arrival qualifiers and shared land-use clauses remain material residuals.
+
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
 engine does not yet evaluate exact ability additions or removals outside the

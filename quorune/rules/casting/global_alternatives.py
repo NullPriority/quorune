@@ -15,7 +15,8 @@ from collections.abc import Mapping
 
 
 def is_battlefield_optional_cost_option(option,optional_id):
-    from ..optional_life_cost_model import optional_life_base_option_id
+    from .turn_cast_grants import underlying_cast_cost_option_id, is_turn_grant_optional_cost_option
+    if is_turn_grant_optional_cost_option(option,optional_id):return True
     identity=option.get('battlefield_alternative_cost')
     if not isinstance(identity,Mapping) or set(identity)!={'source','logical','program','grant'}:return False
     if any(type(identity[key]) is not str or not identity[key] for key in ('source','logical','program')):return False
@@ -23,18 +24,21 @@ def is_battlefield_optional_cost_option(option,optional_id):
         GlobalAlternativeCostSpec.from_dict(identity['grant'])
         expected='battlefield-alternative:'+hashlib.sha256(stable_json(identity).encode('utf-8')).hexdigest()[:24]
     except (TypeError,ValueError):return False
-    return option.get('base_cost_option')==expected and optional_life_base_option_id(option)==expected+'+'+optional_id
+    return option.get('base_cost_option')==expected and underlying_cast_cost_option_id(option)==expected+'+'+optional_id
 
 
 def battlefield_alternative_base_options(host,seat,card,*,cast_type_line,enabled,has_mana_x,x_value,
     commander_tax,temporary_permission):
     if not enabled or has_mana_x and x_value not in (None,0):return []
+    from .turn_cast_grants import free_turn_grant_base_options
+    free=free_turn_grant_base_options(host,seat,card,cast_type_line=cast_type_line,enabled=enabled,
+        has_mana_x=has_mana_x,x_value=x_value,commander_tax=commander_tax)
     ordinary_zone = card.zone in {'hand','command'} or (
         compiled_ordinary_zone_cast_permission(host,seat,card) or card.zone=='exile' and temporary_permission
     )
     from ..graveyard_cast_costs import compiled_paid_graveyard_specs
     paid_zone = tuple(spec for spec in compiled_paid_graveyard_specs(host,seat,card) if spec.mana_cost is None)
-    if not ordinary_zone and not paid_zone:return []
+    if not ordinary_zone and not paid_zone:return free
     registry=default_cast_cost_component_registry();sources=[]
     for source in host._semantic_event_sources(zones={'battlefield'}):
         if source.zone!='battlefield' or source.phased_out or source.controller!=seat:continue
@@ -46,13 +50,13 @@ def battlefield_alternative_base_options(host,seat,card,*,cast_type_line,enabled
             if (not host.semantic_program_is_current_trusted(program) or not program_has_complete_card_program_admission(program)
                 or not program_matches_face(record,program,source)):continue
             sources.append((source,program))
-    if not sources:return []
+    if not sources:return free
     current=host._effective_static_component_key_map()
     effective=dict(host._effective_card_data(card))
     if cast_type_line is not None:effective['type_line']=cast_type_line
     row=object_query_result(card,effective,type_parts=host._type_parts(str(effective.get('type_line') or '')),
         known_to_actor=True,attached_to_ref=None)
-    result=[]
+    result=list(free)
     for source,program in sources:
         if CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage or program.key not in current.get(source.object_id,()):continue
         for descriptor in program.handlers:

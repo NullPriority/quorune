@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 481,
+  "registry_version": 482,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -46467,6 +46467,188 @@
         "test_actual_source_ability_loss_removes_paid_offer_and_stale_command_rolls_back",
         "test_actual_global_alternative_and_increase_keep_other_colors_and_generic_cost",
         "test_sacrificed_provider_keeps_locked_discount_without_a_late_cast_trigger"
+      ]
+    },
+    {
+      "id": "casting.permission.source_once_per_turn",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "118.8",
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "107.3b",
+        "400.7",
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A complete current controlled battlefield source grants one matching own-turn printed-price graveyard or optional free-base hand/top-library cast per incarnation and ability.",
+        "inputs": [
+          "current complete source, ability and turn",
+          "actual selected origin and spell characteristics",
+          "authenticated selected price and existing legality"
+        ],
+        "outputs": [
+          "optional immutable source/turn-bound cast prices",
+          "existing payment and target consequences",
+          "canonical once-per-source allowance consumption after a successful cast"
+        ],
+        "exclusions": [
+          "changed timing rules",
+          "unrepresented grant follow-ups or payments",
+          "qualified arrival provenance and shared land quotas without their exact owners"
+        ]
+      },
+      "dependencies": [
+        "activation.usage.once_per_turn",
+        "casting.alternative_cost.fixed_battlefield_grant"
+      ],
+      "implementation_components": [
+        "quorune.rules.turn_cast_grant_model.TurnCastGrantSpec",
+        "quorune.compiler.turn_cast_grants.turn_cast_grant_handler",
+        "quorune.semantic_runtime.turn_cast_grants.TurnCastGrantHandler",
+        "quorune.rules.casting.turn_cast_grants.current_turn_cast_grants",
+        "quorune.rules.casting.turn_cast_grants.with_turn_cast_grant_choices",
+        "quorune.rules.casting.turn_cast_grants.finalize_turn_cast_grant_option",
+        "quorune.rules.casting.turn_cast_grants.commit_turn_cast_grant_use",
+        "quorune.activation_usage.commit_cast_grant_usage"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete source and registered handler minimum, current ability participation, exact spell/origin grammar, canonical verified withdrawal and sealed price/usage identity reject unowned grant use.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh whole-source admission and actual normal/free cast witnesses kill omitted compiler and quota commitment.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_six_originals_have_normal_complete_admission_and_independent_runtime_minimum",
+        "test_closed_source_grammar_preserves_unknown_followups_and_descriptor_boundaries",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
+        "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
+        "test_real_copied_source_has_its_own_allowance",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+      ],
+      "negative_tests": [
+        "test_six_originals_have_normal_complete_admission_and_independent_runtime_minimum",
+        "test_closed_source_grammar_preserves_unknown_followups_and_descriptor_boundaries",
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
+        "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
+        "test_real_copied_source_has_its_own_allowance",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+      ],
+      "interaction_tests": [
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
+        "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
+        "test_real_copied_source_has_its_own_allowance",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+      ],
+      "multiplayer_tests": [
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
+        "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
+        "test_real_copied_source_has_its_own_allowance",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+      ],
+      "privacy_tests": [
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
+        "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
+        "test_real_copied_source_has_its_own_allowance",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use"
+      ],
+      "replay_tests": [
+        "test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it",
+        "test_actual_gisa_entry_mills_then_one_zombie_cast_pays_printed_cost",
+        "test_actual_danitha_shares_one_graveyard_use_across_aura_and_equipment",
+        "test_actual_karador_keeps_self_reduction_then_casts_one_creature_from_graveyard",
+        "test_actual_vision_free_robot_and_noncreature_excludes_other_creatures",
+        "test_actual_multiverse_shares_hand_top_quota_but_retains_ordinary_top_permission",
+        "test_free_price_retains_kicker_tax_and_only_zeroes_mana_x",
+        "test_free_price_keeps_declared_additional_x_and_private_discards",
+        "test_countered_grant_spell_does_not_refund_source_quota",
+        "test_real_blink_renews_incarnation_and_rejects_old_grant_price",
+        "test_real_copied_source_has_its_own_allowance",
+        "test_own_turn_only_and_new_extra_turn_renews_the_quota",
+        "test_graveyard_grant_composes_with_global_price_kicker_and_life_reduction",
+        "test_zombie_permission_rejects_a_face_down_non_zombie_spell",
+        "test_creature_grant_accepts_actual_face_down_creature_cast",
+        "test_disturb_self_permission_remains_separate_from_source_grant_use"
       ]
     }
   ]

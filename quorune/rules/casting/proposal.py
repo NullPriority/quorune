@@ -867,7 +867,7 @@ def _cast_offer_payload(
         projected = {
             key: copy.deepcopy(value)
             for key, value in raw.items()
-            if key in {"id", "kind", "requirements", "choice_schema", "label"}
+            if key in {"id", "kind", "requirements", "choice_schema", "label", "permission_source"}
         }
         from ..optional_life_cost_model import optional_life_cost_amount
         life_payment=optional_life_cost_amount(raw)

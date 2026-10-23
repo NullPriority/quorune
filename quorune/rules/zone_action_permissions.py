@@ -44,13 +44,13 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any) -> bool:
     )
 
 
-def compiled_zone_cast_permission(host: Any, seat: str, card: Any) -> bool:
+def compiled_zone_cast_permission(host: Any, seat: str, card: Any, *, include_source_grants: bool = True) -> bool:
     from .graveyard_cast_costs import compiled_paid_graveyard_specs
     if compiled_paid_graveyard_specs(host, seat, card):
         return True
     if compiled_self_graveyard_discard_specs(host,seat,card):
         return True
-    if compiled_ordinary_zone_cast_permission(host, seat, card):
+    if compiled_ordinary_zone_cast_permission(host, seat, card, include_source_grants=include_source_grants):
         return True
     if card.zone == "library" and controller_has_library_top_spell_permission(
         host,

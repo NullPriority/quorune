@@ -157,7 +157,8 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
 
 def _global_alternative_template(text):
     from .global_alternative_cost_templates import fixed_global_alternative_cost_handler
-    compiled=fixed_global_alternative_cost_handler(text)
+    from .turn_cast_grants import turn_cast_grant_handler
+    compiled=turn_cast_grant_handler(text) or fixed_global_alternative_cost_handler(text)
     if compiled is None:return None
     return StaticRuntimeTemplate(compiled=compiled,kind='static_ability',event='cast.cost',
         active_zone='battlefield',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),

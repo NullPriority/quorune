@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ...spell_mana_counts import capture_spell_mana_counts
 from ..optional_life_cost_model import optional_life_cost_amount
+from .turn_cast_grants import underlying_cast_cost_option_id, commit_turn_cast_grant_use
 
 from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
 from .reveal_costs import commit_reveal_additional_costs
@@ -1283,7 +1284,7 @@ def _revalidate_fixed_lifecycle_contract(
         FixedCastLifecycleKind.RETRACE: "graveyard",
         FixedCastLifecycleKind.MAYHEM: "graveyard",
     }.get(proposed.kind)
-    option_id = str(selected_option.get("id") or "")
+    option_id = str(underlying_cast_cost_option_id(selected_option) or "")
     if proposed.kind is FixedCastLifecycleKind.AFTERMATH:valid_id=True
     elif proposed.kind is FixedCastLifecycleKind.RETRACE:valid_id=option_id=='retrace'
     else:valid_id=option_id==proposed.kind.value
@@ -1551,6 +1552,7 @@ def _commit_cast_costs_and_stack(
     _record_cast(
         host, proposal, card, item, spent, activations, selected_option, costs
     )
+    commit_turn_cast_grant_use(host,selected_option)
     _dispatch_cast_events(
         host,
         proposal,

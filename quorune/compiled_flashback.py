@@ -29,6 +29,7 @@ def compiled_ordinary_zone_cast_permission(
     host: CompiledFlashbackHost,
     seat: str,
     card: Any,
+    *, include_source_grants: bool = True,
 ) -> bool:
     """Return whether current typed authority permits the printed cost."""
 
@@ -39,7 +40,10 @@ def compiled_ordinary_zone_cast_permission(
         return False
     if card.zone in set(card.annotations.get("cast_from") or []):
         return True
-    return compiled_self_zone_cast_permission(host, seat, card)
+    if compiled_self_zone_cast_permission(host, seat, card):
+        return True
+    from .rules.casting.turn_cast_grants import normal_turn_grant_permission
+    return include_source_grants and normal_turn_grant_permission(host, seat, card)
 
 
 def compiled_fixed_mana_flashback_spec(

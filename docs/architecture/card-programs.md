@@ -181,6 +181,16 @@ ordinary copy semantics. Current ability loss and control changes preserve
 usage; a new logical object or global turn sequence renews the allowance.
 Historical payloads without this descriptor retain their original shape.
 
+Own-turn source casting grants use a registered complete-source descriptor and
+the current static-ability applicability query. Each chosen price binds the
+source incarnation, ability, current turn and underlying casting method. The
+existing permanent-usage owner consumes that ability's allowance after a
+successful cast. Ordinary casts and casts under independent permissions leave
+it available; countering a granted spell does not refund it. Current ability
+loss and control changes preserve the usage data. A new incarnation, a separate
+copied permanent or a new turn has its own allowance. Canonical zone reset,
+save/load and replay retain their existing ownership.
+
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,
   replacements, runtime operations, and the selected rules profile.

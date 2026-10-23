@@ -89,6 +89,13 @@ offered price. Clients select its ordinary `cost_option` identifier; they never
 submit a life discount, amount or source identity. The server recomputes and
 commits the selected price through the normal casting transaction.
 
+An optional source-granted casting price includes `permission_source`, the
+public battlefield reference whose allowance the price uses. Its label names
+that source. Clients select the ordinary opaque `cost_option` identifier and
+submit no permission, quota or source-binding fields. An independently payable
+normal price can preserve the allowance for a later cast. The server checks
+the current source, timing, origin, spell characteristics and remaining use.
+
 Prepared battlefield objects project `prepared: true`; ordinary objects omit
 the field. Their inset spell copies are public exile objects with their own
 references and inset characteristics. Casting actions appear only for the
