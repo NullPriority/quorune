@@ -71,6 +71,18 @@ the printed restriction. This boundary retains the existing mana-plan grammar:
 choice-bearing costs outside the represented automatic forms require explicit
 activation and do not gain a new payment route from a casting condition.
 
+Fixed nonmana Kicker uses the existing optional additional-cost branch and
+canonical life, selected zone-change and tap payment owners. The complete
+source descriptor and its fingerprint are revalidated before mutation; its
+typed payment leaves remain separate from mandatory prices and the base mana
+cost. Distinct hand and battlefield prices may compose without reusing a cost
+object. Subtype tap prices use a version-two creature predicate while version
+one retains its wire shape. A selected tap without a tap symbol permits a
+newly controlled creature and still reserves it against mana or other tap
+payments. The committed kicked fact follows the existing stack and entry
+history. Countering, losing targets or replacing a cost object's destination
+does not refund the payment; unrelated reentry clears the old fact.
+
 Self-cost reductions use the selected spell face and current caster's public
 facts or committed cast history. The total cost locks before mana activation,
 so sacrificing a qualifying permanent while paying does not revoke its

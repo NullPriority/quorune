@@ -17,6 +17,9 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
         own = (*own, *conditional_free_cast_capabilities(value))
         from ..land_entry_condition_model import land_entry_condition_capabilities
         own = (*own, *land_entry_condition_capabilities(value))
+        from ..nonmana_kicker import NONMANA_KICKER_HANDLER,FixedNonmanaKickerSpec,nonmana_kicker_dependencies
+        if value.get('handler_id')==NONMANA_KICKER_HANDLER:
+            own=(*own,*nonmana_kicker_dependencies(FixedNonmanaKickerSpec.from_dict(value['kicker'])))
         if value.get('kind') == 'public_quantity_mana':
             from ..public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_CAPABILITY
             PublicQuantityManaOutput.from_dict(value)

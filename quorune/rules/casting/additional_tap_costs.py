@@ -24,7 +24,8 @@ def _candidates(host,seat,cost):
         card=host.state.cards[oid];data=host._effective_card_data(card)
         rows.append(object_query_result(card,data,type_parts=host._type_parts(str(data.get('type_line') or '')),
             known_to_actor=True,attached_to_ref=None))
-    predicate=ObjectQuerySpec(zones=('battlefield',),controller=seat,types_any=cost.permanent_types,tapped=False,known_to_actor=True)
+    predicate=ObjectQuerySpec(zones=('battlefield',),controller=seat,types_any=cost.permanent_types,
+        subtypes_all=cost.creature_subtypes,tapped=False,known_to_actor=True)
     return tuple(host.state.cards[row.object_id] for row in sorted(query_objects(rows,predicate),key=lambda r:r.ref))
 
 

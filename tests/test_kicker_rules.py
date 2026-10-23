@@ -185,7 +185,7 @@ class FixedKickerCompilerTests(unittest.TestCase):
         for text in (
             "Kicker {R} and/or {G}\nIf this creature was kicked, it enters with three +1/+1 counters on it.",
             "Kicker {X}{U}\nIf this creature was kicked, it enters with X +1/+1 counters on it.",
-            "Kicker—Sacrifice a creature.\nIf this creature was kicked, draw a card.",
+            "Kicker—Sacrifice an unrepresented moon.\nIf this creature was kicked, draw a card.",
         ):
             with self.subTest(text=text):
                 mutated = replace(record, oracle_text=text, keywords=("Kicker",))

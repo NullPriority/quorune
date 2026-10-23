@@ -7481,25 +7481,34 @@
       "id": "fixed-battlefield-alternative-mana-costs",
       "patterns": [
         "quorune/compiler/global_alternative_cost_templates.py",
+        "quorune/compiler/nonmana_kicker.py",
         "quorune/compiler/runtime_templates.py",
+        "quorune/nonmana_kicker.py",
+        "quorune/rules/casting/additional_tap_costs.py",
         "quorune/rules/casting/commit.py",
         "quorune/rules/casting/costs.py",
         "quorune/rules/casting/global_alternatives.py",
         "quorune/rules/casting/option_expansion.py",
         "quorune/rules/global_alternative_cost_model.py",
+        "quorune/rules/tap_additional_cost.py",
         "quorune/semantic_runtime/cast_costs.py",
         "quorune/semantic_runtime/global_alternative_costs.py",
+        "quorune/semantic_runtime/nonmana_kicker.py",
         "tests/fixtures/global-alternative-cost-cards.json",
-        "tests/test_global_alternative_costs.py"
+        "tests/fixtures/nonmana-kicker-cards.json",
+        "tests/test_global_alternative_costs.py",
+        "tests/test_nonmana_kicker.py"
       ],
       "test_modules": [
         "test_card_program_trust",
         "test_casting_spells_rules",
         "test_fixed_alternative_additional_costs",
         "test_fixed_public_alternative_costs",
+        "test_fixed_tap_additional_costs",
         "test_global_alternative_costs",
         "test_kicker_rules",
-        "test_nonmana_buyback_costs"
+        "test_nonmana_buyback_costs",
+        "test_nonmana_kicker"
       ]
     },
     {

@@ -297,6 +297,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.evoke.fixed_mana",
                 "casting.flashback.fixed_mana",
                 "casting.kicker.fixed_mana",
+                "casting.kicker.fixed_nonmana",
                 "casting.multikicker.fixed_mana",
                 "casting.additional_cost.replicate_fixed_mana",
                 "casting.additional_cost.conspire_fixed_tap",

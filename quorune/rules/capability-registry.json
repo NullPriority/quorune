@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 471,
+  "registry_version": 472,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -45072,6 +45072,145 @@
         "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
         "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
       ]
+    },
+    {
+      "id": "casting.kicker.fixed_nonmana",
+      "version": 1,
+      "official_rules": [
+        "118.8",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.33",
+        "702.33a",
+        "702.33b",
+        "702.33d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One complete fixed optional nonmana Kicker price composes existing life, selected zone-change or subtype-qualified untapped-creature payments, with optional fixed ordinary mana.",
+        "inputs": [
+          "source-pinned complete-card-admitted Kicker descriptor",
+          "current typed cost option, selected objects and ordinary mana/life availability"
+        ],
+        "outputs": [
+          "shared payable offers and atomic accepted additional payments",
+          "sealed Kicker fingerprint and existing kicked spell/entry provenance"
+        ],
+        "exclusions": [
+          "multiple or repeated Kicker instances",
+          "unknown cost predicates or variable costs",
+          "unrepresented result siblings",
+          "runtime Oracle parsing or untrusted admission"
+        ]
+      },
+      "dependencies": [
+        "casting.kicker.fixed_mana"
+      ],
+      "implementation_components": [
+        "quorune.compiler.nonmana_kicker.compile_nonmana_kicker",
+        "quorune.nonmana_kicker.FixedNonmanaKickerSpec",
+        "quorune.semantic_runtime.nonmana_kicker.FixedNonmanaKickerHandler",
+        "quorune.compiled_kicker.compiled_kicker_spec",
+        "quorune.compiled_kicker.validate_kicker_commit"
+      ],
+      "positive_tests": [
+        "test_arctic_return_cost_uses_current_control_owner_destination_and_fresh_entry",
+        "test_copy_keeps_kicked_result_without_a_second_sacrifice_payment",
+        "test_cost_models_preserve_optional_leaves_mana_and_closed_legacy_payloads",
+        "test_fixed_mana_discard_and_two_land_prices_pay_all_parts_and_keep_the_source_out_of_hand_payment",
+        "test_four_sacrifice_originals_pay_real_creature_or_artifact_cost_and_replace_the_result",
+        "test_mandatory_discard_composes_with_kicker_and_replacement_does_not_unpay_sacrifice",
+        "test_paid_life_survives_countering_and_bounce_recast_does_not_remember_kicker",
+        "test_return_cost_returns_a_stolen_creature_to_its_owner_without_targeting_it",
+        "test_sacrificed_target_does_not_refund_kicker_when_the_spell_has_no_legal_target",
+        "test_scuta_optional_life_is_paid_before_entry_counters_and_insufficient_life_rolls_back",
+        "test_six_originals_have_complete_registration_and_independent_payment_minima",
+        "test_subtype_tap_cost_uses_current_untapped_controlled_vampire_without_a_tap_symbol"
+      ],
+      "negative_tests": [
+        "test_arctic_return_cost_uses_current_control_owner_destination_and_fresh_entry",
+        "test_copy_keeps_kicked_result_without_a_second_sacrifice_payment",
+        "test_cost_models_preserve_optional_leaves_mana_and_closed_legacy_payloads",
+        "test_fixed_mana_discard_and_two_land_prices_pay_all_parts_and_keep_the_source_out_of_hand_payment",
+        "test_four_sacrifice_originals_pay_real_creature_or_artifact_cost_and_replace_the_result",
+        "test_free_mana_base_retains_optional_nonmana_price_and_commit_rejects_seal_drift",
+        "test_mandatory_discard_composes_with_kicker_and_replacement_does_not_unpay_sacrifice",
+        "test_paid_life_survives_countering_and_bounce_recast_does_not_remember_kicker",
+        "test_return_cost_returns_a_stolen_creature_to_its_owner_without_targeting_it",
+        "test_sacrificed_target_does_not_refund_kicker_when_the_spell_has_no_legal_target",
+        "test_scuta_optional_life_is_paid_before_entry_counters_and_insufficient_life_rolls_back",
+        "test_six_originals_have_complete_registration_and_independent_payment_minima",
+        "test_subtype_tap_cost_uses_current_untapped_controlled_vampire_without_a_tap_symbol",
+        "test_verified_withdrawals_and_fresh_compiler_payment_omissions_reject"
+      ],
+      "interaction_tests": [
+        "test_scuta_optional_life_is_paid_before_entry_counters_and_insufficient_life_rolls_back",
+        "test_arctic_return_cost_uses_current_control_owner_destination_and_fresh_entry",
+        "test_four_sacrifice_originals_pay_real_creature_or_artifact_cost_and_replace_the_result",
+        "test_subtype_tap_cost_uses_current_untapped_controlled_vampire_without_a_tap_symbol",
+        "test_fixed_mana_discard_and_two_land_prices_pay_all_parts_and_keep_the_source_out_of_hand_payment",
+        "test_paid_life_survives_countering_and_bounce_recast_does_not_remember_kicker",
+        "test_sacrificed_target_does_not_refund_kicker_when_the_spell_has_no_legal_target",
+        "test_mandatory_discard_composes_with_kicker_and_replacement_does_not_unpay_sacrifice",
+        "test_return_cost_returns_a_stolen_creature_to_its_owner_without_targeting_it",
+        "test_copy_keeps_kicked_result_without_a_second_sacrifice_payment"
+      ],
+      "multiplayer_tests": [
+        "test_scuta_optional_life_is_paid_before_entry_counters_and_insufficient_life_rolls_back",
+        "test_arctic_return_cost_uses_current_control_owner_destination_and_fresh_entry",
+        "test_four_sacrifice_originals_pay_real_creature_or_artifact_cost_and_replace_the_result",
+        "test_subtype_tap_cost_uses_current_untapped_controlled_vampire_without_a_tap_symbol",
+        "test_fixed_mana_discard_and_two_land_prices_pay_all_parts_and_keep_the_source_out_of_hand_payment",
+        "test_paid_life_survives_countering_and_bounce_recast_does_not_remember_kicker",
+        "test_sacrificed_target_does_not_refund_kicker_when_the_spell_has_no_legal_target",
+        "test_mandatory_discard_composes_with_kicker_and_replacement_does_not_unpay_sacrifice",
+        "test_return_cost_returns_a_stolen_creature_to_its_owner_without_targeting_it",
+        "test_copy_keeps_kicked_result_without_a_second_sacrifice_payment"
+      ],
+      "privacy_tests": [
+        "test_scuta_optional_life_is_paid_before_entry_counters_and_insufficient_life_rolls_back",
+        "test_arctic_return_cost_uses_current_control_owner_destination_and_fresh_entry",
+        "test_four_sacrifice_originals_pay_real_creature_or_artifact_cost_and_replace_the_result",
+        "test_subtype_tap_cost_uses_current_untapped_controlled_vampire_without_a_tap_symbol",
+        "test_fixed_mana_discard_and_two_land_prices_pay_all_parts_and_keep_the_source_out_of_hand_payment",
+        "test_paid_life_survives_countering_and_bounce_recast_does_not_remember_kicker",
+        "test_sacrificed_target_does_not_refund_kicker_when_the_spell_has_no_legal_target",
+        "test_mandatory_discard_composes_with_kicker_and_replacement_does_not_unpay_sacrifice",
+        "test_return_cost_returns_a_stolen_creature_to_its_owner_without_targeting_it",
+        "test_copy_keeps_kicked_result_without_a_second_sacrifice_payment"
+      ],
+      "replay_tests": [
+        "test_scuta_optional_life_is_paid_before_entry_counters_and_insufficient_life_rolls_back",
+        "test_arctic_return_cost_uses_current_control_owner_destination_and_fresh_entry",
+        "test_four_sacrifice_originals_pay_real_creature_or_artifact_cost_and_replace_the_result",
+        "test_subtype_tap_cost_uses_current_untapped_controlled_vampire_without_a_tap_symbol",
+        "test_fixed_mana_discard_and_two_land_prices_pay_all_parts_and_keep_the_source_out_of_hand_payment",
+        "test_paid_life_survives_countering_and_bounce_recast_does_not_remember_kicker",
+        "test_sacrificed_target_does_not_refund_kicker_when_the_spell_has_no_legal_target",
+        "test_mandatory_discard_composes_with_kicker_and_replacement_does_not_unpay_sacrifice",
+        "test_return_cost_returns_a_stolen_creature_to_its_owner_without_targeting_it",
+        "test_copy_keeps_kicked_result_without_a_second_sacrifice_payment"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal and independently stripped nonmana/payment runtime minima reject incomplete authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete original admission, actual life payment and current Vampire reservation witnesses reject compiler, commit and subtype-filter omissions.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

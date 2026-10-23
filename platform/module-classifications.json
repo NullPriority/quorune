@@ -4853,6 +4853,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/nonmana_kicker.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/nonmana_morph_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -9396,6 +9411,20 @@
       "file": "quorune/multikicker_result_amounts.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/nonmana_kicker.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_kicker",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -16757,6 +16786,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/nonmana_kicker.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/nonmana_morph.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -18807,5 +18851,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "07c9f2763c90490cbc554514599f873905d8bc6eda95fc6599e72ef6b673bcc4"
+  "fingerprint": "c9967aaef48344049c96b78972fe6aa834b3b14333f7b4761ce779994ac4e7bd"
 }

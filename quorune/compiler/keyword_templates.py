@@ -51,6 +51,8 @@ def keyword_mechanics(
         return ("equip",)
     if 'morph' in known and re.match(r'Morph[—-]', material, re.I):
         return ('morph',)
+    if 'kicker' in known and re.match(r'Kicker—',material,re.I):
+        return ('kicker',)
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):
         return ("cycling",)
     cycling_parts = [part.strip() for part in material.split(",")]

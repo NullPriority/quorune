@@ -24,7 +24,7 @@ from ...compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
 )
-from ...compiled_kicker import compiled_fixed_mana_kicker_spec
+from ...compiled_kicker import compiled_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from .multikicker_costs import with_multikicker_cost_schema
 from .replicate_costs import with_replicate_cost_schema
@@ -247,7 +247,7 @@ def _with_kicker_cost(
 ) -> dict[str, Any] | None:
     result = copy.deepcopy(dict(schema))
     kicker = (
-        compiled_fixed_mana_kicker_spec(host, card)
+        compiled_kicker_spec(host, card)
         if not suppress_source_costs
         else None
     )

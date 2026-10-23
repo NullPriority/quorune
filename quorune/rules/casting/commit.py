@@ -36,7 +36,7 @@ from ...cast_lifecycles import (
     FIXED_CAST_LIFECYCLE_CONTEXT_FIELD,
     fixed_cast_lifecycle_stack_fields,
 )
-from ...compiled_kicker import compiled_fixed_mana_kicker_spec
+from ...compiled_kicker import validate_kicker_commit
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from .multikicker_costs import multikicker_cast_context, validate_multikicker_commit
 from .replicate_costs import replicate_cast_context, validate_replicate_commit
@@ -449,7 +449,9 @@ def _resolve_fixed_zone_change_additional_cost(
             str(exc), reason="additional_cost_malformed"
         ) from exc
     from ..fixed_payment_groups import fixed_life_zone_costs
-    if cost is None or (len(raw_costs) != 1 and not fixed_life_zone_costs(raw_costs)):
+    from ...nonmana_kicker import distinct_kicker_zone_costs
+    if cost is None or (len(raw_costs) != 1 and not fixed_life_zone_costs(raw_costs)
+            and not distinct_kicker_zone_costs(selected_option,raw_costs)):
         raise CastProposalError(
             "The zone-change additional cost is outside the represented family",
             reason="additional_cost_unsupported",
@@ -1355,17 +1357,8 @@ def _revalidate_cast_contracts(
         validate_replicate_commit(host, card, selected_option)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason='stale_replicate_contract') from exc
-    if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
-        current_kicker = compiled_fixed_mana_kicker_spec(host, card)
-        if (
-            current_kicker is None
-            or selected_option.get("kicker_fingerprint")
-            != current_kicker.fingerprint
-        ):
-            raise CastProposalError(
-                "The fixed-mana Kicker contract changed before commit",
-                reason="stale_kicker_contract",
-            )
+    try:validate_kicker_commit(host,card,selected_option)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_kicker_contract') from exc
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
         current_flashback = compiled_fixed_mana_flashback_spec(host, card)
         if (

@@ -33,6 +33,10 @@ def fixed_mana_kicker_keyword_node(
 
     if mechanics != (KICKER_MECHANIC_ID,):
         return None
+    from .nonmana_kicker import nonmana_kicker_keyword_node
+    nonmana=nonmana_kicker_keyword_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if nonmana is not None:return nonmana
     spec = compile_fixed_mana_kicker(
         material_line=material_line,
         oracle_line=line,

@@ -1822,12 +1822,18 @@ cost modifiers, partial cards, copies, grants, text changes, and unsupported
 graveyard permissions remain source-spanned residuals or fail closed.
 
 `compiler/kicker_nodes.py` owns one single fixed ordinary-mana Kicker cost and
-one closed kicked counter-plus-keyword entry replacement. The cost component
+one closed kicked counter-plus-keyword entry replacement.
+`compiler/nonmana_kicker.py` lowers fixed life, controlled-permanent sacrifice
+or return, owned hand discard, and subtype-qualified untapped-creature prices,
+optionally preceded by fixed ordinary mana. The complete em-dash cost stays
+one keyword instance, including commas between its payment parts. The cost component
 adds a server-authored optional total-cost branch only for a complete admitted
 CardProgram. Its paid stack fact flows into immutable zone-replacement and
 normalized entry snapshots. The entry component creates a nested replacement-
 aware +1/+1 counter event and optionally grants Flying, First Strike, Haste, or
-Trample through existing consumers. Multiple, and/or, variable, nonmana,
+Trample through existing consumers. Each nonmana descriptor independently
+requires its existing payment capabilities. Result siblings keep their own
+whole-card admission boundary. Multiple, and/or, variable,
 copied, granted, kicked-trigger, spell-rider, dynamic, and open entry families
 remain source-spanned residuals.
 

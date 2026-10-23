@@ -107,6 +107,7 @@
       "test_loyalty_counter_cost_replacements",
       "test_mana_mode_effects",
       "test_menace_rules",
+      "test_nonmana_kicker",
       "test_object_query",
       "test_paid_color_entry",
       "test_paid_graveyard_casts",

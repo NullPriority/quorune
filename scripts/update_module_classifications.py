@@ -363,6 +363,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/mentor.py",
         "quorune/morph.py",
         "quorune/kicker.py",
+        "quorune/nonmana_kicker.py",
         "quorune/bestow.py",
         "quorune/flashback.py",
         "quorune/casting_cost_host.py",
@@ -552,6 +553,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/compiled_kicker.py",
         "quorune/kicker.py",
+        "quorune/nonmana_kicker.py",
     }:
         return "casting_kicker"
     if relative in {
