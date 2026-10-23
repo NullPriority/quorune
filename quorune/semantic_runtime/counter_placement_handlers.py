@@ -24,6 +24,8 @@ from .intents import (
 )
 
 
+from .all_kind_counters import AllKindCounterDoublingHandler
+
 _REASON_FIELD = "reason"
 
 
@@ -638,6 +640,7 @@ COUNTER_PLACEMENT_HANDLERS = (
     FixedCounterPlacementSetHandler(),
     FixedCounterPlacementTargetSetHandler(),
     FixedPlayerCounterPlacementHandler(),
+    AllKindCounterDoublingHandler(),
 )
 
 

@@ -7,6 +7,10 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..rules.all_kind_counter_shapes import all_kind_counter_payload_dependencies
+        all_kinds=all_kind_counter_payload_dependencies(value)
+        if all_kinds:
+            return tuple(sorted({*all_kinds,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child))}))
         from ..rules.counter_target_set_shapes import quantified_counter_payload_dependencies
         counter_targets=quantified_counter_payload_dependencies(value)
         if counter_targets:

@@ -127,6 +127,14 @@ sets, cardinality authority. Original integer-only payloads retain their earlier
 wire shape. Pending named placements seal the original target incarnations and
 quantities, including targets with no named counters, before replacement choices.
 
+All-kind doubling has its own typed operation and producer dependency. It
+reuses the counter intent with an explicit all-kinds quantity mode and no
+counter name. The existing source hashes and target cardinality still gate the
+complete instruction. Pending replacement choices seal every selected object's
+full counter map and logical identity; a newly added kind also invalidates the
+choice. The existing generic intent and transaction retain atomic counter
+mutation and replay ownership.
+
 ## Trust and replay
 
 Unconditional static Aura control lowers into a closed attached-source

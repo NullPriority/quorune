@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 476,
+  "registry_version": 477,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -45856,6 +45856,153 @@
       "dependency_fail_closed_rationale": "Versioned payloads independently require the target-set and named-count authorities.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh original source and counter-quantity omissions are killed by accepted original actions and complete consequences.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.producer.all_kind_doubling",
+      "version": 1,
+      "official_rules": [
+        "115.3",
+        "115.6",
+        "122.1",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "616.1",
+        "701.10e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Each legal selected permanent receives its current positive count again for every counter kind in one canonical placement batch.",
+        "inputs": [
+          "one closed permanent target set",
+          "current full counter maps"
+        ],
+        "outputs": [
+          "atomic typed counter placement with per-object/kind replacement ownership"
+        ],
+        "exclusions": [
+          "player counters",
+          "arbitrary affected sets",
+          "variable factors",
+          "unowned costs and result companions"
+        ]
+      },
+      "dependencies": [
+        "counter.characteristic.keyword",
+        "counter.placement.quantity_replacement",
+        "counter.producer.named_doubling"
+      ],
+      "implementation_components": [
+        "quorune.compiler.all_kind_counter_doubling.all_kind_counter_doubling_template",
+        "quorune.rules.all_kind_counter_shapes.all_kind_counter_node_capabilities",
+        "quorune.semantic_runtime.all_kind_counters.AllKindCounterDoublingHandler",
+        "quorune.counter_doubling.snapshot_all_counter_doubling",
+        "quorune.counter_doubling.all_counter_input_snapshot"
+      ],
+      "positive_tests": [
+        "test_all_kind_snapshot_freezes_every_positive_kind_and_rejects_malformed_maps",
+        "test_originals_have_complete_registration_and_independent_all_kind_authority",
+        "test_original_deepglow_selects_three_permanents_and_doubles_all_current_kinds",
+        "test_original_vorel_accepts_artifact_creature_or_land_and_rejects_enchantment",
+        "test_original_gilder_pays_hybrid_mana_and_untaps_as_an_actual_cost",
+        "test_original_zimone_zero_or_two_preserves_own_creature_artifact_domain",
+        "test_original_thing_creates_targets_only_after_reflexive_payment",
+        "test_original_arcade_entry_and_token_sacrifice_use_both_complete_abilities",
+        "test_all_kind_zero_and_nine_targets_resolve_without_a_fixed_ceiling",
+        "test_all_kind_replacement_order_is_atomic_private_and_reads_each_kind_once",
+        "test_pending_all_kind_choice_rejects_an_added_counter_kind",
+        "test_all_kind_copy_uses_current_maps_without_a_second_payment",
+        "test_partial_and_all_illegal_targets_keep_cost_and_original_incarnations",
+        "test_unowned_player_affected_set_and_companion_results_remain_residual",
+        "test_verified_all_kind_withdrawal_rejects_complete_sources_without_unverified_evidence"
+      ],
+      "negative_tests": [
+        "test_all_kind_snapshot_freezes_every_positive_kind_and_rejects_malformed_maps",
+        "test_originals_have_complete_registration_and_independent_all_kind_authority",
+        "test_original_deepglow_selects_three_permanents_and_doubles_all_current_kinds",
+        "test_original_vorel_accepts_artifact_creature_or_land_and_rejects_enchantment",
+        "test_original_gilder_pays_hybrid_mana_and_untaps_as_an_actual_cost",
+        "test_original_zimone_zero_or_two_preserves_own_creature_artifact_domain",
+        "test_original_thing_creates_targets_only_after_reflexive_payment",
+        "test_original_arcade_entry_and_token_sacrifice_use_both_complete_abilities",
+        "test_all_kind_zero_and_nine_targets_resolve_without_a_fixed_ceiling",
+        "test_all_kind_replacement_order_is_atomic_private_and_reads_each_kind_once",
+        "test_pending_all_kind_choice_rejects_an_added_counter_kind",
+        "test_all_kind_copy_uses_current_maps_without_a_second_payment",
+        "test_partial_and_all_illegal_targets_keep_cost_and_original_incarnations",
+        "test_unowned_player_affected_set_and_companion_results_remain_residual",
+        "test_verified_all_kind_withdrawal_rejects_complete_sources_without_unverified_evidence"
+      ],
+      "interaction_tests": [
+        "test_original_deepglow_selects_three_permanents_and_doubles_all_current_kinds",
+        "test_original_vorel_accepts_artifact_creature_or_land_and_rejects_enchantment",
+        "test_original_gilder_pays_hybrid_mana_and_untaps_as_an_actual_cost",
+        "test_original_zimone_zero_or_two_preserves_own_creature_artifact_domain",
+        "test_original_thing_creates_targets_only_after_reflexive_payment",
+        "test_original_arcade_entry_and_token_sacrifice_use_both_complete_abilities",
+        "test_all_kind_zero_and_nine_targets_resolve_without_a_fixed_ceiling",
+        "test_all_kind_replacement_order_is_atomic_private_and_reads_each_kind_once",
+        "test_pending_all_kind_choice_rejects_an_added_counter_kind",
+        "test_all_kind_copy_uses_current_maps_without_a_second_payment",
+        "test_partial_and_all_illegal_targets_keep_cost_and_original_incarnations"
+      ],
+      "multiplayer_tests": [
+        "test_original_deepglow_selects_three_permanents_and_doubles_all_current_kinds",
+        "test_original_vorel_accepts_artifact_creature_or_land_and_rejects_enchantment",
+        "test_original_gilder_pays_hybrid_mana_and_untaps_as_an_actual_cost",
+        "test_original_zimone_zero_or_two_preserves_own_creature_artifact_domain",
+        "test_original_thing_creates_targets_only_after_reflexive_payment",
+        "test_original_arcade_entry_and_token_sacrifice_use_both_complete_abilities",
+        "test_all_kind_zero_and_nine_targets_resolve_without_a_fixed_ceiling",
+        "test_all_kind_replacement_order_is_atomic_private_and_reads_each_kind_once",
+        "test_pending_all_kind_choice_rejects_an_added_counter_kind",
+        "test_all_kind_copy_uses_current_maps_without_a_second_payment",
+        "test_partial_and_all_illegal_targets_keep_cost_and_original_incarnations"
+      ],
+      "privacy_tests": [
+        "test_original_deepglow_selects_three_permanents_and_doubles_all_current_kinds",
+        "test_original_vorel_accepts_artifact_creature_or_land_and_rejects_enchantment",
+        "test_original_gilder_pays_hybrid_mana_and_untaps_as_an_actual_cost",
+        "test_original_zimone_zero_or_two_preserves_own_creature_artifact_domain",
+        "test_original_thing_creates_targets_only_after_reflexive_payment",
+        "test_original_arcade_entry_and_token_sacrifice_use_both_complete_abilities",
+        "test_all_kind_zero_and_nine_targets_resolve_without_a_fixed_ceiling",
+        "test_all_kind_replacement_order_is_atomic_private_and_reads_each_kind_once",
+        "test_pending_all_kind_choice_rejects_an_added_counter_kind",
+        "test_all_kind_copy_uses_current_maps_without_a_second_payment",
+        "test_partial_and_all_illegal_targets_keep_cost_and_original_incarnations"
+      ],
+      "replay_tests": [
+        "test_original_deepglow_selects_three_permanents_and_doubles_all_current_kinds",
+        "test_original_vorel_accepts_artifact_creature_or_land_and_rejects_enchantment",
+        "test_original_gilder_pays_hybrid_mana_and_untaps_as_an_actual_cost",
+        "test_original_zimone_zero_or_two_preserves_own_creature_artifact_domain",
+        "test_original_thing_creates_targets_only_after_reflexive_payment",
+        "test_original_arcade_entry_and_token_sacrifice_use_both_complete_abilities",
+        "test_all_kind_zero_and_nine_targets_resolve_without_a_fixed_ceiling",
+        "test_all_kind_replacement_order_is_atomic_private_and_reads_each_kind_once",
+        "test_pending_all_kind_choice_rejects_an_added_counter_kind",
+        "test_all_kind_copy_uses_current_maps_without_a_second_payment",
+        "test_partial_and_all_illegal_targets_keep_cost_and_original_incarnations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Typed all-kind operation derives its capability independently from the payload and exact target shape.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete source and omitted counter-kind placements are killed by actual original registration, actions and consequences.",
       "blockers": [],
       "status": "trusted"
     }

@@ -1276,11 +1276,13 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 
 def _closed_effect_recognizers():
+    from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
     from ..rules.counter_target_set_shapes import is_closed_quantified_counter_target_program
     from ..rules.any_number_target_shapes import is_closed_any_number_target_program
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     return (
+        is_closed_all_kind_counter_program,
         is_closed_quantified_counter_target_program,
         is_closed_any_number_target_program,
         closed_fused_program,

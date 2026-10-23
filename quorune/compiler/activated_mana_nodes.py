@@ -361,6 +361,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "place_counter_batch",
     "place_counters_on_set",
     "place_counters_on_targets",
+    "double_counters_on_targets",
     "place_player_counters",
     "remove_counters",
     "remove_all_counters",

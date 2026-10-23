@@ -2228,6 +2228,18 @@ closed amount descriptor and the dedicated named-doubling capability. The
 runtime reads current counts at each instruction and uses the ordinary placement
 owner; no new operation or targeting grammar is introduced. Unknown, all-kind,
 chosen, player and independently unsupported sibling forms remain residual.
+`compiler/all_kind_counter_doubling.py` is a separate primitive in the same
+counter-resolution dispatcher. It represents one fixed, up-to, or unrestricted
+permanent target set with “double each kind” semantics. The existing scalar
+target owner preserves type unions, controller relations, and current public
+predicates. Its registered all-kind handler uses the existing counter intent
+with a closed quantity mode and no selected counter name. The canonical counter
+owner snapshots every positive kind and count before submitting one placement
+batch; zero kinds create no request. Existing quantity replacements remain per
+object and kind. The complete result also participates in the existing payment
+component owner, so a reflexive cost precedes a new trigger's target selection.
+Player counters, arbitrary affected sets, variable factors, and linked attached
+object results remain residual.
 `compiler/quantified_counter_targets.py` lifts one complete scalar counter
 result to a homogeneous exact, up-to, or unrestricted target set. It also
 recognizes a closed “choose targets, put counters on each” form. The shared
@@ -2237,7 +2249,7 @@ records one fixed counter amount or the existing named-count descriptor;
 unrestricted cardinality uses the existing selected-target-count descriptor.
 Resolution snapshots each legal target's current named count before quantity
 replacements. A zero named count creates no placement request. Independent
-target groups, divided totals, arbitrary all-kind doubling, and unknown result
+target groups, divided totals, and unknown result
 companions remain residual.
 Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the

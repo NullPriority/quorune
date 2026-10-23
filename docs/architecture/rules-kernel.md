@@ -799,6 +799,15 @@ quantity input set; an external quantity or incarnation change rejects the
 choice before any placement. Replacement ownership remains per affected object,
 while target selection and Strive pricing retain the original chosen roles.
 
+All-kind counter doubling uses that same counter transaction after snapshotting
+all positive kinds on each selected legal permanent. Each request places the
+original count again, before quantity replacements. Its closed intent mode
+requires no counter name, and the ordinary named/integer intent forms retain
+their existing representations. Full counter maps are sealed during pending
+replacement choices. Reflexive child target schemas and ordinary schema
+overrides pass through the same cardinality binder before both offers and
+resolution revalidation.
+
 `rules/casting/target_count_costs.py` prices mandatory fixed mana for every
 chosen target beyond a source-defined threshold. It adds the full colored and
 generic vector before taxes and reductions and seals the source contract again

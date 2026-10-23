@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .control_capability_shapes import fixed_control_node_capabilities
+from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .temporary_cast_restrictions import temporary_cast_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 
@@ -111,6 +112,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    all_kind_counter_component_capabilities,
     temporary_cast_node_capabilities,
     fixed_goad_node_capabilities,
     fixed_prevention_component_capabilities,

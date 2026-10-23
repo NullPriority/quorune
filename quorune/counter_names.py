@@ -6,6 +6,7 @@ from typing import Any, Mapping
 import re
 
 EXISTING_COUNTER_AMOUNT = "existing_named_counter_count"
+ALL_COUNTER_AMOUNTS = "existing_all_counter_counts"
 
 
 def existing_counter_amount_descriptor() -> dict[str, Any]:

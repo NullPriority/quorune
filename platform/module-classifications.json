@@ -1988,6 +1988,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/all_kind_counter_doubling.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/compiler/amass_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -11228,6 +11243,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/all_kind_counter_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/amass_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -15559,6 +15588,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/all_kind_counters.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/attached_continuous.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -19076,5 +19120,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "af82d9b62d535b83b2e720b41dc98097b21a07fc5f48231f7fce24ec65f39ac5"
+  "fingerprint": "2b0126995f9ce1dea2631c4dcd6a97bbe369f73d7294d4da9fb5dd325130cf6b"
 }

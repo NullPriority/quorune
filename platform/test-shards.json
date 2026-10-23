@@ -55,6 +55,7 @@
       "test_activation_restrictions",
       "test_additional_token_compiler",
       "test_all_colors",
+      "test_all_kind_counter_doubling",
       "test_alternative_activation_mana",
       "test_ante_rules",
       "test_any_number_targets",

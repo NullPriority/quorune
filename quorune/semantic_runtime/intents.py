@@ -937,8 +937,8 @@ class PayManaCostIntent:
 class PlaceCountersIntent:
     actor: str
     object_refs: tuple[str, ...]
-    counter_name: str
-    amount: int | Literal["existing_named_counter_count"]
+    counter_name: str | None
+    amount: int | Literal["existing_named_counter_count","existing_all_counter_counts"]
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()

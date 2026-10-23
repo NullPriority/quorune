@@ -875,9 +875,10 @@ class TargetSelectionOwnerMixin:
         program: SemanticProgram | None,
     ) -> Mapping[str, Any] | None:
         if "target_schema_override" in item.context:
-            return dict(item.context["target_schema_override"])
-        from ..rules.blocking_requirements import bound_defending_controller_schema
-        schema=bound_defending_controller_schema(program.target_schema,item.context) if program is not None else None
+            schema=dict(item.context["target_schema_override"])
+        else:
+            from ..rules.blocking_requirements import bound_defending_controller_schema
+            schema=bound_defending_controller_schema(program.target_schema,item.context) if program is not None else None
         if schema is None:return None
         from ..target_cardinality import bind_any_number_target_schema
         return bind_any_number_target_schema(schema,

@@ -12,6 +12,7 @@
     "tests/fixtures/aggregated-zone-event-triggers.json",
     "tests/fixtures/all-colors-cards.json",
     "tests/fixtures/all-counter-self-cost-cards.json",
+    "tests/fixtures/all-kind-counter-cards.json",
     "tests/fixtures/alternative-activation-cost-cards.json",
     "tests/fixtures/amass-rules-cards.json",
     "tests/fixtures/announced-hand-discard-cards.json",

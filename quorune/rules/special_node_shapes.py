@@ -3,6 +3,9 @@ from __future__ import annotations
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    if 'all-kind-counter-doubling' in mechanics and 'any-number-target-set' not in mechanics:
+        from .all_kind_counter_shapes import all_kind_counter_node_capabilities
+        return all_kind_counter_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     if 'any-number-target-set' in mechanics:
         from .any_number_target_shapes import any_number_target_node_capabilities
         return any_number_target_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
