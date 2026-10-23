@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 479,
+  "registry_version": 480,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5085,7 +5085,7 @@
     },
     {
       "id": "casting.additional_cost.fixed_alternative",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "601.2f",
         "601.2g",
@@ -5122,66 +5122,109 @@
       },
       "dependencies": [],
       "implementation_components": [
-        "quorune.compiler.spell_additional_cost_templates.FixedAlternativeAdditionalCostTemplate",
+        "quorune.compiler.permanent_additional_cost_nodes.permanent_additional_cost_node",
         "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node",
-        "quorune.rules.casting_additional_cost_groups.FixedAlternativeAdditionalCost",
-        "quorune.rules.casting.costs._initial_options",
+        "quorune.compiler.spell_additional_cost_templates.FixedAlternativeAdditionalCostTemplate",
+        "quorune.rules.casting.commit._commit_additional_costs",
         "quorune.rules.casting.costs._apply_additional_costs",
-        "quorune.rules.casting.commit._commit_additional_costs"
+        "quorune.rules.casting.costs._initial_options",
+        "quorune.rules.casting_additional_cost_groups.FixedAlternativeAdditionalCost"
       ],
       "positive_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
         "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
         "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
         "test_all_originals_have_complete_independent_bindings",
+        "test_alternative_payload_requires_every_leaf_owner_without_annotations",
         "test_cost_options_require_explicit_branch_and_commit_selected_payment",
+        "test_counted_leaf_default_and_explicit_boundary_and_alternative_price_are_closed",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
         "test_fixed_alternative_costs_compile_source_spanned_programs",
         "test_fixed_single_union_and_alternative_tap_prices_have_complete_spans",
         "test_generic_reveal_or_mana_price_is_source_pinned_and_closed",
-        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw"
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
+        "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch",
+        "test_three_originals_have_normal_complete_admission_and_cost_capabilities"
       ],
       "negative_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
         "test_alternative_descriptor_and_unsupported_grammar_fail_closed",
+        "test_alternative_payload_requires_every_leaf_owner_without_annotations",
         "test_compiler_runtime_and_disclosure_omission_mutants_are_killed",
+        "test_counted_leaf_default_and_explicit_boundary_and_alternative_price_are_closed",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
         "test_fixed_tap_descriptor_and_unknown_variable_or_optional_prices_fail_closed",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
         "test_immutable_cast_plan_rejects_changed_reveal_incarnation_without_partial_payment",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
         "test_malformed_unknown_optional_and_linked_reveals_remain_closed",
         "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
         "test_stale_alternative_selection_rolls_back",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch",
+        "test_three_originals_have_normal_complete_admission_and_cost_capabilities",
         "test_wrong_controller_type_phase_and_tap_state_do_not_supply_cost_objects"
       ],
       "interaction_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
         "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
         "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_changeling_is_an_eligible_current_hand_card_and_direct_stack_departure_ends_reveal",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
         "test_fixed_life_and_mana_alternatives_share_total_cost_options",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
         "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
         "test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
         "test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
         "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch",
         "test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"
       ],
       "multiplayer_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
         "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
         "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
         "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch",
         "test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"
       ],
       "privacy_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
         "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
         "test_private_alternative_discard_offer_is_seat_scoped",
         "test_reveal_choices_reject_foreign_stale_wrong_subtype_and_duplicate_cards_before_mutation",
-        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration"
+        "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch"
       ],
       "replay_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
         "test_actual_migration_reveals_a_dinosaur_then_privately_searches_enters_tapped_and_shuffles",
         "test_actual_protocol_chooses_artifact_tap_or_added_mana_then_counters_target_spell",
         "test_actual_stalwart_reveal_and_mana_prices_use_one_native_cast_and_replay",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
         "test_original_creatures_keep_their_bodies_and_actual_silvergill_entry_draw",
         "test_overlapping_native_spells_keep_the_same_hand_card_revealed_until_both_leave",
         "test_reveal_and_total_cost_branches_keep_reductions_and_free_base_costs_distinct",
         "test_revealed_card_stays_public_through_saved_stack_and_countering_ends_only_the_duration",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch",
         "test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays"
       ],
       "required_evidence": [
@@ -5462,24 +5505,131 @@
     },
     {
       "id": "casting.additional_cost.zone_change.fixed_exile",
-      "version": 2,
-      "official_rules": ["400.2", "400.7", "406.1", "406.2", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.13a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.2",
+        "400.7",
+        "406.1",
+        "406.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Pay one typed additional-cost leaf by exiling exactly one matching card owned in the caster's graveyard or one matching permanent the caster controls.",
-        "inputs": ["one source-spanned typed zone-change cost descriptor", "one known graveyard card or phased-in controlled permanent", "one closed card-type union", "stable replacement-aware zone-change identity"],
-        "outputs": ["one seat-scoped payable cast offer", "one replacement-aware move to exile", "normalized graveyard-departure or battlefield-departure events", "transactional rollback, private replacement continuation, and exact replay"],
-        "exclusions": ["variable, multiple, or optional exile costs", "alternative costs outside the typed binary fixed-cost owner", "exiling cards controlled or owned by another player", "linked exiled-card result dependencies", "dynamic or historical predicates", "cost-order choices involving multiple nonmana costs"]
+        "inputs": [
+          "one source-spanned typed zone-change cost descriptor",
+          "one known graveyard card or phased-in controlled permanent",
+          "one closed card-type union",
+          "stable replacement-aware zone-change identity"
+        ],
+        "outputs": [
+          "one seat-scoped payable cast offer",
+          "one replacement-aware move to exile",
+          "normalized graveyard-departure or battlefield-departure events",
+          "transactional rollback, private replacement continuation, and exact replay"
+        ],
+        "exclusions": [
+          "variable, multiple, or optional exile costs",
+          "alternative costs outside the typed binary fixed-cost owner",
+          "exiling cards controlled or owned by another player",
+          "linked exiled-card result dependencies",
+          "dynamic or historical predicates",
+          "cost-order choices involving multiple nonmana costs"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.spell_additional_cost_templates.FixedZoneChangeAdditionalCostTemplate", "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node", "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost", "quorune.rules.casting.costs._apply_additional_costs", "quorune.rules.casting.commit._resolve_fixed_zone_change_additional_cost", "CommanderEngine.move_card"],
-      "positive_tests": ["test_fixed_zone_change_costs_compile_source_spanned_programs", "test_each_fixed_zone_change_cost_commits_to_operation_destination"],
-      "negative_tests": ["test_fixed_zone_change_cost_grammar_fails_closed", "test_stale_zone_change_selection_rolls_back"],
-      "interaction_tests": ["test_each_fixed_zone_change_cost_commits_to_operation_destination"],
-      "multiplayer_tests": ["test_discard_replacement_suspends_before_mutation_and_replays"],
-      "privacy_tests": ["test_private_discard_offer_is_seat_scoped"],
-      "replay_tests": ["test_discard_replacement_suspends_before_mutation_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "CommanderEngine.move_card",
+        "quorune.compiler.permanent_additional_cost_nodes.permanent_additional_cost_node",
+        "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node",
+        "quorune.compiler.spell_additional_cost_templates.FixedZoneChangeAdditionalCostTemplate",
+        "quorune.rules.casting.commit._resolve_fixed_zone_change_additional_cost",
+        "quorune.rules.casting.costs._apply_additional_costs",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost"
+      ],
+      "positive_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
+        "test_alternative_payload_requires_every_leaf_owner_without_annotations",
+        "test_counted_leaf_default_and_explicit_boundary_and_alternative_price_are_closed",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_each_fixed_zone_change_cost_commits_to_operation_destination",
+        "test_fixed_zone_change_costs_compile_source_spanned_programs",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch",
+        "test_three_originals_have_normal_complete_admission_and_cost_capabilities"
+      ],
+      "negative_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
+        "test_alternative_payload_requires_every_leaf_owner_without_annotations",
+        "test_counted_leaf_default_and_explicit_boundary_and_alternative_price_are_closed",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_fixed_zone_change_cost_grammar_fails_closed",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stale_zone_change_selection_rolls_back",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch",
+        "test_three_originals_have_normal_complete_admission_and_cost_capabilities"
+      ],
+      "interaction_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_each_fixed_zone_change_cost_commits_to_operation_destination",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch"
+      ],
+      "multiplayer_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_discard_replacement_suspends_before_mutation_and_replays",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch"
+      ],
+      "privacy_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
+        "test_private_discard_offer_is_seat_scoped",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch"
+      ],
+      "replay_tests": [
+        "test_actual_cascade_waives_base_mana_but_retains_three_card_exile_price",
+        "test_countered_original_keeps_all_exiled_payment_cards_and_mana_spent",
+        "test_discard_replacement_suspends_before_mutation_and_replays",
+        "test_goliath_exact_two_owned_creatures_pay_before_entry_and_invalid_refs_roll_back",
+        "test_insufficient_count_or_wrong_mana_withholds_only_unpayable_branches",
+        "test_ruinator_casts_from_hand_or_graveyard_and_cannot_exile_its_own_cast_source",
+        "test_stoneglider_selects_exactly_one_exile_or_colored_mana_branch"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "test_fixed_zone_change_capability_dependencies_fail_closed blocks each canonical zone-change dependency and proves the source-spanned exile spell remains inexact.",
       "implementation_mutation_status": "killed",

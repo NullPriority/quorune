@@ -16,6 +16,7 @@ from ..additional_cost_vocabulary import (
     FIXED_MANA_PAYMENT_COST_KIND,
     RETURN_ONE_TO_OWNER_HAND_COST,
     SACRIFICE_ONE_COST,
+    ZONE_CHANGE_COST_KIND,
 )
 from .reveal_additional_cost import FixedRevealAdditionalCost,REVEAL_ADDITIONAL_COST_CAPABILITY,fixed_reveal_additional_cost
 from .tap_additional_cost import FixedTapAdditionalCost,TAP_ADDITIONAL_COST_CAPABILITY,fixed_tap_additional_cost
@@ -389,6 +390,38 @@ def fixed_alternative_additional_cost_node_capabilities(
         elif not isinstance(option, FixedManaPaymentAdditionalCost):
             return ()
     return tuple(sorted(capabilities))
+
+
+def selected_zone_cost_payload_dependencies(value: Any) -> tuple[str, ...]:
+    """Derive cost authority from persisted leaves, independently of annotations."""
+    if not isinstance(value, Mapping):
+        return ()
+    costs = value.get("additional_costs")
+    if not isinstance(costs, (list, tuple)):
+        return ()
+    from ..replacement.immutable import freeze_value, thaw_value
+
+    required: set[str] = set()
+    for raw in costs:
+        if not isinstance(raw, Mapping):
+            continue
+        kind = raw.get("kind")
+        if kind not in {ZONE_CHANGE_COST_KIND, ALTERNATIVE_ADDITIONAL_COST_KIND}:
+            continue
+        descriptor = thaw_value(freeze_value(raw))
+        if kind == ALTERNATIVE_ADDITIONAL_COST_KIND:
+            FixedAlternativeAdditionalCost.from_descriptor(descriptor)
+            dependencies = fixed_alternative_additional_cost_node_capabilities(
+                cost_schema={"additional_costs": [descriptor]}
+            )
+            if not dependencies:
+                raise AdditionalCostError("Alternative additional cost lacks typed owners")
+            required.update(dependencies)
+        else:
+            cost = fixed_zone_change_additional_cost(descriptor)
+            required.update(announced_zone_cost_capabilities(cost))
+            required.add(fixed_zone_change_additional_cost_capability(cost))
+    return tuple(sorted(required))
 
 
 def fixed_additional_cost_option_label(

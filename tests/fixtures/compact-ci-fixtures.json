@@ -76,6 +76,7 @@
     "tests/fixtures/cost-defined-x-cards.json",
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
+    "tests/fixtures/counted-permanent-cost-cards.json",
     "tests/fixtures/counted-spell-additional-costs.json",
     "tests/fixtures/counter-doubling-cards.json",
     "tests/fixtures/counter-placement-event-cards.json",

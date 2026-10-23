@@ -3044,10 +3044,11 @@ return, life, counter, or binary alternative price. Whole-card admission remains
 required. Repeated declarations and independently unrepresented siblings retain
 material residuals, so a supported price cannot make an unsupported card exact.
 
-`compiler/spell_additional_cost_nodes.py` admits mandatory homogeneous selected
-zone-change prices of two through ten objects through the existing counted-cost
-descriptor. The isolated single-object leaf retains its narrower boundary;
-whole-spell composition opts into counted normalization. Distinct eligible
+Spell and permanent additional-cost composition admits mandatory homogeneous
+selected zone-change prices of two through ten objects through the existing
+counted-cost descriptor. Binary alternative prices can contain those same
+counted leaves. The isolated single-object leaf retains its narrower boundary;
+whole-card composition opts into counted normalization. Distinct eligible
 selections, the spell's exclusion from its own price, simultaneous zone-cost
 commitment, replacement continuations and private hand projection remain owned
 by the canonical casting transaction. Variable, random, optional and mixed

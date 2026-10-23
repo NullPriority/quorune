@@ -129,6 +129,12 @@ selected-count amount, and cost handler. Source admission requires both the
 complete target result and mandatory price. The ordinary source hashes,
 component registry, and final cost commitment retain their authority.
 
+Persisted additional-cost schemas independently require the capability of each
+selected zone-change leaf. A binary alternative also requires its choice owner
+and every leaf owner, including branches that the player does not select.
+The existing typed cost decoders validate these payloads before trust binding;
+missing producer annotations cannot remove the price's authority requirement.
+
 Version-two counter target sets reuse the registered counter-placement handler
 and canonical counter transaction. Their payload independently requires the
 quantified-set capability; a named relative amount also requires named doubling.

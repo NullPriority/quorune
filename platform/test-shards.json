@@ -77,6 +77,7 @@
       "test_combat_phase_rules",
       "test_compound_activation_restrictions",
       "test_continuous_effect_components",
+      "test_counted_permanent_costs",
       "test_counter_state",
       "test_counter_target_predicates",
       "test_deck_loader",

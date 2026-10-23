@@ -795,7 +795,7 @@ def _fixed_zone_change_additional_cost_leaf_template(
         + text.strip().removesuffix(".")
         + "."
     )
-    typed = fixed_zone_change_additional_cost_template(clause)
+    typed = fixed_zone_change_additional_cost_template(clause,allow_counted=True)
     if typed is not None:
         return typed
     legacy = fixed_sacrifice_additional_cost_template(clause)
