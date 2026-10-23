@@ -19,8 +19,10 @@ TURN_CAST_MILL_CAPABILITY = 'casting.permission.source_current_mill'
 TURN_CAST_LIBRARY_SHARED_CAPABILITY = 'casting.permission.source_library_arrival_shared_turn'
 TURN_CAST_MILL_HANDLER = 'permission.cast.source-current-mill.v1'
 TURN_CAST_LIBRARY_SHARED_HANDLER = 'permission.action.source-library-arrival-shared.v1'
+TURN_CAST_NONBATTLEFIELD_CAPABILITY = 'casting.permission.source_nonbattlefield_arrival'
+TURN_CAST_NONBATTLEFIELD_HANDLER = 'permission.cast.source-nonbattlefield-arrival.v1'
 TURN_CAST_GRANT_HANDLERS = frozenset({TURN_CAST_GRANT_HANDLER, TURN_CAST_EXILE_HANDLER, TURN_CAST_TAPPED_HANDLER,
-    TURN_CAST_MILL_HANDLER, TURN_CAST_LIBRARY_SHARED_HANDLER})
+    TURN_CAST_MILL_HANDLER, TURN_CAST_LIBRARY_SHARED_HANDLER,TURN_CAST_NONBATTLEFIELD_HANDLER})
 TURN_CAST_RIDER_HANDLERS = {'none': TURN_CAST_GRANT_HANDLER,
     'graveyard_exile': TURN_CAST_EXILE_HANDLER, 'tapped_entry': TURN_CAST_TAPPED_HANDLER}
 TURN_CAST_RIDER_CAPABILITIES = {'graveyard_exile': TURN_CAST_EXILE_CAPABILITY, 'tapped_entry': TURN_CAST_TAPPED_CAPABILITY}
@@ -55,7 +57,7 @@ class TurnCastGrantSpec:
             raise ValueError('Printed casting follow-ups require an ordinary graveyard grant')
         if self.cast_rider == 'tapped_entry' and any('artifact' not in p.types_all for p in self.predicates_any):
             raise ValueError('Artifact entry follow-up requires an artifact spell selector')
-        if self.qualification not in {'none','milled_this_turn','library_arrival_this_turn'} or type(self.allow_land_play) is not bool:
+        if self.qualification not in {'none','milled_this_turn','library_arrival_this_turn','nonbattlefield_arrival_this_turn'} or type(self.allow_land_play) is not bool:
             raise ValueError('Turn casting grant qualification is unsupported')
         if self.qualification != 'none' and (self.origins != ('graveyard',) or self.without_mana_cost or self.cast_rider != 'none'):
             raise ValueError('Current-arrival grants require one ordinary graveyard route')
@@ -64,6 +66,7 @@ class TurnCastGrantSpec:
 
     @property
     def handler_id(self):
+        if self.qualification == 'nonbattlefield_arrival_this_turn':return TURN_CAST_NONBATTLEFIELD_HANDLER
         if self.qualification == 'milled_this_turn':return TURN_CAST_MILL_HANDLER
         if self.qualification == 'library_arrival_this_turn':return TURN_CAST_LIBRARY_SHARED_HANDLER
         return TURN_CAST_RIDER_HANDLERS[self.cast_rider]
@@ -71,6 +74,7 @@ class TurnCastGrantSpec:
     @property
     def capability_dependencies(self):
         if self.qualification != 'none':
+            if self.qualification=='nonbattlefield_arrival_this_turn':return (TURN_CAST_GRANT_CAPABILITY,TURN_CAST_NONBATTLEFIELD_CAPABILITY)
             return (TURN_CAST_GRANT_CAPABILITY,TURN_CAST_MILL_CAPABILITY if self.qualification=='milled_this_turn' else TURN_CAST_LIBRARY_SHARED_CAPABILITY)
         return (TURN_CAST_GRANT_CAPABILITY,) if self.cast_rider == 'none' else (
             TURN_CAST_GRANT_CAPABILITY, TURN_CAST_RIDER_CAPABILITIES[self.cast_rider])

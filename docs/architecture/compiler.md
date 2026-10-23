@@ -1484,7 +1484,12 @@ v1 precedence when its old one-mana/one-effect shape closes. Runtime rechecks
 full resources, current predicates and object incarnations, commits through
 canonical payment or simultaneous zone intents, then resumes the typed result.
 CR 118.12 depends on chosen payment, not the final destination after replacement.
-Alternative/compound/dynamic costs, random/named payments, paid-object or linked
+The version-five cost leaf composes one positive ordinary mana vector with one
+owned hand-card discard in that same optional decision. The advertised choice
+requires both resources. Completion validates both before canonical mana and
+discard intents, and retains already-paid mana through a pending discard
+replacement. Its independent capability is also derived from the payload.
+Other alternative/compound/dynamic costs, random/named payments, paid-object or linked
 results, reflexive triggers, nested/repeated choices, unsupported leaf owners
 and wider grammar remain residual.
 
@@ -2789,6 +2794,11 @@ land-or-permanent permission instead reads ordinary library-arrival history and
 uses one source allowance across both actions. It supplies zone access without
 adding a numeric land play. Dedicated registered qualifier handlers require the
 matching capability and preserve schema-one and schema-two serialization.
+A separate qualifier accepts a current owned creature incarnation arriving
+this turn from any zone other than the battlefield. It reads the exact
+committed origin; battlefield deaths and prior incarnations do not qualify.
+An ability-word prefix has no additional meaning and is removed only when the
+entire supported permission body remains exact.
 
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer

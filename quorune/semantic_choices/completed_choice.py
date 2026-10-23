@@ -118,6 +118,17 @@ def decode_remaining_completion(value):
         intents=tuple(intents),prepend_effects=tuple(value['prepend_effects']),repeat_effect=value['repeat_effect'])
 
 
+def validated_remaining_completion(value, *, continuation, actor, response, intent_kind, intent):
+    """Bind frozen unpaid work to the same parent, payer, response and intent."""
+    from .intent_replacement import semantic_intent_identity
+    saved, saved_actor, saved_response, completion=decode_remaining_completion(value)
+    if (saved.to_dict()!=dict(continuation) or saved_actor!=actor or saved_response!=dict(response)
+            or completion is None or not completion.intents
+            or semantic_intent_identity(completion.intents[0])!=(intent_kind,dict(intent))):
+        raise SemanticChoiceError('Saved remaining completion changed its parent, payer or suspended intent')
+    return completion
+
+
 def resume_completed_choice(host,value):
     from .counter_coordination import continue_semantic_completion
     continuation,actor,response,completion=decode_remaining_completion(value)

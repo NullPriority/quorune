@@ -31,6 +31,8 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
         own = static_player_restriction_capabilities(value) if 'player_restriction' in value else ()
         from ..rules.casting_additional_cost_groups import selected_zone_cost_payload_dependencies
         own = (*own, *selected_zone_cost_payload_dependencies(value))
+        from ..fixed_effect_payment import compound_payment_payload_dependencies
+        own = (*own, *compound_payment_payload_dependencies(value))
         from ..conditional_recipient_model import conditional_recipient_capabilities
         own = (*own, *conditional_recipient_capabilities(value))
         from ..public_zone_condition_model import public_zone_condition_capabilities

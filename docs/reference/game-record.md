@@ -134,6 +134,14 @@ affected object, event identity and original source cost before resuming. The
 client cannot submit this internal field or choose the random card. Ordinary
 selected costs and older continuations retain their payloads.
 
+When a semantic choice commits an earlier intent before a later zone intent
+needs replacement ordering, its continuation may carry `completed_choice`. This
+closed payload stores only the remaining validated intents and their typed
+consequences, bound to the original parent, payer, response and suspended
+intent. Save/load resumes that unpaid work without checking or charging the
+already-committed resource again. Continuations without this field retain
+their existing decoding and validation path.
+
 Random own-graveyard return instructions serialize a version-one closed subject
 descriptor and fixed or declared-X count. They use the existing seed, stack
 reference and instruction-pointer identity with a separate random-return

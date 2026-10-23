@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 484,
+  "registry_version": 485,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -47209,6 +47209,270 @@
         "test_actual_kagha_spell_first_preserves_only_the_ordinary_land_allowance",
         "test_independent_crucible_land_play_preserves_the_shared_kagha_allowance",
         "test_source_zone_permission_needs_a_numeric_land_play_and_composes_with_exploration"
+      ]
+    },
+    {
+      "id": "effect.choice.optional_mana_discard_payment",
+      "version": 1,
+      "official_rules": [
+        "118.3",
+        "601.2h",
+        "608.2g",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One positive ordinary fixed mana vector and exactly one owned hand-card discard form an optional indivisible resolution-time cost before the independently owned result.",
+        "inputs": [
+          "closed fixed payment and existing typed consequences",
+          "current owned hand or graveyard incarnation",
+          "locked payer and current source/turn provenance"
+        ],
+        "outputs": [
+          "atomic accepted costs and private pending/replay",
+          "exact source-qualified ordinary casting price"
+        ],
+        "exclusions": [
+          "arbitrary mixed costs",
+          "discarded-card value or linked results",
+          "battlefield deaths as nonbattlefield arrivals",
+          "invented historical provenance",
+          "independently unsupported source material"
+        ]
+      },
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment",
+        "choice.affected_player.fixed_discard",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_spec",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment._complete_mana_discard_cost"
+      ],
+      "positive_tests": [
+        "test_banon_has_complete_normal_admission_and_two_independent_runtime_minima",
+        "test_combined_payload_is_closed_and_old_cost_wires_remain_unchanged",
+        "test_other_carriers_keep_independent_unsupported_results_and_siblings",
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result",
+        "test_combined_payer_and_qualification_shapes_reject_unknown_ownership"
+      ],
+      "negative_tests": [
+        "test_banon_has_complete_normal_admission_and_two_independent_runtime_minima",
+        "test_combined_payload_is_closed_and_old_cost_wires_remain_unchanged",
+        "test_other_carriers_keep_independent_unsupported_results_and_siblings",
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result",
+        "test_combined_payer_and_qualification_shapes_reject_unknown_ownership"
+      ],
+      "interaction_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
+      ],
+      "multiplayer_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
+      ],
+      "privacy_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
+      ],
+      "replay_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independently registered current-arrival owner and payload-derived compound payment minima reject missing or withdrawn capabilities before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native attack consequence fails if either mana or discard commitment is omitted; exact accepted provenance excludes battlefield deaths.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.permission.source_nonbattlefield_arrival",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "207.2c",
+        "400.7",
+        "601.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A current controlled source grants one own-turn ordinary creature cast of the exact current owned graveyard incarnation arriving this turn from any zone other than battlefield.",
+        "inputs": [
+          "closed fixed payment and existing typed consequences",
+          "current owned hand or graveyard incarnation",
+          "locked payer and current source/turn provenance"
+        ],
+        "outputs": [
+          "atomic accepted costs and private pending/replay",
+          "exact source-qualified ordinary casting price"
+        ],
+        "exclusions": [
+          "arbitrary mixed costs",
+          "discarded-card value or linked results",
+          "battlefield deaths as nonbattlefield arrivals",
+          "invented historical provenance",
+          "independently unsupported source material"
+        ]
+      },
+      "dependencies": [
+        "casting.permission.source_once_per_turn"
+      ],
+      "implementation_components": [
+        "quorune.rules.turn_cast_grant_model.TurnCastGrantSpec",
+        "quorune.compiler.turn_cast_grants._qualified_graveyard_grant",
+        "quorune.turn_history.current_graveyard_incarnation_qualifies",
+        "quorune.semantic_runtime.turn_cast_grants.qualified_turn_grant_handlers"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independently registered current-arrival owner and payload-derived compound payment minima reject missing or withdrawn capabilities before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native attack consequence fails if either mana or discard commitment is omitted; exact accepted provenance excludes battlefield deaths.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_banon_has_complete_normal_admission_and_two_independent_runtime_minima",
+        "test_combined_payload_is_closed_and_old_cost_wires_remain_unchanged",
+        "test_other_carriers_keep_independent_unsupported_results_and_siblings",
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result",
+        "test_combined_payer_and_qualification_shapes_reject_unknown_ownership"
+      ],
+      "negative_tests": [
+        "test_banon_has_complete_normal_admission_and_two_independent_runtime_minima",
+        "test_combined_payload_is_closed_and_old_cost_wires_remain_unchanged",
+        "test_other_carriers_keep_independent_unsupported_results_and_siblings",
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result",
+        "test_combined_payer_and_qualification_shapes_reject_unknown_ownership"
+      ],
+      "interaction_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
+      ],
+      "multiplayer_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
+      ],
+      "privacy_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
+      ],
+      "replay_tests": [
+        "test_actual_player_attack_pays_both_costs_draws_once_and_replays_private_choice",
+        "test_decline_and_unpayable_combination_preserve_both_resources",
+        "test_partial_foreign_duplicate_and_unknown_payment_responses_roll_back",
+        "test_actual_surveil_qualifies_creature_but_not_old_or_foreign_graveyard_cards",
+        "test_actual_countered_creature_qualifies_but_battlefield_death_does_not",
+        "test_madness_discard_pays_once_and_draws_before_its_separate_trigger",
+        "test_competing_discard_replacements_resume_paid_mana_and_draw_once",
+        "test_next_extra_turn_expires_prior_arrival_without_inventing_history",
+        "test_actual_ability_loss_removes_both_grant_and_player_attack_result"
       ]
     }
   ]

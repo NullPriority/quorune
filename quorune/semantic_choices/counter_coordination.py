@@ -143,6 +143,7 @@ def _issue_semantic_intent_replacement_choice(
     ),
     intent_index: int,
     required: ReplacementChoiceRequired,
+    completed_choice: Mapping[str, Any] | None = None,
 ) -> None:
     intent_kind, identity = semantic_intent_identity(intent)
     pending = required.pending
@@ -160,9 +161,10 @@ def _issue_semantic_intent_replacement_choice(
             "semantic_choice_continuation": continuation.to_dict(),
             "semantic_choice_actor": actor,
             "semantic_choice_response": dict(response),
-            "intent_index": intent_index,
+            "intent_index": 0 if completed_choice is not None else intent_index,
             "semantic_intent_kind": intent_kind,
             "semantic_intent": identity,
+            **({'completed_choice':dict(completed_choice)} if completed_choice is not None else {}),
             "replacement_selections": serialized_replacement_selections(
                 intent.replacement_selections
             ),
@@ -195,6 +197,7 @@ def continue_semantic_completion(
     expected_counter_intent: Mapping[str, Any] | None = None,
     expected_intent_kind: str | None = None,
     expected_intent: Mapping[str, Any] | None = None,
+    committed_completion: bool = False,
 ) -> bool:
     """Execute a completion, suspending supported intents before mutation."""
 
@@ -271,6 +274,8 @@ def continue_semantic_completion(
                     CreateTokenIntent,
                 ),
             ):
+                from .completed_choice import encode_remaining_completion
+                saved=encode_remaining_completion(continuation,actor,response,completion,index) if index or committed_completion else None
                 _issue_semantic_intent_replacement_choice(
                     host,
                     continuation=continuation,
@@ -279,6 +284,7 @@ def continue_semantic_completion(
                     intent=intent,
                     intent_index=index,
                     required=required,
+                    completed_choice=saved,
                 )
             else:
                 raise
@@ -398,16 +404,14 @@ def resume_semantic_intent_completion(
             continuation.semantic_frame.to_dict(), item
         )
         actor = restored.semantic_choice_actor
-        completion = handler.complete(
-            continuation,
-            response,
-            host._semantic_choice_query(
-                actor,
-                response=response,
-                effect=continuation.effect,
-                source_ref=_source_ref(host, item),
-            ),
-        )
+        if restored.completed_choice is None:
+            completion = handler.complete(continuation,response,host._semantic_choice_query(
+                actor,response=response,effect=continuation.effect,source_ref=_source_ref(host,item)))
+        else:
+            from .completed_choice import validated_remaining_completion
+            completion=validated_remaining_completion(thaw_value(restored.completed_choice),
+                continuation=continuation.to_dict(),actor=actor,response=response,
+                intent_kind=restored.semantic_intent_kind,intent=expected_intent)
         continue_semantic_completion(
             host,
             item=item,
@@ -422,6 +426,7 @@ def resume_semantic_intent_completion(
             ),
             expected_intent_kind=restored.semantic_intent_kind,
             expected_intent=expected_intent,
+            committed_completion=restored.completed_choice is not None,
         )
     except (SemanticChoiceError, ReplacementEffectError) as exc:
         raise error_type(str(exc)) from exc

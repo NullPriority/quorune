@@ -118,14 +118,16 @@ def current_graveyard_incarnation_qualifies(history, *, turn_sequence, card, qua
         if history.mill_history_version != 1:
             return False
         kind = 'card_milled_graveyard'
-    elif qualification == 'library_arrival_this_turn':
+    elif qualification in {'library_arrival_this_turn','nonbattlefield_arrival_this_turn'}:
         if history.arrival_history_version != 1:
             return False
         kind = 'card_arrived_graveyard'
     else:
         raise ValueError('Unknown current graveyard qualification')
     return any(event.actor == card.owner and event.object_incarnation == card.logical_object_id
-        and (kind == 'card_milled_graveyard' or event.origin == 'library')
+        and (qualification=='milled_this_turn'
+             or qualification=='library_arrival_this_turn' and event.origin=='library'
+             or qualification=='nonbattlefield_arrival_this_turn' and event.origin!='battlefield')
         for event in current_turn_history_events(history,turn_sequence=turn_sequence,kind=kind))
 
 

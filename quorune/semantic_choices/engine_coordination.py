@@ -359,6 +359,11 @@ class SemanticChoiceCoordinationMixin:
             cost_value = effect["_requirements"]
         elif isinstance(effect.get("cost"), Mapping):
             cost_value = effect["cost"]
+        elif (effect.get('op')=='offer_optional_mana_payment'
+                and isinstance(effect.get('payment'),Mapping)
+                and effect['payment'].get('kind')=='mana_discard'):
+            from ..fixed_effect_payment import FixedEffectPaymentSpec
+            cost_value=FixedEffectPaymentSpec.from_dict(effect['payment']).requirements
         elif effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 3:
             from ..source_maintenance import SourceMaintenanceSpec
             payment = SourceMaintenanceSpec.from_effect({

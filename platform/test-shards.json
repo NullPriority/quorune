@@ -111,6 +111,7 @@
       "test_kicked_target_replacements",
       "test_life_effect_runtime",
       "test_loyalty_counter_cost_replacements",
+      "test_mana_discard_payments",
       "test_mana_mode_effects",
       "test_menace_rules",
       "test_modal_activation_admission",

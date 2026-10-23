@@ -208,6 +208,10 @@ also consumes the ordinary numeric land allowance. Independent graveyard land
 permission preserves the source use. Explicit modern Mill-history recording
 stores only committed graveyard results after replacements; absent historical
 version fields remain absent and cannot invent prior qualifying cards.
+A distinct nonbattlefield-arrival qualifier reads the same exact current-turn
+incarnation journal while excluding battlefield-origin moves. It keeps its own
+registered handler and capability requirement; a death cannot acquire this
+permission from being in the graveyard alone.
 
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,

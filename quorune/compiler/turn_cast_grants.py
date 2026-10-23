@@ -25,6 +25,7 @@ def _spell_predicate(subject):
 
 def turn_cast_grant_handler(text):
     material = ' '.join(text.strip().split())
+    material=re.sub(r"^[A-Z][A-Za-z' ]{0,80} — (?=Once during each of your turns,)",'',material)
     qualified = _qualified_graveyard_grant(material)
     if qualified is not None:
         return ('once-own-turn-qualified-grant-v1',{'handler_id':qualified.handler_id,'schema_version':1,
@@ -61,6 +62,8 @@ def turn_cast_grant_handler(text):
 
 
 def _qualified_graveyard_grant(text):
+    if re.fullmatch(r'Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn\.?',text,re.I):
+        return TurnCastGrantSpec(('graveyard',),(ObjectQuerySpec(types_all=('creature',)),),qualification='nonbattlefield_arrival_this_turn')
     if re.fullmatch(r'Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn\.?',text,re.I):
         return TurnCastGrantSpec(('graveyard',),(ObjectQuerySpec(),),qualification='milled_this_turn')
     if re.fullmatch(r'Once during each of your turns, you may play a land or cast a permanent spell from among cards in your graveyard that were put there from your library this turn\.?',text,re.I):
