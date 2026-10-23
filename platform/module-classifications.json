@@ -2018,6 +2018,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/any_number_target_sets.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/as_unblocked_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6489,6 +6504,21 @@
     },
     {
       "file": "quorune/compiler/target_characteristic_sets.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/target_count_cost_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -11197,6 +11227,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/any_number_target_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/as_unblocked_effect.py",
       "layer": "rules",
       "owning_subsystem": "combat_declaration",
@@ -11842,6 +11886,20 @@
     },
     {
       "file": "quorune/rules/casting/target_cardinality.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/casting/target_count_costs.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -17437,6 +17495,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/target_count_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/target_restrictions.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -18085,6 +18158,18 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/target_count_cost_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -18962,5 +19047,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "dc6efa7d836efd33865fc23539b077c721387758566b88ef9a1f3bd40e9fc685"
+  "fingerprint": "2df82c428d92f70764d8badf426219b60dd8cb95ada830bc0da177ba8d885fff"
 }

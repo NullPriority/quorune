@@ -1333,6 +1333,9 @@ def _revalidate_cast_contracts(
                 ),
             )
     selected_option = dict(details["selected_cost_option"])
+    from .target_count_costs import validate_target_count_cost_commit
+    try:validate_target_count_cost_commit(host,card,selected_option,proposal.targets)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_target_count_cost') from exc
     from .kicked_targets import validate_kicked_target_commit
     try:validate_kicked_target_commit(program,selected_option)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_kicked_targets') from exc

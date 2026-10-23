@@ -47,11 +47,15 @@ def chosen_activation_x(ability, response) -> int | None:
     return value
 
 
-def bind_activation_target_cardinality(ability, schema, response, *, hint=False):
+def bind_activation_target_cardinality(ability, schema, response, *, hint=False, target_limit=None):
     from collections.abc import Mapping
-    from .target_cardinality import bind_announced_target_schema
+    from .target_cardinality import AnnouncedTargetCardinality, bind_announced_target_schema
     if not isinstance(schema, Mapping) or 'count_parameter' not in schema:
         return schema
+    if AnnouncedTargetCardinality.from_dict(schema['count_parameter']).parameter == 'any_number':
+        if type(target_limit) is not int or target_limit < 0:
+            raise ValueError('Any-number targets require the authoritative object bound')
+        return bind_announced_target_schema(schema, target_limit)
     if ability.announced_x_symbols is None:
         raise ValueError('Variable target cardinality requires the typed activation-X cost')
     value = 0 if hint else chosen_activation_x(ability, response)

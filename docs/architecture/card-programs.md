@@ -111,6 +111,14 @@ retain casting decisions; permanent copies and later noncast entries receive
 no paid history. Unknown cost variants, instances and linked results remain
 residual. This adds no runtime Oracle parser or second component registry.
 
+Mandatory fixed mana per extra target uses a complete-source cast-cost
+component rather than a repeat-payment casting choice. The typed descriptor
+records its fixed mana vector and free-target threshold. Cardinality and price
+dependencies are derived independently from the persisted target schema,
+selected-count amount, and cost handler. Source admission requires both the
+complete target result and mandatory price. The ordinary source hashes,
+component registry, and final cost commitment retain their authority.
+
 ## Trust and replay
 
 Unconditional static Aura control lowers into a closed attached-source

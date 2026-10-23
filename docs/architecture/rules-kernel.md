@@ -781,6 +781,25 @@ Text-defined or restricted X, unrepresented target roles and nonordinary or
 nonmana X costs remain outside this boundary. Activated-ability copying has
 no represented owner and gains no execution path here.
 
+Unrestricted “any number” target sets use a separate version of the same typed
+cardinality descriptor. Casting, activation, and trigger target selection bind
+its maximum from the authoritative finite object universe; zero remains legal.
+The existing target-plan owner enforces predicates and distinct selections,
+then revalidates each original incarnation at resolution. Homogeneous zone,
+tap-state, and fixed temporary characteristic results reuse their existing
+mutation owners. Their selected-count amount reads the original target groups,
+so partial target loss cannot change an already chosen count.
+
+`rules/casting/target_count_costs.py` prices mandatory fixed mana for every
+chosen target beyond a source-defined threshold. It adds the full colored and
+generic vector before taxes and reductions and seals the source contract again
+at commitment. Base mana waivers retain this additional price. Offer witnesses
+group candidates by their tax signatures and target count without enumerating
+every possible target subset. Public cost rows include the count, tax sources,
+and final mana vector; the client displays the matching payable row. Copies
+retain their chosen roles and use the existing copy-target authority without
+paying another casting price.
+
 Static generic activation-cost modifiers use the existing cost-component
 registry. `rules/activation/cost_modifiers.py` reads only current trusted
 sources, faces, controllers, attachments and public source types.

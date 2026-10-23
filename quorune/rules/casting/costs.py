@@ -1503,7 +1503,8 @@ def build_cast_cost_options(
     result = []
     for option in expanded:
         from .target_cardinality import bind_target_count_option
-        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x)
+        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x,
+            target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
         if option is None:
             continue
         option_cast_type_line = (
@@ -1519,10 +1520,13 @@ def build_cast_cost_options(
             )
         )
         from .targeted_costs import target_cost_variants
+        from .target_count_costs import target_count_price_variants
         if hint:
             from .target_cardinality import target_count_cost_preview
             option = target_count_cost_preview(host, seat, card, program, option)
-        for target_option in target_cost_variants(host,seat,card,program,option,submission,hint=hint):
+        target_options=(target_option for priced in target_count_price_variants(host,seat,card,program,option,submission,hint=hint)
+            for target_option in target_cost_variants(host,seat,card,program,priced,submission,hint=hint))
+        for target_option in target_options:
             finalized = _finalize_option(
                 host,
                 seat,

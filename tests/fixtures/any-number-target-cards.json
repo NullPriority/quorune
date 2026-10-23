@@ -1,0 +1,2460 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned complete Oracle/rulings and generic any-number interaction sources",
+  "cards": [
+    {
+      "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
+      "name": "Aerial Formation",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {2}{U} more to cast for each target beyond the first.\nAny number of target creatures each get +1/+1 and gain flying until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "925a0b9b-a1fa-4aad-89d9-e2698ac3582f",
+      "name": "Ajani's Presence",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {2}{W} more to cast for each target beyond the first.\nAny number of target creatures each get +1/+1 and gain indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3c8b0a8a-8f80-4c3e-8f27-fb1df94aa0d4",
+      "name": "Blinding Flare",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Strive — This spell costs {R} more to cast for each target beyond the first.\nAny number of target creatures can't block this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "name": "Boarding Party",
+      "mana_cost": "{5}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Human Pirate",
+      "oracle_text": "Haste\nCascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": "6",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste",
+        "Cascade"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "68a2e371-ccf0-4c2a-aeef-c66852811e1a",
+      "name": "Boreal Elemental",
+      "mana_cost": "{4}{U}",
+      "cmc": 5.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "Flying\nSpells your opponents cast that target this creature cost {2} more to cast.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-07-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "73d8c33d-916a-4220-96ae-9622aad36210",
+      "name": "Call the Coppercoats",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {1}{W} more to cast for each target beyond the first.\nChoose any number of target opponents. Create X 1/1 white Human Soldier creature tokens, where X is the number of creatures those opponents control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "name": "Colossal Heroics",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {1}{G} more to cast for each target beyond the first.\nAny number of target creatures each get +2/+2 until end of turn. Untap those creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8ac493f2-9519-44d7-b6ac-8c020ad2cede",
+      "name": "Consign to Dust",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {2}{G} more to cast for each target beyond the first.\nDestroy any number of target artifacts and/or enchantments.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "ef60bb5b-7cf5-4b4d-a725-4531fc0c852a",
+      "name": "Cruel Feeding",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {2}{B} more to cast for each target beyond the first.\nAny number of target creatures each get +1/+0 and gain lifelink until end of turn. (Damage dealt by a creature with lifelink also causes its controller to gain that much life.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f8252564-3e61-4ed5-bef1-6ec22882854b",
+      "name": "Desperate Stand",
+      "mana_cost": "{R}{W}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Strive — This spell costs {R}{W} more to cast for each target beyond the first.\nAny number of target creatures each get +2/+0 and gain first strike and vigilance until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "name": "Fist of Suns",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "You may pay {W}{U}{B}{R}{G} rather than pay the mana cost for spells you cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "e3886fe8-9b76-4613-8891-4ec74657c087",
+      "name": "Glorious Anthem",
+      "mana_cost": "{1}{W}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Creatures you control get +1/+1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "name": "Goblin Electromancer",
+      "mana_cost": "{U}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Goblin Wizard",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "name": "Harness by Force",
+      "mana_cost": "{1}{R}{R}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Strive — This spell costs {2}{R} more to cast for each target beyond the first.\nGain control of any number of target creatures until end of turn. Untap those creatures. They gain haste until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2002dd67-2347-4869-98de-299074206684",
+      "name": "Hour of Need",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {1}{U} more to cast for each target beyond the first.\nExile any number of target creatures. For each creature exiled this way, its controller creates a 4/4 blue Sphinx creature token with flying.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6f866b14-dcdd-4c7d-b935-6db431d83b86",
+      "name": "Kiora's Dismissal",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {U} more to cast for each target beyond the first.\nReturn any number of target enchantments to their owners' hands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "name": "Launch the Fleet",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Strive — This spell costs {1} more to cast for each target beyond the first.\nUntil end of turn, any number of target creatures each gain \"Whenever this creature attacks, create a 1/1 white Soldier creature token that's tapped and attacking.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "name": "Murder",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "faces": [],
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b3126751-27fe-42d3-a001-33ecee72b528",
+      "name": "Nature's Panoply",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {2}{G} more to cast for each target beyond the first.\nChoose any number of target creatures. Put a +1/+1 counter on each of them.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5f5e0b10-c8cf-450c-bfd3-bcb0528ec330",
+      "name": "Pacifism",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "799e7bb4-b03c-4568-b321-7810868bdcd7",
+      "name": "Phalanx Formation",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {1}{W} more to cast for each target beyond the first.\nAny number of target creatures each gain double strike until end of turn. (They deal both first-strike and regular combat damage.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "name": "Polymorphous Rush",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {1}{U} more to cast for each target beyond the first.\nChoose a creature on the battlefield. Any number of target creatures you control each become a copy of that creature until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "bc8b2b89-7118-4662-beda-9108cd08491b",
+      "name": "Rouse the Mob",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {2}{R} more to cast for each target beyond the first.\nAny number of target creatures each get +2/+0 and gain trample until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "04eb4fc0-0cc5-44f1-af5a-44579125d5c2",
+      "name": "Scapegoat",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nReturn any number of target creatures you control to their owner's hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1998-03-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "755e2f3e-bb32-4902-af8d-d80f9899c69f",
+      "name": "Setessan Tactics",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {G} more to cast for each target beyond the first.\nUntil end of turn, any number of target creatures each get +1/+1 and gain \"{T}: This creature fights another target creature.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Fight",
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3c2de008-5747-49c0-89c1-83331cb55896",
+      "name": "Silence the Believers",
+      "mana_cost": "{2}{B}{B}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {2}{B} more to cast for each target beyond the first.\nExile any number of target creatures and all Auras attached to them.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "3319b2df-7354-44b5-afa1-b9bc4a577254",
+      "name": "Solidarity of Heroes",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Strive — This spell costs {1}{G} more to cast for each target beyond the first.\nChoose any number of target creatures. Double the number of +1/+1 counters on each of them.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Double",
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "name": "Twinflame",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Strive — This spell costs {2}{R} more to cast for each target beyond the first.\nChoose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Strive"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "76300000-0000-4000-8000-000000000000",
+      "name": "Generic Any Tap",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Tap any number of target creatures.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": null,
+      "toughness": null
+    },
+    {
+      "oracle_id": "76300000-0000-4000-8000-000000000001",
+      "name": "Generic Any Untapper",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "{1}, {T}: Untap any number of target lands.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": null,
+      "toughness": null
+    },
+    {
+      "oracle_id": "76300000-0000-4000-8000-000000000002",
+      "name": "Generic Any Arrival",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Creature — Wizard",
+      "oracle_text": "When this creature enters, tap any number of target creatures.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "6"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "925a0b9b-a1fa-4aad-89d9-e2698ac3582f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "925a0b9b-a1fa-4aad-89d9-e2698ac3582f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "925a0b9b-a1fa-4aad-89d9-e2698ac3582f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "925a0b9b-a1fa-4aad-89d9-e2698ac3582f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "925a0b9b-a1fa-4aad-89d9-e2698ac3582f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "3c8b0a8a-8f80-4c3e-8f27-fb1df94aa0d4",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "3c8b0a8a-8f80-4c3e-8f27-fb1df94aa0d4",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "3c8b0a8a-8f80-4c3e-8f27-fb1df94aa0d4",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "3c8b0a8a-8f80-4c3e-8f27-fb1df94aa0d4",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "3c8b0a8a-8f80-4c3e-8f27-fb1df94aa0d4",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "3c8b0a8a-8f80-4c3e-8f27-fb1df94aa0d4",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Blinding Flare can target any creature, including those you control."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally."
+    },
+    {
+      "oracle_id": "ef69ce86-48ae-4d90-8e29-051583671321",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "68a2e371-ccf0-4c2a-aeef-c66852811e1a",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "An opponent’s spell that targets Boreal Elemental more than once costs only {2} more to cast."
+    },
+    {
+      "oracle_id": "68a2e371-ccf0-4c2a-aeef-c66852811e1a",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you’re paying, add any cost increases (such as that of Boreal Elemental), then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "73d8c33d-916a-4220-96ae-9622aad36210",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The mana value of a strive spell doesn't change no matter how many targets it has."
+    },
+    {
+      "oracle_id": "73d8c33d-916a-4220-96ae-9622aad36210",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If this spell is copied and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "73d8c33d-916a-4220-96ae-9622aad36210",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional cost for any targets beyond the first."
+    },
+    {
+      "oracle_id": "73d8c33d-916a-4220-96ae-9622aad36210",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Any target opponents that are no longer legal targets by the time Call the Coppercoats resolves won't have their creatures counted when determining how many tokens you create."
+    },
+    {
+      "oracle_id": "73d8c33d-916a-4220-96ae-9622aad36210",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Colossal Heroics can target any creatures, not just ones that are tapped."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Heroic abilities will resolve before the spell that caused them to trigger."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Heroic abilities will trigger only once per spell, even if that spell targets the creature with the heroic ability multiple times."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Heroic abilities won't trigger when a copy of a spell is created on the stack or when a spell's targets are changed to include a creature with a heroic ability."
+    },
+    {
+      "oracle_id": "5b01acaf-bcf4-4ac1-ac62-2f25a45c2589",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "8ac493f2-9519-44d7-b6ac-8c020ad2cede",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "8ac493f2-9519-44d7-b6ac-8c020ad2cede",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "8ac493f2-9519-44d7-b6ac-8c020ad2cede",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "8ac493f2-9519-44d7-b6ac-8c020ad2cede",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "8ac493f2-9519-44d7-b6ac-8c020ad2cede",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "ef60bb5b-7cf5-4b4d-a725-4531fc0c852a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "ef60bb5b-7cf5-4b4d-a725-4531fc0c852a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "ef60bb5b-7cf5-4b4d-a725-4531fc0c852a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "ef60bb5b-7cf5-4b4d-a725-4531fc0c852a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "ef60bb5b-7cf5-4b4d-a725-4531fc0c852a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "f8252564-3e61-4ed5-bef1-6ec22882854b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "f8252564-3e61-4ed5-bef1-6ec22882854b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "f8252564-3e61-4ed5-bef1-6ec22882854b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "f8252564-3e61-4ed5-bef1-6ec22882854b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "f8252564-3e61-4ed5-bef1-6ec22882854b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you apply Fist of Suns's alternative cost to a spell with {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Fist of Suns's ability is an alternative cost to cast a spell. You can't combine this with other alternative costs, such as flashback. You can pay additional costs, such as kicker, in addition to this alternative cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you cast a spell for which mana of any color can be spent to cast it, you may cast it for Fist of Suns's alternative cost and still spend any color of mana to cover that cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you pay {W}{U}{B}{R}{G} rather than pay the mana cost of a spell with {X} in its mana cost, the only legal choice for X is 0."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "Two Goblin Electromancers will make instant and sorcery spells you cast cost {2} less to cast, and so on."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "Goblin Electromancer's effect reduces only generic mana in the spell's total cost."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "8c7e2596-6c21-4ce0-95dc-5b4dccb4090a",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Harness by Force can target any creature, even one that's untapped or one you already control."
+    },
+    {
+      "oracle_id": "2002dd67-2347-4869-98de-299074206684",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "2002dd67-2347-4869-98de-299074206684",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "2002dd67-2347-4869-98de-299074206684",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "2002dd67-2347-4869-98de-299074206684",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "2002dd67-2347-4869-98de-299074206684",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "6f866b14-dcdd-4c7d-b935-6db431d83b86",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "6f866b14-dcdd-4c7d-b935-6db431d83b86",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "6f866b14-dcdd-4c7d-b935-6db431d83b86",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "6f866b14-dcdd-4c7d-b935-6db431d83b86",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "6f866b14-dcdd-4c7d-b935-6db431d83b86",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Although the tokens are attacking, they were never declared as attacking creatures (for purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You declare which player or planeswalker each token is attacking as you put it onto the battlefield. It doesn't have to be the same player or planeswalker the original creature is attacking."
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "3362dec2-b157-4a00-8abf-0d7b5a14c6f8",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "b3126751-27fe-42d3-a001-33ecee72b528",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "b3126751-27fe-42d3-a001-33ecee72b528",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "b3126751-27fe-42d3-a001-33ecee72b528",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "b3126751-27fe-42d3-a001-33ecee72b528",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "b3126751-27fe-42d3-a001-33ecee72b528",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "799e7bb4-b03c-4568-b321-7810868bdcd7",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "799e7bb4-b03c-4568-b321-7810868bdcd7",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "799e7bb4-b03c-4568-b321-7810868bdcd7",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "799e7bb4-b03c-4568-b321-7810868bdcd7",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "799e7bb4-b03c-4568-b321-7810868bdcd7",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The creature that's copied isn't targeted by Polymorphous Rush. You choose that creature as the spell resolves. It can be one of the targeted creatures. A creature can become a copy of itself this way, though this usually won't have any noticeable effect."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Effects that have already applied to the target creatures will continue to apply to them. For example, if Giant Growth had given one of those creatures +3/+3 earlier in the turn, then Polymorphous Rush makes it a copy of Pensive Minotaur (a 2/3 creature), it will become a 5/6 Pensive Minotaur."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "This effect can cause the targets to stop being creatures. For example, if they each become a copy of a land that has become a creature, the effect that turned that land into a creature won't be copied. The targets will become noncreature lands."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If the creatures copy a creature that's copying a creature, they will become whatever the chosen creature is copying."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The target creatures copy the printed values of the chosen creature, plus any copy effects that have been applied to it. They won't copy counters on that creature or effects that have changed the creature's power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "3098626a-b786-4f54-83df-51833729c1ec",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target."
+    },
+    {
+      "oracle_id": "bc8b2b89-7118-4662-beda-9108cd08491b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "bc8b2b89-7118-4662-beda-9108cd08491b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "bc8b2b89-7118-4662-beda-9108cd08491b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "bc8b2b89-7118-4662-beda-9108cd08491b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "bc8b2b89-7118-4662-beda-9108cd08491b",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "04eb4fc0-0cc5-44f1-af5a-44579125d5c2",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You must sacrifice exactly one creature to cast this spell; you cannot cast it without sacrificing a creature, and you cannot sacrifice additional creatures."
+    },
+    {
+      "oracle_id": "04eb4fc0-0cc5-44f1-af5a-44579125d5c2",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Players can only respond once this spell has been cast and all its costs have been paid. No one can try to destroy the creature you sacrificed to prevent you from casting this spell."
+    },
+    {
+      "oracle_id": "755e2f3e-bb32-4902-af8d-d80f9899c69f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Each of the two creatures that fight deals damage equal to its power to the other. If either one of the creatures isn't on the battlefield when the ability that instructs them to fight resolves, no damage is dealt."
+    },
+    {
+      "oracle_id": "755e2f3e-bb32-4902-af8d-d80f9899c69f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "755e2f3e-bb32-4902-af8d-d80f9899c69f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "755e2f3e-bb32-4902-af8d-d80f9899c69f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "755e2f3e-bb32-4902-af8d-d80f9899c69f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "755e2f3e-bb32-4902-af8d-d80f9899c69f",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "3c2de008-5747-49c0-89c1-83331cb55896",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "3c2de008-5747-49c0-89c1-83331cb55896",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "3c2de008-5747-49c0-89c1-83331cb55896",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "3c2de008-5747-49c0-89c1-83331cb55896",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The creatures and Auras are exiled at the same time. Specifically, if an Aura is a permanent with bestow, it will be exiled. It won't stop being an Aura and remain on the battlefield."
+    },
+    {
+      "oracle_id": "3c2de008-5747-49c0-89c1-83331cb55896",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "3c2de008-5747-49c0-89c1-83331cb55896",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "3319b2df-7354-44b5-afa1-b9bc4a577254",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Solidarity of Heroes can target any creatures, not just ones with +1/+1 counters on them. Notably, heroic abilities of any target creatures that put +1/+1 counters on that creature will resolve before Solidarity of Heroes."
+    },
+    {
+      "oracle_id": "3319b2df-7354-44b5-afa1-b9bc4a577254",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "3319b2df-7354-44b5-afa1-b9bc4a577254",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "3319b2df-7354-44b5-afa1-b9bc4a577254",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "3319b2df-7354-44b5-afa1-b9bc4a577254",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "3319b2df-7354-44b5-afa1-b9bc4a577254",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The mana cost and mana value of strive spells don't change no matter how many targets they have. Strive abilities affect only what you pay."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If another creature becomes or enters the battlefield as a copy of the token, that creature will have haste, but you won't exile it. However, if Twinflame creates multiple tokens copying a single creature due to a replacement effect (like the one Doubling Season creates), you'll exile each of them."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The tokens see each other enter the battlefield. If any of them have a triggered ability that triggers whenever a creature enters the battlefield, they'll trigger for one another."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If a spell or ability allows you to cast a strive spell without paying its mana cost, you must pay the additional costs for any targets beyond the first."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If such a spell is copied, and the effect that copies the spell allows a player to choose new targets for the copy, the number of targets can't be changed. The player may change any number of the targets, including all of them or none of them. If, for one of the targets, the player can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, the token created by Twinflame copies the original characteristics of that token as stated by the effect that put that token onto the battlefield."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is a Clone), then the token enters the battlefield as whatever that creature copied."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "If all of the spell's targets are illegal when the spell tries to resolve, it won't resolve and none of its effects will happen. If one or more of its targets are legal when it tries to resolve, the spell will resolve and affect only those legal targets. It will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "The tokens copy exactly what was printed on the original creature and nothing else (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "83cf1169-5853-4332-b897-7b17d72d76ab",
+      "published_at": "2014-04-26",
+      "source": "wotc",
+      "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    }
+  ]
+}

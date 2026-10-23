@@ -62,6 +62,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/kicked_target_model.py",
         "quorune/kicked_target_replacement_model.py",
         "quorune/recipient_modifier_model.py",
+        "quorune/target_count_cost_model.py",
         "quorune/mana_symbol_counts.py",
         "quorune/public_zone_condition_model.py",
         "quorune/conditional_free_cast_model.py",

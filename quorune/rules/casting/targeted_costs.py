@@ -76,7 +76,11 @@ def _announced_tax_assignments(host,seat,card,schema,sources):
 def _announced_tax_variants(host,seat,card,schema,sources,option,modes):
     """Price each signature once, retaining its separate target witnesses."""
     signatures={}
-    for targets,grouped,limit in _announced_tax_assignments(host,seat,card,schema,sources):
+    if 'target_count_price' in option:
+        from .target_count_costs import counted_target_tax_assignments
+        assignments=counted_target_tax_assignments(host,seat,card,schema,sources,option['target_count_price'])
+    else:assignments=_announced_tax_assignments(host,seat,card,schema,sources)
+    for targets,grouped,limit in assignments:
         fact=target_cost_fact(sources,targets)
         key=tuple(row['component_id'] for row in fact['sources'])
         signatures.setdefault(key,(fact,[],limit))[1].append({'targets':grouped,'modes':list(modes)})
@@ -89,7 +93,7 @@ def _announced_tax_variants(host,seat,card,schema,sources,option,modes):
 def target_cost_variants(host,seat,card,program,option,response,*,hint):
     from ...morph import FACE_DOWN_CAST_METHODS
     sources=targeted_spell_cost_sources(host,seat,card=card if option.get('id') not in FACE_DOWN_CAST_METHODS else None,spell_program=program)
-    if not sources:yield option;return
+    if not sources and 'target_count_price' not in option:yield option;return
     schema=option.get('target_schema') or getattr(program,'target_schema',None)
     if schema is None:
         enchant=host._compiled_enchant_spec(card)
@@ -99,7 +103,7 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
         targets,_=host._validate_semantic_targets(seat,program,host._normalize_target_submission(response.get('targets')),
             modes=modes,acting_source=spell_targeting_source(host,card), source_ref=card.ref,target_schema=schema)
         yield {**option,'targeted_cost':target_cost_fact(sources,targets)};return
-    if 'target_count_preview_limit' in option:
+    if 'target_count_preview_limit' in option or 'target_count_price' in option:
         yield from _announced_tax_variants(host,seat,card,schema,sources,option,modes)
         return
     mode_sets=(modes,)
@@ -159,7 +163,9 @@ def consolidate_target_cost_options(options,*,hint):
         if 'targeted_cost' in raw:
             modes=tuple(raw.get('target_cost_witness',{}).get('modes',()))
             components=tuple(row['component_id'] for row in raw['targeted_cost']['sources'])
-            prices.setdefault(option.option_id,{})[(modes,components)]={'modes':list(modes),'components':list(components),
+            count=raw.get('target_count_price')
+            prices.setdefault(option.option_id,{})[(modes,components,count)]={'modes':list(modes),'components':list(components),
+                **({'target_count':count} if count is not None else {}),
                 'requirements':raw['requirements'], **({'maximum_x':raw['choice_schema']['x']['maximum']}
                 if ('target_count_parameter' in raw or raw['targeted_cost'].get('schema_version')==2) and 'x' in raw.get('choice_schema',{}) else {})}
         prior=result.get(option.option_id)
@@ -171,7 +177,7 @@ def consolidate_target_cost_options(options,*,hint):
 def public_target_costs(host,seat,option,*,card=None,spell_program=None):
     from ...morph import FACE_DOWN_CAST_METHODS
     clauses=target_cost_clauses(host,seat,card=card if option.get('id') not in FACE_DOWN_CAST_METHODS else None,spell_program=spell_program)
-    if not clauses:return None
+    if not clauses and 'target_count_cost' not in option:return None
     def label(requirements):
         value=(f"{{{requirements['GENERIC']}}}" if requirements.get('GENERIC') else '')
         value+=''.join(('{'+key+'}')*requirements.get(key,0) for key in 'WUBRGC')

@@ -11,11 +11,12 @@ OPERATION='apply_source_characteristics_until_end_of_turn'
 
 
 def decode_target_characteristics(effect,*,allow_zero_result=False):
-    if not isinstance(effect,Mapping) or set(effect)!={'op','schema_version','cards','maximum_targets','power','toughness','keywords'}:
+    variable = isinstance(effect,Mapping) and effect.get('announced_target_count') is True
+    if not isinstance(effect,Mapping) or set(effect)!={'op','schema_version','cards','maximum_targets','power','toughness','keywords'} | ({'announced_target_count'} if variable else set()):
         raise ValueError('Target characteristic set fields are malformed')
     if effect['op']!=OPERATION or type(effect['schema_version']) is not int or effect['schema_version']!=6:
         raise ValueError('Target characteristic set version is unsupported')
-    if type(effect['maximum_targets']) is not int or not 1<=effect['maximum_targets']<=6:
+    if type(effect['maximum_targets']) is not int or not (effect['maximum_targets']>=0 if variable else 1<=effect['maximum_targets']<=6):
         raise ValueError('Target characteristic set bound is invalid')
     if type(effect['power']) is not int or type(effect['toughness']) is not int:
         raise ValueError('Target characteristic set modifier is fixed integral')
@@ -57,6 +58,13 @@ def target_characteristic_set_runtime_dependencies(program):
         if isinstance(value,Mapping):
             if value.get('op')==OPERATION and value.get('schema_version')==6:
                 fixed=value
+                if 'announced_target_count' in value:
+                    from .any_number_target_shapes import any_number_target_node_capabilities
+                    required=any_number_target_node_capabilities(effects=(value,),target_schema=program.target_schema,mechanic_ids=program.coverage)
+                    if not required:raise ValueError('Any-number characteristic result lacks its cardinality owner')
+                    dependencies.update(required)
+                    fixed={key:child for key,child in value.items() if key!='announced_target_count'}
+                    fixed['maximum_targets']=2
                 if any(isinstance(value.get(field),Mapping) for field in ('power','toughness')):
                     from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
                     context=public_query_amount_shape_context((value,),set(program.coverage),target_schema=program.target_schema)

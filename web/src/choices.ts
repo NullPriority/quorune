@@ -108,8 +108,9 @@ export function activeFields(form: ChoiceForm, values: ChoiceValues): ChoiceFiel
 function selectedTargetPrice(field: ChoiceField, values: ChoiceValues): ChoiceField | null | undefined {
   const costs = record(field.target_costs);
   if (!Object.keys(costs).length) return undefined;
-  const targets = new Set(Object.values(record(values[stringValue(field.name)]))
-    .flatMap((refs) => list(refs).map(String)));
+  const selectedTargets = Object.values(record(values[stringValue(field.name)]))
+    .flatMap((refs) => list(refs).map(String));
+  const targets = new Set(selectedTargets);
   const components = list(costs.clauses).map(record)
     .filter((clause) => list(clause.any_target_refs).some((ref) => targets.has(String(ref))))
     .map((clause) => String(clause.component_id)).sort();
@@ -117,7 +118,8 @@ function selectedTargetPrice(field: ChoiceField, values: ChoiceValues): ChoiceFi
   const same = (left: string[], right: string[]) => left.length === right.length
     && left.every((value, index) => value === right[index]);
   const price = list(costs.prices).map(record).find((row) =>
-    same(list(row.components).map(String).sort(), components)
+    (row.target_count === undefined || Number(row.target_count) === selectedTargets.length)
+    && same(list(row.components).map(String).sort(), components)
     && same(list(row.modes).map(String).sort(), modes));
   if (price?.maximum_x !== undefined && Number(values.x ?? 0) > Number(price.maximum_x)) return null;
   return price ?? null;

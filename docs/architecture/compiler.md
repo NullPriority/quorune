@@ -703,6 +703,23 @@ the existing optional and closed-sequence compilers. Heterogeneous roles,
 divided or dynamic quantities, linked results, compound or conditional tails,
 other players' graveyards, non-owner-hand destinations, and unsupported
 characteristic dependencies remain source-spanned residuals.
+`compiler/any_number_target_sets.py` reuses these complete homogeneous results
+and the fixed temporary characteristic-set owner for “any number of targets”.
+Its version-two count parameter permits zero through the authoritative finite
+object universe without requiring mana X or imposing a fixed six-target limit.
+The result's typed maximum reads the original chosen target roles, including
+targets that later become illegal. Unknown result siblings, divided quantities,
+and aggregate target constraints remain residual.
+
+`compiler/target_count_cost_nodes.py` lowers a complete fixed ordinary-mana
+sentence that charges for each target beyond the first. Strive is an ability
+word; the sentence defines its mandatory price. The existing cast-cost component
+registry owns this source-pinned descriptor. The price is multiplied by the
+original chosen target count minus one, floored at zero, before ordinary total
+cost adjustments. This source family requires one homogeneous unrestricted
+target group; heterogeneous or independently quantified price groups remain
+residual. It creates no Kicker or mana-X casting decision.
+
 Legacy creature-or-Vehicle and historic-permanent target alternatives retain
 their existing typed union authority. Only schemas closed by the shared direct
 permanent predicate decoder request that decoder's characteristic dependencies;

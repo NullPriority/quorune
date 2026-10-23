@@ -7,6 +7,14 @@ def typed_result_amount_runtime_dependencies(value: Any) -> tuple[str, ...]:
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..target_count_cost_model import TARGET_COUNT_COST_HANDLER, TARGET_COUNT_COST_CAPABILITY, FixedManaPerTargetCostSpec
+        if value.get('handler_id') == TARGET_COUNT_COST_HANDLER:
+            FixedManaPerTargetCostSpec.from_dict(value['target_cost'])
+            return (TARGET_COUNT_COST_CAPABILITY,)
+        from ..target_cardinality import SELECTED_TARGET_COUNT_KIND, ANY_NUMBER_TARGET_CAPABILITY, validate_selected_target_count
+        if value.get('kind') == SELECTED_TARGET_COUNT_KIND:
+            validate_selected_target_count(value)
+            return (ANY_NUMBER_TARGET_CAPABILITY,)
         from ..static_player_restriction_model import static_player_restriction_capabilities
         own = static_player_restriction_capabilities(value) if 'player_restriction' in value else ()
         from ..conditional_recipient_model import conditional_recipient_capabilities

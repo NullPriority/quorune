@@ -16,6 +16,22 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Per-extra-target prices match the chosen count as well as static target taxes", () => {
+  const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target", min: 0, max: 9,
+    legal_refs: ["TAXED", "ORDINARY", "THIRD"] }] }, target_costs: {
+    clauses: [{ component_id: "tax", any_target_refs: ["TAXED"] }], prices: [
+      { modes: [], components: [], target_count: 0, label: "Pay {U}" },
+      { modes: [], components: [], target_count: 1, label: "Pay {U}" },
+      { modes: [], components: [], target_count: 2, label: "Pay {2}{U}{U}" },
+      { modes: [], components: ["tax"], target_count: 1, label: "Pay {2}{U}" },
+      { modes: [], components: ["tax"], target_count: 2, label: "Pay {4}{U}{U}" }] } };
+  assert.equal(selectedTargetCostLabel(field, { targets: { target: [] } }), "Pay {U}");
+  assert.equal(selectedTargetCostLabel(field, { targets: { target: ["ORDINARY"] } }), "Pay {U}");
+  assert.equal(selectedTargetCostLabel(field, { targets: { target: ["ORDINARY", "THIRD"] } }), "Pay {2}{U}{U}");
+  assert.equal(selectedTargetCostLabel(field, { targets: { target: ["TAXED", "ORDINARY"] } }), "Pay {4}{U}{U}");
+  assert.match(selectedTargetCostLabel(field, { targets: { target: ["TAXED", "ORDINARY", "THIRD"] } }) ?? "", /No payable/);
+});
+
 test("Declared X updates exact and up-to target groups without limiting paid X", () => {
   for (const exact of [true, false]) {
     const choices = form([

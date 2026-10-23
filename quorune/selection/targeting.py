@@ -646,6 +646,9 @@ class TargetSelectionOwnerMixin:
         source_ref: str | None,
         acting_source: TargetingSource | None = None,
     ) -> dict[str, Any] | None:
+        from ..target_cardinality import bind_any_number_target_schema
+        schema = bind_any_number_target_schema(schema,
+            len(self.state.cards)+len(self.state.players)+len(self.state.stack))
         modes = available_modes(schema)
         if modes:
             legal_modes: list[str] = []
@@ -831,6 +834,9 @@ class TargetSelectionOwnerMixin:
                     "This semantic program does not accept targets or modes"
                 )
             return [], {}
+        from ..target_cardinality import bind_any_number_target_schema
+        schema = bind_any_number_target_schema(schema,
+            len(self.state.cards)+len(self.state.players)+len(self.state.stack))
         try:
             selected_modes = canonical_modes(
                 schema,
@@ -863,15 +869,19 @@ class TargetSelectionOwnerMixin:
                 raise
             raise GameRuleError(str(exc)) from exc
 
-    @staticmethod
     def _stack_target_schema(
+        self,
         item: StackItem,
         program: SemanticProgram | None,
     ) -> Mapping[str, Any] | None:
         if "target_schema_override" in item.context:
             return dict(item.context["target_schema_override"])
         from ..rules.blocking_requirements import bound_defending_controller_schema
-        return bound_defending_controller_schema(program.target_schema,item.context) if program is not None else None
+        schema=bound_defending_controller_schema(program.target_schema,item.context) if program is not None else None
+        if schema is None:return None
+        from ..target_cardinality import bind_any_number_target_schema
+        return bind_any_number_target_schema(schema,
+            len(self.state.cards)+len(self.state.players)+len(self.state.stack))
 
     def _stack_source_ref(self, item: StackItem) -> str:
         if (

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 474,
+  "registry_version": 475,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -45482,6 +45482,248 @@
       "dependency_fail_closed_rationale": "Verified withdrawal and both-branch independent target/result runtime minima reject incomplete source authority.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh complete source, paid target legality and exact reviewed/current equivalence reject source, forced-unpaid-schema and compatibility-precedence omissions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "target.cardinality.any_number",
+      "version": 1,
+      "official_rules": [
+        "115.3",
+        "115.6",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One unrestricted distinct target set uses existing eligibility, result and revalidation owners, including zero targets.",
+        "inputs": [
+          "complete pinned source",
+          "authoritative chosen target roles"
+        ],
+        "outputs": [
+          "shared offers and accepted command semantics"
+        ],
+        "exclusions": [
+          "unsupported distributed amounts, result siblings and variable prices"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.any_number_target_sets.any_number_target_set_template",
+        "quorune.rules.any_number_target_shapes.any_number_target_node_capabilities",
+        "quorune.target_cardinality.bind_any_number_target_schema",
+        "quorune.target_cardinality.resolve_selected_target_count"
+      ],
+      "positive_tests": [
+        "test_cardinality_and_price_codecs_preserve_legacy_x_and_reject_malformed_authority",
+        "test_originals_have_complete_registration_and_both_independent_runtime_minima",
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality",
+        "test_incomplete_source_results_and_variable_prices_remain_residual",
+        "test_price_commitment_rejects_count_source_and_malformed_fact_drift"
+      ],
+      "negative_tests": [
+        "test_cardinality_and_price_codecs_preserve_legacy_x_and_reject_malformed_authority",
+        "test_originals_have_complete_registration_and_both_independent_runtime_minima",
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality",
+        "test_incomplete_source_results_and_variable_prices_remain_residual",
+        "test_price_commitment_rejects_count_source_and_malformed_fact_drift"
+      ],
+      "interaction_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality"
+      ],
+      "multiplayer_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality"
+      ],
+      "privacy_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality"
+      ],
+      "replay_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Payload-owned minimum dependencies reject missing cardinality or mandatory price authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh target and mandatory-price omissions are exercised by actual original casts.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.per_target_fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "118.8",
+        "601.2c",
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One complete source sentence adds fixed ordinary mana per originally chosen target beyond its printed threshold before total cost locking.",
+        "inputs": [
+          "complete pinned source with one homogeneous unrestricted target group",
+          "authoritative original chosen target roles"
+        ],
+        "outputs": [
+          "shared offers and accepted command semantics"
+        ],
+        "exclusions": [
+          "heterogeneous or independently quantified price groups",
+          "variable or nonmana per-target prices",
+          "unsupported result siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.target_count_cost_nodes.target_count_cost_static_node",
+        "quorune.semantic_runtime.target_count_costs.FixedManaPerTargetCostHandler",
+        "quorune.rules.casting.target_count_costs.target_count_price_variants",
+        "quorune.rules.casting.target_count_costs.validate_target_count_cost_commit"
+      ],
+      "positive_tests": [
+        "test_cardinality_and_price_codecs_preserve_legacy_x_and_reject_malformed_authority",
+        "test_originals_have_complete_registration_and_both_independent_runtime_minima",
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality",
+        "test_incomplete_source_results_and_variable_prices_remain_residual",
+        "test_price_commitment_rejects_count_source_and_malformed_fact_drift"
+      ],
+      "negative_tests": [
+        "test_cardinality_and_price_codecs_preserve_legacy_x_and_reject_malformed_authority",
+        "test_originals_have_complete_registration_and_both_independent_runtime_minima",
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_unrestricted_targets_accept_zero_and_nine_without_x_or_a_fixed_six_limit",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge",
+        "test_activation_and_trigger_target_choices_share_unrestricted_cardinality",
+        "test_incomplete_source_results_and_variable_prices_remain_residual",
+        "test_price_commitment_rejects_count_source_and_malformed_fact_drift"
+      ],
+      "interaction_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge"
+      ],
+      "multiplayer_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge"
+      ],
+      "privacy_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge"
+      ],
+      "replay_tests": [
+        "test_each_original_pays_two_target_price_and_applies_its_complete_result",
+        "test_strive_zero_one_and_nine_targets_use_the_same_base_and_per_extra_price",
+        "test_colored_surcharge_target_taxes_and_static_reductions_share_offer_and_acceptance",
+        "test_partial_and_all_illegal_targets_keep_the_original_paid_count",
+        "test_copy_retains_two_target_roles_and_changes_targets_without_repaying_strive",
+        "test_copy_can_retain_an_unchanged_illegal_target_while_retargeting_the_other_role",
+        "test_cascade_waives_the_base_mana_cost_but_preserves_the_target_surcharge"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Payload-owned minimum dependencies reject missing cardinality or mandatory price authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh target and mandatory-price omissions are exercised by actual original casts.",
       "blockers": [],
       "status": "trusted"
     }

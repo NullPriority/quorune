@@ -57,6 +57,7 @@
       "test_all_colors",
       "test_alternative_activation_mana",
       "test_ante_rules",
+      "test_any_number_targets",
       "test_any_source_counter_costs",
       "test_attached_protection_exceptions",
       "test_banding",
