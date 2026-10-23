@@ -1406,6 +1406,7 @@ def default_continuous_effect_component_registry(
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
     from .quantified_anthems import QuantifiedAnthemHandler
+    from .recipient_anthems import RecipientAnthemHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
@@ -1458,6 +1459,7 @@ def default_continuous_effect_component_registry(
             ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),
             QuantifiedAnthemHandler(),
+            RecipientAnthemHandler(),
         )
     )
     registry.require_registered_capabilities(

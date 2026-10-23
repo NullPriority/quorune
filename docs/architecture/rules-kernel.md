@@ -1228,6 +1228,18 @@ quantities use this counter owner without reading later-layer characteristics.
 An attack legally declared under a conditional Defender exception remains
 declared when the final qualifying counter is removed afterward.
 
+`continuous_stat_operations.py` applies fixed set, additive and switch
+operations to detached characteristic proposals. Recipient-local scalar
+modifiers use the same owner in layer 7c, reading that recipient after earlier
+copy, type and color layers. Counter quantities read its canonical public
+counter snapshot; ordinary counter P/T changes still apply separately. Mana
+symbol quantities read the current copiable mana cost, including the empty
+cost of a face-down object. `mana_symbol_counts.py` shares symbol validation
+with collection and devotion counts. These effects retain live source and
+subject applicability, validate their closed codecs and capability dependencies,
+and store no mutable quantity cache. Existing operation payloads retain their
+serialized fields.
+
 Version-nine queries add `colors_none` for negative-color battlefield sets.
 The shared matcher checks current color membership, so colorless objects match
 and a multicolored object containing the excluded color does not. Static

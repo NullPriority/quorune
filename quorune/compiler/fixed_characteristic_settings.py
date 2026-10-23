@@ -101,6 +101,9 @@ def _setting_part(modifier, part):
 
 
 def fixed_characteristic_setting_handler(text: str, *, source_name: str | None = None):
+    from .recipient_modifiers import recipient_modifier_handler
+    recipient=recipient_modifier_handler(text)
+    if recipient is not None:return recipient
     from .live_modifier_quantities import quantified_public_modifier_handler
     quantified=quantified_public_modifier_handler(text)
     if quantified is not None:return quantified

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 470,
+  "registry_version": 471,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -44964,6 +44964,113 @@
         "test_hall_other_player_cast_and_actual_copy_do_not_create_own_cast_fact",
         "test_hall_qualifying_cast_fact_resets_on_the_next_turn",
         "test_gutterbones_nondamage_loss_and_missing_history_share_offer_and_commit"
+      ]
+    },
+    {
+      "id": "continuous.power_toughness.recipient_quantity",
+      "version": 1,
+      "official_rules": [
+        "105.2",
+        "107.4e",
+        "107.4f",
+        "109.5",
+        "122.1",
+        "611.3a",
+        "611.3b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One live layer7c modifier reads each eligible recipient's current colors, fixed named counters, colored symbols in its copiable mana cost, or distinct creature types with an optional fixed cap.",
+        "inputs": [
+          "complete source-spanned subject and scalar descriptors",
+          "current layered recipient characteristics and canonical public counters"
+        ],
+        "outputs": [
+          "recipient-local additive P/T changes after earlier characteristic layers",
+          "current controlled/excluded recipient sets without caching or hidden reads"
+        ],
+        "exclusions": [
+          "P/T or ability-presence feedback quantities",
+          "private or controller-relative collections",
+          "arbitrary expressions or unsupported sibling clauses"
+        ]
+      },
+      "dependencies": [
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "implementation_components": [
+        "quorune.compiler.recipient_modifiers.recipient_modifier_handler",
+        "quorune.recipient_modifier_model.RecipientQuantitySpec",
+        "quorune.semantic_runtime.recipient_anthems.RecipientAnthemHandler",
+        "quorune.continuous_stat_operations.recipient_quantity_amount",
+        "quorune.continuous_stat_operations.apply_stat_operation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified capability withdrawal and independent registered-handler runtime minima reject stripped recipient quantity authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh full source admission, real per-recipient color/counter and own-cost witnesses reject omitted compiler and scalar/symbol readers.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_closed_quantity_and_operation_codecs_reject_unknown_bool_and_wrong_fields",
+        "test_live_scalar_reads_each_recipients_own_public_values_and_the_explicit_cap",
+        "test_earlier_copy_color_type_and_base_layers_precede_recipient_quantities",
+        "test_four_originals_have_complete_normal_registration_and_independent_runtime_minima",
+        "test_knight_actual_cast_colors_source_exclusion_and_cleanup_are_live",
+        "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
+        "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
+        "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+      ],
+      "negative_tests": [
+        "test_closed_quantity_and_operation_codecs_reject_unknown_bool_and_wrong_fields",
+        "test_live_scalar_reads_each_recipients_own_public_values_and_the_explicit_cap",
+        "test_earlier_copy_color_type_and_base_layers_precede_recipient_quantities",
+        "test_four_originals_have_complete_normal_registration_and_independent_runtime_minima",
+        "test_unsupported_quantity_feedback_unknown_labels_and_old_operation_wire_remain_bounded",
+        "test_verified_capability_withdrawal_refuses_the_normal_original",
+        "test_fresh_compiler_and_recipient_quantity_omissions_are_killed"
+      ],
+      "interaction_tests": [
+        "test_knight_actual_cast_colors_source_exclusion_and_cleanup_are_live",
+        "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
+        "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
+        "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_knight_actual_cast_colors_source_exclusion_and_cleanup_are_live",
+        "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
+        "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
+        "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+      ],
+      "privacy_tests": [
+        "test_knight_actual_cast_colors_source_exclusion_and_cleanup_are_live",
+        "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
+        "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
+        "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
+      ],
+      "replay_tests": [
+        "test_knight_actual_cast_colors_source_exclusion_and_cleanup_are_live",
+        "test_light_uses_own_cost_not_current_colors_and_composes_with_base_setting_and_departure",
+        "test_clamavus_adds_recipient_counters_and_ordinary_counter_bonus_without_sharing_source_counters",
+        "test_zookeeper_uses_distinct_creature_types_clamps_ten_and_excludes_humans_and_changelings",
+        "test_native_control_changes_rebind_the_subjects_and_restore_without_a_new_incarnation"
       ]
     }
   ]

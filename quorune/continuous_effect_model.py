@@ -111,6 +111,7 @@ _OPERATION_LAYERS = {
     "set_toughness": Layer.POWER_TOUGHNESS,
     "set_power_toughness": Layer.POWER_TOUGHNESS,
     "modify_power_toughness": Layer.POWER_TOUGHNESS,
+    "modify_power_toughness_by_recipient_quantity": Layer.POWER_TOUGHNESS,
     "switch_power_toughness": Layer.POWER_TOUGHNESS,
 }
 _COPY_FIELDS = {
@@ -346,6 +347,11 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     elif op in {"set_power", "set_toughness"}:
         if field is not None or type(value) is not int:
             raise ContinuousEffectError(f"{op} requires one integer")
+    elif op == 'modify_power_toughness_by_recipient_quantity':
+        from .recipient_modifier_model import validate_recipient_modifier
+        if field is not None:raise ContinuousEffectError('Recipient modifiers accept no field')
+        try:validate_recipient_modifier(value)
+        except (TypeError,ValueError) as exc:raise ContinuousEffectError(str(exc)) from exc
     elif op in {"set_power_toughness", "modify_power_toughness"}:
         if field is not None or not isinstance(value, (list, tuple)) or len(value) != 2:
             raise ContinuousEffectError(f"{op} requires an integer pair")

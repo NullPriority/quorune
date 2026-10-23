@@ -2856,6 +2856,16 @@ Counted token instructions retain supported trailing keyword abilities as part
 of the complete fixed token definition before lowering the separate quantity.
 The existing token compiler still rejects unrepresented abilities and definitions.
 
+`compiler/recipient_modifiers.py` lowers fixed modifiers calculated separately
+for each creature in a closed battlefield set. Its typed scalar reads that
+recipient's current colors, fixed named counters, colored symbols in its
+copiable mana cost, or distinct creature types with an optional fixed maximum.
+Singular `each` subjects retain their qualifiers and source exclusion through
+the existing public query owner. Complete ability and flavor word bodies keep
+their source spans; mechanical scope markers and unrepresented conditions
+remain residual. Power/toughness feedback, private collections, and extra
+unrepresented result clauses are outside this grammar.
+
 `compiler/declared_effect_amounts.py` binds ordinary announced cost X or
 one complete public count definition to numeric result slots in existing typed
 instructions. Mandatory `mill cards equal to` wording normalizes to the same

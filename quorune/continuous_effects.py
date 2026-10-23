@@ -407,6 +407,7 @@ def _apply_ability_operation(
 def _apply_operation(
     state: CharacteristicState,
     operation: ContinuousOperation,
+    context: Mapping[str, Any],
 ) -> None:
     op = operation.op
     value = operation.value
@@ -495,33 +496,8 @@ def _apply_operation(
         return
     if _apply_ability_operation(state, operation):
         return
-    if op == "set_power":
-        state.power = int(value)
-        return
-    if op == "set_toughness":
-        state.toughness = int(value)
-        return
-    if op == "set_power_toughness":
-        if not isinstance(value, Sequence) or len(value) != 2:
-            raise ContinuousEffectError(
-                "set_power_toughness requires [power, toughness]"
-            )
-        state.power = int(value[0])
-        state.toughness = int(value[1])
-        return
-    if op == "modify_power_toughness":
-        if not isinstance(value, Sequence) or len(value) != 2:
-            raise ContinuousEffectError(
-                "modify_power_toughness requires [power, toughness]"
-            )
-        if state.power is not None:
-            state.power += int(value[0])
-        if state.toughness is not None:
-            state.toughness += int(value[1])
-        return
-    if op == "switch_power_toughness":
-        state.power, state.toughness = state.toughness, state.power
-        return
+    from .continuous_stat_operations import apply_stat_operation
+    if apply_stat_operation(state,operation,context):return
     raise ContinuousEffectError(
         f"Unsupported continuous operation {op!r}"
     )
@@ -614,7 +590,7 @@ def evaluate_continuous_effects(
                 str(operation.value).casefold(),
             ) in effect.denied_keyword_grants:
                 continue
-            _apply_operation(base, operation)
+            _apply_operation(base, operation, context)
         if effect.layer == Layer.COPY and effect.sublayer == "1a":
             base.copiable_values = base.snapshot()
         applied.append(effect.effect_id)

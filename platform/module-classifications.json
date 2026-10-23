@@ -5663,6 +5663,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/recipient_modifiers.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/reconfigure_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7038,6 +7053,20 @@
       "file": "quorune/continuous_effects.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/continuous_stat_operations.py",
+      "layer": "rules",
+      "owning_subsystem": "continuous_effects",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -9204,6 +9233,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/mana_symbol_counts.py",
+      "layer": "domain",
+      "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/mana_undo.py",
       "layer": "rules",
       "owning_subsystem": "mana_rules",
@@ -10008,6 +10049,18 @@
       "file": "quorune/read_ahead.py",
       "layer": "domain",
       "owning_subsystem": "keyword_abilities",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/recipient_modifier_model.py",
+      "layer": "domain",
+      "owning_subsystem": "continuous_effects",
       "allowed_dependency_layers": [
         "domain"
       ],
@@ -16944,6 +16997,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/recipient_anthems.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/regeneration_handlers.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -18739,5 +18807,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "8b52a42b6bf8ef61c8bbfe6eebe109f67ebbbbad3ceecee7d360e83f70efc662"
+  "fingerprint": "07c9f2763c90490cbc554514599f873905d8bc6eda95fc6599e72ef6b673bcc4"
 }
