@@ -83,6 +83,16 @@ payments. The committed kicked fact follows the existing stack and entry
 history. Countering, losing targets or replacing a cost object's destination
 does not refund the payment; unrelated reentry clears the old fact.
 
+Kicker-dependent target groups use the same bound source schema in the offer,
+cost option and accepted proposal. The unpaid group has no selected target;
+the paid group retains its required count and separate target domain. Commit
+rechecks that schema against the current sealed Kicker choice. The version-ten
+cast-fact instruction selects its symbolic child program before ordinary value
+binding, so inactive roles are never read. Existing target snapshots and
+mutation owners handle partial target loss, new incarnations and printed
+effect order. A copied spell retains its original role counts and restrictions
+while allowing the usual new-target choice without another Kicker payment.
+
 Self-cost reductions use the selected spell face and current caster's public
 facts or committed cast history. The total cost locks before mana activation,
 so sacrificing a qualifying permanent while paying does not revoke its

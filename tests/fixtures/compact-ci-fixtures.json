@@ -176,6 +176,7 @@
     "tests/fixtures/kicked-same-target-replacement-cards.json",
     "tests/fixtures/kicked-self-replacement-cards.json",
     "tests/fixtures/kicked-spell-conditions.json",
+    "tests/fixtures/kicked-target-group-cards.json",
     "tests/fixtures/kindred-subtype-quantities.json",
     "tests/fixtures/land-condition-quantity-cards.json",
     "tests/fixtures/landwalk-as-though-cards.json",

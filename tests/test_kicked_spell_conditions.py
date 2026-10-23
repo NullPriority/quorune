@@ -66,7 +66,7 @@ class KickedSpellConditionTests(unittest.TestCase):
             handler.prepare({**effect, 'player': 'B', 'cast_fact': True}, context)
 
     def test_cast_condition_rejects_self_replacement_open_targets_and_unknown_fields(self):
-        for text in ('If this spell was kicked, instead draw two cards.', 'If this spell was kicked, destroy target creature.', 'If this spell was kicked, draw X cards.'):
+        for text in ('If this spell was kicked, instead draw two cards.', 'If this spell was kicked, destroy another target creature.', 'If this spell was kicked, draw X cards.'):
             with self.subTest(text=text):
                 self.assertIsNone(kicked_spell_condition_template(text, compile_component=lambda body: _reviewed_effect_template(body, card_name='Witness')))
         result = kicked_spell_condition_template('If this spell was kicked, draw a card.', compile_component=lambda text: _reviewed_effect_template(text, card_name='Witness'))

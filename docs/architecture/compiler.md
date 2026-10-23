@@ -1569,6 +1569,15 @@ changes controller. A blinked object or token copy has no paid kicker fact and
 creates no new kicked trigger. Multiple kicker costs, Multikicker, cost-specific
 conditions and independently unsupported results or siblings remain residual.
 
+`compiler/kicked_targets.py` lowers a fixed Kicker-dependent targeted result
+beside an independently closed prefix. Its source binding retains each target
+domain and an explicit different-role relation for “another target.” Casting
+binds the conditional group's count to zero or one from the selected Kicker
+price before ordinary target selection and tax pricing. Unsupported target
+replacement, variable counts, source-linked amounts and unrepresented sibling
+results remain residual. Complete target-role closure is checked independently
+from the compiler's declared capabilities.
+
 `compiler/source_maintenance_nodes.py` recognizes self-entry and fixed upkeep
 or end-step triggers whose only result is sacrificing the source, optionally
 unless the triggering controller pays one existing closed fixed cost. Its v3

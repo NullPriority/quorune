@@ -14,6 +14,9 @@ from ...target_cardinality import (
 def bind_target_count_option(program: Any, option: Mapping[str, Any], response: Mapping[str, Any],
     *, has_mana_x: bool, has_declared_cost_x: bool=False) -> dict[str, Any] | None:
     schema = getattr(program, "target_schema", None)
+    from .kicked_targets import bind_kicked_targets
+    try:option=bind_kicked_targets(program,option)
+    except (TypeError,ValueError):return None
     if not isinstance(schema, Mapping) or "count_parameter" not in schema:
         return deepcopy(dict(option))
     if not (has_mana_x or has_declared_cost_x) or option.get("target_schema") is not None:

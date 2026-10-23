@@ -103,6 +103,7 @@
       "test_graveyard_return_rules",
       "test_haste_rules",
       "test_hexproof_targeting",
+      "test_kicked_target_groups",
       "test_life_effect_runtime",
       "test_loyalty_counter_cost_replacements",
       "test_mana_mode_effects",

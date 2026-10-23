@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 472,
+  "registry_version": 473,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -45209,6 +45209,151 @@
       "dependency_fail_closed_rationale": "Verified withdrawal and independently stripped nonmana/payment runtime minima reject incomplete authority.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh complete original admission, actual life payment and current Vampire reservation witnesses reject compiler, commit and subtype-filter omissions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.effect.kicker_conditional_targets",
+      "version": 1,
+      "official_rules": [
+        "115.1a",
+        "115.3",
+        "601.2b",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33b",
+        "702.33c",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One source-bound fixed targeted result exists only for the paid Kicker cast, with an independently closed prefix and explicit target-role relations.",
+        "inputs": [
+          "complete typed conditional target binding",
+          "sealed Kicker price decision and original target incarnations"
+        ],
+        "outputs": [
+          "shared cost/target/offer legality with absent unpaid and required paid role",
+          "ordered ordinary targeted effects after branch selection and separate target revalidation"
+        ],
+        "exclusions": [
+          "unknown source/amount dependencies",
+          "unrepresented target-schema replacement or variable target count",
+          "multiple conditional clauses or unclosed result siblings"
+        ]
+      },
+      "dependencies": [
+        "resolution.effect.fixed_cast_fact"
+      ],
+      "implementation_components": [
+        "quorune.compiler.kicked_targets.kicked_target_template",
+        "quorune.kicked_target_model.validate_kicked_target_instruction",
+        "quorune.rules.kicked_target_shapes.kicked_target_capabilities",
+        "quorune.rules.casting.kicked_targets.bind_kicked_targets",
+        "quorune.rules.casting.kicked_targets.validate_kicked_target_commit"
+      ],
+      "positive_tests": [
+        "test_bounced_then_recast_target_is_a_new_incarnation_and_is_not_damaged_by_old_role",
+        "test_copy_inherits_paid_roles_and_new_target_constraints_without_paying_again",
+        "test_jilt_ordinary_and_paid_have_distinct_required_roles_and_real_results",
+        "test_magma_burst_paid_sacrifices_two_lands_and_targets_distinct_player_or_permanent",
+        "test_one_eligible_creature_keeps_normal_jilt_available_and_withholds_impossible_paid_option",
+        "test_paid_target_can_be_sacrificed_as_the_cost_without_suppressing_other_legal_target",
+        "test_partial_and_all_target_loss_use_original_roles_and_do_not_retarget_returned_incarnations",
+        "test_probe_requires_its_discard_target_only_when_paid_after_private_prefix_draw_discard",
+        "test_repossession_returns_distinct_owned_card_roles_and_keeps_life_gain",
+        "test_river_and_landslide_pay_nonmana_costs_and_keep_separate_target_domains",
+        "test_six_originals_have_complete_normal_registration_and_independent_group_minima",
+        "test_target_roles_bind_to_kicker_and_refuse_drift_unknown_scopes_and_ambiguous_results",
+        "test_unpaid_copy_cannot_add_the_conditional_target"
+      ],
+      "negative_tests": [
+        "test_bounced_then_recast_target_is_a_new_incarnation_and_is_not_damaged_by_old_role",
+        "test_copy_inherits_paid_roles_and_new_target_constraints_without_paying_again",
+        "test_current_cost_and_target_schema_seals_reject_paid_count_or_predicate_drift",
+        "test_jilt_ordinary_and_paid_have_distinct_required_roles_and_real_results",
+        "test_magma_burst_paid_sacrifices_two_lands_and_targets_distinct_player_or_permanent",
+        "test_one_eligible_creature_keeps_normal_jilt_available_and_withholds_impossible_paid_option",
+        "test_paid_target_can_be_sacrificed_as_the_cost_without_suppressing_other_legal_target",
+        "test_partial_and_all_target_loss_use_original_roles_and_do_not_retarget_returned_incarnations",
+        "test_probe_requires_its_discard_target_only_when_paid_after_private_prefix_draw_discard",
+        "test_repossession_returns_distinct_owned_card_roles_and_keeps_life_gain",
+        "test_river_and_landslide_pay_nonmana_costs_and_keep_separate_target_domains",
+        "test_six_originals_have_complete_normal_registration_and_independent_group_minima",
+        "test_target_roles_bind_to_kicker_and_refuse_drift_unknown_scopes_and_ambiguous_results",
+        "test_unpaid_copy_cannot_add_the_conditional_target",
+        "test_verified_withdrawal_and_fresh_target_binding_omissions_reject"
+      ],
+      "interaction_tests": [
+        "test_jilt_ordinary_and_paid_have_distinct_required_roles_and_real_results",
+        "test_river_and_landslide_pay_nonmana_costs_and_keep_separate_target_domains",
+        "test_magma_burst_paid_sacrifices_two_lands_and_targets_distinct_player_or_permanent",
+        "test_repossession_returns_distinct_owned_card_roles_and_keeps_life_gain",
+        "test_probe_requires_its_discard_target_only_when_paid_after_private_prefix_draw_discard",
+        "test_partial_and_all_target_loss_use_original_roles_and_do_not_retarget_returned_incarnations",
+        "test_paid_target_can_be_sacrificed_as_the_cost_without_suppressing_other_legal_target",
+        "test_copy_inherits_paid_roles_and_new_target_constraints_without_paying_again",
+        "test_bounced_then_recast_target_is_a_new_incarnation_and_is_not_damaged_by_old_role",
+        "test_unpaid_copy_cannot_add_the_conditional_target",
+        "test_one_eligible_creature_keeps_normal_jilt_available_and_withholds_impossible_paid_option"
+      ],
+      "multiplayer_tests": [
+        "test_jilt_ordinary_and_paid_have_distinct_required_roles_and_real_results",
+        "test_river_and_landslide_pay_nonmana_costs_and_keep_separate_target_domains",
+        "test_magma_burst_paid_sacrifices_two_lands_and_targets_distinct_player_or_permanent",
+        "test_repossession_returns_distinct_owned_card_roles_and_keeps_life_gain",
+        "test_probe_requires_its_discard_target_only_when_paid_after_private_prefix_draw_discard",
+        "test_partial_and_all_target_loss_use_original_roles_and_do_not_retarget_returned_incarnations",
+        "test_paid_target_can_be_sacrificed_as_the_cost_without_suppressing_other_legal_target",
+        "test_copy_inherits_paid_roles_and_new_target_constraints_without_paying_again",
+        "test_bounced_then_recast_target_is_a_new_incarnation_and_is_not_damaged_by_old_role",
+        "test_unpaid_copy_cannot_add_the_conditional_target",
+        "test_one_eligible_creature_keeps_normal_jilt_available_and_withholds_impossible_paid_option"
+      ],
+      "privacy_tests": [
+        "test_jilt_ordinary_and_paid_have_distinct_required_roles_and_real_results",
+        "test_river_and_landslide_pay_nonmana_costs_and_keep_separate_target_domains",
+        "test_magma_burst_paid_sacrifices_two_lands_and_targets_distinct_player_or_permanent",
+        "test_repossession_returns_distinct_owned_card_roles_and_keeps_life_gain",
+        "test_probe_requires_its_discard_target_only_when_paid_after_private_prefix_draw_discard",
+        "test_partial_and_all_target_loss_use_original_roles_and_do_not_retarget_returned_incarnations",
+        "test_paid_target_can_be_sacrificed_as_the_cost_without_suppressing_other_legal_target",
+        "test_copy_inherits_paid_roles_and_new_target_constraints_without_paying_again",
+        "test_bounced_then_recast_target_is_a_new_incarnation_and_is_not_damaged_by_old_role",
+        "test_unpaid_copy_cannot_add_the_conditional_target",
+        "test_one_eligible_creature_keeps_normal_jilt_available_and_withholds_impossible_paid_option"
+      ],
+      "replay_tests": [
+        "test_jilt_ordinary_and_paid_have_distinct_required_roles_and_real_results",
+        "test_river_and_landslide_pay_nonmana_costs_and_keep_separate_target_domains",
+        "test_magma_burst_paid_sacrifices_two_lands_and_targets_distinct_player_or_permanent",
+        "test_repossession_returns_distinct_owned_card_roles_and_keeps_life_gain",
+        "test_probe_requires_its_discard_target_only_when_paid_after_private_prefix_draw_discard",
+        "test_partial_and_all_target_loss_use_original_roles_and_do_not_retarget_returned_incarnations",
+        "test_paid_target_can_be_sacrificed_as_the_cost_without_suppressing_other_legal_target",
+        "test_copy_inherits_paid_roles_and_new_target_constraints_without_paying_again",
+        "test_bounced_then_recast_target_is_a_new_incarnation_and_is_not_damaged_by_old_role",
+        "test_unpaid_copy_cannot_add_the_conditional_target",
+        "test_one_eligible_creature_keeps_normal_jilt_available_and_withholds_impossible_paid_option"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Normal complete source and independent targeted-group runtime minima reject stripped or withdrawn target authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh complete original admission and actual ordinary/paid target-role witnesses reject omitted source production and forced paid targeting.",
       "blockers": [],
       "status": "trusted"
     }
