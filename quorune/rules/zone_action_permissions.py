@@ -20,12 +20,15 @@ from ..semantic_runtime.action_permissions import (
 )
 
 
-def compiled_land_play_permission(host: Any, seat: str, card: Any) -> bool:
+def compiled_land_play_permission(host: Any, seat: str, card: Any, *, include_source_grants: bool = True) -> bool:
     permission = host._temporary_play_permission(seat, card)
     if permission is not None and bool(permission.get("allow_land", True)):
         return True
     if card.owner != seat:
         return False
+    if include_source_grants:
+        from .casting.turn_cast_grants import current_turn_cast_grants
+        if current_turn_cast_grants(host,seat,card,for_land=True):return True
     if card.zone == "hand":
         return True
     if card.zone == "library":

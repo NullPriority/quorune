@@ -18,7 +18,7 @@ from ..turn_cast_grant_model import (
 )
 
 
-def current_turn_cast_grants(host, seat, card, *, cast_type_line=None):
+def current_turn_cast_grants(host, seat, card, *, cast_type_line=None, for_land=False):
     if host.state.active_player != seat or card.owner != seat or card.object_kind != 'card':
         return ()
     from ...semantic_runtime.cast_costs import default_cast_cost_component_registry
@@ -54,13 +54,17 @@ def current_turn_cast_grants(host, seat, card, *, cast_type_line=None):
             if descriptor.get('handler_id') not in TURN_CAST_GRANT_HANDLERS:
                 continue
             for spec in registry.lower(descriptor, None):
+                from ...turn_history import current_graveyard_incarnation_qualifies
+                if (for_land and not spec.allow_land_play) or not current_graveyard_incarnation_qualifies(
+                        host.state.turn_history,turn_sequence=host.state.turn_sequence,card=card,qualification=spec.qualification):
+                    continue
                 origins = set(spec.origins)
                 if card.zone == 'library':
                     library = host.state.players[seat].zones['library']
                     eligible_origin = 'library_top' in origins and bool(library) and library[-1] == card.object_id
                 else:
                     eligible_origin = card.zone in origins
-                if eligible_origin and any(object_matches_query(row, predicate) for predicate in spec.predicates_any):
+                if eligible_origin and (for_land or any(object_matches_query(row, predicate) for predicate in spec.predicates_any)):
                     result.append({'source': source.object_id, 'logical': source.logical_object_id, 'program': program.key,
                         'source_ref': source.ref, 'source_label': source.printed_name, 'turn': host.state.turn_sequence,
                         'grant': spec.to_dict(), 'original_cost_id': 'normal'})

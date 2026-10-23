@@ -195,6 +195,8 @@ def _finish_mill(
         if card.destination in PUBLIC_ZONES
         and not host.state.cards[card.identity.object_id].face_down
     ]
+    from .turn_history import record_milled_graveyard_arrivals
+    record_milled_graveyard_arrivals(host,plan.request.player,results)
     host._log(
         plan.request.actor,
         "card.mill",

@@ -64,6 +64,7 @@ TurnHistoryEventKind = Literal[
     "permanent_entered",
     "permanent_left",
     "card_arrived_graveyard",
+    "card_milled_graveyard",
 ]
 
 
@@ -93,6 +94,8 @@ class TurnHistoryEvent:
         if self.kind=='card_arrived_graveyard' and (self.origin is None or type(self.object_incarnation) is not str or not self.object_incarnation):
             raise ValueError('Graveyard arrival needs its exact arrived incarnation and origin')
         if self.kind!='card_arrived_graveyard' and self.origin is not None:raise ValueError('Only graveyard arrival history has an origin')
+        if self.kind=='card_milled_graveyard' and (type(self.object_incarnation) is not str or not self.object_incarnation):
+            raise ValueError('Mill arrival history needs its exact graveyard incarnation')
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -125,6 +128,7 @@ class TurnHistory:
     # committed battlefield-departure recording explicitly.
     departure_history_version: int | None = None
     arrival_history_version: int | None = None
+    mill_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -137,6 +141,7 @@ class TurnHistory:
         ):
             raise ValueError("Unsupported departure-history version")
         if self.arrival_history_version is not None and (type(self.arrival_history_version) is not int or self.arrival_history_version!=1):raise ValueError('Unsupported arrival-history version')
+        if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
         ):
@@ -175,6 +180,7 @@ class TurnHistory:
             "turn_sequence": self.turn_sequence,
             "events": [event.to_dict() for event in self.events],
             **({"arrival_history_version":1} if self.arrival_history_version is not None else {}),
+            **({"mill_history_version":1} if self.mill_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -207,6 +213,7 @@ class TurnHistory:
             schema_version=int(data.get("schema_version", 1)),
             departure_history_version=data.get("departure_history_version"),
             arrival_history_version=data.get("arrival_history_version"),
+            mill_history_version=data.get("mill_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

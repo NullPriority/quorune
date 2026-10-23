@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from ..rules.turn_cast_grant_model import (
     TURN_CAST_GRANT_CAPABILITY, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_HANDLER, TurnCastGrantSpec,
     TURN_CAST_EXILE_CAPABILITY, TURN_CAST_EXILE_HANDLER, TURN_CAST_TAPPED_CAPABILITY, TURN_CAST_TAPPED_HANDLER,
+    TURN_CAST_MILL_CAPABILITY, TURN_CAST_MILL_HANDLER, TURN_CAST_LIBRARY_SHARED_CAPABILITY, TURN_CAST_LIBRARY_SHARED_HANDLER,
 )
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -28,7 +29,7 @@ class TurnCastGrantHandler:
             raise SemanticNodeError('Turn casting grant requires its exact identity and complete source')
         try:
             spec = TurnCastGrantSpec.from_dict(descriptor['grant'])
-            if spec.cast_rider != self.cast_rider:
+            if spec.handler_id != self.handler_id:
                 raise ValueError('Casting grant result does not match its registered owner')
             return spec
         except (TypeError, ValueError) as exc:
@@ -47,4 +48,15 @@ def turn_cast_rider_handlers():
         TurnCastGrantHandler(handler_id=TURN_CAST_TAPPED_HANDLER, family=TURN_CAST_TAPPED_CAPABILITY,
             rule_references=('118.9', '400.7', '601.2i', '614.1c', '614.12', '616.1'),
             capability_dependencies=(TURN_CAST_GRANT_CAPABILITY, TURN_CAST_TAPPED_CAPABILITY), cast_rider='tapped_entry'),
+    )
+
+
+def qualified_turn_grant_handlers():
+    return (
+        TurnCastGrantHandler(handler_id=TURN_CAST_MILL_HANDLER,family=TURN_CAST_MILL_CAPABILITY,
+            rule_references=('113.6','400.7','601.2','701.17a','701.17c'),
+            capability_dependencies=(TURN_CAST_GRANT_CAPABILITY,TURN_CAST_MILL_CAPABILITY)),
+        TurnCastGrantHandler(handler_id=TURN_CAST_LIBRARY_SHARED_HANDLER,family=TURN_CAST_LIBRARY_SHARED_CAPABILITY,
+            rule_references=('113.6','305.1','305.2','400.7','601.2'),
+            capability_dependencies=(TURN_CAST_GRANT_CAPABILITY,TURN_CAST_LIBRARY_SHARED_CAPABILITY)),
     )

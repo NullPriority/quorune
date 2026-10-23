@@ -96,6 +96,13 @@ submit no permission, quota or source-binding fields. An independently payable
 normal price can preserve the allowance for a later cast. The server checks
 the current source, timing, origin, spell characteristics and remaining use.
 
+A source-granted land play uses the existing opaque `land_play_permission`
+identifier and the same public `permission_source` reference. When independent
+and source-backed routes differ, they are separate offered land actions with
+source-labelled text. Clients submit the offered action normally; no source
+binding or history data is accepted from them. The source allowance and the
+ordinary numeric land allowance are separate requirements.
+
 Prepared battlefield objects project `prepared: true`; ordinary objects omit
 the field. Their inset spell copies are public exile objects with their own
 references and inset characteristics. Casting actions appear only for the

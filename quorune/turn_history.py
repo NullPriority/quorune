@@ -13,7 +13,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
     """Start an empty current-turn journal without changing its event mode."""
     return TurnHistory(turn_sequence=turn_sequence,
                        departure_history_version=history.departure_history_version,
-        arrival_history_version=history.arrival_history_version)
+        arrival_history_version=history.arrival_history_version,mill_history_version=history.mill_history_version)
 
 
 def roll_turn_history(
@@ -43,7 +43,8 @@ def roll_turn_history(
         or history.turn_sequence < 1
     ):
         return TurnHistory(turn_sequence=next_turn_sequence,
-                           departure_history_version=history.departure_history_version,arrival_history_version=history.arrival_history_version)
+                           departure_history_version=history.departure_history_version,arrival_history_version=history.arrival_history_version,
+                           mill_history_version=history.mill_history_version)
     counts = Counter(
         event.actor
         for event in history.events
@@ -53,6 +54,7 @@ def roll_turn_history(
         turn_sequence=next_turn_sequence,
         departure_history_version=history.departure_history_version,
         arrival_history_version=history.arrival_history_version,
+        mill_history_version=history.mill_history_version,
         previous_turn_sequence=history.turn_sequence,
         previous_active_player=previous_active_player,
         previous_spell_cast_counts=dict(sorted(counts.items())),
@@ -90,6 +92,41 @@ def current_turn_history_events(
     ):
         return ()
     return tuple(event for event in history.events if event.kind == kind)
+
+
+def record_milled_graveyard_arrivals(host, player, results) -> None:
+    """Record only actual committed Mill results under the explicit new mode."""
+    history = getattr(host.state,'turn_history',None)
+    if history is None or getattr(history,'mill_history_version',None) != 1:
+        return
+    for result in results:
+        card = host.state.cards.get(result.identity.object_id)
+        if (result.destination != 'graveyard' or card is None or not card.is_card_object
+                or card.zone != 'graveyard' or card.logical_object_id != result.destination_logical_object_id):
+            continue
+        host._record_turn_history('card_milled_graveyard', actor=player,
+            object_incarnation=result.destination_logical_object_id)
+
+
+def current_graveyard_incarnation_qualifies(history, *, turn_sequence, card, qualification) -> bool:
+    """Keep word-Mill provenance distinct from generic library arrivals."""
+    if qualification == 'none':
+        return True
+    if history is None or card.zone != 'graveyard' or not card.is_card_object:
+        return False
+    if qualification == 'milled_this_turn':
+        if history.mill_history_version != 1:
+            return False
+        kind = 'card_milled_graveyard'
+    elif qualification == 'library_arrival_this_turn':
+        if history.arrival_history_version != 1:
+            return False
+        kind = 'card_arrived_graveyard'
+    else:
+        raise ValueError('Unknown current graveyard qualification')
+    return any(event.actor == card.owner and event.object_incarnation == card.logical_object_id
+        and (kind == 'card_milled_graveyard' or event.origin == 'library')
+        for event in current_turn_history_events(history,turn_sequence=turn_sequence,kind=kind))
 
 
 def record_creature_attack_history(

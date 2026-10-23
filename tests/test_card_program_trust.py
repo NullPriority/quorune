@@ -295,6 +295,8 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.permission.source_once_per_turn",
                 "casting.permission.source_graveyard_exile",
                 "casting.permission.source_tapped_entry",
+                "casting.permission.source_current_mill",
+                "casting.permission.source_library_arrival_shared_turn",
                 "casting.cost.targeted_fixed_generic",
                 "casting.cost.modifier.self_public",
                 "casting.disguise.fixed_mana",

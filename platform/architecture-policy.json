@@ -426,6 +426,7 @@
       ,"quorune/rules/casting/optional_life_costs.py": "read-only current provider, immutable optional price and total-life affordability queries; all life and casting mutations remain with canonical owners"
       ,"quorune/rules/casting/turn_cast_grants.py": "read-only current source-permission, turn usage and immutable price queries; usage mutation delegates to the existing permanent-incarnation usage owner"
       ,"quorune/rules/cast_grant_riders.py": "read-only sealed spell-incarnation binding and ordinary replacement proposals; mutation delegates to canonical zone, tap and object-state owners"
+      ,"quorune/rules/source_land_plays.py": "read-only shared source/land permission proposals; numeric allowance and source usage commits delegate to their existing canonical owners"
       ,"quorune/cast_lifecycles.py": "typed casting-lifecycle coordinator delegating state changes to canonical cost, zone, keyword, trigger, and permission owners"
       ,"quorune/linked_exile_return.py": "typed linked exile and return coordinator reading public identities and storing a closed stack continuation while delegating all zone, entry, layer and delayed-trigger mutations to canonical owners"
       ,"quorune/rules/casting/proposal.py": "read-only immutable casting proposal query"

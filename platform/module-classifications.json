@@ -13962,6 +13962,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/source_land_plays.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/source_protection_choice_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -19265,5 +19279,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "1fcab99203f33e5dd6871067fff25d26abfb92c624ea9ea67a0617fc2ac34b10"
+  "fingerprint": "27444d4015a7a3102d78381108511c1377b4b19d6222d5d0d1ecde8092f921ce"
 }

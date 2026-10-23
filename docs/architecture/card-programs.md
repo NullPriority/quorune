@@ -200,6 +200,15 @@ not gain Flashback self-replacement priority, get copied to a spell copy, or
 remain on a later incarnation. A tapped-entry follow-up participates before
 entry rather than tapping the resulting permanent afterward.
 
+Version-three source grants can require the current graveyard incarnation to
+have arrived from its controller's library this turn or to have been actually
+milled this turn. Those are distinct journal facts. A shared land-or-permanent
+grant consumes the same source ability allowance for either action; a land play
+also consumes the ordinary numeric land allowance. Independent graveyard land
+permission preserves the source use. Explicit modern Mill-history recording
+stores only committed graveyard results after replacements; absent historical
+version fields remain absent and cannot invent prior qualifying cards.
+
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,
   replacements, runtime operations, and the selected rules profile.

@@ -196,7 +196,8 @@ def _land_offers(
                 "life": life_amount,
                 "effect": "enters untapped",
             }
-        offers.append(
+        from .source_land_plays import source_land_offer_variants
+        offers.extend(source_land_offer_variants(host,seat,card,
             ActionOffer(
                 action_id=action_id,
                 action="play_land",
@@ -205,7 +206,7 @@ def _land_offers(
                 expiry_revision=host.state.revision,
                 payload=freeze_json(payload),
             ).to_dict()
-        )
+        ))
     return lands, offers
 
 

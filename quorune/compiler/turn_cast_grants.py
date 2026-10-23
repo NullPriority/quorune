@@ -25,6 +25,10 @@ def _spell_predicate(subject):
 
 def turn_cast_grant_handler(text):
     material = ' '.join(text.strip().split())
+    qualified = _qualified_graveyard_grant(material)
+    if qualified is not None:
+        return ('once-own-turn-qualified-grant-v1',{'handler_id':qualified.handler_id,'schema_version':1,
+            'event':TURN_CAST_GRANT_EVENT,'requires_complete_card_program':True,'grant':qualified.to_dict()},qualified.capability_dependencies)
     rider = 'none'
     for suffix, kind in (
             (' If a spell cast this way would be put into your graveyard, exile it instead.', 'graveyard_exile'),
@@ -54,3 +58,12 @@ def turn_cast_grant_handler(text):
     return ('once-own-turn-cast-grant-v1', {'handler_id': TURN_CAST_RIDER_HANDLERS[spec.cast_rider],
         'schema_version': 1, 'event': TURN_CAST_GRANT_EVENT, 'requires_complete_card_program': True, 'grant': spec.to_dict()},
         spec.capability_dependencies)
+
+
+def _qualified_graveyard_grant(text):
+    if re.fullmatch(r'Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn\.?',text,re.I):
+        return TurnCastGrantSpec(('graveyard',),(ObjectQuerySpec(),),qualification='milled_this_turn')
+    if re.fullmatch(r'Once during each of your turns, you may play a land or cast a permanent spell from among cards in your graveyard that were put there from your library this turn\.?',text,re.I):
+        return TurnCastGrantSpec(('graveyard',),(ObjectQuerySpec(types_any=('artifact','battle','creature','enchantment','planeswalker')),),
+            qualification='library_arrival_this_turn',allow_land_play=True)
+    return None

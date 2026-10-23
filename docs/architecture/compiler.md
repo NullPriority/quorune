@@ -2782,6 +2782,14 @@ the canonical coordinator. A later source departure does not erase it, while
 the spell's zone change ends it. Extra payment and other linked clauses still
 require their complete owners.
 
+Version-three grant data adds exact current-incarnation graveyard qualifiers.
+A Mill-qualified spell permission reads the committed Mill-result journal;
+generic library-to-graveyard moves such as Surveil do not satisfy it. A shared
+land-or-permanent permission instead reads ordinary library-arrival history and
+uses one source allowance across both actions. It supplies zone access without
+adding a numeric land play. Dedicated registered qualifier handlers require the
+matching capability and preserve schema-one and schema-two serialization.
+
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
 engine does not yet evaluate exact ability additions or removals outside the

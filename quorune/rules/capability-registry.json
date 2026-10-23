@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 483,
+  "registry_version": 484,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -46889,6 +46889,326 @@
         "test_edgar_copy_entry_choice_preserves_the_created_tapped_replacement",
         "test_edgar_attack_uses_current_own_artifact_maximum_once_at_resolution",
         "test_created_replacements_use_ordinary_order_and_sealed_stack_identity"
+      ]
+    },
+    {
+      "id": "zone.mill.graveyard_arrival_history",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "305.1",
+        "305.2",
+        "400.7",
+        "601.2",
+        "701.17a",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Committed actual Mill records exact post-move graveyard incarnations under an explicit modern history version; non-Mill library arrivals and historical absent flags remain distinct.",
+        "inputs": [
+          "typed committed origin or Mill journal with explicit mode",
+          "current owned graveyard incarnation",
+          "current controlled source/turn and existing timing/allowance"
+        ],
+        "outputs": [
+          "closed provenance-qualified prices and land offers",
+          "separate numeric land and shared source quota commitment",
+          "principal-correct private replayable transitions"
+        ],
+        "exclusions": [
+          "invented historical provenance",
+          "generic arrivals substituted for word Mill",
+          "extra numeric land plays",
+          "independently unrepresented source clauses"
+        ]
+      },
+      "dependencies": [
+        "zone.mill.fixed"
+      ],
+      "implementation_components": [
+        "quorune.rules.turn_cast_grant_model.TurnCastGrantSpec",
+        "quorune.turn_history.record_milled_graveyard_arrivals",
+        "quorune.turn_history.current_graveyard_incarnation_qualifies",
+        "quorune.compiler.turn_cast_grants._qualified_graveyard_grant",
+        "quorune.semantic_runtime.turn_cast_grants.qualified_turn_grant_handlers",
+        "quorune.rules.source_land_plays.SourceLandPlayChoice",
+        "quorune.rules.source_land_plays.source_land_play_choices",
+        "quorune.rules.source_land_plays.commit_source_land_choice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact committed incarnation/owner/turn, explicit history mode, independent registered qualifier owner and canonical verified withdrawal prevent forged or unsupported provenance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual each-player Mill and qualifier witnesses kill omitted word-Mill fact recording.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_originals_have_complete_admission_and_independent_qualifier_minima",
+        "test_legacy_history_and_grant_wires_and_closed_qualification_are_preserved",
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "negative_tests": [
+        "test_originals_have_complete_admission_and_independent_qualifier_minima",
+        "test_legacy_history_and_grant_wires_and_closed_qualification_are_preserved",
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "interaction_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "multiplayer_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "privacy_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "replay_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ]
+    },
+    {
+      "id": "casting.permission.source_current_mill",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "305.1",
+        "305.2",
+        "400.7",
+        "601.2",
+        "701.17a",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A complete current source permits one own-turn ordinary cast of the current owned graveyard incarnation actually milled this turn.",
+        "inputs": [
+          "typed committed origin or Mill journal with explicit mode",
+          "current owned graveyard incarnation",
+          "current controlled source/turn and existing timing/allowance"
+        ],
+        "outputs": [
+          "closed provenance-qualified prices and land offers",
+          "separate numeric land and shared source quota commitment",
+          "principal-correct private replayable transitions"
+        ],
+        "exclusions": [
+          "invented historical provenance",
+          "generic arrivals substituted for word Mill",
+          "extra numeric land plays",
+          "independently unrepresented source clauses"
+        ]
+      },
+      "dependencies": [
+        "casting.permission.source_once_per_turn",
+        "zone.mill.graveyard_arrival_history"
+      ],
+      "implementation_components": [
+        "quorune.rules.turn_cast_grant_model.TurnCastGrantSpec",
+        "quorune.turn_history.record_milled_graveyard_arrivals",
+        "quorune.turn_history.current_graveyard_incarnation_qualifies",
+        "quorune.compiler.turn_cast_grants._qualified_graveyard_grant",
+        "quorune.semantic_runtime.turn_cast_grants.qualified_turn_grant_handlers",
+        "quorune.rules.source_land_plays.SourceLandPlayChoice",
+        "quorune.rules.source_land_plays.source_land_play_choices",
+        "quorune.rules.source_land_plays.commit_source_land_choice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact committed incarnation/owner/turn, explicit history mode, independent registered qualifier owner and canonical verified withdrawal prevent forged or unsupported provenance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual each-player Mill and qualifier witnesses kill omitted word-Mill fact recording.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_originals_have_complete_admission_and_independent_qualifier_minima",
+        "test_legacy_history_and_grant_wires_and_closed_qualification_are_preserved",
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "negative_tests": [
+        "test_originals_have_complete_admission_and_independent_qualifier_minima",
+        "test_legacy_history_and_grant_wires_and_closed_qualification_are_preserved",
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "interaction_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "multiplayer_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "privacy_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ],
+      "replay_tests": [
+        "test_actual_raul_each_player_mill_records_only_current_owned_arrivals",
+        "test_departure_and_discard_return_do_not_keep_the_old_mill_incarnation",
+        "test_history_version_absence_does_not_invent_legacy_mill_facts",
+        "test_real_extra_turn_expires_old_provenance_and_new_mill_qualifies"
+      ]
+    },
+    {
+      "id": "casting.permission.source_library_arrival_shared_turn",
+      "version": 1,
+      "official_rules": [
+        "113.6",
+        "305.1",
+        "305.2",
+        "400.7",
+        "601.2",
+        "701.17a",
+        "701.17c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One source own-turn allowance is shared by an ordinary numeric land play or permanent cast of a current owned graveyard incarnation arriving from library this turn.",
+        "inputs": [
+          "typed committed origin or Mill journal with explicit mode",
+          "current owned graveyard incarnation",
+          "current controlled source/turn and existing timing/allowance"
+        ],
+        "outputs": [
+          "closed provenance-qualified prices and land offers",
+          "separate numeric land and shared source quota commitment",
+          "principal-correct private replayable transitions"
+        ],
+        "exclusions": [
+          "invented historical provenance",
+          "generic arrivals substituted for word Mill",
+          "extra numeric land plays",
+          "independently unrepresented source clauses"
+        ]
+      },
+      "dependencies": [
+        "casting.permission.source_once_per_turn",
+        "land.play.from_own_graveyard"
+      ],
+      "implementation_components": [
+        "quorune.rules.turn_cast_grant_model.TurnCastGrantSpec",
+        "quorune.turn_history.record_milled_graveyard_arrivals",
+        "quorune.turn_history.current_graveyard_incarnation_qualifies",
+        "quorune.compiler.turn_cast_grants._qualified_graveyard_grant",
+        "quorune.semantic_runtime.turn_cast_grants.qualified_turn_grant_handlers",
+        "quorune.rules.source_land_plays.SourceLandPlayChoice",
+        "quorune.rules.source_land_plays.source_land_play_choices",
+        "quorune.rules.source_land_plays.commit_source_land_choice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact committed incarnation/owner/turn, explicit history mode, independent registered qualifier owner and canonical verified withdrawal prevent forged or unsupported provenance.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual each-player Mill and qualifier witnesses kill omitted word-Mill fact recording.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_originals_have_complete_admission_and_independent_qualifier_minima",
+        "test_legacy_history_and_grant_wires_and_closed_qualification_are_preserved",
+        "test_actual_surveil_qualifies_for_kagha_but_is_not_a_raul_mill",
+        "test_actual_kagha_land_first_consumes_shared_use_and_numeric_land_play",
+        "test_actual_kagha_spell_first_preserves_only_the_ordinary_land_allowance",
+        "test_independent_crucible_land_play_preserves_the_shared_kagha_allowance",
+        "test_source_zone_permission_needs_a_numeric_land_play_and_composes_with_exploration"
+      ],
+      "negative_tests": [
+        "test_originals_have_complete_admission_and_independent_qualifier_minima",
+        "test_legacy_history_and_grant_wires_and_closed_qualification_are_preserved",
+        "test_actual_surveil_qualifies_for_kagha_but_is_not_a_raul_mill",
+        "test_actual_kagha_land_first_consumes_shared_use_and_numeric_land_play",
+        "test_actual_kagha_spell_first_preserves_only_the_ordinary_land_allowance",
+        "test_independent_crucible_land_play_preserves_the_shared_kagha_allowance",
+        "test_source_zone_permission_needs_a_numeric_land_play_and_composes_with_exploration"
+      ],
+      "interaction_tests": [
+        "test_actual_surveil_qualifies_for_kagha_but_is_not_a_raul_mill",
+        "test_actual_kagha_land_first_consumes_shared_use_and_numeric_land_play",
+        "test_actual_kagha_spell_first_preserves_only_the_ordinary_land_allowance",
+        "test_independent_crucible_land_play_preserves_the_shared_kagha_allowance",
+        "test_source_zone_permission_needs_a_numeric_land_play_and_composes_with_exploration"
+      ],
+      "multiplayer_tests": [
+        "test_actual_surveil_qualifies_for_kagha_but_is_not_a_raul_mill",
+        "test_actual_kagha_land_first_consumes_shared_use_and_numeric_land_play",
+        "test_actual_kagha_spell_first_preserves_only_the_ordinary_land_allowance",
+        "test_independent_crucible_land_play_preserves_the_shared_kagha_allowance",
+        "test_source_zone_permission_needs_a_numeric_land_play_and_composes_with_exploration"
+      ],
+      "privacy_tests": [
+        "test_actual_surveil_qualifies_for_kagha_but_is_not_a_raul_mill",
+        "test_actual_kagha_land_first_consumes_shared_use_and_numeric_land_play",
+        "test_actual_kagha_spell_first_preserves_only_the_ordinary_land_allowance",
+        "test_independent_crucible_land_play_preserves_the_shared_kagha_allowance",
+        "test_source_zone_permission_needs_a_numeric_land_play_and_composes_with_exploration"
+      ],
+      "replay_tests": [
+        "test_actual_surveil_qualifies_for_kagha_but_is_not_a_raul_mill",
+        "test_actual_kagha_land_first_consumes_shared_use_and_numeric_land_play",
+        "test_actual_kagha_spell_first_preserves_only_the_ordinary_land_allowance",
+        "test_independent_crucible_land_play_preserves_the_shared_kagha_allowance",
+        "test_source_zone_permission_needs_a_numeric_land_play_and_composes_with_exploration"
       ]
     }
   ]
