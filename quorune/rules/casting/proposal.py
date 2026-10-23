@@ -869,6 +869,10 @@ def _cast_offer_payload(
             for key, value in raw.items()
             if key in {"id", "kind", "requirements", "choice_schema", "label"}
         }
+        from ..optional_life_cost_model import optional_life_cost_amount
+        life_payment=optional_life_cost_amount(raw)
+        if life_payment:
+            projected['additional_life']=life_payment
         if public_schema is not None:
             from .targeted_costs import public_payable_target_schema
             public_schema=public_payable_target_schema(public_schema,raw)

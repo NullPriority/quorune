@@ -116,6 +116,7 @@
       "test_modal_activation_admission",
       "test_nonmana_kicker",
       "test_object_query",
+      "test_optional_life_cost_reductions",
       "test_paid_color_entry",
       "test_paid_graveyard_casts",
       "test_paid_mana_resolution",

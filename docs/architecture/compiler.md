@@ -86,6 +86,15 @@ recognizing the price does not admit an unknown result. Printed Waterbend
 action observers bind the acting player through the normalized public-action
 event owner. Optional and variable Waterbend grammar remains residual.
 
+`compiler/optional_life_costs.py` admits the complete declaration that optionally
+pays two life to reduce one corresponding colored mana for a matching colored
+permanent spell. The declaration includes its colored-only restriction and
+requires complete source admission. Current battlefield abilities supply the
+choices; the existing total-cost and life-payment owners apply the price.
+Each provider can be paid once per spell, including when its reduction is zero.
+Generic and other-color costs remain intact. Unknown amounts, mismatched colors
+and incomplete declarations retain material residuals.
+
 `compiler/targeted_spell_costs.py` lowers opponent spell-cost increases for the
 source itself and one or more controlled commander creatures. Descriptors bind
 the fixed generic amount and target subject; the existing cast-cost component

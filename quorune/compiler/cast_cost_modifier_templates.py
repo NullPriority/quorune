@@ -857,7 +857,8 @@ def static_fixed_spell_cost_reduction_handler(
 ) -> CastCostModifierTemplate | None:
     """Lower one public fixed-generic modifier through the shared schema."""
 
-    unconditional = _unconditional_spell_cost_reduction_handler(text)
+    from .optional_life_costs import optional_life_color_reduction_template
+    unconditional = optional_life_color_reduction_template(text) or _unconditional_spell_cost_reduction_handler(text)
     if unconditional is not None:
         return unconditional
     from .public_state_queries import fixed_public_state_parts

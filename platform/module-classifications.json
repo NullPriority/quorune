@@ -5018,6 +5018,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/optional_life_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/optional_payment_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -11832,6 +11847,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/casting/optional_life_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/casting/overload_costs.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -13345,6 +13374,20 @@
     },
     {
       "file": "quorune/rules/optional_draw_discard.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/optional_life_cost_model.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -17073,6 +17116,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/optional_life_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/paid_entry_copy.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -19135,5 +19193,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "27cc469b734361c66aebfc2ec2634e5ebfc163b912b33b2a6ca54884f20f38b7"
+  "fingerprint": "14cc0ab3dd945f84717debf030fbce9b589a0e0b9df5e3ee48cb0e89a4cef3c7"
 }

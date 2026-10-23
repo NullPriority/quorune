@@ -83,6 +83,12 @@ display row as targets change and flags an absent payable combination. This
 metadata grants no command fields; clients submit the ordinary cost option,
 targets and modes, and the server determines the actual total cost again.
 
+A casting cost option may include `additional_life` alongside its mana
+requirements and display label. This is the exact optional life amount for that
+offered price. Clients select its ordinary `cost_option` identifier; they never
+submit a life discount, amount or source identity. The server recomputes and
+commits the selected price through the normal casting transaction.
+
 Prepared battlefield objects project `prepared: true`; ordinary objects omit
 the field. Their inset spell copies are public exile objects with their own
 references and inset characteristics. Casting actions appear only for the

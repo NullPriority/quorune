@@ -1441,6 +1441,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         return None
     if not finalize_emerge_selection(host, seat, card, option, response, choice_schema, hint=hint):
         return None
+    from .optional_life_costs import optional_life_payment_affordable
+    if not optional_life_payment_affordable(host,seat,option,response):
+        return None
     if isinstance(exile_spec, Mapping):
         choice_schema["exile_card"] = {
             "type": "object_ref",
@@ -1493,6 +1496,8 @@ def build_cast_cost_options(
     if initial is None:
         return ()
     expanded, mandatory, mechanics, has_x = initial
+    from .optional_life_costs import optional_life_cost_variants
+    expanded=optional_life_cost_variants(host,seat,card,expanded,cast_type_line=cast_type_line)
     target_mana_x = has_x
     target_schema = getattr(program, "target_schema", None)
     if not has_x and isinstance(target_schema, Mapping) and "count_parameter" in target_schema:

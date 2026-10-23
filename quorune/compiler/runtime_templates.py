@@ -227,7 +227,7 @@ def _source_permanent_participation_template(
                 "static_ability",
                 *(
                     (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1"}
+                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1", "optional-life-colored-reduction-v1"}
                     else ()
                 ),
             ),

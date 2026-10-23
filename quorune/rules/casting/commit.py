@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ...spell_mana_counts import capture_spell_mana_counts
+from ..optional_life_cost_model import optional_life_cost_amount
 
 from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
 from .reveal_costs import commit_reveal_additional_costs
@@ -1508,6 +1509,8 @@ def _commit_cast_costs_and_stack(
     try:validate_cast_waterbend(host,proposal.seat,card,selected_option)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_waterbend_after_mana') from exc
     _commit_tap_costs(host, proposal, card)
+    if optional_life := optional_life_cost_amount(selected_option):
+        _pay_fixed_life_additional_cost(host,proposal,card,selected_option,optional_life)
     costs = _commit_additional_costs(
         host, proposal, response, card, selected_option
     )

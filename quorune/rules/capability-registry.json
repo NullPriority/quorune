@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 480,
+  "registry_version": 481,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -46308,6 +46308,166 @@
       "implementation_mutation_rationale": "Fresh complete source and omitted counter-kind placements are killed by actual original registration, actions and consequences.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "casting.cost.optional_life_colored_reduction",
+      "version": 1,
+      "official_rules": [
+        "118.3b",
+        "118.8",
+        "118.8a",
+        "119.4",
+        "601.2b",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "113.6",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A current controlled complete battlefield source permits one optional two-life additional cost per matching colored permanent spell, reducing only one corresponding colored mana.",
+        "inputs": [
+          "current source ability and incarnation",
+          "selected permanent spell colors and normal cast authority",
+          "sealed provider count choices and total cost"
+        ],
+        "outputs": [
+          "optional paid and declined legal prices",
+          "colored-only reduction after increases",
+          "canonical additional life payment with no refund"
+        ],
+        "exclusions": [
+          "nonpermanent and nonmatching spells",
+          "generic or other-color reduction",
+          "unrepresented life amounts or selectors"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.fixed_life_payment",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "implementation_components": [
+        "quorune.rules.optional_life_cost_model.OptionalLifeColorReductionSpec",
+        "quorune.compiler.optional_life_costs.optional_life_color_reduction_template",
+        "quorune.semantic_runtime.optional_life_costs.OptionalLifeColorReductionHandler",
+        "quorune.rules.casting.optional_life_costs.optional_life_providers",
+        "quorune.rules.casting.optional_life_costs.optional_life_cost_variants",
+        "quorune.rules.casting.optional_life_costs.apply_optional_life_reduction",
+        "quorune.rules.casting.optional_life_costs.optional_life_payment_affordable"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete typed source, independent registered runtime dependency, canonical verified withdrawal, exact optional life schema and current-ability discovery reject unowned reductions.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh original admission and actual paid/declined cast witnesses kill omitted compiler and current-provider discovery.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_five_originals_have_complete_admission_and_independent_runtime_owner",
+        "test_complete_declaration_and_descriptor_reject_unknown_or_mismatched_prices",
+        "test_actual_dreams_paid_and_declined_both_draw_and_keep_printed_flying",
+        "test_actual_faith_paid_cast_creates_exactly_one_soldier",
+        "test_actual_vigor_paid_cast_counters_only_current_controlled_creatures",
+        "test_multiple_providers_pay_once_each_and_total_life_limits_options",
+        "test_actual_flesh_and_instinct_paid_casts_keep_their_targeted_cast_triggers",
+        "test_actual_countered_paid_spell_keeps_life_and_mana_spent",
+        "test_actual_blue_instant_has_no_life_option_and_pays_both_blue_symbols",
+        "test_actual_without_mana_alternative_still_allows_optional_life_payment",
+        "test_actual_kicker_additional_colored_cost_composes_with_normal_and_granted_bases",
+        "test_only_current_controlled_unphased_matching_battlefield_providers_apply",
+        "test_actual_source_ability_loss_removes_paid_offer_and_stale_command_rolls_back",
+        "test_actual_global_alternative_and_increase_keep_other_colors_and_generic_cost",
+        "test_sacrificed_provider_keeps_locked_discount_without_a_late_cast_trigger"
+      ],
+      "negative_tests": [
+        "test_five_originals_have_complete_admission_and_independent_runtime_owner",
+        "test_complete_declaration_and_descriptor_reject_unknown_or_mismatched_prices",
+        "test_actual_dreams_paid_and_declined_both_draw_and_keep_printed_flying",
+        "test_actual_faith_paid_cast_creates_exactly_one_soldier",
+        "test_actual_vigor_paid_cast_counters_only_current_controlled_creatures",
+        "test_multiple_providers_pay_once_each_and_total_life_limits_options",
+        "test_actual_flesh_and_instinct_paid_casts_keep_their_targeted_cast_triggers",
+        "test_actual_countered_paid_spell_keeps_life_and_mana_spent",
+        "test_actual_blue_instant_has_no_life_option_and_pays_both_blue_symbols",
+        "test_actual_without_mana_alternative_still_allows_optional_life_payment",
+        "test_actual_kicker_additional_colored_cost_composes_with_normal_and_granted_bases",
+        "test_only_current_controlled_unphased_matching_battlefield_providers_apply",
+        "test_actual_source_ability_loss_removes_paid_offer_and_stale_command_rolls_back",
+        "test_actual_global_alternative_and_increase_keep_other_colors_and_generic_cost",
+        "test_sacrificed_provider_keeps_locked_discount_without_a_late_cast_trigger"
+      ],
+      "interaction_tests": [
+        "test_actual_dreams_paid_and_declined_both_draw_and_keep_printed_flying",
+        "test_actual_faith_paid_cast_creates_exactly_one_soldier",
+        "test_actual_vigor_paid_cast_counters_only_current_controlled_creatures",
+        "test_multiple_providers_pay_once_each_and_total_life_limits_options",
+        "test_actual_flesh_and_instinct_paid_casts_keep_their_targeted_cast_triggers",
+        "test_actual_countered_paid_spell_keeps_life_and_mana_spent",
+        "test_actual_blue_instant_has_no_life_option_and_pays_both_blue_symbols",
+        "test_actual_without_mana_alternative_still_allows_optional_life_payment",
+        "test_actual_kicker_additional_colored_cost_composes_with_normal_and_granted_bases",
+        "test_only_current_controlled_unphased_matching_battlefield_providers_apply",
+        "test_actual_source_ability_loss_removes_paid_offer_and_stale_command_rolls_back",
+        "test_actual_global_alternative_and_increase_keep_other_colors_and_generic_cost",
+        "test_sacrificed_provider_keeps_locked_discount_without_a_late_cast_trigger"
+      ],
+      "multiplayer_tests": [
+        "test_actual_dreams_paid_and_declined_both_draw_and_keep_printed_flying",
+        "test_actual_faith_paid_cast_creates_exactly_one_soldier",
+        "test_actual_vigor_paid_cast_counters_only_current_controlled_creatures",
+        "test_multiple_providers_pay_once_each_and_total_life_limits_options",
+        "test_actual_flesh_and_instinct_paid_casts_keep_their_targeted_cast_triggers",
+        "test_actual_countered_paid_spell_keeps_life_and_mana_spent",
+        "test_actual_blue_instant_has_no_life_option_and_pays_both_blue_symbols",
+        "test_actual_without_mana_alternative_still_allows_optional_life_payment",
+        "test_actual_kicker_additional_colored_cost_composes_with_normal_and_granted_bases",
+        "test_only_current_controlled_unphased_matching_battlefield_providers_apply",
+        "test_actual_source_ability_loss_removes_paid_offer_and_stale_command_rolls_back",
+        "test_actual_global_alternative_and_increase_keep_other_colors_and_generic_cost",
+        "test_sacrificed_provider_keeps_locked_discount_without_a_late_cast_trigger"
+      ],
+      "privacy_tests": [
+        "test_actual_dreams_paid_and_declined_both_draw_and_keep_printed_flying",
+        "test_actual_faith_paid_cast_creates_exactly_one_soldier",
+        "test_actual_vigor_paid_cast_counters_only_current_controlled_creatures",
+        "test_multiple_providers_pay_once_each_and_total_life_limits_options",
+        "test_actual_flesh_and_instinct_paid_casts_keep_their_targeted_cast_triggers",
+        "test_actual_countered_paid_spell_keeps_life_and_mana_spent",
+        "test_actual_blue_instant_has_no_life_option_and_pays_both_blue_symbols",
+        "test_actual_without_mana_alternative_still_allows_optional_life_payment",
+        "test_actual_kicker_additional_colored_cost_composes_with_normal_and_granted_bases",
+        "test_actual_global_alternative_and_increase_keep_other_colors_and_generic_cost",
+        "test_sacrificed_provider_keeps_locked_discount_without_a_late_cast_trigger"
+      ],
+      "replay_tests": [
+        "test_actual_dreams_paid_and_declined_both_draw_and_keep_printed_flying",
+        "test_actual_faith_paid_cast_creates_exactly_one_soldier",
+        "test_actual_vigor_paid_cast_counters_only_current_controlled_creatures",
+        "test_multiple_providers_pay_once_each_and_total_life_limits_options",
+        "test_actual_flesh_and_instinct_paid_casts_keep_their_targeted_cast_triggers",
+        "test_actual_countered_paid_spell_keeps_life_and_mana_spent",
+        "test_actual_blue_instant_has_no_life_option_and_pays_both_blue_symbols",
+        "test_actual_without_mana_alternative_still_allows_optional_life_payment",
+        "test_actual_kicker_additional_colored_cost_composes_with_normal_and_granted_bases",
+        "test_only_current_controlled_unphased_matching_battlefield_providers_apply",
+        "test_actual_source_ability_loss_removes_paid_offer_and_stale_command_rolls_back",
+        "test_actual_global_alternative_and_increase_keep_other_colors_and_generic_cost",
+        "test_sacrificed_provider_keeps_locked_discount_without_a_late_cast_trigger"
+      ]
     }
   ]
 }

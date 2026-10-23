@@ -162,6 +162,8 @@ def apply_static_reductions(
         option.setdefault("cost_reductions", []).append(
             {"kind": "self_public", "reduction": applied_self}
         )
+    from .optional_life_costs import apply_optional_life_reduction
+    apply_optional_life_reduction(option)
 
 
 __all__ = [

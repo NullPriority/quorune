@@ -135,6 +135,14 @@ and every leaf owner, including branches that the player does not select.
 The existing typed cost decoders validate these payloads before trust binding;
 missing producer annotations cannot remove the price's authority requirement.
 
+Optional life for colored mana reductions uses a registered cost component on
+a complete current battlefield source. The offer seals the provider's object,
+incarnation, program and fixed price. Equivalent providers use count choices
+instead of enumerating source subsets. Ordinary cast acceptance recomputes
+the choices, checks total life affordability and retains a locked discount if
+another cost later removes its source. The life transaction remains the mutation
+owner. Selecting a free base cost can still include the optional life payment.
+
 Version-two counter target sets reuse the registered counter-placement handler
 and canonical counter transaction. Their payload independently requires the
 quantified-set capability; a named relative amount also requires named doubling.

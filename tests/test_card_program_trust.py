@@ -291,6 +291,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.additional.paid_entry_copy",
                 "casting.bestow.fixed_mana",
                 "casting.cost.modifier.fixed_query",
+                "casting.cost.optional_life_colored_reduction",
                 "casting.cost.targeted_fixed_generic",
                 "casting.cost.modifier.self_public",
                 "casting.disguise.fixed_mana",
