@@ -549,6 +549,7 @@
       "test_battlefield_rules",
       "test_beginning_phase_rules",
       "test_browser_gameplay_regressions",
+      "test_characteristic_query_unions",
       "test_combat_damage_assignment",
       "test_combat_damage_sequence",
       "test_combat_damage_snapshot",

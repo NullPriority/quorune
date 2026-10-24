@@ -15,7 +15,9 @@ def current_printed_face_keywords(host,card,record,base):
         return base.get('keywords',[])
     current=set()
     qualified=set()
-    known={str(value).casefold() for value in FIXED_CHARACTERISTIC_KEYWORDS}
+    # The record keyword index combines faces; qualified Protection also needs
+    # the current face's trusted printed declaration before retaining its label.
+    known={str(value).casefold() for value in FIXED_CHARACTERISTIC_KEYWORDS} | {'protection'}
     for program in host.semantics.programs_for_oracle(record.oracle_id):
         if (program.provenance.get('template_id')=='printed-keyword-list-v1'
                 and program_matches_face(record,program,card)

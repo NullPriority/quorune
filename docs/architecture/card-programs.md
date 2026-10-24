@@ -121,6 +121,22 @@ and independently proves the unchanged trigger shell through its fixed-value
 contract. Resolution reads that player's current life with explicit rounding;
 source departure does not reassign an already-created trigger.
 
+Public characteristic quantities can use the existing flat battlefield query
+union. Each object contributes once when it matches multiple type or subtype
+branches, and relative creature descriptions preserve the creature restriction
+on every branch. The quantity reader retains its source-controller relation and
+rejects unresolved branch references, hidden zones and nested unions. Finite
+lists of permanent card types retain the ordinary typed union and tapped-state
+query. `compiler/attached_ability_templates.py` owns closed attached ability
+lists, including ordinary keywords combined with typed Protection fragments;
+the existing attachment and characteristic owners apply those fragments.
+For a represented current face, the combined card keyword index retains a
+Protection label only when that face has a trusted printed declaration.
+Protection granted to an attached creature does not protect the granting Aura.
+The same closed public quantities feed self-entry counters through the existing
+pre-entry snapshot. Simultaneous entrants do not count one another, and later
+changes to the queried battlefield do not change counters already placed.
+
 Runtime dependency inference decodes persisted declaration cost, requirement
 and restriction fragments wherever they are nested in handlers or effects.
 Their registered combat-declaration capability remains mandatory when a query

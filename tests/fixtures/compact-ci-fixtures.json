@@ -53,6 +53,7 @@
     "tests/fixtures/cast-creature-targets.json",
     "tests/fixtures/casting-activation-metadata-cards.json",
     "tests/fixtures/casting-payment-keywords-cards.json",
+    "tests/fixtures/characteristic-query-union-cards.json",
     "tests/fixtures/chosen-aura-protection-cards.json",
     "tests/fixtures/chosen-color-mana-cards.json",
     "tests/fixtures/classic-flash-cards.json",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 505,
+  "registry_version": 506,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7167,7 +7167,7 @@
     },
     {
       "id": "protection.typed.debt",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "301.5c",
         "303.4c",
@@ -7188,7 +7188,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of compiled fixed Protection qualities using current or last-known source characteristics. The same typed DEBT consumers receive live query grants and temporary closed direct-permanent results. Explicit repeated from clauses in comma-separated printed keyword lists lower to independent typed Protection instances while sibling keywords retain their boundaries.",
+        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of compiled fixed Protection qualities using current or last-known source characteristics. The same typed DEBT consumers receive live query grants and temporary closed direct-permanent results. Explicit repeated from clauses in comma-separated printed keyword lists lower to independent typed Protection instances while sibling keywords retain their boundaries. Current represented faces retain the combined Protection keyword label only under their own trusted printed declaration; an attached typed grant does not protect its source.",
         "inputs": [
           "trusted typed protection fragment",
           "protected permanent characteristics",
@@ -7228,7 +7228,8 @@
         "quorune.compiler.temporary_target_interactions._fixed_protection_template",
         "quorune.semantic_runtime.continuous_components.FixedQueryProtectionGrantHandler",
         "quorune.compiler.keyword_templates.printed_keyword_parts",
-        "quorune.ability_fragments.parse_protection_line"
+        "quorune.ability_fragments.parse_protection_line",
+        "quorune.rules.current_face_keywords.current_printed_face_keywords"
       ],
       "positive_tests": [
         "test_compiler_closes_fixed_source_quality_predicates",
@@ -7252,7 +7253,8 @@
         "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
         "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
         "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
-        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+        "test_current_face_protection_label_requires_that_faces_printed_declaration"
       ],
       "negative_tests": [
         "test_untyped_and_unsupported_protection_fail_closed",
@@ -7264,7 +7266,9 @@
         "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
         "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
         "test_protection_runtime_minimum_cannot_be_stripped_from_list_programs",
-        "test_verified_protection_owner_withdrawal_leaves_both_originals_residual"
+        "test_verified_protection_owner_withdrawal_leaves_both_originals_residual",
+        "test_current_face_protection_label_requires_that_faces_printed_declaration",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "interaction_tests": [
         "test_layer_six_granted_protection_uses_typed_fragment",
@@ -7282,7 +7286,8 @@
         "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
         "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
         "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
-        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "multiplayer_tests": [
         "test_four_player_protection_uses_the_actual_source",
@@ -7299,7 +7304,8 @@
         "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
         "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
         "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
-        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller"
       ],
       "privacy_tests": [
         "test_aura_entry_choice_projection_and_replay_are_exact",
@@ -7311,7 +7317,8 @@
         "test_actual_blink_and_control_response_preserve_source_incarnation_and_original_choice_actor",
         "test_unmatched_red_damage_still_kills_a_source_protected_from_blue",
         "test_chosen_green_protection_rejects_a_real_green_blocker_and_allows_white",
-        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw"
+        "test_actual_oversoul_cast_rejects_all_matching_targets_and_allows_white_draw",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "replay_tests": [
         "test_aura_entry_choice_projection_and_replay_are_exact",
@@ -7329,7 +7336,8 @@
         "test_actual_red_sweeper_prevents_damage_only_to_matching_protected_object",
         "test_actual_oversoul_rejects_three_colored_blockers_and_accepts_white_blocker",
         "test_actual_elite_cast_retains_stats_first_strike_vigilance_and_all_protections",
-        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance"
+        "test_actual_elite_subtype_blocking_preserves_first_strike_and_vigilance",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "required_evidence": [
         "positive",
@@ -11257,7 +11265,7 @@
     },
     {
       "id": "counter.producer.dynamic_self_entry",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "107.3m",
         "122.6",
@@ -11274,7 +11282,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile one mandatory source-self battlefield-entry counter replacement whose nonnegative amount is frozen from cast X, distinct mana colors, closed current-turn history including controller-relative departures, creature deaths and actual life gains, cast origin/payment, or one cycle-safe public layer-5 object count before replacement ordering. Fixed escaped-entry amounts require actual Escape casting, independently of graveyard origin.",
+        "summary": "Compile one mandatory source-self battlefield-entry counter replacement whose nonnegative amount is frozen from cast X, distinct mana colors, closed current-turn history including controller-relative departures, creature deaths and actual life gains, cast origin/payment, or one cycle-safe public layer-5 object count before replacement ordering. Fixed escaped-entry amounts require actual Escape casting, independently of graveyard origin. Existing public-query entry quantities accept closed reordered permanent-type unions and retain one pre-entry object count, independent of overlapping card types or simultaneous entrants.",
         "inputs": [
           "one whole source-spanned self-entry sentence",
           "same entering physical object and logical incarnation proposing battlefield entry",
@@ -11324,7 +11332,8 @@
         "quorune.semantic_runtime.self_entry_counters.dynamic_self_entry_counter_amounts_from_programs",
         "quorune.semantic_runtime.self_entry_counters.program_static_component_is_applicable",
         "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot",
-        "quorune.semantic_runtime.zone_replacements.commit_counter_events_from_resolution"
+        "quorune.semantic_runtime.zone_replacements.commit_counter_events_from_resolution",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union"
       ],
       "positive_tests": [
         "test_actual_originals_close_only_when_all_siblings_are_supported",
@@ -11345,7 +11354,8 @@
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
         "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
       ],
       "negative_tests": [
         "test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
@@ -11364,7 +11374,9 @@
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
         "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_simultaneous_luxknight_entries_count_only_the_pre_batch_battlefield",
+        "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
       ],
       "interaction_tests": [
         "test_actual_history_entry_quantity_replacement_adds_once_and_replays",
@@ -11386,7 +11398,8 @@
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
         "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters"
       ],
       "multiplayer_tests": [
         "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
@@ -11398,7 +11411,8 @@
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
         "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_simultaneous_luxknight_entries_count_only_the_pre_batch_battlefield"
       ],
       "privacy_tests": [
         "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
@@ -11408,7 +11422,8 @@
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
         "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters"
       ],
       "replay_tests": [
         "test_actual_history_entry_quantity_replacement_adds_once_and_replays",
@@ -11422,7 +11437,8 @@
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
         "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters"
       ],
       "required_evidence": [
         "positive",
@@ -13246,7 +13262,7 @@
     },
     {
       "id": "continuous.characteristics.query_count_modifier",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -13265,7 +13281,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply copied typed self modifiers in layers 6 and 7c from closed layer-5 public quantities, including explicit distinct values, mana-value reductions, colored mana symbols, fixed nonnegative arithmetic and two leaf sums. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Existing explicit collection values also lower complete where-X self modifiers, union card predicates and printed each-collection sums without counting a dual-type card twice in one union.",
+        "summary": "Apply copied typed self modifiers in layers 6 and 7c from closed layer-5 public quantities, including explicit distinct values, mana-value reductions, colored mana symbols, fixed nonnegative arithmetic and two leaf sums. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Existing explicit collection values also lower complete where-X self modifiers, union card predicates and printed each-collection sums without counting a dual-type card twice in one union. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported.",
         "inputs": [
           "active phased-in battlefield source",
           "copied typed query-characteristic fragment",
@@ -13301,7 +13317,9 @@
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.public_quantity_reductions.reduce_public_quantity",
-        "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler"
+        "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query"
       ],
       "positive_tests": [
         "test_query_characteristic_grammar_compiles_closed_fragments",
@@ -13312,7 +13330,9 @@
         "test_originals_have_complete_admission_and_original_source_spans",
         "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
       ],
       "negative_tests": [
         "test_query_characteristic_descriptors_fail_closed_without_behavior",
@@ -13323,7 +13343,9 @@
         "test_originals_have_complete_admission_and_original_source_spans",
         "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_union_quantities_reject_hidden_nested_unresolved_and_ambiguous_queries",
+        "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
       ],
       "interaction_tests": [
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
@@ -13333,27 +13355,38 @@
         "test_query_fragment_copy_uses_current_source_and_controller",
         "test_query_gate_recomputes_layer_six_and_seven_characteristics",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "multiplayer_tests": [
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
         "test_original_upriser_counts_controller_aura_and_counter_modifications_once",
         "test_query_quantities_recompute_controller_correct_characteristics",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss"
       ],
       "privacy_tests": [
         "test_query_hand_count_projects_and_replays_without_hidden_identity",
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "replay_tests": [
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
         "test_original_upriser_counts_controller_aura_and_counter_modifications_once",
         "test_query_hand_count_projects_and_replays_without_hidden_identity",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "required_evidence": [
         "positive",
@@ -14083,7 +14116,7 @@
     },
     {
       "id": "continuous.characteristics.query_power_toughness_definition",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -14102,7 +14135,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Closed scalar arithmetic uses unfiltered public hand size and named source counters; singular instant/sorcery graveyard card definitions use the existing all-zone owner. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner.",
+        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Closed scalar arithmetic uses unfiltered public hand size and named source counters; singular instant/sorcery graveyard card definitions use the existing all-zone owner. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported.",
         "inputs": [
           "one source-spanned source-possessive power, toughness, or paired definition",
           "copied typed all-zone definition fragment",
@@ -14136,7 +14169,9 @@
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.public_quantity_reductions.reduce_public_quantity",
-        "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler"
+        "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query"
       ],
       "positive_tests": [
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
@@ -14147,7 +14182,9 @@
         "test_definitions_preserve_complete_nested_public_arithmetic",
         "test_query_definitions_apply_in_every_zone_and_preserve_undefined_field",
         "test_query_power_toughness_definition_grammar_compiles_closed_fragments",
-        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+        "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
       ],
       "negative_tests": [
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
@@ -14155,7 +14192,9 @@
         "test_hand_arithmetic_reads_only_cardinality_and_counter_arithmetic_remains_closed",
         "test_query_power_toughness_definition_descriptors_fail_closed",
         "test_query_power_toughness_definition_grammar_keeps_open_families_residual",
-        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"
+        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+        "test_union_quantities_reject_hidden_nested_unresolved_and_ambiguous_queries",
+        "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
       ],
       "interaction_tests": [
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
@@ -14165,20 +14204,27 @@
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
         "test_query_definition_ability_removal_sibling_withholds_runtime_admission",
         "test_query_definition_copy_and_control_change_use_current_source",
-        "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a"
+        "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a",
+        "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "multiplayer_tests": [
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
-        "test_query_definition_copy_and_control_change_use_current_source"
+        "test_query_definition_copy_and_control_change_use_current_source",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss"
       ],
       "privacy_tests": [
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
-        "test_query_definition_hand_count_projects_without_hidden_identity"
+        "test_query_definition_hand_count_projects_without_hidden_identity",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "replay_tests": [
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
@@ -14186,7 +14232,11 @@
         "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
-        "test_query_definition_save_load_and_replay_exactly"
+        "test_query_definition_save_load_and_replay_exactly",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "required_evidence": [
         "positive",
@@ -14438,7 +14488,7 @@
     },
     {
       "id": "continuous.attached.fixed_characteristics",
-      "version": 16,
+      "version": 17,
       "official_rules": [
         "301.5",
         "303.4",
@@ -14463,7 +14513,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime. A quoted terminal list comma is assigned to the independently validated outer conjunction while inner punctuation, source spans and complete child behavior remain intact. Closed ability-plus-additive-type compositions do not require a P/T term. Standalone enchanted-object keyword grants also cover ordinary noncreature permanent types or an unqualified permanent, without changing the older creature, Equipment or Fortification modifier productions. Runtime binding independently derives represented keyword and typed-fragment owner minima from the validated descriptor.",
+        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime. A quoted terminal list comma is assigned to the independently validated outer conjunction while inner punctuation, source spans and complete child behavior remain intact. Closed ability-plus-additive-type compositions do not require a P/T term. Standalone enchanted-object keyword grants also cover ordinary noncreature permanent types or an unqualified permanent, without changing the older creature, Equipment or Fortification modifier productions. Runtime binding independently derives represented keyword and typed-fragment owner minima from the validated descriptor. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported. Fixed ability lists may combine ordinary keywords and independently typed Protection fragments with the same current attached modifier.",
         "inputs": [
           "active attached source object",
           "reciprocal physical attachment relation",
@@ -14527,7 +14577,10 @@
         "quorune.rules.activation.query.activated_abilities",
         "quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
         "quorune.trigger_discovery._event_programs_for_source",
-        "quorune.rules.attached_keyword_requirements.attached_keyword_runtime_dependencies"
+        "quorune.rules.attached_keyword_requirements.attached_keyword_runtime_dependencies",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query",
+        "quorune.compiler.attached_ability_templates._attached_granted_abilities"
       ],
       "positive_tests": [
         "test_ability_and_type_without_stats_keeps_the_independent_exact_child",
@@ -14568,7 +14621,9 @@
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_subject_descriptors_are_closed_and_legacy_creature_shape_is_retained",
         "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
-        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+        "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
       ],
       "negative_tests": [
         "test_ability_and_type_without_stats_keeps_the_independent_exact_child",
@@ -14596,7 +14651,9 @@
         "test_withdrawn_attached_owner_keeps_combined_original_source_residual",
         "test_granted_keyword_owners_are_independent_runtime_requirements",
         "test_subject_descriptors_are_closed_and_legacy_creature_shape_is_retained",
-        "test_canonically_verified_grant_and_keyword_withdrawals_keep_originals_residual"
+        "test_canonically_verified_grant_and_keyword_withdrawals_keep_originals_residual",
+        "test_union_quantities_reject_hidden_nested_unresolved_and_ambiguous_queries",
+        "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
       ],
       "interaction_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14634,7 +14691,10 @@
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
-        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+        "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "multiplayer_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14654,7 +14714,9 @@
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
-        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss"
       ],
       "privacy_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14672,7 +14734,9 @@
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
-        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "replay_tests": [
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
@@ -14699,7 +14763,11 @@
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_relic_intrinsic_cleanup_sacrifices_aura_and_ends_artifact_shroud",
-        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies"
+        "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "required_evidence": [
         "positive",
@@ -44346,7 +44414,7 @@
     },
     {
       "id": "state_query.permanent.receiver_union",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "109.2",
         "611.3a",
@@ -44363,7 +44431,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "One flat live battlefield receiver union matches each object once and preserves branch-local and shared source exclusion.",
+        "summary": "One flat live battlefield receiver union matches each object once and preserves branch-local and shared source exclusion. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported.",
         "inputs": [
           "two through four closed public type/subtype/color/snow leaves",
           "shared source-controller relation and current source reference",
@@ -44387,7 +44455,9 @@
         "quorune.object_query_union.validate_receiver_union",
         "quorune.object_query_union.bind_receiver_union_source",
         "quorune.object_query.object_matches_query",
-        "quorune.compiler.receiver_union_queries.fixed_receiver_union_subject"
+        "quorune.compiler.receiver_union_queries.fixed_receiver_union_subject",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query"
       ],
       "required_evidence": [
         "positive",
@@ -44415,14 +44485,18 @@
         "test_original_masked_gorgon_cast_grants_global_protection_and_keeps_threshold",
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
         "test_original_narfi_snow_return_pays_three_real_snow_sources",
-        "test_five_originals_have_complete_admission_and_union_runtime_minimum"
+        "test_five_originals_have_complete_admission_and_union_runtime_minimum",
+        "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
       ],
       "negative_tests": [
         "test_unions_reject_recursive_hidden_late_or_unbounded_queries",
         "test_union_surface_preserves_scope_and_unsupported_antecedents",
         "test_five_originals_have_complete_admission_and_union_runtime_minimum",
         "test_canonically_verified_union_withdrawal_blocks_all_originals",
-        "test_handler_rejects_hidden_recursive_and_foreign_source_union_branches"
+        "test_handler_rejects_hidden_recursive_and_foreign_source_union_branches",
+        "test_union_quantities_reject_hidden_nested_unresolved_and_ambiguous_queries",
+        "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
       ],
       "interaction_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -44432,7 +44506,10 @@
         "test_original_masked_gorgon_cast_grants_global_protection_and_keeps_threshold",
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
         "test_original_narfi_snow_return_pays_three_real_snow_sources",
-        "test_death_baron_other_is_local_after_source_becomes_a_skeleton"
+        "test_death_baron_other_is_local_after_source_becomes_a_skeleton",
+        "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "multiplayer_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -44441,7 +44518,9 @@
         "test_original_narfi_cast_buffs_snow_or_zombie_once_and_excludes_self",
         "test_original_masked_gorgon_cast_grants_global_protection_and_keeps_threshold",
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
-        "test_original_narfi_snow_return_pays_three_real_snow_sources"
+        "test_original_narfi_snow_return_pays_three_real_snow_sources",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss"
       ],
       "privacy_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -44450,7 +44529,9 @@
         "test_original_narfi_cast_buffs_snow_or_zombie_once_and_excludes_self",
         "test_original_masked_gorgon_cast_grants_global_protection_and_keeps_threshold",
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
-        "test_original_narfi_snow_return_pays_three_real_snow_sources"
+        "test_original_narfi_snow_return_pays_three_real_snow_sources",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ],
       "replay_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -44459,7 +44540,11 @@
         "test_original_narfi_cast_buffs_snow_or_zombie_once_and_excludes_self",
         "test_original_masked_gorgon_cast_grants_global_protection_and_keeps_threshold",
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
-        "test_original_narfi_snow_return_pays_three_real_snow_sources"
+        "test_original_narfi_snow_return_pays_three_real_snow_sources",
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
+        "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
       ]
     },
     {

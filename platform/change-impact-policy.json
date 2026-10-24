@@ -8311,6 +8311,30 @@
         "test_fractional_player_results",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "characteristic-query-unions",
+      "patterns": [
+        "quorune/compiler/receiver_union_queries.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/attached_ability_templates.py",
+        "quorune/characteristic_fragments.py",
+        "tests/test_characteristic_query_unions.py",
+        "tests/fixtures/characteristic-query-union-cards.json",
+        "quorune/rules/current_face_keywords.py"
+      ],
+      "test_modules": [
+        "test_characteristic_query_unions",
+        "test_receiver_query_unions",
+        "test_typed_query_self_characteristics",
+        "test_query_power_toughness_definitions",
+        "test_attached_static_characteristics",
+        "test_fixed_disturb",
+        "test_card_program_trust",
+        "test_activated_self_transform",
+        "test_printed_protection_lists"
+      ]
     }
   ],
   "symbol_rules": [

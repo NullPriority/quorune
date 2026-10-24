@@ -19597,6 +19597,21 @@
       ],
       "interaction_order": 2,
       "assertion": "A canonically admitted same-tag commander performs its own fully paid draw activation through the private library-to-hand owner while retaining its physical designation and its paired commander identity; unauthorized activation, pending/final replay and four-player projection are checked."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_real_front_death_disturb_and_aura_departure_share_one_replay_prefix",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.characteristics.query_power_toughness_definition"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.characteristics.query_power_toughness_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual paid Katilda front reads current Spirit/enchantment union through all-zone CDA, real Murder moves it to graveyard and recomputes its value, actual paid Disturb casts back as an Aura onto a current Spirit, and real Disenchant exiles the Aura and ends its typed grants. One four-principal rollback/save-load/pre-action replay prefix crosses both faces."
     }
   ]
 }

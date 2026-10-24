@@ -244,7 +244,7 @@ class CharacteristicQuantitySpec:
             or query.colors_none
             or query.keywords_none
             or query.numeric_characteristic is not None
-            or query.any_of
+            or (query.any_of and any(part.exclude_ref is not None for part in query.any_of))
             or query.include_phased_out
         ):
             raise CharacteristicFragmentError(
