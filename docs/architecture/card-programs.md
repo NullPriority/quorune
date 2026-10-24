@@ -275,14 +275,17 @@ leaves. More than two quoted abilities, unsupported children, reminder-only
 profiles, and nonfixed token shells remain residual.
 
 Commander pairing is also a CardProgram declaration boundary. Exact ordinary
-  `Partner`, `Partner with`, `Choose a Background`, and `Doctor's companion`
+  `Partner`, the four pinned `Partner—[text]` variants, `Partner with`,
+  `Choose a Background`, and `Doctor's companion`
   lines compile to distinct trusted `game.setup` capabilities. `Partner with`
   also compiles its separate self-entry targeted named search through the shared
   private library-search and normalized trigger owners. One setup owner checks
   the current canonical declaration plus the printed legendary, Background,
   exact Doctor, or reciprocal named-partner predicate before it creates any
-  state. Broad keyword metadata and Oracle prose have no setup authority. Named
-  Partner variants, granted or changed setup abilities, and stale or duplicate
+  state. Tagged declarations share one capability and retain their exact closed
+  ability variant; only identical tags pair. Mixed tags and other pairing kinds
+  do not combine. Broad keyword metadata and Oracle prose have no setup authority.
+  Unknown Partner variants, granted or changed setup abilities, and stale or duplicate
   declarations fail closed until their distinct typed owners are implemented.
 
 ## Inspection and extension

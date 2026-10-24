@@ -258,6 +258,7 @@ class CommanderPairingTests(unittest.TestCase):
     def test_pairing_keywords_compile_as_exact_typed_setup_declarations(self):
         expected = {
             "Thrasios, Triton Hero": CommanderPairingKind.PARTNER,
+            "Bjorna, Nightfall Alchemist": CommanderPairingKind.PARTNER_FRIENDS_FOREVER,
             "Wilson, Refined Grizzly": (
                 CommanderPairingKind.CHOOSE_A_BACKGROUND
             ),
@@ -281,14 +282,6 @@ class CommanderPairingTests(unittest.TestCase):
                 self.assertTrue(nodes[0].exact)
                 self.assertEqual("game.setup", nodes[0].event)
                 self.assertEqual((kind.value,), nodes[0].mechanics)
-
-        for name in ("Bjorna, Nightfall Alchemist",):
-            with self.subTest(excluded=name):
-                ir = compile_oracle_card(
-                    self.db.lookup(name),
-                    capability_registry=self.capabilities,
-                    capability_profile="commander_review",
-                )
 
     def test_partner_with_compiles_exact_pairing_and_entry_search(self):
         cases = (

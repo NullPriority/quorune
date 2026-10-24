@@ -3,7 +3,10 @@ from __future__ import annotations
 import re
 from typing import Sequence
 
-from ..commander_pairing import partner_with_spec_for_material_line
+from ..commander_pairing import (
+    TAGGED_PARTNER_KINDS, pairing_kind_for_material_line,
+    partner_with_spec_for_material_line,
+)
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from .qualified_hexproof_keywords import qualified_hexproof_keywords
 from ..rules.attachment_actions import fixed_equip_ability_spec
@@ -46,6 +49,10 @@ def keyword_mechanics(
     """Recognize a complete Oracle line made only of printed keywords."""
 
     known = {keyword.casefold() for keyword in card_keywords}
+    if 'partner' in known:
+        pairing_kind = pairing_kind_for_material_line(text.strip())
+        if pairing_kind in TAGGED_PARTNER_KINDS:
+            return (pairing_kind.value,)
     material = text.rstrip(".").strip()
     if "equip" in known and fixed_equip_ability_spec(material) is not None:
         return ("equip",)

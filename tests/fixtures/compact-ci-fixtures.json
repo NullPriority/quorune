@@ -332,6 +332,7 @@
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/storm-cards.json",
     "tests/fixtures/subtype-union-condition-cards.json",
+    "tests/fixtures/tagged-partner-cards.json",
     "tests/fixtures/tap-controller-information-cards.json",
     "tests/fixtures/target-announcements.json",
     "tests/fixtures/target-characteristic-sets.json",

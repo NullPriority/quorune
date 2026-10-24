@@ -1,0 +1,993 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned tagged-partner originals and canonical controls; eight explicitly generic closed-tag matrix fixtures are not real card gains.",
+  "cards": [
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "name": "April O'Neil, Live on the Scene",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Detective",
+      "oracle_text": "Whenever a Mutant, Ninja, or Turtle you control enters, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nPartner—Character select",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Investigate",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5a35201d-e9b1-433a-bb70-3280ceedbcd6",
+      "name": "Elmar, Ulvenwald Informant",
+      "mana_cost": "{1}{R}{G}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Haste\nWhenever you cast your second spell each turn, untap target creature, then investigate. (Create a colorless Clue artifact token with \"{2}, Sacrifice this artifact: Draw a card.\")\nPartner—Friends forever (You can have two commanders if both have this ability.)",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Investigate",
+        "Haste",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-03-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "747009e7-da07-48c7-b838-687f19b884ea",
+      "name": "Hargilde, Kindly Runechanter",
+      "mana_cost": "{2}{W}{U}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "{T}: Add {C}{C}. Spend this mana only to cast artifact spells or activate abilities of artifacts.\nPartner—Friends forever (You can have two commanders if both have this ability.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Partner"
+      ],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2022-03-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c880fbdc-bdd9-4f80-81d4-e3e1124f76ca",
+      "name": "Bjorna, Nightfall Alchemist",
+      "mana_cost": "{U}{R}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "{T}, Sacrifice an artifact: Bjorna, Nightfall Alchemist deals 1 damage to target creature. Goad that creature.\nPartner—Friends forever (You can have two commanders if both have this ability.)",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Goad",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-03-03",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "name": "Michelangelo, the Heart",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Mutant Ninja Turtle",
+      "oracle_text": "Trample\nRaid (the Fridge) — At the beginning of your second main phase, if you attacked this turn, put a +1/+1 counter on target creature and create a Food token.\nPartner—Character select (You can have two commanders if both have this ability.)",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Food",
+        "Partner",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "name": "Splinter, the Mentor",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Mutant Ninja Rat",
+      "oracle_text": "Menace\nWhenever Splinter or another nontoken creature you control leaves the battlefield, create a Mutagen token.\nPartner—Character select (You can have two commanders if both have this ability.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Partner",
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "name": "Wastes",
+      "mana_cost": "",
+      "type_line": "Basic Land",
+      "oracle_text": "{T}: Add {C}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "3501a839-eef5-44e4-8637-b5754780454e",
+      "name": "Expedite",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature gains haste until end of turn.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "273b339c-964b-4a18-8eb5-ceb8abcdfd9e",
+      "name": "Divination",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Draw two cards.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Generic Character select Commander 1",
+      "oracle_id": "be6d112c-bab3-5e81-a2cd-e03e6c645e43",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Character select",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "name": "Generic Character select Commander 2",
+      "oracle_id": "6f3af4dd-983f-5ae5-8f95-7dcf76d05c14",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Character select",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "name": "Generic Father & son Commander 1",
+      "oracle_id": "4e5cafc6-c68e-52a3-bea8-12b1ed764b4e",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Father & son",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "name": "Generic Father & son Commander 2",
+      "oracle_id": "de339d4e-4eaa-5653-b609-e741b11b7ae0",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Father & son",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "name": "Generic Friends forever Commander 1",
+      "oracle_id": "c623fff8-53f4-59fe-b9a6-a678fec3d1ab",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Friends forever",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "name": "Generic Friends forever Commander 2",
+      "oracle_id": "92fac4b9-5d8b-5a5e-8c98-56dec4f1932c",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Friends forever",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "name": "Generic Survivors Commander 1",
+      "oracle_id": "3d044e90-e48b-5b89-aa89-305fd665a137",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Survivors",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "name": "Generic Survivors Commander 2",
+      "oracle_id": "105499e4-87b0-5bfe-af6f-910aa8782335",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner—Survivors",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Disperse",
+      "oracle_id": "9d8fe3f8-5027-4f9e-999e-e277caa96478",
+      "oracle_text": "Return target nonland permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Swamp"
+    },
+    {
+      "name": "Generic Tagged Draw Commander",
+      "oracle_id": "6614dd27-1c85-54ba-b806-966e2b29eb01",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "{1}: Draw a card.\nPartner—Friends forever",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Partner"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have appropriate partner abilities as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Donatello, the Brains and Splinter, the Mentor are your commanders, your deck may contain cards with blue and/or black in their color identity, but not cards with red, green, or white. (If Leonardo, the Balance is one of your commanders, your deck may contain cards with any color or combination of colors in their color identity, regardless of who your other commander is.)"
+    },
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "You can have two commanders if each one has \"Partner—Character select.\" You can't mix and match them with cards that have other partner abilities."
+    },
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "4900c157-8d9f-4f92-aaca-5246b6e2832e",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "You can have two commanders if each one has \"Partner—Character select.\" You can't mix and match them with cards that have other partner abilities."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Pizza Face (a Legendary Artifact Creature — Food Mutant) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost). You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have appropriate partner abilities as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Donatello, the Brains and Splinter, the Mentor are your commanders, your deck may contain cards with blue and/or black in their color identity, but not cards with red, green, or white. (If Leonardo, the Balance is one of your commanders, your deck may contain cards with any color or combination of colors in their color identity, regardless of who your other commander is.)"
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the cards. (Also, don't make the pizzas pictured on the cards. You don't have the digestive system of a Ninja Turtle.)"
+    },
+    {
+      "oracle_id": "f11e914c-16bc-4836-bc14-bc1b5de9cd87",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Food tokens may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Food tokens."
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Donatello, the Brains and Splinter, the Mentor are your commanders, your deck may contain cards with blue and/or black in their color identity, but not cards with red, green, or white. (If Leonardo, the Balance is one of your commanders, your deck may contain cards with any color or combination of colors in their color identity, regardless of who your other commander is.)"
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Mutagen tokens require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. The Mutagen token won't be created."
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "You can have two commanders if each one has \"Partner—Character select.\" You can't mix and match them with cards that have other partner abilities."
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Mutagen tokens are a kind of predefined token. Each one is a colorless artifact with the artifact subtype Mutagen and the ability \"{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery.\""
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have appropriate partner abilities as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "fdcb016e-36e7-46b3-9dff-20b9b9cc421d",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Wastes is not a land type. If something asks you to name a land type, you can't choose Wastes."
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "In Limited events (including Sealed Deck and Booster Draft), Wastes must be in your card pool to be included in your deck. You can't add Wastes to your card pool in the same way that you can add other basic lands."
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Because Wastes is a basic land, you can include as many of them as you like in your Constructed decks."
+    }
+  ]
+}

@@ -8089,6 +8089,23 @@
         "test_fixed_alternative_additional_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "tagged-partner-setup",
+      "patterns": [
+        "quorune/commander_pairing.py",
+        "quorune/compiler/commander_pairing_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "tests/test_tagged_partner.py",
+        "tests/fixtures/tagged-partner-cards.json"
+      ],
+      "test_modules": [
+        "test_tagged_partner",
+        "test_commander_pairing",
+        "test_commander_damage_identity",
+        "test_exact_keyword_families",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 500,
+  "registry_version": 501,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -49117,6 +49117,107 @@
       "dependency_fail_closed_rationale": "Canonical verified own/base withdrawal and undeclared attached-source runtime minimum reject closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh live attachment fact omissions forcing false or true fail actual paid equip/response witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "format.commander.pairing.tagged",
+      "version": 1,
+      "official_rules": [
+        "702.124a",
+        "702.124b",
+        "702.124c",
+        "702.124d",
+        "702.124f",
+        "702.124g",
+        "702.124i",
+        "903.3",
+        "903.4",
+        "903.5a",
+        "903.8"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Allow two distinct legendary commanders with the same closed pinned tagged-partner ability, through the existing canonical setup owner.",
+        "inputs": [
+          "two distinct legendary cards with current canonical typed game.setup declarations",
+          "one of four pinned CR702.124i tags on each declaration",
+          "shared trusted tagged-pairing capability with exactly one unambiguous ability variant"
+        ],
+        "outputs": [
+          "one accepted matching-tag two-commander designation",
+          "two independent physical commander identities using existing tax, color identity and damage owners"
+        ],
+        "exclusions": [
+          "mixed tags or other pairing variants",
+          "unknown or partial tags",
+          "keyword metadata without a canonical declaration",
+          "stale, copied, granted, changed or ambiguous setup declarations",
+          "unclosed remaining source abilities"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.commander_pairing.CommanderPairingKind",
+        "quorune.commander_pairing.tagged_partner_kinds_match",
+        "quorune.commander_pairing.commander_pairing_declaration",
+        "quorune.commander_pairing.validate_commander_pair",
+        "quorune.compiler.keyword_templates.keyword_mechanics",
+        "quorune.compiler.commander_pairing_nodes.commander_pairing_keyword_node"
+      ],
+      "positive_tests": [
+        "test_original_six_have_complete_normal_admission_and_exact_tag_spans",
+        "test_four_closed_tags_form_only_identical_distinct_legendary_pairs",
+        "test_real_six_form_native_hundred_card_pairs_and_reject_mixed_variants",
+        "test_current_canonical_tag_declaration_rejects_missing_ambiguous_and_stale_authority",
+        "test_native_command_zone_casts_keep_independent_tax_mana_purpose_and_private_replay",
+        "test_deck_size_and_combined_identity_use_both_designated_commanders",
+        "test_verified_withdrawal_and_fresh_match_omissions_fail_closed",
+        "test_tagged_commander_draw_activation_retains_both_identities_and_private_replay"
+      ],
+      "negative_tests": [
+        "test_original_six_have_complete_normal_admission_and_exact_tag_spans",
+        "test_four_closed_tags_form_only_identical_distinct_legendary_pairs",
+        "test_real_six_form_native_hundred_card_pairs_and_reject_mixed_variants",
+        "test_current_canonical_tag_declaration_rejects_missing_ambiguous_and_stale_authority",
+        "test_native_command_zone_casts_keep_independent_tax_mana_purpose_and_private_replay",
+        "test_deck_size_and_combined_identity_use_both_designated_commanders",
+        "test_verified_withdrawal_and_fresh_match_omissions_fail_closed",
+        "test_tagged_commander_draw_activation_retains_both_identities_and_private_replay"
+      ],
+      "interaction_tests": [
+        "test_real_six_form_native_hundred_card_pairs_and_reject_mixed_variants",
+        "test_native_command_zone_casts_keep_independent_tax_mana_purpose_and_private_replay",
+        "test_tagged_commander_draw_activation_retains_both_identities_and_private_replay"
+      ],
+      "multiplayer_tests": [
+        "test_real_six_form_native_hundred_card_pairs_and_reject_mixed_variants",
+        "test_native_command_zone_casts_keep_independent_tax_mana_purpose_and_private_replay",
+        "test_tagged_commander_draw_activation_retains_both_identities_and_private_replay"
+      ],
+      "privacy_tests": [
+        "test_native_command_zone_casts_keep_independent_tax_mana_purpose_and_private_replay",
+        "test_tagged_commander_draw_activation_retains_both_identities_and_private_replay"
+      ],
+      "replay_tests": [
+        "test_native_command_zone_casts_keep_independent_tax_mana_purpose_and_private_replay",
+        "test_tagged_commander_draw_activation_retains_both_identities_and_private_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The leaf has no downstream capability dependencies. Own verified withdrawal, canonical closure, declaration presence and exact tag variant are checked directly.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh matching-tag omission and always-accept mutations fail the full four-tag pairing compatibility witness.",
       "blockers": [],
       "status": "trusted"
     }

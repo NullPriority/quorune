@@ -19582,6 +19582,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Sphere adds its generic increase before the fixed target reduction. An actual Unsummon response moves the reducing source; the paid price remains locked and the surviving target still returns through ordinary resolution and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_tagged_commander_draw_activation_retains_both_identities_and_private_replay",
+      "piece_ids": [
+        "capability.format.commander.pairing.tagged",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.tagged",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "A canonically admitted same-tag commander performs its own fully paid draw activation through the private library-to-hand owner while retaining its physical designation and its paired commander identity; unauthorized activation, pending/final replay and four-player projection are checked."
     }
   ]
 }
