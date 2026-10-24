@@ -8210,6 +8210,22 @@
         "test_fixed_token_creation_effects",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "current-activation-target-view-equivalence",
+      "patterns": [
+        "quorune/card_programs/activation_target_equivalence.py",
+        "quorune/card_programs/activation_view_equivalence.py",
+        "tests/test_activation_target_view_equivalence.py",
+        "tests/fixtures/activation-target-view-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_target_view_equivalence",
+        "test_land_search_view_equivalence",
+        "test_activation_view_equivalence",
+        "test_shroud_targeting",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

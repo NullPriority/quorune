@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 from .current_view_equivalence import _catalog_preserves_cost,_same_current_source
 from .battlefield_search_equivalence import fixed_battlefield_search_results_equal
+from .activation_target_equivalence import reviewed_activation_with_equivalent_target
 
 
 def _predefined_token_results_equal(current,old):
@@ -37,14 +38,16 @@ def shadowed_reviewed_activation_view_keys(record,generated_programs,reviewed_pr
         if old.event!='activate' or not old.ability_id.startswith('ability:'):continue
         matches=[]
         for current in generated:
+            comparison=reviewed_activation_with_equivalent_target(current,old)
+            if comparison is None:continue
             if (current.key!=old.key or current.ability_id!=old.ability_id
-                    or not _same_current_source(record,current,old)
+                    or not _same_current_source(record,current,comparison)
                     or not str(current.provenance.get('authored_by','')).startswith('oracle-ir-v')
                     or current.provenance.get('source_oracle_hash')!=oracle_hash
                     or current.semantic_schema_version!=old.semantic_schema_version
                     or current.event_condition!=old.event_condition or current.trigger_limit!=old.trigger_limit
                     or current.requires_arbiter or current.capability_closure.get('blockers')!=[]
-                    or not _catalog_preserves_cost(current,old)
+                    or not _catalog_preserves_cost(current,comparison)
                     or not _results_equal(current,old)):continue
             if bind_semantic_program_runtime(current,capability_registry=capability_registry,profile=capability_profile)['strict']:
                 matches.append(current)

@@ -82,6 +82,15 @@ explicit tapped entry, mandatory shuffle, and every other result field remain
 compared. Foreign libraries, unknown fields, changed qualities, optional counts,
 and changed result flags do not establish equivalence.
 
+Single-creature activation targets may compare through
+`activation_target_equivalence.py` only for an explicit battlefield permanent
+target with cardinality one. The existing target codec compares legacy
+`creature` and `controller` aliases with their typed fields. Top-level and
+catalog target domains must agree on each view. A temporary comparison copy
+allows the unchanged full catalog-price proof to run; stored programs and
+execution descriptors remain unchanged. Additional predicates, optional or
+grouped targets, unknown fields and changed controller relations remain unequal.
+
 The legacy single-Treasure operation may compare with the current complete
 predefined Treasure template after the same source, price and strict capability
 proof. The existing token compiler owns that complete definition, including
