@@ -24,6 +24,8 @@ def effect_program_is_closed(program, *, recognizers, recursive_is_closed, compo
 
 
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
+    from .fixed_sacrifice_result_promotion import closed_fixed_sacrifice_spell_result
+    if closed_fixed_sacrifice_spell_result(program,recognizers=recognizers):return True
     from .nonmana_equip_nodes import is_closed_nonmana_equip_program
     if is_closed_nonmana_equip_program(program):return True
     from ..rules.temporary_cast_restrictions import temporary_cast_node_capabilities

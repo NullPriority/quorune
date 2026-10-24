@@ -166,6 +166,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/target_numeric.py",
         "quorune/prevention_triggers.py",
         "quorune/query_effect_amount_model.py",
+        "quorune/mana_spending_model.py",
         "quorune/scalar_effect_amount_model.py",
         "quorune/whole_hand_discard_model.py",
         "quorune/read_ahead.py",
@@ -759,6 +760,8 @@ def _owner(relative: str, layer: str) -> str:
         return "card_characteristics"
     if relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/cost_payments.py",
+        "quorune/mana_spending_model.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",
         "quorune/mana_provenance.py",

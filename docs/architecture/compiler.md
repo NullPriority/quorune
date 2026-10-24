@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Fixed sacrifice-price spell promotion validates the canonical typed price and
+its declared authority separately from the independently closed result. The
+composed producer prefix is checked against that price before testing the
+result through existing closed-effect owners. A strict capability binding alone
+does not promote unknown prices, malformed descriptors or unrepresented results.
+
 The static dispatcher removes a leading nonfunctional ability or flavor label
 before invoking its existing typed body owners. Declaration nodes keep the
 original labeled text and source span while parsing that complete material

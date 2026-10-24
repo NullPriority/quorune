@@ -111,6 +111,7 @@ def pay_mana_from_pool(
     requirements: Mapping[str, int],
     *,
     payment: Mapping[str, int] | None = None,
+    spending_policy: Any | None = None,
 ) -> tuple[dict[str, int], dict[str, int]]:
     """
     Validate and spend an ordinary mana requirement.
@@ -132,6 +133,9 @@ def pay_mana_from_pool(
             raise ValueError("Mana requirements cannot be negative")
     if req["GENERIC"] < 0:
         raise ValueError("Mana requirements cannot be negative")
+
+    if spending_policy is not None:
+        return spending_policy.pay(new_pool,req,payment)
 
     if payment is not None:
         spent = normalize_mana_bundle(payment)

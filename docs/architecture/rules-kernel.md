@@ -9,6 +9,17 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+`cost_payments.py` shares affordability and accepted manual/automatic mana
+payments. It delegates mana activation and provenance mutation to their existing
+owners. Live spending permissions come from the trusted action-permission
+collector and affect only cost matching: actual mana types, colors, snow and
+spending restrictions remain unchanged. The finite allocator in
+`mana_spending_model.py` assigns each actual unit once, distinguishes any color
+from any type, and preserves declared reserves. Creature-spell permissions use
+the existing typed spending-purpose context. Sources are rechecked after mana
+activations before the final spend; ordinary later sacrifice prices do not
+retroactively invalidate an already paid mana cost.
+
 Fuse is a hand-only casting method selected through the ordinary cast offer and
 proposal. It creates one spell with both halves' names, types, colors, and
 combined printed mana cost and mana value. Casting a single half retains that

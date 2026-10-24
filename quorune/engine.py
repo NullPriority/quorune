@@ -2394,100 +2394,8 @@ class CommanderEngine(
         spend_context: str | None = None,
         snow_required: int = 0,
     ) -> tuple[dict[str, int], list[dict[str, Any]]]:
-        activations: list[dict[str, Any]] = []
-        pay_mode = response.get("pay", "auto")
-        if pay_mode == "auto":
-            plan = auto_plan_payment(
-                requirements,
-                [
-                    source
-                    for source in self.available_mana_sources(
-                        seat,
-                        spend_context=spend_context,
-                    )
-                    if source.object_id not in (exclude_sources or set())
-                ],
-                allow_conditional=(
-                    bool(response.get("allow_conditional_mana", False))
-                    and not self.state.config.strict_mana
-                ),
-                reserve=normalize_mana_bundle(response.get("reserve")),
-                starting_pool=self._spendable_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-                snow_required=snow_required,
-                starting_snow_pool=self._snow_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-            )
-            activations = plan.activations
-            self._activate_mana_plan(
-                seat,
-                activations,
-                spend_context=spend_context,
-                payment_id=str(response.get("_mana_payment_id") or "") or None,
-                replacement_selections_by_event=(
-                    response.get("_mana_replacement_selections")
-                    if isinstance(
-                        response.get("_mana_replacement_selections"), Mapping
-                    )
-                    else None
-                ),
-            )
-            payment = plan.payment
-            snow_payment = plan.snow_payment
-        else:
-            activations = [dict(item) for item in response.get("mana") or []]
-            self._activate_mana_plan(
-                seat,
-                activations,
-                spend_context=spend_context,
-                payment_id=str(response.get("_mana_payment_id") or "") or None,
-                replacement_selections_by_event=(
-                    response.get("_mana_replacement_selections")
-                    if isinstance(
-                        response.get("_mana_replacement_selections"), Mapping
-                    )
-                    else None
-                ),
-            )
-            payment = normalize_mana_bundle(response.get("payment"))
-            snow_payment = normalize_mana_bundle(
-                response.get("snow_payment")
-            )
-        if sum(snow_payment.values()) != snow_required:
-            raise GameRuleError(
-                f"Mana payment requires exactly {snow_required} snow mana"
-            )
-        snow_pool = self._snow_mana_pool(seat, spend_context)
-        if any(
-            snow_payment[color] > snow_pool[color]
-            for color in "WUBRGC"
-        ):
-            raise GameRuleError("Declared snow mana is not available")
-        ordinary_pool = self._spendable_mana_pool(seat, spend_context)
-        for color in "WUBRGC":
-            ordinary_pool[color] -= snow_payment[color]
-        try:
-            _, spent = pay_mana_from_pool(
-                ordinary_pool,
-                requirements,
-                payment=payment,
-            )
-        except ValueError as exc:
-            raise GameRuleError(str(exc)) from exc
-        combined = normalize_mana_bundle(spent)
-        for color in "WUBRGC":
-            combined[color] += snow_payment[color]
-        self._apply_mana_spend(
-            seat,
-            combined,
-            spend_context,
-            snow_payment=snow_payment,
-        )
-        return combined, activations
+        from .cost_payments import pay_for_cost
+        return pay_for_cost(self,seat,requirements,response,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
 
     def _check_priority(self, seat: str) -> None:
         if self.state.priority_player != seat:
@@ -3046,42 +2954,8 @@ class CommanderEngine(
         spend_context: str | None = None,
         snow_required: int = 0,
     ) -> bool:
-        try:
-            sources = [
-                source
-                for source in self.available_mana_sources(
-                    seat,
-                    spend_context=spend_context,
-                )
-                if source.object_id not in (exclude_sources or set())
-            ]
-            auto_plan_payment(
-                {
-                    key: int(requirements.get(key, 0))
-                    for key in (
-                        "GENERIC",
-                        "W",
-                        "U",
-                        "B",
-                        "R",
-                        "G",
-                        "C",
-                    )
-                },
-                sources,
-                starting_pool=self._spendable_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-                snow_required=snow_required,
-                starting_snow_pool=self._snow_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-            )
-            return True
-        except ManaPlanError:
-            return False
+        from .cost_payments import cost_is_affordable
+        return cost_is_affordable(self,seat,requirements,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
 
 
     @staticmethod

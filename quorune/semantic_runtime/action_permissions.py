@@ -40,6 +40,9 @@ OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
 
 
 class ActionPermissionKind(StrEnum):
+    MANA_WHITE_AS_RED = 'mana_white_as_red'
+    MANA_ANY_COLOR = 'mana_any_color'
+    MANA_ANY_TYPE_CREATURE = 'mana_any_type_creature'
     PUBLIC_HAND = 'public_hand'
     OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
     OPENING_HAND_REVEAL = "opening_hand_reveal"
@@ -434,10 +437,12 @@ class ActionPermissionRegistry(
 def default_action_permission_registry() -> ActionPermissionRegistry:
     from .library_search_rules import LibrarySearchRuleHandler
     from .hand_visibility import StaticHandVisibilityHandler
+    from .mana_spending import mana_spending_handlers
     registry = ActionPermissionRegistry(
         (
             LibrarySearchRuleHandler(),
             StaticHandVisibilityHandler(),
+            *mana_spending_handlers(),
             OpeningHandBattlefieldPermissionHandler(),
             OpeningHandRevealPermissionHandler(),
             StaticActionPermissionHandler(

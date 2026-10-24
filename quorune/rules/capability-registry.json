@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 498,
+  "registry_version": 499,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5298,7 +5298,7 @@
     },
     {
       "id": "casting.additional_cost.fixed_sacrifice",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "601.2f",
         "601.2g",
@@ -5354,7 +5354,8 @@
         "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice",
         "quorune.replacement.replay.ReplacementContinuation",
         "CommanderEngine.move_card",
-        "quorune.replacement.replay._prior_casting_zone_cost_event_ids"
+        "quorune.replacement.replay._prior_casting_zone_cost_event_ids",
+        "quorune.compiler.fixed_sacrifice_result_promotion.closed_fixed_sacrifice_spell_result"
       ],
       "positive_tests": [
         "test_fixed_sacrifice_cost_compiles_source_spanned_v2_program",
@@ -5362,30 +5363,38 @@
         "test_fixed_zone_change_costs_compile_source_spanned_programs",
         "test_qualified_sacrifice_uses_pinned_subtype_predicate",
         "test_exact_counted_spell_price_keeps_cost_and_result_separate",
-        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays"
+        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
+        "test_fixed_sacrifice_promotion_keeps_price_and_result_obligations",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves"
       ],
       "negative_tests": [
         "test_fixed_sacrifice_cost_grammar_fails_closed",
         "test_offer_and_submission_share_effective_type_legality",
         "test_fixed_zone_change_cost_grammar_fails_closed",
         "test_random_variable_and_mixed_prices_remain_material",
-        "test_prior_counted_cast_journal_rejects_foreign_future_and_duplicate_identities"
+        "test_prior_counted_cast_journal_rejects_foreign_future_and_duplicate_identities",
+        "test_fixed_sacrifice_promotion_keeps_price_and_result_obligations",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves"
       ],
       "interaction_tests": [
         "test_sacrifice_is_not_destruction_and_uses_owner_graveyard",
         "test_zone_replacement_suspends_cost_before_mutation_and_replays",
-        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays"
+        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves"
       ],
       "multiplayer_tests": [
-        "test_zone_replacement_suspends_cost_before_mutation_and_replays"
+        "test_zone_replacement_suspends_cost_before_mutation_and_replays",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves"
       ],
       "privacy_tests": [
-        "test_zone_replacement_suspends_cost_before_mutation_and_replays"
+        "test_zone_replacement_suspends_cost_before_mutation_and_replays",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves"
       ],
       "replay_tests": [
         "test_fixed_sacrifice_cost_commits_and_replays",
         "test_zone_replacement_suspends_cost_before_mutation_and_replays",
-        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays"
+        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves"
       ],
       "required_evidence": [
         "positive",
@@ -48898,6 +48907,122 @@
       "dependency_fail_closed_rationale": "Leaf hand-visibility authority; own verified withdrawal and undeclared runtime minimum reject closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual grant omission, opponent-scope widening and current-ability applicability-bypass mutants fail native Wandering Eye/Telepathy witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "mana.spending.as_though",
+      "version": 1,
+      "official_rules": [
+        "106.1a",
+        "106.1b",
+        "107.4b",
+        "107.4c",
+        "107.4h",
+        "118.14",
+        "609.4",
+        "609.4b",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Apply current controller static as-though spending only to exact cost matching, preserving actual mana and provenance.",
+        "inputs": [
+          "closed white-as-red/any-color/creature-spell-any-type permission",
+          "trusted current battlefield source/controller/face/ability",
+          "actual spendable and snow pools",
+          "typed spell/ability payment context",
+          "declared actual payment or deterministic source plan"
+        ],
+        "outputs": [
+          "shared payable offers and accepted manual/automatic payments",
+          "one-use actual-unit allocation with reserves",
+          "unchanged actual spent-color/type/snow/restriction receipts"
+        ],
+        "exclusions": [
+          "resource conversion",
+          "arbitrary mana-type substitutions",
+          "conditional/chosen/temporary spending grammar",
+          "client-authored spending modes",
+          "unrepresented siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.mana_spending_model.ManaSpendingPolicy",
+        "quorune.semantic_runtime.mana_spending.current_mana_spending_policy",
+        "quorune.compiler.action_permission_templates.static_action_permission_handler",
+        "quorune.cost_payments.pay_for_cost",
+        "quorune.cost_payments.cost_is_affordable",
+        "quorune.mana.auto_plan_payment",
+        "quorune.util.pay_mana_from_pool"
+      ],
+      "positive_tests": [
+        "test_directed_modes_exact_actual_units_and_closed_inputs",
+        "test_bounded_matching_agrees_with_independent_unit_assignment",
+        "test_planner_reserves_and_snow_do_not_change_type_provenance",
+        "test_originals_admit_all_printed_components_and_reject_undeclared_minimum",
+        "test_real_sunglasses_manual_activation_and_adamant_keep_actual_white",
+        "test_real_orrery_colorless_mana_converge_explicit_colorless_and_draw",
+        "test_real_vizier_top_creature_colorless_cost_purpose_snow_and_loss",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves",
+        "test_real_restricted_mana_does_not_become_unrestricted"
+      ],
+      "negative_tests": [
+        "test_directed_modes_exact_actual_units_and_closed_inputs",
+        "test_bounded_matching_agrees_with_independent_unit_assignment",
+        "test_planner_reserves_and_snow_do_not_change_type_provenance",
+        "test_originals_admit_all_printed_components_and_reject_undeclared_minimum",
+        "test_real_sunglasses_manual_activation_and_adamant_keep_actual_white",
+        "test_real_orrery_colorless_mana_converge_explicit_colorless_and_draw",
+        "test_real_vizier_top_creature_colorless_cost_purpose_snow_and_loss",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves",
+        "test_real_restricted_mana_does_not_become_unrestricted"
+      ],
+      "interaction_tests": [
+        "test_real_sunglasses_manual_activation_and_adamant_keep_actual_white",
+        "test_real_orrery_colorless_mana_converge_explicit_colorless_and_draw",
+        "test_real_vizier_top_creature_colorless_cost_purpose_snow_and_loss",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves",
+        "test_real_restricted_mana_does_not_become_unrestricted"
+      ],
+      "multiplayer_tests": [
+        "test_real_sunglasses_manual_activation_and_adamant_keep_actual_white",
+        "test_real_orrery_colorless_mana_converge_explicit_colorless_and_draw",
+        "test_real_vizier_top_creature_colorless_cost_purpose_snow_and_loss",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves",
+        "test_real_restricted_mana_does_not_become_unrestricted"
+      ],
+      "privacy_tests": [
+        "test_real_sunglasses_manual_activation_and_adamant_keep_actual_white",
+        "test_real_orrery_colorless_mana_converge_explicit_colorless_and_draw",
+        "test_real_vizier_top_creature_colorless_cost_purpose_snow_and_loss",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves",
+        "test_real_restricted_mana_does_not_become_unrestricted"
+      ],
+      "replay_tests": [
+        "test_real_sunglasses_manual_activation_and_adamant_keep_actual_white",
+        "test_real_orrery_colorless_mana_converge_explicit_colorless_and_draw",
+        "test_real_vizier_top_creature_colorless_cost_purpose_snow_and_loss",
+        "test_real_sacrifice_price_spends_before_permission_source_leaves",
+        "test_real_restricted_mana_does_not_become_unrestricted"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Leaf spending primitive; verified own withdrawal and undeclared runtime minimum reject closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh shared spending-policy omission and creature-purpose widening fail actual Sunglasses/Vizier witnesses.",
       "blockers": [],
       "status": "trusted"
     }

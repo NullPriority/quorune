@@ -4086,6 +4086,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/fixed_sacrifice_result_promotion.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/fixed_self_entry_counter_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7398,6 +7413,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/cost_payments.py",
+      "layer": "rules",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/counter_doubling.py",
       "layer": "rules",
       "owning_subsystem": "counter_placement",
@@ -9502,6 +9531,18 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/mana_spending_model.py",
+      "layer": "domain",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -17309,6 +17350,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/mana_spending.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/maximum_hand_size.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -19491,5 +19547,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "9d1dd431e36869715567e7dbc271640697faf418919f43287d2dad078b54826d"
+  "fingerprint": "78861d3fd82bfeeddf678521591bc54b552af690c237e8cdad9b5804e9e66440"
 }

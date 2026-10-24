@@ -157,6 +157,7 @@
       "test_source_fixed_protection",
       "test_source_keyword_choices",
       "test_source_protection_choices",
+      "test_static_mana_spending",
       "test_subtype_union_conditions",
       "test_targeted_exile_effect_clauses",
       "test_temporary_keyword_removal",
