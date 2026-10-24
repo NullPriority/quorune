@@ -211,6 +211,7 @@
     "tests/fixtures/multikicker-entry-counter-cards.json",
     "tests/fixtures/multikicker-result-cards.json",
     "tests/fixtures/multisentence-effect-cards.json",
+    "tests/fixtures/myrel-composition-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
     "tests/fixtures/noncreature-subtype-targets.json",
     "tests/fixtures/nonmana-buyback-cost-cards.json",

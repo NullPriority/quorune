@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 496,
+  "registry_version": 497,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13814,7 +13814,7 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 15,
+      "version": 16,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -13905,7 +13905,10 @@
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
-        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
       ],
       "negative_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13926,7 +13929,10 @@
         "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
         "test_verified_owner_withdrawals_reject_combined_group_results",
         "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
-        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
       ],
       "interaction_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13947,7 +13953,9 @@
         "test_zero_query_amount_and_stale_target_use_existing_target_owner",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
       ],
       "multiplayer_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13959,7 +13967,9 @@
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
       ],
       "privacy_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13970,7 +13980,9 @@
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
       ],
       "replay_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -13984,7 +13996,9 @@
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup"
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
       ],
       "required_evidence": [
         "positive",
@@ -44373,7 +44387,7 @@
     },
     {
       "id": "actions.restriction.static_player",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "101.2",
         "109.2",
@@ -44456,7 +44470,9 @@
         "test_five_originals_have_complete_native_programs_and_independent_minimum",
         "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
         "test_drannith_command_and_exile_permissions_recheck_source_departure",
-        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn",
+        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
+        "test_real_myrel_cast_prohibits_battlefield_types_and_keeps_other_zones_and_land_mana"
       ],
       "negative_tests": [
         "test_closed_player_restriction_wire_preserves_actor_and_source_turn_roles",
@@ -44472,7 +44488,9 @@
         "test_canonically_verified_player_restriction_withdrawal_blocks_all_originals",
         "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
         "test_drannith_command_and_exile_permissions_recheck_source_departure",
-        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn",
+        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
+        "test_real_myrel_cast_prohibits_battlefield_types_and_keeps_other_zones_and_land_mana"
       ],
       "interaction_tests": [
         "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
@@ -44483,7 +44501,8 @@
         "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
         "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
         "test_drannith_command_and_exile_permissions_recheck_source_departure",
-        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn",
+        "test_real_myrel_cast_prohibits_battlefield_types_and_keeps_other_zones_and_land_mana"
       ],
       "multiplayer_tests": [
         "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
@@ -44494,7 +44513,8 @@
         "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
         "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
         "test_drannith_command_and_exile_permissions_recheck_source_departure",
-        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn",
+        "test_real_myrel_cast_prohibits_battlefield_types_and_keeps_other_zones_and_land_mana"
       ],
       "privacy_tests": [
         "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
@@ -44505,7 +44525,8 @@
         "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
         "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
         "test_drannith_command_and_exile_permissions_recheck_source_departure",
-        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn",
+        "test_real_myrel_cast_prohibits_battlefield_types_and_keeps_other_zones_and_land_mana"
       ],
       "replay_tests": [
         "test_actual_dosan_cast_restricts_each_actor_turn_but_keeps_mana_abilities",
@@ -44516,7 +44537,8 @@
         "test_actual_drannith_cast_blocks_opponent_nonhand_methods_and_keeps_hand_casts",
         "test_player_restrictions_bind_auto_mana_sources_and_stale_payment_plans",
         "test_drannith_command_and_exile_permissions_recheck_source_departure",
-        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn"
+        "test_canonist_counts_countered_nonartifact_casts_and_resets_on_next_turn",
+        "test_real_myrel_cast_prohibits_battlefield_types_and_keeps_other_zones_and_land_mana"
       ]
     },
     {
