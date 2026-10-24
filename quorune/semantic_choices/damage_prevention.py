@@ -132,6 +132,11 @@ class ChooseDamageSourceHandler:
             raise SemanticChoiceError(
                 "A chosen source must continue into a prevention shield"
             )
+        from ..designation_prevention import unavailable_designation
+        if unavailable_designation(effect.get('source_predicate')):
+            return SemanticChoicePreparation(request=None,
+                continuation_effect=FrozenMap({**effect,'_legal_refs':[]}),
+                auto_continue=AutoContinue(reason='No source entry designation was made'))
         predicate = _source_predicate(effect)
         from ..attached_prevention_model import BOUND_SUBJECT_VERSION, validate_bound_prevention_version
         if BOUND_SUBJECT_VERSION in shield:

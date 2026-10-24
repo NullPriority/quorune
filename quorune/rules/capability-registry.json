@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 493,
+  "registry_version": 494,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -48477,6 +48477,118 @@
       "dependency_fail_closed_rationale": "Verified withdrawal of the actual base shield and attachment-information producers blocks the whole original.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh owner-level move/departure fails without capture; fresh actual missing-recipient resolution fails if the creation guard falls back to controller.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "damage.prevention.source_entry_designation",
+      "version": 1,
+      "official_rules": [
+        "105.1",
+        "113.7a",
+        "205.3m",
+        "400.7",
+        "607.1",
+        "607.2d",
+        "608.2h",
+        "609.7a",
+        "609.7b",
+        "615.8",
+        "615.9",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Bind a plain single retained entry color or creature-type designation to an existing chosen-damage-source predicate, with server-captured incarnation information.",
+        "inputs": [
+          "closed version-one designation predicate",
+          "matching server-captured source object and incarnation",
+          "validated plain retained entry designation or explicit absence"
+        ],
+        "outputs": [
+          "canonical literal chosen-source color predicate or one next-matching-creature scope",
+          "explicit no-effect result when no designation exists",
+          "existing source identity and damage-time property matching"
+        ],
+        "exclusions": [
+          "ambiguous same-kind linked declarations",
+          "client-provided designation values",
+          "unknown captured versions or foreign source identities",
+          "independently linked granted declarations"
+        ]
+      },
+      "dependencies": [
+        "damage.prevention.persistent_amount",
+        "zone.entry.public_designation"
+      ],
+      "implementation_components": [
+        "quorune.designation_prevention.designation_predicate_kind",
+        "quorune.designation_prevention.capture_designation_information",
+        "quorune.designation_prevention.resolve_designation_predicate",
+        "quorune.compiler.prevention_templates._chosen_source_next_instance"
+      ],
+      "positive_tests": [
+        "test_originals_admit_and_require_actual_designation_predicate_producer",
+        "test_closed_information_distinguishes_missing_choice_from_missing_or_foreign_capture",
+        "test_real_story_circle_entry_choice_and_paid_source_choice_prevent_only_matching_source",
+        "test_real_solace_chosen_type_uses_creature_source_and_foreign_principal_correctly",
+        "test_real_story_circle_reentry_choice_cannot_replace_old_activation_designation",
+        "test_real_no_entry_choice_pays_cost_without_creating_wildcard_or_source_prompt",
+        "test_real_prismatic_cumulative_upkeep_and_retained_color_remain_separate"
+      ],
+      "negative_tests": [
+        "test_originals_admit_and_require_actual_designation_predicate_producer",
+        "test_closed_information_distinguishes_missing_choice_from_missing_or_foreign_capture",
+        "test_real_story_circle_entry_choice_and_paid_source_choice_prevent_only_matching_source",
+        "test_real_solace_chosen_type_uses_creature_source_and_foreign_principal_correctly",
+        "test_real_story_circle_reentry_choice_cannot_replace_old_activation_designation",
+        "test_real_no_entry_choice_pays_cost_without_creating_wildcard_or_source_prompt",
+        "test_real_prismatic_cumulative_upkeep_and_retained_color_remain_separate"
+      ],
+      "interaction_tests": [
+        "test_real_story_circle_entry_choice_and_paid_source_choice_prevent_only_matching_source",
+        "test_real_solace_chosen_type_uses_creature_source_and_foreign_principal_correctly",
+        "test_real_story_circle_reentry_choice_cannot_replace_old_activation_designation",
+        "test_real_no_entry_choice_pays_cost_without_creating_wildcard_or_source_prompt",
+        "test_real_prismatic_cumulative_upkeep_and_retained_color_remain_separate"
+      ],
+      "multiplayer_tests": [
+        "test_real_story_circle_entry_choice_and_paid_source_choice_prevent_only_matching_source",
+        "test_real_solace_chosen_type_uses_creature_source_and_foreign_principal_correctly",
+        "test_real_story_circle_reentry_choice_cannot_replace_old_activation_designation",
+        "test_real_no_entry_choice_pays_cost_without_creating_wildcard_or_source_prompt",
+        "test_real_prismatic_cumulative_upkeep_and_retained_color_remain_separate"
+      ],
+      "privacy_tests": [
+        "test_real_story_circle_entry_choice_and_paid_source_choice_prevent_only_matching_source",
+        "test_real_solace_chosen_type_uses_creature_source_and_foreign_principal_correctly",
+        "test_real_story_circle_reentry_choice_cannot_replace_old_activation_designation",
+        "test_real_no_entry_choice_pays_cost_without_creating_wildcard_or_source_prompt",
+        "test_real_prismatic_cumulative_upkeep_and_retained_color_remain_separate"
+      ],
+      "replay_tests": [
+        "test_real_story_circle_entry_choice_and_paid_source_choice_prevent_only_matching_source",
+        "test_real_solace_chosen_type_uses_creature_source_and_foreign_principal_correctly",
+        "test_real_story_circle_reentry_choice_cannot_replace_old_activation_designation",
+        "test_real_no_entry_choice_pays_cost_without_creating_wildcard_or_source_prompt",
+        "test_real_prismatic_cumulative_upkeep_and_retained_color_remain_separate"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal of the actual entry-designation or base shield producer rejects the whole original; payload-derived own minimum cannot be omitted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual Story Circle cast/entry/activation fails when a wrong captured choice or wildcard predicate substitutes for its chosen color.",
       "blockers": [],
       "status": "trusted"
     }

@@ -79,6 +79,14 @@ shield and no source-choice prompt, rather than an implicit controller shield.
 Created shields pin their resolved recipient independently of later attachment
 changes. Older unmarked prevention instructions retain their existing defaults.
 
+Plain retained entry colors and creature types can parameterize a version-one
+prevention predicate. Server capture binds the value to the activating source
+incarnation before costs, so reentry with a new choice cannot alter an old
+activation. Color Circles choose one eligible damage source; the chosen-type
+scope instead creates one next-instance shield for any matching creature.
+An absent choice resolves to no effect, never an unqualified predicate. Literal
+predicates keep their existing encoding and damage-time property checks.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial

@@ -89,6 +89,7 @@
       "test_defender_rules",
       "test_delayed_triggers",
       "test_delivery_interaction_boundaries",
+      "test_designation_prevention",
       "test_draw_continuation",
       "test_draw_transaction_model",
       "test_end_of_combat_rules",

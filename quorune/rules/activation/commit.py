@@ -792,6 +792,8 @@ def _commit_activation_costs_and_stack(
     from ...transmute import capture_transmute_discard
     transmute_context = capture_transmute_discard(host, program, source)
     attachment_snapshot = _source_attachment_snapshot(host, source, program)
+    from ...designation_prevention import capture_designation_information, DESIGNATION_INFORMATION_FIELD
+    designation_information=capture_designation_information(source,program.effects) if program is not None else None
     if not ability.mana_ability:
         clear_mana_undo_stack(host.state.players[proposal.seat].stats)
     from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
@@ -821,6 +823,8 @@ def _commit_activation_costs_and_stack(
     from ...attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
     if attachment_snapshot is not None and program is not None and attachment_information_capabilities(program.effects):
         source_activation_context={**(source_activation_context or {}),ATTACHMENT_INFORMATION_VERSION:1}
+    if designation_information is not None:
+        source_activation_context={**(source_activation_context or {}),DESIGNATION_INFORMATION_FIELD:designation_information}
     if ability.mana_ability:
         complete_mana_activation(
             host,

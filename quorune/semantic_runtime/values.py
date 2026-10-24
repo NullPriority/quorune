@@ -87,8 +87,12 @@ def _resolve_attachment_reference(
     return target.ref
 
 
-def _resolve_typed_numeric_amount(host, value, item):
-    """Delegate numeric value families without changing their error boundary."""
+def _resolve_typed_semantic_value(host, value, item):
+    """Delegate typed amounts and public predicates to their narrow owners."""
+    if value['kind'] in {'source_entry_designation_predicate','source_entry_designation_scope'}:
+        from ..designation_prevention import resolve_designation_predicate
+        try:return resolve_designation_predicate(value,item)
+        except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value['kind'] == 'selected_target_count':
         from ..target_cardinality import resolve_selected_target_count
         try:return resolve_selected_target_count(value, item)
@@ -102,7 +106,7 @@ def _resolve_typed_numeric_amount(host, value, item):
             return resolve_scalar_effect_amount(host, value, item)
     except PublicQueryAmountError as exc:
         raise SemanticNodeError(str(exc)) from exc
-    raise SemanticNodeError('Typed numeric value kind is unsupported')
+    raise SemanticNodeError('Typed semantic value kind is unsupported')
 
 
 def _resolve_effect_mapping(host, value, item):
@@ -162,8 +166,8 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'selected_target_count'):
-        return _resolve_typed_numeric_amount(host, value, item)
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
+        return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)
     if not isinstance(value, str) or not value.startswith("$"):

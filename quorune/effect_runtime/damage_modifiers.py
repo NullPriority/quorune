@@ -406,6 +406,8 @@ def _apply_create_damage_prevention_shield(
 ) -> str | list[str]:
     del operation
     try:
+        from ..designation_prevention import unavailable_designation
+        if unavailable_designation(effect.get('scope')):return []
         if _bound_prevention_subject_is_unavailable(host,effect,actor=actor):return []
         mode = PreventionMode(str(effect.get("mode") or "amount"))
         duration = DamageModifierDuration(

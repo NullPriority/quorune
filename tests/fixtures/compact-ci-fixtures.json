@@ -91,6 +91,7 @@
     "tests/fixtures/defender-declaration-numeric-cards.json",
     "tests/fixtures/defender-permission-cards.json",
     "tests/fixtures/delivery-interaction-boundary-cards.json",
+    "tests/fixtures/designation-prevention-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",
     "tests/fixtures/devour-cards.json",
     "tests/fixtures/draw-rules-cards.json",

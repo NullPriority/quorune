@@ -133,13 +133,17 @@ def _trigger_attachment_context(
     source: CardInstance,
     program: SemanticProgram,
 ) -> dict[str, Any]:
+    from .designation_prevention import capture_designation_information, DESIGNATION_INFORMATION_FIELD
+    designation=capture_designation_information(source,program.effects)
+    extra={DESIGNATION_INFORMATION_FIELD:designation} if designation is not None else {}
     snapshot = _trigger_attachment_snapshot(host, source, program)
     if snapshot is None:
-        return {"source_logical_object_id": source.logical_object_id}
+        return {"source_logical_object_id": source.logical_object_id,**extra}
     return {
         "source_logical_object_id": snapshot.source.logical_object_id,
         "source_attachment_snapshot": snapshot.to_dict(),
         **_versioned_attachment_information(program),
+        **extra,
     }
 
 

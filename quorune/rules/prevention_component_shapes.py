@@ -10,6 +10,20 @@ from .permanent_predicate_capability_shapes import direct_permanent_target_schem
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
     if 'cr-615-prevention-effects' not in set(mechanic_ids) or len(effects)!=1:return ()
     effect=effects[0]
+    from ..designation_prevention import DESIGNATION_PREDICATE_KIND, DESIGNATION_SCOPE_KIND, designation_predicate_dependencies
+    if isinstance(effect,Mapping) and effect.get('op')=='create_damage_prevention_shield' and isinstance(effect.get('scope'),Mapping) and effect['scope'].get('kind')==DESIGNATION_SCOPE_KIND:
+        try:own=designation_predicate_dependencies(effect['scope'])
+        except (ValueError,TypeError):return ()
+        if (set(effect)!={'op','source','subject','mode','duration','scope'} or target_schema is not None
+                or effect.get('source')!='$source' or effect.get('subject')!='$controller'
+                or effect.get('mode')!='next_instance' or effect.get('duration')!='until_end_of_turn'):return ()
+        return ('damage.prevention.persistent_amount','zone.entry.public_designation',*own)
+    if isinstance(effect,Mapping) and effect.get('op')=='choose_damage_source' and isinstance(effect.get('source_predicate'),Mapping) and effect['source_predicate'].get('kind')==DESIGNATION_PREDICATE_KIND:
+        try:own=designation_predicate_dependencies(effect['source_predicate'])
+        except (ValueError,TypeError):return ()
+        if (set(effect)!={'op','prompt','source_predicate','shield'} or target_schema is not None
+                or effect['shield']!={'op':'create_damage_prevention_shield','source':'$source','subject':'$controller','mode':'next_instance','duration':'until_end_of_turn'}):return ()
+        return ('damage.prevention.persistent_amount','zone.entry.public_designation',*own)
     from ..attached_prevention_model import attached_prevention_dependencies
     attached=effect.get('shield') if isinstance(effect,Mapping) and effect.get('op')=='choose_damage_source' else effect
     try:attachment_dependencies=attached_prevention_dependencies(attached)

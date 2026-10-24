@@ -234,6 +234,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     ) or relative in {
         "quorune/activation_mana_cost.py",
         "quorune/target_controller_information.py",
+        "quorune/designation_prevention.py",
         "quorune/attached_prevention_model.py",
         "quorune/attachment_information.py",
         "quorune/activation_x.py",
@@ -457,6 +458,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative=="quorune/designation_prevention.py":return "damage"
     if relative=="quorune/attached_prevention_model.py":return "damage"
     if relative=="quorune/attachment_information.py":return "attachments"
     if relative=='quorune/kicked_target_model.py':return 'search_target_and_choice'

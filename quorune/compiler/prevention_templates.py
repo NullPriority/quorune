@@ -177,6 +177,23 @@ def _chosen_source_effect(
 def _chosen_source_next_instance(
     normalized: str,
 ) -> PreventionTemplate | None:
+    designation=re.fullmatch(r'the next time (?P<source>a source of your choice of the chosen color|a creature of the chosen type) '
+        r'would deal damage to you this turn, prevent that damage\.?',normalized,re.I)
+    if designation is not None:
+        from ..designation_prevention import DESIGNATION_PREDICATE_KIND, DESIGNATION_SCOPE_KIND
+        kind='color' if 'color' in designation['source'].casefold() else 'creature_type'
+        if kind=='creature_type':
+            return ('damage-prevention-entry-type-scope-v1',({
+                'op':'create_damage_prevention_shield','source':'$source','subject':'$controller',
+                'mode':'next_instance','duration':'until_end_of_turn',
+                'scope':{'kind':DESIGNATION_SCOPE_KIND,'schema_version':1,'designation':kind},
+            },),None,_rules(None))
+        return ('damage-prevention-entry-designation-source-v1',({
+            'op':'choose_damage_source','prompt':'Choose the source whose damage will be prevented.',
+            'source_predicate':{'kind':DESIGNATION_PREDICATE_KIND,'schema_version':1,'designation':kind},
+            'shield':{'op':'create_damage_prevention_shield','source':'$source','subject':'$controller',
+                'mode':'next_instance','duration':'until_end_of_turn'},
+        },),None,_rules(None))
     match = re.fullmatch(
         rf"the next time an? (?:(?P<qualifier>{_SOURCE_QUALIFIER_PATTERN}) )?"
         r"source of your choice would deal damage"

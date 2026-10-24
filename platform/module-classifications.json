@@ -8044,6 +8044,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/designation_prevention.py",
+      "layer": "rules",
+      "owning_subsystem": "damage",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/destruction.py",
       "layer": "rules",
       "owning_subsystem": "destruction",
@@ -19462,5 +19476,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "201a7e61d6a5ea6eeca1e260909edceec34993f23d6676198f2ac2722f8913fa"
+  "fingerprint": "d79990b7ae36f1108606073191ac61baddc42cd7597cbe2718861a755738fd35"
 }
