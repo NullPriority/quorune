@@ -14,6 +14,7 @@ from ..entry_counter_model import (
     PAID_COLOR_ENTRY_CAPABILITY,
 )
 from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
+from ..characteristic_fragments import characteristic_quantity_capabilities
 from ..keyword_counters import (keyword_counter_mechanic, KeywordCounterError,
     FIXED_KEYWORD_COUNTER_CHOICE_CAPABILITY, KeywordCounterEntryChoiceSpec)
 from ..rules.source_references import (
@@ -22,7 +23,7 @@ from ..rules.source_references import (
 )
 from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
-from .query_characteristic_templates import query_characteristic_quantity
+from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
 
 
 FIXED_SELF_ENTRY_COUNTER_CAPABILITY = "counter.producer.fixed_self_entry"
@@ -33,7 +34,7 @@ _ENTRY = re.compile(
     rf"^(?P<subject>.+?) enters with "
     rf"(?P<count>an|{FIXED_COUNT_PATTERN}) "
     rf"(?P<counter>{FIXED_COUNTER_NAME_PATTERN}) "
-    r"(?P<plural>counter|counters) on it\.?$",
+    r"(?P<plural>counter|counters) on (?:it|him|her)\.?$",
     re.IGNORECASE,
 )
 _DYNAMIC_ENTRY = re.compile(
@@ -187,6 +188,7 @@ def _dynamic_compiled(
         },
         (
             DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,
+            *characteristic_quantity_capabilities(amount_spec.quantity),
             *((PAID_COLOR_ENTRY_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY) if amount_spec.mana_color is not None else ()),
             *(
                 ("casting.lifecycle.fixed_zone_cast",)
@@ -209,7 +211,7 @@ def _x_dynamic_amount_body(
 ) -> tuple[str, DynamicEntryCounterAmountSpec] | None:
     x_match = re.fullmatch(
         rf"(?P<twice>twice )?X (?P<counter>{FIXED_COUNTER_NAME_PATTERN}) "
-        r"counters on it(?:, where X is (?P<definition>.+))?",
+        r"counters on (?:it|him|her)(?:, where X is (?P<definition>.+))?",
         body,
         re.IGNORECASE,
     )
@@ -224,17 +226,9 @@ def _x_dynamic_amount_body(
             elif normalized in {"the amount of life you've gained this turn", "the amount of life you gained this turn"}:
                 value_source = DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED
             else:
-                query_match = re.fullmatch(
-                    r"the number of (?P<quantity>.+)",
+                quantity = query_characteristic_value(
                     definition,
-                    re.IGNORECASE,
-                )
-                if query_match is None:
-                    return None
-                quantity = query_characteristic_quantity(
-                    query_match.group("quantity"),
                     source_name=source_name,
-                    definition_extensions=True,
                 )
                 if quantity is None:
                     return None

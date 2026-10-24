@@ -119,8 +119,8 @@ class DynamicEntryCounterAmountSpec:
                     CharacteristicQuantityScope.ALL_ZONES,
                 }
                 or quantity.query is None
-                or quantity.query.zones
-                not in {("battlefield",), ("graveyard",)}
+                or (quantity.schema_version != 5 and quantity.query.zones
+                    not in {("battlefield",), ("graveyard",)})
             ):
                 raise EntryCounterError(
                     "Dynamic entry counter queries require the cycle-safe "

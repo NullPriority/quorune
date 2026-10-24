@@ -39,6 +39,14 @@ incarnation; resumption neither repeats the prefix nor recounts changed zones.
 Source-counter last-known quantities, distributed results and independently
 unsupported costs or linked riders remain outside this query family.
 
+Source-self entry counters accept complete closed public value definitions,
+including graveyard mana-value totals and explicit hand or library cardinalities.
+The prospective entry reads its value before the zone transition commits: a
+card entering directly from hand still contributes to a hand count. The counter
+request then freezes that value. Compiler-bound self recipients include `it`,
+`him` and `her` after the entering subject has been validated as the source.
+Nested quantities retain their own producer capability requirements.
+
 Represented Multikicker entry counters read the immutable paid count of the
 linked printed instance from the resolving spell. The prospective entry
 snapshot seals that count, including copied casting decisions, before the

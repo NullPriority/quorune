@@ -91,6 +91,7 @@
       "test_draw_continuation",
       "test_draw_transaction_model",
       "test_end_of_combat_rules",
+      "test_entry_value_consumers",
       "test_exact_deck_interactions",
       "test_fixed_affected_player_sacrifices",
       "test_fixed_counter_additional_costs",

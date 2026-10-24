@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 490,
+  "registry_version": 491,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -10950,7 +10950,7 @@
     },
     {
       "id": "counter.producer.fixed_self_entry",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "122.1",
         "122.1a",
@@ -11011,7 +11011,10 @@
         "test_compound_tapped_entry_counters_form_one_complete_replacement",
         "test_fixed_self_entry_component_uses_the_shared_presence_marker",
         "test_fixed_self_entry_counter_grammar_is_closed",
-        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_real_hulk_fixed_him_entry_preserves_gamma_upkeep_doubling"
       ],
       "negative_tests": [
         "test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed",
@@ -11019,29 +11022,36 @@
         "test_fixed_self_entry_runtime_mutation_is_killed",
         "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
         "test_stale_fixed_self_entry_aborts_without_card_mutation",
-        "test_unsupported_fixed_self_entry_forms_and_dependency_fail_closed"
+        "test_unsupported_fixed_self_entry_forms_and_dependency_fail_closed",
+        "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_real_hulk_fixed_him_entry_preserves_gamma_upkeep_doubling"
       ],
       "interaction_tests": [
         "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
         "test_actual_source_only_ability_removal_is_not_copied",
         "test_fixed_self_entry_keyword_counter_uses_shared_characteristics",
         "test_fixed_self_entry_uses_quantity_replacement",
-        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_real_hulk_fixed_him_entry_preserves_gamma_upkeep_doubling"
       ],
       "multiplayer_tests": [
         "test_four_player_fixed_self_entry_is_private_and_replays_exactly",
-        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_real_hulk_fixed_him_entry_preserves_gamma_upkeep_doubling"
       ],
       "privacy_tests": [
         "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
         "test_four_player_fixed_self_entry_is_private_and_replays_exactly",
-        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_real_hulk_fixed_him_entry_preserves_gamma_upkeep_doubling"
       ],
       "replay_tests": [
         "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
         "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
         "test_four_player_fixed_self_entry_is_private_and_replays_exactly",
-        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_real_hulk_fixed_him_entry_preserves_gamma_upkeep_doubling"
       ],
       "required_evidence": [
         "positive",
@@ -11181,7 +11191,7 @@
     },
     {
       "id": "counter.producer.dynamic_self_entry",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "107.3m",
         "122.6",
@@ -11263,7 +11273,13 @@
         "test_escaped_counter_grammar_and_boundaries_are_source_spanned",
         "test_history_entry_grammar_has_exact_value_sources_and_spans",
         "test_permanent_spell_characteristic_change_carries_through_entry",
-        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+        "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
       ],
       "negative_tests": [
         "test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
@@ -11276,7 +11292,13 @@
         "test_escaped_fact_distinguishes_actual_method_origin_and_spell_copies",
         "test_missing_departure_history_mutant_is_killed_by_actual_revolt_cast",
         "test_new_history_amounts_reject_missing_or_stale_journal_before_entry",
-        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"
+        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+        "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
       ],
       "interaction_tests": [
         "test_actual_history_entry_quantity_replacement_adds_once_and_replays",
@@ -11294,7 +11316,11 @@
         "test_dynamic_x_and_query_amounts_use_frozen_preentry_state",
         "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
         "test_original_avatar_and_sentinels_use_other_current_counter_creatures",
-        "test_permanent_spell_characteristic_change_carries_through_entry"
+        "test_permanent_spell_characteristic_change_carries_through_entry",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
       ],
       "multiplayer_tests": [
         "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
@@ -11302,13 +11328,21 @@
         "test_controller_death_amount_uses_committed_death_not_replaced_departure",
         "test_dynamic_entry_replacement_choice_is_private_and_replays",
         "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
-        "test_original_avatar_and_sentinels_use_other_current_counter_creatures"
+        "test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
       ],
       "privacy_tests": [
         "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
         "test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
         "test_dynamic_entry_replacement_choice_is_private_and_replays",
-        "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount"
+        "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
       ],
       "replay_tests": [
         "test_actual_history_entry_quantity_replacement_adds_once_and_replays",
@@ -11318,7 +11352,11 @@
         "test_actual_wurm_entry_counts_life_gained_independently_of_later_payment",
         "test_dynamic_entry_replacement_choice_is_private_and_replays",
         "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
-        "test_original_avatar_and_sentinels_use_other_current_counter_creatures"
+        "test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling"
       ],
       "required_evidence": [
         "positive",
@@ -48058,7 +48096,11 @@
         "test_real_multani_counts_all_hands_and_preserves_shroud",
         "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
         "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
-        "test_real_body_of_research_counts_library_without_inspecting_cards"
+        "test_real_body_of_research_counts_library_without_inspecting_cards",
+        "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "negative_tests": [
         "test_nine_originals_admit_and_require_their_actual_quantity_producer",
@@ -48067,35 +48109,47 @@
         "test_real_multani_counts_all_hands_and_preserves_shroud",
         "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
         "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
-        "test_real_body_of_research_counts_library_without_inspecting_cards"
+        "test_real_body_of_research_counts_library_without_inspecting_cards",
+        "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "interaction_tests": [
         "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
         "test_real_multani_counts_all_hands_and_preserves_shroud",
         "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
         "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
-        "test_real_body_of_research_counts_library_without_inspecting_cards"
+        "test_real_body_of_research_counts_library_without_inspecting_cards",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "multiplayer_tests": [
         "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
         "test_real_multani_counts_all_hands_and_preserves_shroud",
         "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
         "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
-        "test_real_body_of_research_counts_library_without_inspecting_cards"
+        "test_real_body_of_research_counts_library_without_inspecting_cards",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "privacy_tests": [
         "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
         "test_real_multani_counts_all_hands_and_preserves_shroud",
         "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
         "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
-        "test_real_body_of_research_counts_library_without_inspecting_cards"
+        "test_real_body_of_research_counts_library_without_inspecting_cards",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "replay_tests": [
         "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
         "test_real_multani_counts_all_hands_and_preserves_shroud",
         "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
         "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
-        "test_real_body_of_research_counts_library_without_inspecting_cards"
+        "test_real_body_of_research_counts_library_without_inspecting_cards",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "required_evidence": [
         "positive",
