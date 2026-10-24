@@ -376,6 +376,7 @@
       "test_turn_count_self_costs",
       "test_typed_ability_fragments",
       "test_undaunted",
+      "test_unpreventable_damage_permissions",
       "test_untap_selection_limits",
       "test_waterbend",
       "test_zone_general_rules"

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 503,
+  "registry_version": 504,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -49364,6 +49364,94 @@
       "dependency_fail_closed_rationale": "Canonical blocked-registry reconstruction and evidence validation produces the explicit life-gain permission status blocker, independently of unverified-evidence rejection.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh kernel gate omissions restore forbidden replacement choices or lifelink gains and fail; the live current-ability omission has an additional declared native sentinel.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "damage.prevention.prohibition.static",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "120.4b",
+        "615.12",
+        "615.12a",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Seal static global, self-source and controlled-creature combat unpreventability through existing immutable source facts and authoritative damage flags.",
+        "inputs": [
+          "trusted current static rule",
+          "current global source snapshot",
+          "sealed current/LKI source facts",
+          "combat and source controller/type facts"
+        ],
+        "outputs": [
+          "authoritative unpreventable damage flag before prevention",
+          "applicable prevention still applied once",
+          "shield amounts unconsumed and fixed side consequences retained"
+        ],
+        "exclusions": [
+          "temporary and conditional instruction riders",
+          "global wither and other damage-result transformations",
+          "unsupported independent card clauses"
+        ]
+      },
+      "dependencies": [
+        "damage.prevention.static_fixed"
+      ],
+      "implementation_components": [
+        "quorune.damage_prevention_permission.StaticUnpreventableDamageSpec",
+        "quorune.damage_prevention_permission.DamagePreventionPermissionSnapshot",
+        "quorune.semantic_runtime.damage_permissions.StaticUnpreventableDamageHandler",
+        "quorune.semantic_runtime.damage_permissions.collect_damage_prevention_permissions",
+        "quorune.semantic_runtime.damage_permissions.source_has_unpreventable_damage",
+        "quorune.rules.damage_snapshots.source_snapshot",
+        "quorune.damage.prepare_damage_batch",
+        "quorune.compiler.damage_permission_templates.static_damage_unpreventability_handler"
+      ],
+      "positive_tests": [
+        "test_originals_normally_bind_complete_static_permission_and_current_scope",
+        "test_sealed_self_fact_sets_existing_flag_without_consuming_shield"
+      ],
+      "negative_tests": [
+        "test_absent_permission_keeps_preventable_damage_and_shield_consumption",
+        "test_static_frames_require_exact_descriptor_and_current_source_scope",
+        "test_verified_withdrawal_blocks_exact_static_source"
+      ],
+      "interaction_tests": [
+        "test_closed_permission_scopes_preserve_controller_type_combat_and_sealed_self_facts",
+        "test_real_excruciator_source_lki_survives_bounce_and_humbled_new_incarnation",
+        "test_real_leyline_cast_preserves_shields_counter_aftermath_and_life_restriction"
+      ],
+      "multiplayer_tests": [
+        "test_synthetic_controlled_combat_rule_uses_controller_and_excludes_noncombat"
+      ],
+      "privacy_tests": [
+        "test_real_leyline_opening_hand_choice_is_private_and_enters_without_casting"
+      ],
+      "replay_tests": [
+        "test_real_excruciator_source_lki_survives_bounce_and_humbled_new_incarnation",
+        "test_real_leyline_cast_preserves_shields_counter_aftermath_and_life_restriction",
+        "test_real_leyline_opening_hand_choice_is_private_and_enters_without_casting",
+        "test_synthetic_controlled_combat_rule_uses_controller_and_excludes_noncombat"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonical blocked-registry reconstruction and evidence verification produces the specific static unpreventability blocker.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh removal of permission-to-flag propagation restores shield prevention and fails; live-source omission has an additional declared native sentinel.",
       "blockers": [],
       "status": "trusted"
     }

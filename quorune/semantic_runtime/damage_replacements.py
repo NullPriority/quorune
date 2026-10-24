@@ -13,6 +13,7 @@ from ..replacement_effects import (
 )
 from ..damage_modifier_state import DamageModifierError, DamagePreventionScope
 from ..rules.capabilities import load_default_capability_registry
+from ..damage_prevention_permission import StaticUnpreventableDamageSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .counter_prevention import FixedCounterPreventionHandler, COUNTER_PREVENTION_HANDLER
@@ -833,7 +834,7 @@ class StaticDamageRedirectionHandler:
 class DamageReplacementRegistry(
     RuntimeComponentRegistry[
         DamageReplacementSourceContext,
-        ReplacementEffect,
+        ReplacementEffect | StaticUnpreventableDamageSpec,
     ]
 ):
     def replacement_effect(
@@ -853,6 +854,7 @@ class DamageReplacementRegistry(
 
 @lru_cache(maxsize=1)
 def default_damage_replacement_registry() -> DamageReplacementRegistry:
+    from .damage_permissions import StaticUnpreventableDamageHandler
     registry = DamageReplacementRegistry(
         (
             DamageQuantityReplacementHandler(),
@@ -862,6 +864,7 @@ def default_damage_replacement_registry() -> DamageReplacementRegistry:
             AllDamagePreventionHandler(),
             StaticDamageRedirectionHandler(),
             FixedCounterPreventionHandler(),
+            StaticUnpreventableDamageHandler(),
         )
     )
     registry.require_registered_capabilities(

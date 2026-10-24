@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from .rules.damage_snapshots import source_snapshot,recipient_snapshot
 import hashlib
 from typing import Any, Mapping, Protocol, Sequence
@@ -35,6 +35,7 @@ from .damage_values import (
 from .damage_turn_history import record_damage_turn_history
 from .util import stable_json
 from .semantic_runtime.life_prohibitions import collect_life_gain_permissions
+from .semantic_runtime.damage_permissions import collect_damage_prevention_permissions
 from .deathtouch import DeathtouchError, deathtouch_damage_result_applies
 from .commander import CommanderIdentityError, commander_damage_key
 from .combat_damage_events import (
@@ -682,6 +683,9 @@ def prepare_damage_batch(
         collect_counter_placement_replacement_effects,
     )
 
+    permission = collect_damage_prevention_permissions(host,sources=sources,source_zones=source_zones)
+    nonzero = tuple(replace(proposal,unpreventable=proposal.unpreventable or permission.unpreventable(
+        proposal.source,combat=proposal.combat)) for proposal in nonzero)
     effects = (
         *collect_damage_replacement_effects(
             host,

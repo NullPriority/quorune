@@ -370,6 +370,7 @@
     "tests/fixtures/umbra-armor-cards.json",
     "tests/fixtures/undaunted-cards.json",
     "tests/fixtures/union-receiver-cards.json",
+    "tests/fixtures/unpreventable-damage-cards.json",
     "tests/fixtures/untap-selection-limit-cards.json",
     "tests/fixtures/vanishing-cards.json",
     "tests/fixtures/variable-library-count-cards.json",

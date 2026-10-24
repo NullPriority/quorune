@@ -3,8 +3,9 @@ from __future__ import annotations
 """Sealed public creature-state facts consumed by prevention scopes."""
 
 from typing import Mapping
+from .damage_prevention_permission import UNPREVENTABLE_SOURCE_FACT
 
-_FACTS=frozenset({'attacking','unblocked','token','enchanted','no-plus-one-counter'})
+_FACTS=frozenset({'attacking','unblocked','token','enchanted','no-plus-one-counter',UNPREVENTABLE_SOURCE_FACT})
 
 
 def canonical_damage_scope_facts(values):

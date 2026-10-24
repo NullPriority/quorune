@@ -157,6 +157,13 @@ life payments retain their separate rules. Each damage step collects its own
 current snapshot, while simultaneous damage results use the same precommit
 permission facts.
 
+Static unpreventability uses the existing authoritative damage flag. Current
+ambient rules are collected when damage is prepared; a source's own rule is
+sealed into its existing source-scope facts, including last-known snapshots.
+Typed component markers determine current applicability and ability loss.
+Prevention still applies once to flagged damage, preserving fixed additional
+consequences while preventing zero damage and retaining shield amounts.
+
 State-based actions consume temporal damage markers according to their own
 owner. Damage code does not perform unrelated state-based checks or bypass
 focused life, counter, or permanent-state mutation boundaries.

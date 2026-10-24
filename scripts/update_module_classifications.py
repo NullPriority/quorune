@@ -59,6 +59,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/object_query_union.py",
         "quorune/static_player_restriction_model.py",
         "quorune/life_gain_permission.py",
+        "quorune/damage_prevention_permission.py",
         "quorune/conditional_recipient_model.py",
         "quorune/kicked_target_model.py",
         "quorune/kicked_target_replacement_model.py",
@@ -460,6 +461,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == 'quorune/damage_prevention_permission.py':return 'damage'
     if relative=="quorune/designation_prevention.py":return "damage"
     if relative=="quorune/attached_prevention_model.py":return "damage"
     if relative=="quorune/attachment_information.py":return "attachments"

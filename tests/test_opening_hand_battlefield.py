@@ -183,8 +183,10 @@ class OpeningHandBattlefieldRuntimeTests(unittest.TestCase):
         self.replay(session,load=True)
 
     def test_original_with_unclosed_siblings_never_receives_partial_opening_permission(self):
-        session=self.session(103619,{'A':['Leyline of Punishment']})
-        card=self.card(session,'Leyline of Punishment')
+        # The real Leyline now closes; keep this whole-source exclusion on a
+        # constructed, specifically unsupported spell-control exchange sibling.
+        session=self.session(103619,{'A':['Generic Unclosed Opener']})
+        card=self.card(session,'Generic Unclosed Opener')
         program=compile_best_available_card_program(self.db,session.engine.card_record(card),
             semantic_registry=session.engine.semantics,capability_registry=self.registry,capability_profile='commander_review')
         self.assertFalse(bind_card_program_runtime(program,capability_registry=self.registry,

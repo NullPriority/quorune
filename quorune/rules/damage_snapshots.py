@@ -5,7 +5,8 @@ from __future__ import annotations
 from typing import Any, Mapping
 from ..damage_source import DamageSourceSnapshot,DamageError,represented_toxic_value
 from ..damage_values import DamageRecipientSnapshot
-from ..damage_scope_facts import current_damage_scope_facts,current_damage_combat_partners
+from ..damage_scope_facts import current_damage_scope_facts,current_damage_combat_partners,canonical_damage_scope_facts
+from ..damage_prevention_permission import UNPREVENTABLE_SOURCE_FACT
 
 
 def _normalized_keywords(values):
@@ -67,6 +68,10 @@ def source_snapshot(
     )
     if toxic_value != 0 and "toxic" not in keywords:
         keywords = tuple(sorted({*keywords, "toxic"}))
+    from ..semantic_runtime.damage_permissions import source_has_unpreventable_damage
+    scope_facts = current_damage_scope_facts(host,source,data)
+    if source_has_unpreventable_damage(host,data):
+        scope_facts = canonical_damage_scope_facts((*scope_facts,UNPREVENTABLE_SOURCE_FACT))
     return DamageSourceSnapshot(
         ref=source.ref,
         object_id=source.object_id,
@@ -90,7 +95,7 @@ def source_snapshot(
         mana_value=data.get("mana_value"),
         is_commander=bool(source.is_commander),
         toxic_value=toxic_value,
-        scope_facts=current_damage_scope_facts(host,source,data),
+        scope_facts=scope_facts,
         combat_partners=current_damage_combat_partners(host,source),
     )
 

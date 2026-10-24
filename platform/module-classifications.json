@@ -3201,6 +3201,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/damage_permission_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/damage_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7876,6 +7891,18 @@
         "semantics"
       ],
       "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/damage_prevention_permission.py",
+      "layer": "domain",
+      "owning_subsystem": "damage",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
@@ -16672,6 +16699,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/damage_permissions.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/damage_replacements.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -19664,5 +19706,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "15fccf0edb4e0dad4fe7f94398f9638c2fb2b19d8a7fc519bec768d2b8f68e15"
+  "fingerprint": "46ae5f22e8fac4838cb0a51628804136089ed376ce4f0aae2c9a835da1690a94"
 }

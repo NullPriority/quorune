@@ -8269,6 +8269,30 @@
         "test_damage_result_events",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "static-unpreventable-damage-permissions",
+      "patterns": [
+        "quorune/damage_prevention_permission.py",
+        "quorune/semantic_runtime/damage_permissions.py",
+        "quorune/compiler/damage_permission_templates.py",
+        "quorune/damage_scope_facts.py",
+        "quorune/damage.py",
+        "quorune/semantic_runtime/damage_replacements.py",
+        "tests/test_unpreventable_damage_permissions.py",
+        "tests/fixtures/unpreventable-damage-cards.json",
+        "tests/fixtures/opening-hand-battlefield-cards.json",
+        "tests/test_opening_hand_battlefield.py",
+        "quorune/rules/damage_snapshots.py"
+      ],
+      "test_modules": [
+        "test_unpreventable_damage_permissions",
+        "test_damage_prevention_shields",
+        "test_damage_prevention_aftermath",
+        "test_fixed_counter_prevention",
+        "test_card_program_trust",
+        "test_opening_hand_battlefield"
+      ]
     }
   ],
   "symbol_rules": [
