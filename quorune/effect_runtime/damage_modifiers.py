@@ -381,6 +381,21 @@ def _prevention_trigger_request(
     )
 
 
+def _bound_prevention_subject_is_unavailable(host, effect, *, actor):
+    from ..attached_prevention_model import BOUND_SUBJECT_VERSION, validate_bound_prevention_version
+    if BOUND_SUBJECT_VERSION not in effect:return False
+    validate_bound_prevention_version(effect[BOUND_SUBJECT_VERSION])
+    subject=effect.get('subject')
+    if subject is None:return True
+    if type(subject) is not str or not subject:
+        raise GameRuleError('A bound prevention subject must be an object reference')
+    try:bound_subject=recipient_snapshot(host,subject,actor=actor)
+    except DamageError:return True
+    if bound_subject.kind!='permanent':
+        raise GameRuleError('An attached prevention subject must be a permanent')
+    return False
+
+
 def _apply_create_damage_prevention_shield(
     host: Any,
     effect: Mapping[str, Any],
@@ -391,6 +406,7 @@ def _apply_create_damage_prevention_shield(
 ) -> str | list[str]:
     del operation
     try:
+        if _bound_prevention_subject_is_unavailable(host,effect,actor=actor):return []
         mode = PreventionMode(str(effect.get("mode") or "amount"))
         duration = DamageModifierDuration(
             str(effect.get("duration") or "until_end_of_turn")

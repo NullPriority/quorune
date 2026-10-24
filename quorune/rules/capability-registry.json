@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 492,
+  "registry_version": 493,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -48265,6 +48265,218 @@
       "dependency_fail_closed_rationale": "Verified withdrawal of the actual base shield producer rejects the whole original. The selector independently requires its new producer by payload-derived minima.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh actual original cast/activation witness fails when creature recipients are omitted from the snapshot.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "object.reference.source_attachment_information",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version-two attachment references request server-captured, incarnation-bound current or actual-departure information. Historical version-one references and contexts retain their wire and behavior.",
+        "inputs": [
+          "closed typed source attachment reference",
+          "server capture before cost mutation",
+          "matching source and recipient incarnations",
+          "current public battlefield information"
+        ],
+        "outputs": [
+          "current or actual-departure creature binding",
+          "existing canonical finite/next-instance shield creation",
+          "no-op when bound recipient is unavailable"
+        ],
+        "exclusions": [
+          "unproved source attachment relation",
+          "new incarnations substituted for old bindings",
+          "unknown binding versions",
+          "unrepresented independent riders"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.attachment_references.AttachmentReferenceSpec",
+        "quorune.attachment_information.pin_attachment_information_departures",
+        "quorune.attached_prevention_model.attached_prevention_dependencies",
+        "quorune.compiler.prevention_templates._attached_recipient_prevention"
+      ],
+      "positive_tests": [
+        "test_originals_admit_with_independent_bound_recipient_and_information_minima",
+        "test_closed_binding_versions_and_source_relation_proof_preserve_legacy",
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot"
+      ],
+      "negative_tests": [
+        "test_originals_admit_with_independent_bound_recipient_and_information_minima",
+        "test_closed_binding_versions_and_source_relation_proof_preserve_legacy",
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot"
+      ],
+      "interaction_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "multiplayer_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "privacy_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "replay_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The versioned information owner validates typed identities and snapshots directly; it has no separate producer dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh owner-level move/departure fails without capture; fresh actual missing-recipient resolution fails if the creation guard falls back to controller.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "damage.prevention.attached_recipient",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "615.1",
+        "615.7",
+        "615.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A closed bound-subject version creates a shield for the current or last-known attached creature, never for an implicit controller when that creature is unavailable.",
+        "inputs": [
+          "closed typed source attachment reference",
+          "server capture before cost mutation",
+          "matching source and recipient incarnations",
+          "current public battlefield information"
+        ],
+        "outputs": [
+          "current or actual-departure creature binding",
+          "existing canonical finite/next-instance shield creation",
+          "no-op when bound recipient is unavailable"
+        ],
+        "exclusions": [
+          "unproved source attachment relation",
+          "new incarnations substituted for old bindings",
+          "unknown binding versions",
+          "unrepresented independent riders"
+        ]
+      },
+      "dependencies": [
+        "damage.prevention.persistent_amount",
+        "object.reference.source_attachment_information"
+      ],
+      "implementation_components": [
+        "quorune.attachment_references.AttachmentReferenceSpec",
+        "quorune.attachment_information.pin_attachment_information_departures",
+        "quorune.attached_prevention_model.attached_prevention_dependencies",
+        "quorune.compiler.prevention_templates._attached_recipient_prevention"
+      ],
+      "positive_tests": [
+        "test_originals_admit_with_independent_bound_recipient_and_information_minima",
+        "test_closed_binding_versions_and_source_relation_proof_preserve_legacy",
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot"
+      ],
+      "negative_tests": [
+        "test_originals_admit_with_independent_bound_recipient_and_information_minima",
+        "test_closed_binding_versions_and_source_relation_proof_preserve_legacy",
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot"
+      ],
+      "interaction_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "multiplayer_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "privacy_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "replay_tests": [
+        "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
+        "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
+        "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
+        "test_real_unavailable_attached_recipient_never_shields_controller",
+        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal of the actual base shield and attachment-information producers blocks the whole original.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh owner-level move/departure fails without capture; fresh actual missing-recipient resolution fails if the creation guard falls back to controller.",
       "blockers": [],
       "status": "trusted"
     }

@@ -44,6 +44,11 @@ def _resolve_attachment_reference(
     item: Any,
 ) -> str | None:
     spec = AttachmentReferenceSpec.from_dict(value)
+    if spec.schema_version==2:
+        from ..attachment_references import ATTACHMENT_INFORMATION_VERSION
+        version=item.context.get(ATTACHMENT_INFORMATION_VERSION)
+        if type(version) is not int or version!=1:
+            raise AttachmentReferenceError('Version-two attachment references require captured departure information')
     snapshot = item.context.get("source_attachment_snapshot")
     if not isinstance(snapshot, Mapping):
         raise AttachmentReferenceError(

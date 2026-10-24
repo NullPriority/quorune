@@ -794,6 +794,12 @@ last-known relation after it leaves, then rejects a phased, wrong-type, or new
 target incarnation before the existing counter intent is created. The
 read-only identity resolver adds no state mutation or runtime Oracle parser.
 
+Version-two attachment references opt into separately versioned source
+information. The zone-transition owner refreshes pending stack and trigger
+snapshots immediately before an actual source departure, so a moved attachment
+does not leave an earlier activation-time relation as its last-known value.
+Version-one references and stored contexts retain their encoding and behavior.
+
 The affected-set family lowers one mandatory fixed quantity onto every member
 of one closed public battlefield set. Its predicates are serialized in an
 immutable `AffectedPermanentSetSpec`; represented sets may test one named

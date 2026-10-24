@@ -234,6 +234,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     ) or relative in {
         "quorune/activation_mana_cost.py",
         "quorune/target_controller_information.py",
+        "quorune/attached_prevention_model.py",
+        "quorune/attachment_information.py",
         "quorune/activation_x.py",
         "quorune/whole_hand_discard.py",
         "quorune/random_discard.py",
@@ -455,6 +457,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative=="quorune/attached_prevention_model.py":return "damage"
+    if relative=="quorune/attachment_information.py":return "attachments"
     if relative=='quorune/kicked_target_model.py':return 'search_target_and_choice'
     if relative=='quorune/kicked_target_replacement_model.py':return 'search_target_and_choice'
     if relative == 'quorune/conditional_recipient_model.py':
@@ -1104,6 +1108,7 @@ def build_classifications() -> dict[str, Any]:
                             "quorune/preparation.py",
                             "quorune/rules/activation/payment_commit.py",
                             "quorune/target_source.py",
+                            "quorune/attachment_information.py",
                             "quorune/untap_selection.py",
                             "quorune/zone_devour.py",
                             "quorune/soulbond_model.py",

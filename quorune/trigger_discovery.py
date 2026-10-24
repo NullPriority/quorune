@@ -139,7 +139,13 @@ def _trigger_attachment_context(
     return {
         "source_logical_object_id": snapshot.source.logical_object_id,
         "source_attachment_snapshot": snapshot.to_dict(),
+        **_versioned_attachment_information(program),
     }
+
+
+def _versioned_attachment_information(program):
+    from .attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
+    return {ATTACHMENT_INFORMATION_VERSION:1} if attachment_information_capabilities(program.effects) else {}
 
 
 class TriggerDiscoveryHost(Protocol):

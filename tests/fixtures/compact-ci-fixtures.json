@@ -28,6 +28,7 @@
     "tests/fixtures/attached-object-keyword-cards.json",
     "tests/fixtures/attached-occurrence-cards.json",
     "tests/fixtures/attached-permanent-modifier-cards.json",
+    "tests/fixtures/attached-prevention-cards.json",
     "tests/fixtures/attached-protection-cards.json",
     "tests/fixtures/attached-pt-keyword-removal-cards.json",
     "tests/fixtures/backup-cards.json",

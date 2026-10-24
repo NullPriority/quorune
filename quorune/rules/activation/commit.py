@@ -818,6 +818,9 @@ def _commit_activation_costs_and_stack(
             "encore_source_zone": source.zone,
             "encore_copy_snapshot": token_copy_snapshot(host, source),
         }
+    from ...attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
+    if attachment_snapshot is not None and program is not None and attachment_information_capabilities(program.effects):
+        source_activation_context={**(source_activation_context or {}),ATTACHMENT_INFORMATION_VERSION:1}
     if ability.mana_ability:
         complete_mana_activation(
             host,

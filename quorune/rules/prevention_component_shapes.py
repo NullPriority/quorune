@@ -10,6 +10,18 @@ from .permanent_predicate_capability_shapes import direct_permanent_target_schem
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
     if 'cr-615-prevention-effects' not in set(mechanic_ids) or len(effects)!=1:return ()
     effect=effects[0]
+    from ..attached_prevention_model import attached_prevention_dependencies
+    attached=effect.get('shield') if isinstance(effect,Mapping) and effect.get('op')=='choose_damage_source' else effect
+    try:attachment_dependencies=attached_prevention_dependencies(attached)
+    except (TypeError,ValueError):return ()
+    if attachment_dependencies:
+        if target_schema is not None:return ()
+        if effect is not attached:
+            if set(effect)!={'op','prompt','source_predicate','shield'}:return ()
+            from ..object_query import ObjectQuerySpec,validate_chosen_damage_source_predicate
+            try:validate_chosen_damage_source_predicate(ObjectQuerySpec.from_dict(effect['source_predicate']))
+            except (TypeError,ValueError):return ()
+        return ('damage.prevention.persistent_amount',*attachment_dependencies)
     from ..prevention_recipient_sets import prevention_recipient_set_dependencies
     if (isinstance(effect, Mapping) and set(effect)=={'op','source','subject','mode','duration','amount','selector'}
             and effect.get('source')=='$source' and effect.get('subject')=='*'

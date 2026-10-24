@@ -107,6 +107,8 @@ class ZoneTransitionOwner:
         try:
             from .target_controller_information import pin_target_controller_departures
             pin_target_controller_departures(self.host,cards,error_type=StateInvariantError)
+            from .attachment_information import pin_attachment_information_departures
+            pin_attachment_information_departures(self.host,cards,error_type=StateInvariantError)
             pin_scalar_characteristic_departures(self.host, cards, error_type=StateInvariantError)
             from .token_copy_references import pin_copy_characteristic_departures
             pin_copy_characteristic_departures(self.host, cards, error_type=StateInvariantError)

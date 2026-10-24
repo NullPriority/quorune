@@ -13,6 +13,7 @@ from ..object_query import (
 from ..replacement.immutable import FrozenMap, thaw_value
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
+    AutoContinue,
     ObjectChoice,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
@@ -132,6 +133,13 @@ class ChooseDamageSourceHandler:
                 "A chosen source must continue into a prevention shield"
             )
         predicate = _source_predicate(effect)
+        from ..attached_prevention_model import BOUND_SUBJECT_VERSION, validate_bound_prevention_version
+        if BOUND_SUBJECT_VERSION in shield:
+            validate_bound_prevention_version(shield[BOUND_SUBJECT_VERSION])
+            if shield.get('subject') is None:
+                return SemanticChoicePreparation(request=None,
+                    continuation_effect=FrozenMap({**effect,'source_predicate':predicate.to_dict(),'_legal_refs':[]}),
+                    auto_continue=AutoContinue(reason='The attached recipient is unavailable'))
         candidates = _candidates(
             context.query,
             predicate=predicate,

@@ -833,14 +833,38 @@ _PREVENTION_PRODUCTIONS = (
 )
 
 
+def _attached_recipient_prevention(normalized, source_attachment_relation):
+    from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+    from ..attached_prevention_model import BOUND_SUBJECT_VERSION
+    finite=re.fullmatch(r'prevent the next (?P<amount>\d+) damage that would be dealt to '
+        r'(?P<relation>enchanted|equipped|fortified) creature this turn\.?',normalized,re.I)
+    chosen=re.fullmatch(r'the next time a source of your choice would deal damage to '
+        r'(?P<relation>enchanted|equipped|fortified) creature this turn, prevent that damage\.?',normalized,re.I)
+    match=finite or chosen
+    if match is None:return None
+    relation={'enchanted':AttachmentReferenceKind.ENCHANTED,'equipped':AttachmentReferenceKind.EQUIPPED,
+        'fortified':AttachmentReferenceKind.FORTIFIED}[match['relation'].casefold()]
+    if source_attachment_relation is not relation:return None
+    if finite is not None and int(finite['amount'])<1:return None
+    shield={'op':'create_damage_prevention_shield','source':'$source',
+        'subject':AttachmentReferenceSpec(relation,'creature',schema_version=2).to_dict(),BOUND_SUBJECT_VERSION:1,
+        'mode':'amount' if finite is not None else 'next_instance','duration':'until_end_of_turn',
+        **({'amount':int(finite['amount'])} if finite is not None else {})}
+    effect=shield if finite is not None else _chosen_source_effect(shield=shield,qualifier=None)
+    return ('damage-prevention-bound-attachment-v1',(effect,),None,_rules(None))
+
+
 def fixed_prevention_effect_template(
     text: str,
     *,
     card_name: str | None = None,
+    source_attachment_relation=None,
 ) -> PreventionTemplate | None:
     """Lower one closed finite CR 615 sentence through ordered productions."""
 
     normalized = " ".join(text.strip().split())
+    attached=_attached_recipient_prevention(normalized,source_attachment_relation)
+    if attached is not None:return attached
     triggered = _chosen_source_triggered_damage_and_draw(
         normalized,
         card_name=card_name,

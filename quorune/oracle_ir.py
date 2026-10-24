@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v568"
+ORACLE_COMPILER_VERSION = "oracle-ir-v569"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -410,6 +410,7 @@ def _reviewed_atomic_effect_template(
     prevention = fixed_prevention_effect_template(
         text.strip(),
         card_name=card_name,
+        source_attachment_relation=source_attachment_relation,
     )
     from .compiler.commander_learn_templates import commander_learn_effect_template
     compiled = prevention or commander_learn_effect_template(text) or _effect_template(

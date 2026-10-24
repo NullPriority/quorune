@@ -70,6 +70,15 @@ animation and new object incarnations cannot inherit those shields. The
 selector has an independent producer capability; existing selectors and shield
 records keep their encoded forms and canonical lifetime and consumption owners.
 
+Resolved prevention can bind an enchanted, equipped or fortified creature
+through the existing attachment-reference owner. The compiler proves the source
+relation and emits a versioned bound-subject marker with a version-two
+reference. Activation captures the relation before costs; departure refreshes
+pending source information before zone reset. Missing recipients produce no
+shield and no source-choice prompt, rather than an implicit controller shield.
+Created shields pin their resolved recipient independently of later attachment
+changes. Older unmarked prevention instructions retain their existing defaults.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial
