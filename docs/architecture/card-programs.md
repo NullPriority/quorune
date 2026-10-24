@@ -54,6 +54,16 @@ cast with no extra cost. Nonempty reviewed abilities remain authoritative under
 the existing precedence rules; partial source, stale data, unsupported faces,
 and unbound generated dependencies cannot authorize this migration.
 
+`trigger_view_equivalence.py` compares complete source-matched trigger views
+with current trusted dependency closure. It retains event, role, result, cost,
+limit, and target meaning. Closed scalar event conjunctions may reorder their
+leaves; only `creature.dies` aliases its sealed previous controller to its
+controller field. A single positional destroy target may use the existing flat
+or one-group target codec, and its textual reason remains reporting metadata.
+Other result/source differences, missing predicates, or ambiguous matches do
+not establish equivalence. Existing private-draw defaults keep their current
+normalization; historical payloads are not rewritten.
+
 Current typed modal activations can supersede catalog-only reviewed views only
 through `modal_catalog_equivalence.py`. It requires matching source hashes,
 ability identity and runtime role, exact catalog cost fields, one-mode

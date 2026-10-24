@@ -366,6 +366,7 @@
       "test_targeted_spell_costs",
       "test_trample_assignment_integration",
       "test_trigger_processing_owner",
+      "test_trigger_view_equivalence",
       "test_turn_count_self_costs",
       "test_typed_ability_fragments",
       "test_undaunted",

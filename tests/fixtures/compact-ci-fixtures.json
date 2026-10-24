@@ -353,6 +353,7 @@
     "tests/fixtures/token-entry-boundary-cards.json",
     "tests/fixtures/toughness-assignment-cards.json",
     "tests/fixtures/transmute-cards.json",
+    "tests/fixtures/trigger-view-equivalence-cards.json",
     "tests/fixtures/turn-cast-grant-cards.json",
     "tests/fixtures/turn-cast-rider-cards.json",
     "tests/fixtures/turn-count-self-cost-cards.json",

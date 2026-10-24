@@ -8143,6 +8143,24 @@
         "test_fixed_mana_abilities",
         "test_additional_token_definitions"
       ]
+    },
+    {
+      "id": "current-trigger-view-equivalence",
+      "patterns": [
+        "quorune/card_programs/trigger_view_equivalence.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "tests/test_trigger_view_equivalence.py",
+        "tests/fixtures/trigger-view-equivalence-cards.json"
+      ],
+      "test_modules": [
+        "test_trigger_view_equivalence",
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_scry_rules",
+        "test_fabricate_compiler",
+        "test_triggered_abilities",
+        "test_zone_trigger_events"
+      ]
     }
   ],
   "symbol_rules": [
