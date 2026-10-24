@@ -82,6 +82,12 @@ explicit tapped entry, mandatory shuffle, and every other result field remain
 compared. Foreign libraries, unknown fields, changed qualities, optional counts,
 and changed result flags do not establish equivalence.
 
+The legacy single-Treasure operation may compare with the current complete
+predefined Treasure template after the same source, price and strict capability
+proof. The existing token compiler owns that complete definition, including
+quantity, type, text and mana ability profile. Changed characteristics, creation
+state, quantities, recipients or additional operations remain unequal.
+
 Current typed modal activations can supersede catalog-only reviewed views only
 through `modal_catalog_equivalence.py`. It requires matching source hashes,
 ability identity and runtime role, exact catalog cost fields, one-mode

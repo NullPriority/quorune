@@ -350,6 +350,7 @@
       "test_opening_hand_battlefield",
       "test_opening_hand_reveal",
       "test_opponent_keyword_prohibition",
+      "test_predefined_token_view_equivalence",
       "test_preparation",
       "test_public_condition_surfaces",
       "test_public_zone_conditions",

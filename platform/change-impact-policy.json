@@ -8195,6 +8195,21 @@
         "test_library_search_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "current-predefined-token-view-equivalence",
+      "patterns": [
+        "quorune/card_programs/activation_view_equivalence.py",
+        "tests/test_predefined_token_view_equivalence.py",
+        "tests/fixtures/predefined-token-view-cards.json"
+      ],
+      "test_modules": [
+        "test_predefined_token_view_equivalence",
+        "test_land_search_view_equivalence",
+        "test_activation_view_equivalence",
+        "test_fixed_token_creation_effects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
