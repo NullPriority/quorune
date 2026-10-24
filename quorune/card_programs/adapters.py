@@ -291,6 +291,9 @@ def _compile_card_program_from_ir(
             record,
             programs.values(),
             reviewed_programs,
+            capability_registry=capability_registry,
+            capability_profile=capability_profile,
+            oracle_ir=ir,
         )
         for program in reviewed_programs:
             if program.key in shadowed_reviewed_keys:

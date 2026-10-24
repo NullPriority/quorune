@@ -19,7 +19,7 @@ from ..carddb import CardDatabase, CardRecord
 if TYPE_CHECKING:
     from .ir_model import OracleCardIR
 from ..card_programs.reviewed_overlay import (
-    shadowed_reviewed_program_keys,
+    retire_reviewed_programs,
 )
 from ..object_predicate import ObjectQuerySpec
 from ..rules.capabilities import (
@@ -1646,13 +1646,8 @@ def register_generated_programs(
             trusted_programs.get(provisional.key, provisional)
             for provisional in provisional_programs
         )
-        shadowed_reviewed_keys = shadowed_reviewed_program_keys(
-            record,
-            runtime_programs,
-            registry.programs_for_oracle(record.oracle_id),
-        )
-        for key in sorted(shadowed_reviewed_keys):
-            registry.remove(key)
+        retire_reviewed_programs(record,runtime_programs,registry,
+            capability_registry=capability_registry,capability_profile=capability_profile)
         for provisional, program in zip(
             provisional_programs,
             runtime_programs,

@@ -915,6 +915,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/card_programs/empty_permanent_equivalence.py",
+      "layer": "semantics",
+      "owning_subsystem": "card_programs",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/card_programs/kicker_view_equivalence.py",
       "layer": "semantics",
       "owning_subsystem": "card_programs",
@@ -19562,5 +19577,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "62051da821716aa2ba42924d648fff87e7aad05138db8593d40b420a536aa70b"
+  "fingerprint": "ed0a2880df32ad4f27a1d4208b66dc45147bec42e47d69612781c62b63b534c8"
 }

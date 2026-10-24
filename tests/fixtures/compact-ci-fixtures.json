@@ -102,6 +102,7 @@
     "tests/fixtures/each-player-mill-cards.json",
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/empty-fixed-target-batch-cards.json",
+    "tests/fixtures/empty-permanent-cards.json",
     "tests/fixtures/energy-activation-cards.json",
     "tests/fixtures/enlist-cards.json",
     "tests/fixtures/entry-color-composition-cards.json",

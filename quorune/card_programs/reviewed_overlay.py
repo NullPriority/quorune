@@ -275,6 +275,7 @@ def shadowed_reviewed_program_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
     reviewed_programs: Iterable[SemanticProgram],
+    *, capability_registry=None, capability_profile='traditional', oracle_ir=None,
 ) -> set[str]:
     """Apply shared current-program precedence in both assembly paths."""
     generated = tuple(generated_programs)
@@ -285,6 +286,7 @@ def shadowed_reviewed_program_keys(
     from .modal_catalog_equivalence import shadowed_reviewed_modal_catalog_keys
     from .resolution_mana_overlay import shadowed_reviewed_resolution_mana_keys
     from .additional_token_equivalence import shadowed_reviewed_additional_token_keys
+    from .empty_permanent_equivalence import shadowed_reviewed_empty_permanent_keys
     return shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(
@@ -292,10 +294,21 @@ def shadowed_reviewed_program_keys(
     ) | shadowed_reviewed_event_return_keys(record, generated, reviewed) | shadowed_reviewed_subtype_anthem_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_zero_price_keys(record, generated, reviewed) | shadowed_reviewed_fixed_search_keys(
-        record,generated,reviewed) | shadowed_reviewed_upkeep_type_count_keys(record,generated,reviewed) | shadowed_reviewed_kicker_target_keys(record,generated,reviewed) | shadowed_reviewed_modal_catalog_keys(record,generated,reviewed) | shadowed_reviewed_resolution_mana_keys(record,generated,reviewed) | shadowed_reviewed_additional_token_keys(record,generated,reviewed)
+        record,generated,reviewed) | shadowed_reviewed_upkeep_type_count_keys(record,generated,reviewed) | shadowed_reviewed_kicker_target_keys(record,generated,reviewed) | shadowed_reviewed_modal_catalog_keys(record,generated,reviewed) | shadowed_reviewed_resolution_mana_keys(record,generated,reviewed) | shadowed_reviewed_additional_token_keys(record,generated,reviewed) | shadowed_reviewed_empty_permanent_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile,oracle_ir=oracle_ir)
+
+
+def retire_reviewed_programs(record, generated_programs, registry, *,
+        capability_registry=None, capability_profile='traditional') -> set[str]:
+    """Commit the shared precedence decision through the registry's own port."""
+    keys=shadowed_reviewed_program_keys(record,generated_programs,
+        registry.programs_for_oracle(record.oracle_id),
+        capability_registry=capability_registry,capability_profile=capability_profile)
+    for key in sorted(keys):registry.remove(key)
+    return keys
 
 
 __all__ = [
     "shadowed_reviewed_multi_event_keys", "shadowed_reviewed_counted_search_keys",
     "shadowed_reviewed_program_keys",
+    "retire_reviewed_programs",
 ]

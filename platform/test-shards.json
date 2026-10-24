@@ -323,6 +323,7 @@
       "test_continuous_compiler_hardening",
       "test_declare_attackers_rules",
       "test_devour",
+      "test_empty_permanent_views",
       "test_entry_copy_predicates",
       "test_entry_copy_values",
       "test_entry_keyword_counter_choices",

@@ -45,6 +45,15 @@ equivalence is established may a source-matched empty normal-permanent cast
 view yield to the existing card-form owner. Nonempty, stale, conditional,
 multiface, or provisional compatibility views remain intact.
 
+`empty_permanent_equivalence.py` applies the empty-cast boundary independently
+when the complete native source is exact and every generated ability is trusted
+and bound to the current rules profile. It accepts only normal single-face,
+nonland permanent records with current matching Oracle and rulings hashes.
+The reviewed view must be an empty, nontargeted, unconditional stack-to-battlefield
+cast with no extra cost. Nonempty reviewed abilities remain authoritative under
+the existing precedence rules; partial source, stale data, unsupported faces,
+and unbound generated dependencies cannot authorize this migration.
+
 Current typed modal activations can supersede catalog-only reviewed views only
 through `modal_catalog_equivalence.py`. It requires matching source hashes,
 ability identity and runtime role, exact catalog cost fields, one-mode

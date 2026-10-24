@@ -8124,6 +8124,25 @@
         "test_card_program_trust",
         "test_fixed_token_production"
       ]
+    },
+    {
+      "id": "native-empty-permanent-view",
+      "patterns": [
+        "quorune/card_programs/empty_permanent_equivalence.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "quorune/card_programs/adapters.py",
+        "quorune/compiler/program_generation.py",
+        "tests/test_empty_permanent_views.py",
+        "tests/fixtures/empty-permanent-cards.json"
+      ],
+      "test_modules": [
+        "test_empty_permanent_views",
+        "test_card_program_trust",
+        "test_casting_activation_metadata",
+        "test_typed_untap_step_participation",
+        "test_fixed_mana_abilities",
+        "test_additional_token_definitions"
+      ]
     }
   ],
   "symbol_rules": [
