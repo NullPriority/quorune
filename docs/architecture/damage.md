@@ -147,6 +147,16 @@ parallel generic counter-state commit. Every owner validates before the first
 write, so a malformed event or stale logical incarnation leaves the complete
 life, placement, removal, and permanent-result batch unchanged.
 
+The life and damage planners share an immutable gain-permission snapshot.
+Current trusted battlefield abilities supply global or opponent prohibitions,
+including their current controller and layer-6 applicability. Prohibited gains
+are excluded before life-gain replacement processing; lifelink cannot create a
+gain result for a prohibited player. Ordinary life changes retain a zero
+resolved audit result without dispatching a gain occurrence. Life loss and
+life payments retain their separate rules. Each damage step collects its own
+current snapshot, while simultaneous damage results use the same precommit
+permission facts.
+
 State-based actions consume temporal damage markers according to their own
 owner. Damage code does not perform unrelated state-based checks or bypass
 focused life, counter, or permanent-state mutation boundaries.

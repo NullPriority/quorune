@@ -115,6 +115,15 @@ def static_runtime_node(
     from .devotion_templates import fixed_devotion_increase_handler
     from .token_templates import static_token_quantity_replacement_handler
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .life_templates import static_life_gain_prohibition_handler
+    from ..life_gain_permission import LIFE_GAIN_PROHIBITION_EVENT
+    prohibition = (static_life_gain_prohibition_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if prohibition is not None:
+        return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=prohibition,
+            kind='static_ability',event=LIFE_GAIN_PROHIBITION_EVENT,runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Static life-gain permission requires its typed rules owner',
+            capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     devotion = (fixed_devotion_increase_handler(material_line)
         if not source_is_class and card_types.intersection(permanent_card_types) else None)
     if devotion is not None:

@@ -29,6 +29,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
             return (ANY_NUMBER_TARGET_CAPABILITY,)
         from ..static_player_restriction_model import static_player_restriction_capabilities
         own = static_player_restriction_capabilities(value) if 'player_restriction' in value else ()
+        from ..life_gain_permission import life_gain_prohibition_payload_dependencies
+        own = (*own,*life_gain_prohibition_payload_dependencies(value,coverage=mechanics))
         from ..rules.casting_additional_cost_groups import selected_zone_cost_payload_dependencies
         own = (*own, *selected_zone_cost_payload_dependencies(value))
         from ..fixed_effect_payment import compound_payment_payload_dependencies

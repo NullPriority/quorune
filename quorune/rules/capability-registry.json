@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 502,
+  "registry_version": 503,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -49264,6 +49264,106 @@
       "dependency_fail_closed_rationale": "The leaf has no downstream capability dependencies. Own verified withdrawal, canonical closure, declaration presence and exact tag variant are checked directly.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh matching-tag omission and always-accept mutations fail the full four-tag pairing compatibility witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "life.gain.prohibition.static",
+      "version": 1,
+      "official_rules": [
+        "119.7",
+        "119.9",
+        "119.10",
+        "120.3f",
+        "120.4c",
+        "615.5",
+        "702.15b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A current trusted battlefield rule prohibits global or opponent life gain before replacement processing; existing life and damage result owners consume one immutable permission snapshot.",
+        "inputs": [
+          "typed static global/opponent prohibition",
+          "current source controller and layer6 ability scope",
+          "positive life request or lifelink result"
+        ],
+        "outputs": [
+          "zero resolved gain without a gain occurrence or replacement choice",
+          "unchanged loss and life-payment semantics",
+          "canonical atomic life state plan"
+        ],
+        "exclusions": [
+          "conditional, temporary, self-only and rest-of-game rules",
+          "unrepresented gain-as-cost, exchange, redistribution and life-setting procedures",
+          "life-loss prohibitions",
+          "team variants beyond the bounded free-for-all model"
+        ]
+      },
+      "dependencies": [
+        "life.change.effect",
+        "damage.result.replacement_order"
+      ],
+      "implementation_components": [
+        "quorune.life_gain_permission.FixedLifeGainProhibitionSpec",
+        "quorune.life_gain_permission.LifeGainPermissionSnapshot",
+        "quorune.semantic_runtime.life_prohibitions.LifeGainProhibitionHandler",
+        "quorune.semantic_runtime.life_prohibitions.collect_life_gain_permissions",
+        "quorune.life_change.prepare_life_change_batch",
+        "quorune.life_change.validate_life_change_batch",
+        "quorune.damage_results.materialize_damage_results",
+        "quorune.compiler.life_templates.static_life_gain_prohibition_handler",
+        "quorune.effect_runtime.life_effects._commit",
+        "quorune.semantic_choices.life_intent_commit.apply_life_change_intent",
+        "quorune.damage.prepare_damage_batch",
+        "quorune.damage_prevention_aftermath.prepare_prevention_aftermath"
+      ],
+      "positive_tests": [
+        "test_lifelink_permission_is_applied_before_damage_result_replacement",
+        "test_originals_normally_bind_complete_sources_and_current_permission_scopes",
+        "test_prohibited_gain_precedes_replacement_choice_and_commits_no_life_change"
+      ],
+      "negative_tests": [
+        "test_closed_global_and_opponent_scopes_use_current_controller_and_immutable_snapshots",
+        "test_exact_static_frames_and_current_scope_are_required_by_the_descriptor",
+        "test_verified_capability_withdrawal_is_a_specific_rules_block"
+      ],
+      "interaction_tests": [
+        "test_mixed_gain_replacement_continuation_contains_only_permitted_events",
+        "test_no_prohibition_keeps_original_event_order_and_replacement_journal",
+        "test_prohibition_does_not_block_loss_or_another_players_gain",
+        "test_real_global_source_blocks_canonical_prevention_aftermath",
+        "test_real_global_source_blocks_doublers_and_lifelink_then_humble_revokes_it"
+      ],
+      "multiplayer_tests": [
+        "test_real_knight_control_and_departure_change_gain_scope_without_skipping_draws"
+      ],
+      "privacy_tests": [
+        "test_real_erebos_noncreature_permission_life_price_and_live_devotion",
+        "test_real_knight_control_and_departure_change_gain_scope_without_skipping_draws"
+      ],
+      "replay_tests": [
+        "test_real_erebos_noncreature_permission_life_price_and_live_devotion",
+        "test_real_global_source_blocks_canonical_prevention_aftermath",
+        "test_real_global_source_blocks_doublers_and_lifelink_then_humble_revokes_it",
+        "test_real_knight_control_and_departure_change_gain_scope_without_skipping_draws",
+        "test_real_tibalt_loyalty_devil_death_and_source_removal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonical blocked-registry reconstruction and evidence validation produces the explicit life-gain permission status blocker, independently of unverified-evidence rejection.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh kernel gate omissions restore forbidden replacement choices or lifelink gains and fail; the live current-ability omission has an additional declared native sentinel.",
       "blockers": [],
       "status": "trusted"
     }

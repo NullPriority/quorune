@@ -34,6 +34,7 @@ from .damage_values import (
 )
 from .damage_turn_history import record_damage_turn_history
 from .util import stable_json
+from .semantic_runtime.life_prohibitions import collect_life_gain_permissions
 from .deathtouch import DeathtouchError, deathtouch_damage_result_applies
 from .commander import CommanderIdentityError, commander_damage_key
 from .combat_damage_events import (
@@ -735,6 +736,7 @@ def prepare_damage_batch(
             host,
             events,
             effects=result_effects,
+            gain_permissions=collect_life_gain_permissions(host,sources=sources,source_zones=source_zones),
             selections=tuple(selections[consumed:]),
             require_all_selections=False,
         )

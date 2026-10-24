@@ -8246,6 +8246,29 @@
         "test_optional_draw_choices",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "static-life-gain-prohibitions",
+      "patterns": [
+        "quorune/life_gain_permission.py",
+        "quorune/life_change.py",
+        "quorune/damage_results.py",
+        "quorune/damage.py",
+        "quorune/semantic_runtime/life_prohibitions.py",
+        "quorune/semantic_runtime/life_replacements.py",
+        "quorune/effect_runtime/life_effects.py",
+        "quorune/semantic_choices/life_intent_commit.py",
+        "quorune/damage_prevention_aftermath.py",
+        "quorune/compiler/life_templates.py",
+        "tests/test_life_gain_prohibitions.py",
+        "tests/fixtures/life-gain-prohibition-cards.json"
+      ],
+      "test_modules": [
+        "test_life_gain_prohibitions",
+        "test_life_change",
+        "test_damage_result_events",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

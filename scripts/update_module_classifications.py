@@ -58,6 +58,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/ability_fragments.py",
         "quorune/object_query_union.py",
         "quorune/static_player_restriction_model.py",
+        "quorune/life_gain_permission.py",
         "quorune/conditional_recipient_model.py",
         "quorune/kicked_target_model.py",
         "quorune/kicked_target_replacement_model.py",
@@ -719,6 +720,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/life_change.py",
         "quorune/life_state.py",
+        "quorune/life_gain_permission.py",
     }:
         return "life_state"
     if relative in {

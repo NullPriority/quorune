@@ -49,6 +49,7 @@ from .replacement import (
 from .semantic_runtime.life_replacements import (
     collect_life_change_replacement_effects,
 )
+from .semantic_runtime.life_prohibitions import collect_life_gain_permissions
 
 
 class PreventionAftermathError(ValueError):
@@ -447,6 +448,7 @@ def prepare_prevention_aftermath(
             host,
             requests.life,
             effects=life_effects,
+            gain_permissions=collect_life_gain_permissions(host,sources=sources,source_zones=source_zones),
             selections=selections,
             require_all_selections=False,
             batch_id=(

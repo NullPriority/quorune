@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..replacement_effects import ReplacementClass, ReplacementEffect
 from ..rules.capabilities import load_default_capability_registry
+from ..life_gain_permission import FixedLifeGainProhibitionSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 
@@ -198,7 +199,7 @@ class LifeGainMultiplierHandler:
 class LifeReplacementRegistry(
     RuntimeComponentRegistry[
         LifeReplacementSourceContext,
-        ReplacementEffect,
+        ReplacementEffect | FixedLifeGainProhibitionSpec,
     ]
 ):
     def replacement_effect(
@@ -218,7 +219,8 @@ class LifeReplacementRegistry(
 
 @lru_cache(maxsize=1)
 def default_life_replacement_registry() -> LifeReplacementRegistry:
-    registry = LifeReplacementRegistry((LifeGainMultiplierHandler(),))
+    from .life_prohibitions import LifeGainProhibitionHandler
+    registry = LifeReplacementRegistry((LifeGainMultiplierHandler(),LifeGainProhibitionHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

@@ -205,6 +205,7 @@
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/library-search-rules-cards.json",
     "tests/fixtures/library-selection-predicate-cards.json",
+    "tests/fixtures/life-gain-prohibition-cards.json",
     "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/live-battlefield-quantity-cards.json",
     "tests/fixtures/live-modifier-quantity-cards.json",

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .life_gain_permission import ALLOW_ALL_LIFE_GAIN, LifeGainPermissionSnapshot
 
 from dataclasses import dataclass
 from typing import Any, Literal, Mapping, Protocol, Sequence
@@ -689,6 +690,7 @@ def _accumulate_damage_event(
 
 def _append_accumulated_player_results(
     state: _MaterializationState,
+    gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
 ) -> None:
     for player, (amount, event_ids) in sorted(state.life_losses.items()):
         _append_player_life(
@@ -705,6 +707,8 @@ def _append_accumulated_player_results(
     for (player, source_logical, source), (amount, event_ids) in sorted(
         state.life_gains.items()
     ):
+        if not gain_permissions.allows_gain(player):
+            continue
         _append_player_life(
             state.accumulators,
             event_id=f"damage.result:lifelink:{player}:{source_logical}",
@@ -863,13 +867,17 @@ def _materialized_root(
 def materialize_damage_results(
     host: DamageResultHost,
     damage_events: Sequence[ReplaceableEvent],
+    *,
+    gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
 ) -> tuple[ReplaceableEvent, ...]:
     """Convert final dealt components into immutable CR 120.3 result trees."""
 
+    if not isinstance(gain_permissions, LifeGainPermissionSnapshot):
+        raise DamageResultError('Damage results require a typed gain-permission snapshot')
     state = _new_materialization_state()
     for damage_event in damage_events:
         _accumulate_damage_event(host, state, damage_event)
-    _append_accumulated_player_results(state)
+    _append_accumulated_player_results(state, gain_permissions)
     _append_accumulated_permanent_results(state)
     return tuple(
         _materialized_root(host, key, state.accumulators[key])
@@ -882,8 +890,9 @@ def prepare_damage_results(
     effects: Sequence[ReplacementEffect],
     selections: Sequence[str | None] = (),
     require_all_selections: bool = True,
+    gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
 ) -> PreparedDamageResults:
-    roots = materialize_damage_results(host, damage_events)
+    roots = materialize_damage_results(host, damage_events, gain_permissions=gain_permissions)
     if not roots:
         if selections and require_all_selections:
             raise DamageResultError(

@@ -9433,6 +9433,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/life_gain_permission.py",
+      "layer": "domain",
+      "owning_subsystem": "life_state",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/life_state.py",
       "layer": "rules",
       "owning_subsystem": "life_state",
@@ -17380,6 +17392,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/life_prohibitions.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/life_replacements.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -19637,5 +19664,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "67969955a32bbac29cfc18423e368b5d3377811bfdff47655f31eed21cdcc024"
+  "fingerprint": "15fccf0edb4e0dad4fe7f94398f9638c2fb2b19d8a7fc519bec768d2b8f68e15"
 }

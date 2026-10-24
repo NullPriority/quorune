@@ -345,6 +345,7 @@
       "test_land_condition_quantities",
       "test_land_search_view_equivalence",
       "test_library_rules",
+      "test_life_gain_prohibitions",
       "test_mulligan_and_turns",
       "test_multiplayer_rules",
       "test_nested_entry_copy",
