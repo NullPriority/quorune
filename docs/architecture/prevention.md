@@ -87,6 +87,15 @@ scope instead creates one next-instance shield for any matching creature.
 An absent choice resolves to no effect, never an unqualified predicate. Literal
 predicates keep their existing encoding and damage-time property checks.
 
+Fixed targeted-source prevention lowers directly to a canonical chosen-source
+identity without asking another source choice. Targeted recipient shields pin
+the resolved recipient through the creation owner, rather than retaining only
+a public reference in an applicability filter. Source and recipient reentry
+therefore cannot inherit a prior incarnation's shield. Shared direct targets
+compose tapped creature state with a closed subtype disjunction and revalidate
+both restrictions on resolution. Literal source keyword requirements retain
+their ordinary choice-time validation and damage-time property recheck.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial

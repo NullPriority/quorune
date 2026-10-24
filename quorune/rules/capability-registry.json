@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 494,
+  "registry_version": 495,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -22465,7 +22465,7 @@
     },
     {
       "id": "state_query.permanent.public_state_predicate",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "110.5",
         "115.1",
@@ -22567,7 +22567,11 @@
         "test_shared_public_set_query_fans_into_layers_and_resolution",
         "test_source_spans_unsupported_neighbors_and_surface_omissions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
-        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
+        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+        "test_originals_have_complete_normal_admission",
+        "test_shared_target_codec_keeps_tapped_subtype_union_and_source_identity_effects",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry"
       ],
       "negative_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -22590,7 +22594,11 @@
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_unsupported_and_malformed_direct_target_predicates_fail_closed",
         "test_unsupported_counter_set_variants_remain_material_residuals",
-        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
+        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+        "test_originals_have_complete_normal_admission",
+        "test_shared_target_codec_keeps_tapped_subtype_union_and_source_identity_effects",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry"
       ],
       "interaction_tests": [
         "test_ability_presence_query_uses_shared_layer_six_dependency_order",
@@ -22611,7 +22619,9 @@
         "test_shared_public_queries_govern_untap_participation",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
-        "test_tapped_target_set_revalidates_public_state_before_placement"
+        "test_tapped_target_set_revalidates_public_state_before_placement",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry"
       ],
       "multiplayer_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -22627,14 +22637,18 @@
         "test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
         "test_public_state_counter_set_resolves_current_membership_once",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
-        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry"
       ],
       "privacy_tests": [
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
         "test_combat_state_target_offers_and_submission_share_one_or_legality",
         "test_fixed_public_characteristic_sets_lock_multiplayer_membership",
         "test_four_player_target_predicate_privacy_rollback_and_replay",
-        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry"
       ],
       "replay_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -22645,7 +22659,9 @@
         "test_actual_speaker_loses_island_bonus_and_dies_to_already_marked_native_damage",
         "test_four_player_target_predicate_privacy_rollback_and_replay",
         "test_land_conditions_follow_current_controller_and_ignore_foreign_or_hand_deserts",
-        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry"
       ],
       "required_evidence": [
         "positive",
@@ -23945,7 +23961,7 @@
     },
     {
       "id": "damage.prevention.persistent_amount",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "609.7",
         "609.7a",
@@ -24058,7 +24074,14 @@
         "test_actual_dolmen_attackers_take_no_combat_damage_but_unblocked_attacker_hits_player",
         "test_bound_creature_prevention_pronouns_preserve_closed_scope_shape",
         "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
-        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
+        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+        "test_originals_have_complete_normal_admission",
+        "test_shared_target_codec_keeps_tapped_subtype_union_and_source_identity_effects",
+        "test_real_shadow_circle_prevents_noncombat_matching_source",
+        "test_real_shadow_property_loss_keeps_shield_unused",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry",
+        "test_real_elder_pays_tribal_taps_and_pins_spell_and_creature_sources"
       ],
       "negative_tests": [
         "test_unpreventable_damage_does_not_consume_shield",
@@ -24076,7 +24099,14 @@
         "test_negative_source_predicate_fails_closed_without_current_or_lki_facts",
         "test_scope_codec_old_form_is_preserved_and_malformed_extensions_reject",
         "test_damage_source_and_redirection_codecs_preserve_empty_legacy_forms",
-        "test_actual_shared_color_negative_keeps_unmatched_combat_damage"
+        "test_actual_shared_color_negative_keeps_unmatched_combat_damage",
+        "test_originals_have_complete_normal_admission",
+        "test_shared_target_codec_keeps_tapped_subtype_union_and_source_identity_effects",
+        "test_real_shadow_circle_prevents_noncombat_matching_source",
+        "test_real_shadow_property_loss_keeps_shield_unused",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry",
+        "test_real_elder_pays_tribal_taps_and_pins_spell_and_creature_sources"
       ],
       "interaction_tests": [
         "test_chosen_source_identity_and_property_mismatch_preserve_shield",
@@ -24108,14 +24138,24 @@
         "test_actual_enchanted_source_prevention_follows_aura_damage_scope",
         "test_actual_oaf_prevents_only_its_damage_to_red_creature",
         "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
-        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
+        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+        "test_real_shadow_circle_prevents_noncombat_matching_source",
+        "test_real_shadow_property_loss_keeps_shield_unused",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry",
+        "test_real_elder_pays_tribal_taps_and_pins_spell_and_creature_sources"
       ],
       "multiplayer_tests": [
         "test_simultaneous_sources_require_and_replay_exact_allocation",
         "test_chooser_selects_which_simultaneous_event_uses_next_instance_shield",
         "test_actual_emmara_prevents_only_own_creature_token_shock_and_replays",
         "test_actual_dolmen_attackers_take_no_combat_damage_but_unblocked_attacker_hits_player",
-        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
+        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+        "test_real_shadow_circle_prevents_noncombat_matching_source",
+        "test_real_shadow_property_loss_keeps_shield_unused",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry",
+        "test_real_elder_pays_tribal_taps_and_pins_spell_and_creature_sources"
       ],
       "privacy_tests": [
         "test_combat_allocation_is_seat_scoped_and_command_replays",
@@ -24125,7 +24165,12 @@
         "test_combat_event_order_is_seat_scoped_and_replays_exactly",
         "test_actual_emmara_prevents_only_own_creature_token_shock_and_replays",
         "test_actual_dolmen_attackers_take_no_combat_damage_but_unblocked_attacker_hits_player",
-        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
+        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+        "test_real_shadow_circle_prevents_noncombat_matching_source",
+        "test_real_shadow_property_loss_keeps_shield_unused",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry",
+        "test_real_elder_pays_tribal_taps_and_pins_spell_and_creature_sources"
       ],
       "replay_tests": [
         "test_combat_allocation_is_seat_scoped_and_command_replays",
@@ -24148,7 +24193,12 @@
         "test_actual_enchanted_source_prevention_follows_aura_damage_scope",
         "test_actual_oaf_prevents_only_its_damage_to_red_creature",
         "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
-        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
+        "test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners",
+        "test_real_shadow_circle_prevents_noncombat_matching_source",
+        "test_real_shadow_property_loss_keeps_shield_unused",
+        "test_real_wellgabber_accepts_each_tapped_subtype_and_rejects_other_candidates",
+        "test_real_wellgabber_revalidates_untap_and_does_not_follow_reentry",
+        "test_real_elder_pays_tribal_taps_and_pins_spell_and_creature_sources"
       ],
       "required_evidence": [
         "positive",

@@ -10,6 +10,17 @@ from .permanent_predicate_capability_shapes import direct_permanent_target_schem
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
     if 'cr-615-prevention-effects' not in set(mechanic_ids) or len(effects)!=1:return ()
     effect=effects[0]
+    direct_fields={'op','source','subject','mode','duration'}
+    if (isinstance(effect,Mapping) and effect.get('op')=='create_damage_prevention_shield'
+            and effect.get('source')=='$source' and effect.get('mode')=='all'
+            and effect.get('duration')=='until_end_of_turn' and target_schema is not None
+            and ((set(effect)==direct_fields and effect.get('subject')=='$target.0')
+                or (set(effect)==direct_fields|{'chosen_source','source_predicate'} and effect.get('subject')=='*' and effect.get('chosen_source')=='$target.0'))):
+        if direct_permanent_target_schema_is_closed(target_schema):
+            from .permanent_predicate_capability_shapes import direct_target_predicate_capabilities
+            return ('damage.prevention.persistent_amount','target.revalidate_resolution',*direct_target_predicate_capabilities(target_schema))
+        if target_schema=={'zones':['stack'],'categories':['spell'],'source_exclusion':True,'count':1}:
+            return ('damage.prevention.persistent_amount','target.revalidate_resolution')
     from ..designation_prevention import DESIGNATION_PREDICATE_KIND, DESIGNATION_SCOPE_KIND, designation_predicate_dependencies
     if isinstance(effect,Mapping) and effect.get('op')=='create_damage_prevention_shield' and isinstance(effect.get('scope'),Mapping) and effect['scope'].get('kind')==DESIGNATION_SCOPE_KIND:
         try:own=designation_predicate_dependencies(effect['scope'])

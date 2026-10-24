@@ -187,9 +187,10 @@ def _validate_public_state_predicate(
             state.minimum_total_counter_count is not None,
         )
     )
+    creature_domain = spec.types_any == ("creature",) or spec.types_all == ("creature",)
     invalid_creature_state = (
         state.entered_this_turn or state.tapped is not None
-    ) and spec.types_any != ("creature",)
+    ) and not creature_domain
     invalid_counter_state = (
         (state.counter_name is not None or state.minimum_total_counter_count is not None)
         and spec.types_any not in {(), ("creature",)}
