@@ -127,6 +127,7 @@
       "test_preflight_v080",
       "test_provoke_rules",
       "test_public_condition_self_replacements",
+      "test_public_zone_quantities",
       "test_qualified_graveyard_grants",
       "test_qualified_hexproof",
       "test_quantified_counter_targets",

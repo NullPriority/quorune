@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 489,
+  "registry_version": 490,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -47909,6 +47909,206 @@
       "dependency_fail_closed_rationale": "Closed payload/registered owners bind the parent and actual creation result; runtime minima and verified withdrawal reject independently of stale evidence.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual X token creation fails if separately instructed counters are omitted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "quantity_expression.public_owned_zone_collection",
+      "version": 1,
+      "official_rules": [
+        "111.6",
+        "400.3",
+        "406.3",
+        "604.3",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Count current owned face-up card qualities across explicit public exile/graveyard collections; unqualified counts include face-down card objects without identities.",
+        "inputs": [
+          "closed version-five quantity",
+          "current owner-zone lists and card-object metadata",
+          "active represented roster",
+          "public face-up characteristics only when filtered"
+        ],
+        "outputs": [
+          "exact current count/maximum with closed arithmetic",
+          "independent producer capability minimum",
+          "privacy-preserving deterministic replay"
+        ],
+        "exclusions": [
+          "hidden quality reads",
+          "unsupported zone or scope mixtures",
+          "linked exiled-object grants",
+          "names or Adventure predicates",
+          "unrepresented source siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.public_zone_quantity_model.validate_public_zone_quantity",
+        "quorune.public_zone_quantities.current_public_zone_quantity",
+        "quorune.compiler.public_zone_quantities.public_zone_quantity"
+      ],
+      "positive_tests": [
+        "test_nine_originals_admit_and_require_their_actual_quantity_producer",
+        "test_public_union_reads_no_face_down_characteristics_and_counts_cards_once",
+        "test_real_cosmogoyf_counts_face_down_cards_and_itself_after_departure",
+        "test_real_serpentine_curve_reads_union_once_before_its_own_graveyard_arrival",
+        "test_real_beacon_bolt_jump_start_counts_paid_discard_but_not_the_spell",
+        "test_real_crackling_drake_counts_union_once_and_draws"
+      ],
+      "negative_tests": [
+        "test_nine_originals_admit_and_require_their_actual_quantity_producer",
+        "test_public_union_reads_no_face_down_characteristics_and_counts_cards_once",
+        "test_real_cosmogoyf_counts_face_down_cards_and_itself_after_departure",
+        "test_real_serpentine_curve_reads_union_once_before_its_own_graveyard_arrival",
+        "test_real_beacon_bolt_jump_start_counts_paid_discard_but_not_the_spell",
+        "test_real_crackling_drake_counts_union_once_and_draws"
+      ],
+      "interaction_tests": [
+        "test_real_cosmogoyf_counts_face_down_cards_and_itself_after_departure",
+        "test_real_serpentine_curve_reads_union_once_before_its_own_graveyard_arrival",
+        "test_real_beacon_bolt_jump_start_counts_paid_discard_but_not_the_spell",
+        "test_real_crackling_drake_counts_union_once_and_draws"
+      ],
+      "multiplayer_tests": [
+        "test_real_cosmogoyf_counts_face_down_cards_and_itself_after_departure",
+        "test_real_serpentine_curve_reads_union_once_before_its_own_graveyard_arrival",
+        "test_real_beacon_bolt_jump_start_counts_paid_discard_but_not_the_spell",
+        "test_real_crackling_drake_counts_union_once_and_draws"
+      ],
+      "privacy_tests": [
+        "test_real_cosmogoyf_counts_face_down_cards_and_itself_after_departure",
+        "test_real_serpentine_curve_reads_union_once_before_its_own_graveyard_arrival",
+        "test_real_beacon_bolt_jump_start_counts_paid_discard_but_not_the_spell",
+        "test_real_crackling_drake_counts_union_once_and_draws"
+      ],
+      "replay_tests": [
+        "test_real_cosmogoyf_counts_face_down_cards_and_itself_after_departure",
+        "test_real_serpentine_curve_reads_union_once_before_its_own_graveyard_arrival",
+        "test_real_beacon_bolt_jump_start_counts_paid_discard_but_not_the_spell",
+        "test_real_crackling_drake_counts_union_once_and_draws"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Leaf producer uses an explicit closed version and current validated zone authority; missing/withdrawn own producer is rejected by payload-derived minima.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Body of Research and Crackling Drake witnesses fail when their actual library or owned collection count is omitted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "quantity_expression.zone_cardinality",
+      "version": 1,
+      "official_rules": [
+        "111.6",
+        "400.3",
+        "406.3",
+        "604.3",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Count raw card objects in hand/library across the represented active roster without reading hidden characteristics; sum or maximum cardinality has an explicit version.",
+        "inputs": [
+          "closed version-five quantity",
+          "current owner-zone lists and card-object metadata",
+          "active represented roster",
+          "public face-up characteristics only when filtered"
+        ],
+        "outputs": [
+          "exact current count/maximum with closed arithmetic",
+          "independent producer capability minimum",
+          "privacy-preserving deterministic replay"
+        ],
+        "exclusions": [
+          "hidden quality reads",
+          "unsupported zone or scope mixtures",
+          "linked exiled-object grants",
+          "names or Adventure predicates",
+          "unrepresented source siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.public_zone_quantity_model.validate_public_zone_quantity",
+        "quorune.public_zone_quantities.current_public_zone_quantity",
+        "quorune.compiler.public_zone_quantities.public_zone_quantity"
+      ],
+      "positive_tests": [
+        "test_nine_originals_admit_and_require_their_actual_quantity_producer",
+        "test_raw_hidden_zone_sizes_read_only_public_object_kind",
+        "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
+        "test_real_multani_counts_all_hands_and_preserves_shroud",
+        "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
+        "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
+        "test_real_body_of_research_counts_library_without_inspecting_cards"
+      ],
+      "negative_tests": [
+        "test_nine_originals_admit_and_require_their_actual_quantity_producer",
+        "test_raw_hidden_zone_sizes_read_only_public_object_kind",
+        "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
+        "test_real_multani_counts_all_hands_and_preserves_shroud",
+        "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
+        "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
+        "test_real_body_of_research_counts_library_without_inspecting_cards"
+      ],
+      "interaction_tests": [
+        "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
+        "test_real_multani_counts_all_hands_and_preserves_shroud",
+        "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
+        "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
+        "test_real_body_of_research_counts_library_without_inspecting_cards"
+      ],
+      "multiplayer_tests": [
+        "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
+        "test_real_multani_counts_all_hands_and_preserves_shroud",
+        "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
+        "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
+        "test_real_body_of_research_counts_library_without_inspecting_cards"
+      ],
+      "privacy_tests": [
+        "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
+        "test_real_multani_counts_all_hands_and_preserves_shroud",
+        "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
+        "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
+        "test_real_body_of_research_counts_library_without_inspecting_cards"
+      ],
+      "replay_tests": [
+        "test_real_adamaro_uses_maximum_opponent_hand_and_updates_on_concession",
+        "test_real_multani_counts_all_hands_and_preserves_shroud",
+        "test_real_sage_draw_and_history_transform_use_different_live_hand_domains",
+        "test_real_enemy_counts_only_opponent_hands_and_revalidates_departure",
+        "test_real_body_of_research_counts_library_without_inspecting_cards"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Leaf producer uses an explicit closed version and current validated zone authority; missing/withdrawn own producer is rejected by payload-derived minima.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh native Body of Research and Crackling Drake witnesses fail when their actual library or owned collection count is omitted.",
       "blockers": [],
       "status": "trusted"
     }

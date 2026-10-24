@@ -262,6 +262,9 @@ def query_characteristic_quantity(
     definition_extensions: bool = False,
 ) -> CharacteristicQuantitySpec | None:
     text = " ".join(value.strip().rstrip(".").split())
+    from .public_zone_quantities import public_zone_quantity
+    zone=public_zone_quantity(text)
+    if zone is not None:return zone
     if text.casefold() in {'opponent you have','opponents you have'}:
         return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT,schema_version=2)
     reduced = collection_quantity(
@@ -387,6 +390,9 @@ def query_characteristic_value(value: str, *, source_name: str) -> Characteristi
 
 
 def _unadjusted_characteristic_value(text: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
+    from .public_zone_quantities import public_zone_quantity
+    zone=public_zone_quantity(text)
+    if zone is not None:return zone
     if text.casefold().startswith('your devotion to '):
         return query_characteristic_quantity(text,source_name=source_name,definition_extensions=True)
     added = additive_quantity(text, compile_value=lambda base: _unadjusted_characteristic_value(base, source_name=source_name))

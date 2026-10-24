@@ -1,0 +1,3282 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned card cardinality and owned public zone collection witnesses",
+  "cards": [
+    {
+      "oracle_id": "18f34bfd-7675-49df-91ea-695c510cd3c3",
+      "name": "Adamaro, First to Desire",
+      "mana_cost": "{1}{R}{R}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Spirit",
+      "oracle_text": "Adamaro's power and toughness are each equal to the number of cards in the hand of the opponent with the most cards in hand.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1e048c15-50d6-4313-880a-e04348952a51",
+      "name": "Alaundo the Seer",
+      "mana_cost": "{2}{G}{U}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Shaman",
+      "oracle_text": "{T}: Draw a card, then exile a card from your hand and put a number of time counters on it equal to its mana value. It gains \"When the last time counter is removed from this card, if it's exiled, you may cast it without paying its mana cost. If you cast a creature spell this way, it gains haste until end of turn.\" Then remove a time counter from each other card you own in exile.",
+      "power": "3",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "name": "Alrund, God of the Cosmos // Hakka, Whispering Raven",
+      "mana_cost": "{3}{U}{U} // {1}{U}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — God // Legendary Creature — Bird",
+      "oracle_text": "Alrund, God of the Cosmos: Alrund gets +1/+1 for each card in your hand and each foretold card you own in exile.\nAt the beginning of your end step, choose a card type, then reveal the top two cards of your library. Put all cards of the chosen type revealed this way into your hand and the rest on the bottom of your library in any order.\n//\nHakka, Whispering Raven: Flying\nWhenever Hakka deals combat damage to a player, return it to its owner's hand, then scry 2.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry",
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "modal_dfc",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{U}{U}",
+          "name": "Alrund, God of the Cosmos",
+          "oracle_text": "Alrund gets +1/+1 for each card in your hand and each foretold card you own in exile.\nAt the beginning of your end step, choose a card type, then reveal the top two cards of your library. Put all cards of the chosen type revealed this way into your hand and the rest on the bottom of your library in any order.",
+          "power": "1",
+          "toughness": "1",
+          "type_line": "Legendary Creature — God"
+        },
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Hakka, Whispering Raven",
+          "oracle_text": "Flying\nWhenever Hakka deals combat damage to a player, return it to its owner's hand, then scry 2.",
+          "power": "2",
+          "toughness": "3",
+          "type_line": "Legendary Creature — Bird"
+        }
+      ]
+    },
+    {
+      "oracle_id": "43dc4b0c-e437-4abc-a3fb-48bd3098de88",
+      "name": "Altaïr Ibn-La'Ahad",
+      "mana_cost": "{R}{W}{B}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Assassin",
+      "oracle_text": "First strike\nWhenever Altaïr attacks, exile up to one target Assassin creature card from your graveyard with a memory counter on it. Then for each creature card you own in exile with a memory counter on it, create a tapped and attacking token that's a copy of it. Exile those tokens at end of combat.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "First strike"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-07-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "67d66678-a8e6-4f80-bade-1f1daf4b0610",
+      "name": "Ashiok, Wicked Manipulator",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Legendary Planeswalker — Ashiok",
+      "oracle_text": "If you would pay life while your library has at least that many cards in it, exile that many cards from the top of your library instead.\n+1: Look at the top two cards of your library. Exile one of them and put the other into your hand.\n−2: Create two 1/1 black Nightmare creature tokens with \"At the beginning of combat on your turn, if a card was put into exile this turn, put a +1/+1 counter on this token.\"\n−7: Target player exiles the top X cards of their library, where X is the total mana value of cards you own in exile.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "5",
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9b544415-841d-4038-841b-efb0cede5c24",
+      "name": "Battle of Wits",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "At the beginning of your upkeep, if you have 200 or more cards in your library, you win the game.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
+      "name": "Beacon Bolt",
+      "mana_cost": "{1}{U}{R}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Beacon Bolt deals damage to target creature equal to the total number of instant and sorcery cards you own in exile and in your graveyard.\nJump-start (You may cast this card from your graveyard by discarding a card in addition to paying its other costs. Then exile this card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Jump",
+        "Jump-start"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e0c21b32-f672-4496-91ed-7b7f351eb539",
+      "name": "Body of Research",
+      "mana_cost": "{G}{G}{G}{U}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it, where X is the number of cards in your library.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "32d666ff-4d6b-4c60-8d3d-5bdae2d475fa",
+      "name": "Candlekeep Inspiration",
+      "mana_cost": "{4}{U}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Until end of turn, creatures you control have base power and toughness X/X, where X is the number of cards you own in exile and in your graveyard that are instant cards, are sorcery cards, and/or have an Adventure.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "032fdd08-2ea7-442e-8162-0a8e5a585253",
+      "name": "Close Encounter",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "As an additional cost to cast this spell, choose a creature you control or a warped creature card you own in exile.\nClose Encounter deals damage equal to the power of the chosen creature or card to target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "63488c95-c249-40d8-a579-3ca311ed57ca",
+      "name": "Coax from the Blind Eternities",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "You may reveal an Eldrazi card you own from outside the game or choose a face-up Eldrazi card you own in exile. Put that card into your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-07-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "99d8c5f9-ad8f-450e-9a7c-51a4c0ca5043",
+      "name": "Cosmogoyf",
+      "mana_cost": "{B}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Elemental Lhurgoyf",
+      "oracle_text": "Cosmogoyf's power is equal to the number of cards you own in exile and its toughness is equal to that number plus 1.",
+      "power": "*",
+      "toughness": "1+*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "c8b4eba6-88ce-42d7-a235-5a4765a4a981",
+      "name": "Crackling Drake",
+      "mana_cost": "{U}{U}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Drake",
+      "oracle_text": "Flying\nCrackling Drake's power is equal to the total number of instant and sorcery cards you own in exile and in your graveyard.\nWhen this creature enters, draw a card.",
+      "power": "*",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "273b339c-964b-4a18-8eb5-ceb8abcdfd9e",
+      "name": "Divination",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Draw two cards.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "783f059f-90d0-4148-898b-9e694b22ac0a",
+      "name": "Enemy of Enlightenment",
+      "mana_cost": "{5}{B}",
+      "cmc": 6.0,
+      "type_line": "Enchantment Creature — Demon",
+      "oracle_text": "Flying\nThis creature gets -1/-1 for each card in your opponents' hands.\nAt the beginning of your upkeep, each player discards a card.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2adbb56a-45e9-4fbe-b586-3488ef8014a3",
+      "name": "Enter the Infinite",
+      "mana_cost": "{8}{U}{U}{U}{U}",
+      "cmc": 12.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Draw cards equal to the number of cards in your library, then put a card from your hand on top of your library. You have no maximum hand size until your next turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-02-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "2f092562-9e17-43cd-aeb8-d0567f99363e",
+      "name": "Go for the Throat",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target nonartifact creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9207facd-fbf9-4faa-ac44-6c0bcac81551",
+      "name": "Goliath Daydreamer",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Giant Wizard",
+      "oracle_text": "Whenever you cast an instant or sorcery spell from your hand, exile that card with a dream counter on it instead of putting it into your graveyard as it resolves.\nWhenever this creature attacks, you may cast a spell from among cards you own in exile with dream counters on them without paying its mana cost.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "53029460-50a0-4934-8fa9-0271517cd5d0",
+      "name": "Grolnok, the Omnivore",
+      "mana_cost": "{2}{G}{U}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Frog",
+      "oracle_text": "Whenever a Frog you control attacks, mill three cards.\nWhenever a permanent card is put into your graveyard from your library, exile it with a croak counter on it.\nYou may play lands and cast spells from among cards you own in exile with croak counters on them.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "faefb352-575c-49f7-9f7a-96f2279a077b",
+      "name": "Huskburster Swarm",
+      "mana_cost": "{7}{B}",
+      "cmc": 8.0,
+      "type_line": "Creature — Elemental Insect",
+      "oracle_text": "This spell costs {1} less to cast for each creature card you own in exile and in your graveyard.\nMenace, deathtouch",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Menace",
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cc7d99e8-f9dc-47d3-b6c0-e9308d33c3c0",
+      "name": "Invincible Hymn",
+      "mana_cost": "{6}{W}{W}",
+      "cmc": 8.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Count the number of cards in your library. Your life total becomes that number.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-10-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "oracle_id": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1",
+      "name": "Karn, the Great Creator",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Legendary Planeswalker — Karn",
+      "oracle_text": "Activated abilities of artifacts your opponents control can't be activated.\n+1: Until your next turn, up to one target noncreature artifact becomes an artifact creature with power and toughness each equal to its mana value.\n−2: You may reveal an artifact card you own from outside the game or choose a face-up artifact card you own in exile. Put that card into your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "5",
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "banned",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "restricted"
+      }
+    },
+    {
+      "oracle_id": "13a4f88b-6832-43a1-b4fa-c1ee60560bad",
+      "name": "Kaya the Inexorable",
+      "mana_cost": "{3}{W}{B}",
+      "cmc": 5.0,
+      "type_line": "Legendary Planeswalker — Kaya",
+      "oracle_text": "+1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.\"\n−3: Exile target nonland permanent.\n−7: You get an emblem with \"At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": "5",
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9eab65ee-e8be-4fa6-9634-fb03582bd745",
+      "name": "Kianne, Dean of Substance // Imbraham, Dean of Theory",
+      "mana_cost": "{2}{G} // {2}{U}{U}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Elf Druid // Legendary Creature — Bird Wizard",
+      "oracle_text": "Kianne, Dean of Substance: {T}: Exile the top card of your library. If it's a land card, put it into your hand. Otherwise, put a study counter on it.\n{4}{G}: Create a 0/0 green and blue Fractal creature token. Put a +1/+1 counter on it for each different mana value among nonland cards you own in exile with study counters on them.\n//\nImbraham, Dean of Theory: Flying\n{X}{U}{U}, {T}: Exile the top X cards of your library and put a study counter on each of them. Then you may put a card you own in exile with a study counter on it into your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "modal_dfc",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Kianne, Dean of Substance",
+          "oracle_text": "{T}: Exile the top card of your library. If it's a land card, put it into your hand. Otherwise, put a study counter on it.\n{4}{G}: Create a 0/0 green and blue Fractal creature token. Put a +1/+1 counter on it for each different mana value among nonland cards you own in exile with study counters on them.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Legendary Creature — Elf Druid"
+        },
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{U}{U}",
+          "name": "Imbraham, Dean of Theory",
+          "oracle_text": "Flying\n{X}{U}{U}, {T}: Exile the top X cards of your library and put a study counter on each of them. Then you may put a card you own in exile with a study counter on it into your hand.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Legendary Creature — Bird Wizard"
+        }
+      ]
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "name": "Mairsil, the Pretender",
+      "mana_cost": "{1}{U}{B}{R}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "When Mairsil enters, you may exile an artifact or creature card from your hand or graveyard and put a cage counter on it.\nMairsil has all activated abilities of all cards you own in exile with cage counters on them. You may activate each of those abilities only once each turn.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "bce5b327-7da1-4136-b76f-069e2fef5d2a",
+      "name": "Multani, Maro-Sorcerer",
+      "mana_cost": "{4}{G}{G}",
+      "cmc": 6.0,
+      "type_line": "Legendary Creature — Elemental Sorcerer",
+      "oracle_text": "Shroud (This creature can't be the target of spells or abilities.)\nMultani's power and toughness are each equal to the total number of cards in all players' hands.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Shroud"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1999-02-15",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "name": "Niko Defies Destiny",
+      "mana_cost": "{1}{W}{U}",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — You gain 2 life for each foretold card you own in exile.\nII — Add {W}{U}. Spend this mana only to foretell cards or cast spells that have foretell.\nIII — Return target card with foretell from your graveyard to your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "U",
+        "W"
+      ],
+      "layout": "saga",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "21fa2442-6eac-4dce-a9cc-76f0053fdb8f",
+      "name": "Peer into the Abyss",
+      "mana_cost": "{4}{B}{B}{B}",
+      "cmc": 7.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f29f4c73-5e5c-4341-8582-2873fbe5c5a3",
+      "name": "Ral, Izzet Viceroy",
+      "mana_cost": "{3}{U}{R}",
+      "cmc": 5.0,
+      "type_line": "Legendary Planeswalker — Ral",
+      "oracle_text": "+1: Look at the top two cards of your library. Put one of them into your hand and the other into your graveyard.\n−3: Ral deals damage to target creature equal to the total number of instant and sorcery cards you own in exile and in your graveyard.\n−8: You get an emblem with \"Whenever you cast an instant or sorcery spell, this emblem deals 4 damage to any target and you draw two cards.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": "5",
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ccb66cdc-909a-42c1-a10f-3886e9ed1936",
+      "name": "Realm Seekers",
+      "mana_cost": "{4}{G}{G}",
+      "cmc": 6.0,
+      "type_line": "Creature — Elf Scout",
+      "oracle_text": "This creature enters with X +1/+1 counters on it, where X is the total number of cards in all players' hands.\n{2}{G}, Remove a +1/+1 counter from this creature: Search your library for a land card, reveal it, put it into your hand, then shuffle.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a46454ad-d912-42f7-b228-492796161d82",
+      "name": "Sage of Ancient Lore // Werewolf of Ancient Hunger",
+      "mana_cost": "{4}{G} // ",
+      "cmc": 5.0,
+      "type_line": "Creature — Human Shaman Werewolf // Creature — Werewolf",
+      "oracle_text": "Sage of Ancient Lore: Sage of Ancient Lore's power and toughness are each equal to the number of cards in your hand.\nWhen this creature enters, draw a card.\nAt the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n//\nWerewolf of Ancient Hunger: Vigilance, trample\nWerewolf of Ancient Hunger's power and toughness are each equal to the total number of cards in all players' hands.\nAt the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Vigilance",
+        "Transform",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2016-04-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{G}",
+          "name": "Sage of Ancient Lore",
+          "oracle_text": "Sage of Ancient Lore's power and toughness are each equal to the number of cards in your hand.\nWhen this creature enters, draw a card.\nAt the beginning of each upkeep, if no spells were cast last turn, transform this creature.",
+          "power": "*",
+          "toughness": "*",
+          "type_line": "Creature — Human Shaman Werewolf"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Werewolf of Ancient Hunger",
+          "oracle_text": "Vigilance, trample\nWerewolf of Ancient Hunger's power and toughness are each equal to the total number of cards in all players' hands.\nAt the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+          "power": "*",
+          "toughness": "*",
+          "type_line": "Creature — Werewolf"
+        }
+      ]
+    },
+    {
+      "oracle_id": "5d22ab00-b454-4407-93d7-65b47f56cbaa",
+      "name": "Sailors' Bane",
+      "mana_cost": "{7}{U}{U}",
+      "cmc": 9.0,
+      "type_line": "Creature — Dragon Turtle",
+      "oracle_text": "This spell costs {1} less to cast for each card you own in exile and in your graveyard that's an instant card, a sorcery card, or a card that has an Adventure.\nWard {4} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {4}.)",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Ward"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "90edaf33-d0ab-47e0-8f6a-6fba38286e6e",
+      "name": "Saw It Coming",
+      "mana_cost": "{1}{U}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell.\nForetell {1}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Foretell"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "name": "Seize the Storm",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a red Elemental creature token with trample and \"This token's power and toughness are each equal to the number of instant and sorcery cards in your graveyard plus the number of cards with flashback you own in exile.\"\nFlashback {6}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "683775ac-481e-4c26-ab2f-5d2813af0268",
+      "name": "Sentinel of Lost Lore",
+      "mana_cost": "{1}{G}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Elf Knight",
+      "oracle_text": "When this creature enters, choose one or more —\n• Return target card you own in exile that has an Adventure to your hand.\n• Put target card you don't own in exile that has an Adventure on the bottom of its owner's library.\n• Exile target player's graveyard.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e07ed462-17b8-46ec-8a3f-3f5c89f4bf78",
+      "name": "Serpentine Curve",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it, where X is one plus the total number of instant and sorcery cards you own in exile and in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b53597f4-1a0f-4fa8-9c17-29178cdc4d2b",
+      "name": "Slime Against Humanity",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a 0/0 green Ooze creature token with trample. Put X +1/+1 counters on it, where X is two plus the total number of cards you own in exile and in your graveyard that are Oozes or are named Slime Against Humanity.\nA deck can have any number of cards named Slime Against Humanity.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "name": "Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",
+      "mana_cost": "{U} // ",
+      "cmc": 1.0,
+      "type_line": "Legendary Creature — Moonfolk Wizard // Legendary Planeswalker — Tamiyo",
+      "oracle_text": "Tamiyo, Inquisitive Student: Flying\nWhenever Tamiyo attacks, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhen you draw your third card in a turn, exile Tamiyo, then return her to the battlefield transformed under her owner's control.\n//\nTamiyo, Seasoned Scholar: +2: Until your next turn, whenever a creature attacks you or a planeswalker you control, it gets -1/-0 until end of turn.\n−3: Return target instant or sorcery card from your graveyard to your hand. If it's a green card, add one mana of any color.\n−7: Draw cards equal to half the number of cards in your library, rounded up. You get an emblem with \"You have no maximum hand size.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Investigate",
+        "Transform"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "transform",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "banned",
+        "duel": "restricted",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{U}",
+          "name": "Tamiyo, Inquisitive Student",
+          "oracle_text": "Flying\nWhenever Tamiyo attacks, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhen you draw your third card in a turn, exile Tamiyo, then return her to the battlefield transformed under her owner's control.",
+          "power": "0",
+          "toughness": "3",
+          "type_line": "Legendary Creature — Moonfolk Wizard"
+        },
+        {
+          "colors": [
+            "G",
+            "U"
+          ],
+          "defense": null,
+          "loyalty": "2",
+          "mana_cost": "",
+          "name": "Tamiyo, Seasoned Scholar",
+          "oracle_text": "+2: Until your next turn, whenever a creature attacks you or a planeswalker you control, it gets -1/-0 until end of turn.\n−3: Return target instant or sorcery card from your graveyard to your hand. If it's a green card, add one mana of any color.\n−7: Draw cards equal to half the number of cards in your library, rounded up. You get an emblem with \"You have no maximum hand size.\"",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Planeswalker — Tamiyo"
+        }
+      ]
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "name": "Thassa's Oracle",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Creature — Merfolk Wizard",
+      "oracle_text": "When this creature enters, look at the top X cards of your library, where X is your devotion to blue. Put up to one of them on top of your library and the rest on the bottom of your library in a random order. If X is greater than or equal to the number of cards in your library, you win the game. (Each {U} in the mana costs of permanents you control counts toward your devotion to blue.)",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "banned",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "name": "The Dragon-Kami Reborn // Dragon-Kami's Egg",
+      "mana_cost": "{2}{G} // ",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Egg",
+      "oracle_text": "The Dragon-Kami Reborn: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — You gain 2 life. Look at the top three cards of your library. Exile one of them face down with a hatching counter on it, then put the rest on the bottom of your library in any order.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nDragon-Kami's Egg: Whenever this creature or a Dragon you control dies, you may cast a creature spell from among cards you own in exile with hatching counters on them without paying its mana cost.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Transform"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "The Dragon-Kami Reborn",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — You gain 2 life. Look at the top three cards of your library. Exile one of them face down with a hatching counter on it, then put the rest on the bottom of your library in any order.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Dragon-Kami's Egg",
+          "oracle_text": "Whenever this creature or a Dragon you control dies, you may cast a creature spell from among cards you own in exile with hatching counters on them without paying its mana cost.",
+          "power": "0",
+          "toughness": "1",
+          "type_line": "Enchantment Creature — Egg"
+        }
+      ]
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "1e048c15-50d6-4313-880a-e04348952a51",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If you exile a card with a mana value of 0, such as a land card, no time counters will be placed on it. Unless you find a way to put time counters on it in exile, the triggered ability it gains from Alaundo will never trigger."
+    },
+    {
+      "oracle_id": "1e048c15-50d6-4313-880a-e04348952a51",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Alaundo's ability is not the same as the suspend ability. However, if you exile a card with suspend this way, the suspend ability will also cause you to remove time counters from it."
+    },
+    {
+      "oracle_id": "1e048c15-50d6-4313-880a-e04348952a51",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Alaundo's ability will remove time counters from all cards you own in exile, even ones that were put there another way, such as with the suspend ability."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-01-22",
+      "source": "scryfall",
+      "comment": "Alrund recieved day 1 eratta to clarify that you select from the cards \"revealed this way\". For more information, see https://magic.wizards.com/en/articles/archive/feature/kaldheim-release-notes-2021-01-22"
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face's name."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \"play\") a specific modal double-faced card, you can't play it as a land."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can't be put onto the battlefield, it doesn't enter the battlefield."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "There is a single triangle icon in the top left corner of the front face. There is a double triangle icon in the top left corner of the back face."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you're playing and ignore the other face's characteristics."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that's being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Alrund's first ability applies only while Alrund is on the battlefield. In every other zone, Alrund is 1/1."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You may choose any card type, but the ones that may appear in your library are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Supertypes such as snow and basic may not be chosen. Subtypes such as God, Aura, and Forest also may not be chosen."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The words \"revealed this way\" were inadvertently omitted from the printed card. Alrund's Oracle text was updated to include this phrase."
+    },
+    {
+      "oracle_id": "0a69c3dd-52a3-4ef6-b53f-b0780e0dc5f8",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "A modal double-faced card can't be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed."
+    },
+    {
+      "oracle_id": "43dc4b0c-e437-4abc-a3fb-48bd3098de88",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "Although the tokens enter the battlefield attacking, they were never declared as attacking creatures. Abilities that trigger whenever a creature attacks won't trigger when they enter the battlefield attacking."
+    },
+    {
+      "oracle_id": "43dc4b0c-e437-4abc-a3fb-48bd3098de88",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "If an exiled card has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "43dc4b0c-e437-4abc-a3fb-48bd3098de88",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "Each of the tokens copies exactly what was printed on the card in exile and nothing else. They don't copy any information about the object the card was before it was exiled. "
+    },
+    {
+      "oracle_id": "43dc4b0c-e437-4abc-a3fb-48bd3098de88",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "You choose which player, planeswalker, or battle the tokens are attacking. Each token can enter attacking a different player, planeswalker, or battle, and they don't need to be the same one that Altaïr is attacking."
+    },
+    {
+      "oracle_id": "43dc4b0c-e437-4abc-a3fb-48bd3098de88",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "If a card copied by one of the tokens had any \"when [this permanent] enters the battlefield\" abilities, then the token also has those abilities and will trigger them when it's created. Similarly, any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities that any of the tokens have copied will also work."
+    },
+    {
+      "oracle_id": "67d66678-a8e6-4f80-bade-1f1daf4b0610",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Ashiok, Wicked Nightmare's first ability isn't optional. You can't choose to pay life instead of exiling cards from the top of your library while you control Ashiok, and you can't split the payment between life and cards."
+    },
+    {
+      "oracle_id": "67d66678-a8e6-4f80-bade-1f1daf4b0610",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If you would pay life while you control Ashiok and your library does not have at least that many cards in it, you'll just pay life as normal."
+    },
+    {
+      "oracle_id": "67d66678-a8e6-4f80-bade-1f1daf4b0610",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Ashiok's first ability doesn't allow you to attempt to pay an amount of life greater than your current life total."
+    },
+    {
+      "oracle_id": "9b544415-841d-4038-841b-efb0cede5c24",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "Battle of Wits has an “intervening ‘if’ clause.” This means that if you don’t have 200 or more cards in your library at the beginning of your upkeep, the ability won’t trigger. If the ability does trigger, but you have fewer than 200 cards in your library when the ability resolves, the ability will do nothing."
+    },
+    {
+      "oracle_id": "9b544415-841d-4038-841b-efb0cede5c24",
+      "published_at": "2012-07-01",
+      "source": "wotc",
+      "comment": "In tournaments, you must be able to shuffle your entire deck within a reasonable amount of time."
+    },
+    {
+      "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If any exiled cards you own are face down, they have no characteristics. If they're normally instants or sorceries, they won't be counted."
+    },
+    {
+      "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If a card with jump-start is put into your graveyard during your turn, you'll be able to cast it right away if it's legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "A spell cast using jump-start will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "Beacon Bolt is still on the stack while you count your instant and sorcery cards in your graveyard and in exile. It doesn't count itself."
+    },
+    {
+      "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If an effect allows you to pay an alternative cost rather than a spell's mana cost, you may pay that alternative cost when you jump-start a spell. You'll still discard a card as an additional cost to cast it."
+    },
+    {
+      "oracle_id": "884686dd-515c-4484-a324-e7d126903a42",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions when casting a spell with jump-start, including those based on the card's type. For instance, you can cast a sorcery using jump-start only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "32d666ff-4d6b-4c60-8d3d-5bdae2d475fa",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "The value of X is locked in at the time that Candlekeep Inspiration resolves. The power and toughness of creatures affected by it will not change as cards enter and leave exile and/or your graveyard."
+    },
+    {
+      "oracle_id": "32d666ff-4d6b-4c60-8d3d-5bdae2d475fa",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "The set of creatures that Candlekeep Inspiration applies to is locked in as it resolves. Creatures that enter the battlefield under your control after it resolves will not be affected."
+    },
+    {
+      "oracle_id": "032fdd08-2ea7-442e-8162-0a8e5a585253",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If you chose a creature on the battlefield, use that creature’s power when Close Encounter resolves to determine how much damage is dealt. If that creature is no longer on the battlefield when Close Encounter resolves, use that creature’s power as it last existed on the battlefield to determine how much damage is dealt."
+    },
+    {
+      "oracle_id": "63488c95-c249-40d8-a579-3ca311ed57ca",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "In a casual game, a card you choose from outside the game comes from your personal collection. In a tournament event, a card you choose from outside the game must come from your sideboard."
+    },
+    {
+      "oracle_id": "63488c95-c249-40d8-a579-3ca311ed57ca",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "A card that is exiled face down has no characteristics. You can’t choose it, even if you’re allowed to look at it."
+    },
+    {
+      "oracle_id": "63488c95-c249-40d8-a579-3ca311ed57ca",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "An Eldrazi card is one with the subtype Eldrazi. Noncreature cards with devoid from the Battle for Zendikar block are Eldrazi-themed, but they are not Eldrazi cards."
+    },
+    {
+      "oracle_id": "99d8c5f9-ad8f-450e-9a7c-51a4c0ca5043",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "The ability that defines Cosmogoyf’s power and toughness works in all zones, not just the battlefield. If Cosmogoyf is in exile, its ability will count itself."
+    },
+    {
+      "oracle_id": "c8b4eba6-88ce-42d7-a235-5a4765a4a981",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If any exiled cards you own are face down, they have no characteristics. If they're normally instants or sorceries, they won't be counted."
+    },
+    {
+      "oracle_id": "c8b4eba6-88ce-42d7-a235-5a4765a4a981",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "The ability that defines Crackling Drake's power works in all zones."
+    },
+    {
+      "oracle_id": "783f059f-90d0-4148-898b-9e694b22ac0a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a spell or ability causes an opponent to draw one or more cards, wait until that spell or ability has finished resolving to determine whether Enemy of Enlightenment dies for having 0 toughness. If that spell or ability also causes cards to leave that player's hand, Enemy of Enlightenment may briefly be a 0/0 creature without dying."
+    },
+    {
+      "oracle_id": "783f059f-90d0-4148-898b-9e694b22ac0a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The ability that modifies the power and toughness of Enemy of Enlightenment applies only while it's on the battlefield."
+    },
+    {
+      "oracle_id": "783f059f-90d0-4148-898b-9e694b22ac0a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If any player can't discard a card, skip that player and each other player discards a card."
+    },
+    {
+      "oracle_id": "783f059f-90d0-4148-898b-9e694b22ac0a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "As the last ability resolves, first you choose a card in hand without revealing it, then each other player in turn order does the same. Then all the chosen cards are discarded at the same time."
+    },
+    {
+      "oracle_id": "2adbb56a-45e9-4fbe-b586-3488ef8014a3",
+      "published_at": "2013-01-24",
+      "source": "wotc",
+      "comment": "If you are playing with the top card of your library revealed (due to Garruk's Horde, for example), you'll reveal each card before you draw it."
+    },
+    {
+      "oracle_id": "2adbb56a-45e9-4fbe-b586-3488ef8014a3",
+      "published_at": "2013-01-24",
+      "source": "wotc",
+      "comment": "You won't have to discard any cards during the cleanup step of the turn you cast Enter the Infinite. You will have to discard down to your maximum hand size during the cleanup step of your next turn."
+    },
+    {
+      "oracle_id": "2f092562-9e17-43cd-aeb8-d0567f99363e",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If the targeted creature is also an artifact when Go for the Throat tries to resolve, it won't resolve."
+    },
+    {
+      "oracle_id": "2f092562-9e17-43cd-aeb8-d0567f99363e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the targeted creature is also an artifact when Go for the Throat tries to resolve, it won't resolve."
+    },
+    {
+      "oracle_id": "9207facd-fbf9-4faa-ac44-6c0bcac81551",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Goliath Daydreamer's last ability allows you to cast an exiled card with a dream counter on it only while the ability is resolving and still on the stack. You can't wait to cast the spell later in the turn. Timing restrictions based on the card's type are ignored."
+    },
+    {
+      "oracle_id": "9207facd-fbf9-4faa-ac44-6c0bcac81551",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If the spell you cast has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "9207facd-fbf9-4faa-ac44-6c0bcac81551",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Since you are using an alternative cost to cast the spell, you can't pay any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "9207facd-fbf9-4faa-ac44-6c0bcac81551",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "The spell will have all of its normal effects before being exiled. If the spell's normal effects include exiling itself, the effect of Goliath Daydreamer's first ability won't apply to it."
+    },
+    {
+      "oracle_id": "9207facd-fbf9-4faa-ac44-6c0bcac81551",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If a spell is countered or otherwise fails to resolve, Goliath Daydreamer's first ability won't exile it."
+    },
+    {
+      "oracle_id": "53029460-50a0-4934-8fa9-0271517cd5d0",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Grolnok's last ability allows you to play lands and cast spells from among all cards you own in exile with croak counters on them, regardless of whether they were put there by the Grolnok that's currently on the battlefield or by an earlier incarnation."
+    },
+    {
+      "oracle_id": "53029460-50a0-4934-8fa9-0271517cd5d0",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Grolnok, the Omnivore's second ability exiles all permanent cards that are put into your graveyard from your library, not just those that you mill when a Frog you control attacks."
+    },
+    {
+      "oracle_id": "cc7d99e8-f9dc-47d3-b6c0-e9308d33c3c0",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "For your life total to become the appropriate number, you actually gain or lose the necessary amount of life. For example, if your life total is 20 and your library has thirty-two cards in it when Invincible Hymn resolves, Invincible Hymn will cause you to gain 12 life. Other cards that interact with life gain or life loss will interact with Invincible Hymn accordingly."
+    },
+    {
+      "oracle_id": "cc7d99e8-f9dc-47d3-b6c0-e9308d33c3c0",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Invincible Hymn checks the number of cards in your library just once: when it resolves. It doesn’t continuously modify your life total as your library size changes."
+    },
+    {
+      "oracle_id": "cc7d99e8-f9dc-47d3-b6c0-e9308d33c3c0",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, Invincible Hymn will essentially set your team’s life total to the number of cards in your library. For example, suppose your team has 8 life and you have thirty cards in your library. Your life total (being the same as your team’s life total) changes from 8 life to 30 life, for a net gain of 22 life. Your team’s life total becomes 30 (22 + 8)."
+    },
+    {
+      "oracle_id": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature."
+    },
+    {
+      "oracle_id": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "If a permanent has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "Karn's last ability can't get a face-down card in exile, even if you know it's an artifact card."
+    },
+    {
+      "oracle_id": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "In a casual game, a card you choose from outside the game comes from your personal collection. In a tournament event, a card you choose from outside the game must come from your sideboard. You may look at your sideboard at any time."
+    },
+    {
+      "oracle_id": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "Karn's first ability affects only artifacts on the battlefield. Activated abilities that work in other zones can still be activated."
+    },
+    {
+      "oracle_id": "a20dd48d-d344-4db1-b0e9-a2b71c3cc9d1",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keyword abilities are activated abilities and will have colons in their reminder text, such as equip. Triggered abilities (starting with \"when,\" \"whenever,\" or \"at\") are unaffected by Karn."
+    },
+    {
+      "oracle_id": "13a4f88b-6832-43a1-b4fa-c1ee60560bad",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If the spell has {X} in its mana cost, you must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "13a4f88b-6832-43a1-b4fa-c1ee60560bad",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If you cast a spell “without paying its mana cost,” you can’t choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "13a4f88b-6832-43a1-b4fa-c1ee60560bad",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If you own a face-down card in exile, Kaya’s emblem will let you cast it only if you can look at the card (and only if it’s legendary). If you aren’t allowed to look at the card, you can’t cast it, even if you know it’s legendary."
+    },
+    {
+      "oracle_id": "13a4f88b-6832-43a1-b4fa-c1ee60560bad",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The ghostform counter added by the first ability doesn’t have any functional importance. It’s there to remind you of the ability the creature gains. Even if that counter is removed from the creature, the triggered ability it gains will still work."
+    },
+    {
+      "oracle_id": "13a4f88b-6832-43a1-b4fa-c1ee60560bad",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If a nontoken creature gains more than one instance of that triggered ability, each of them will trigger separately. You can return the card to its owner’s hand only once, but you’ll create a Spirit creature token for each of those abilities."
+    },
+    {
+      "oracle_id": "9eab65ee-e8be-4fa6-9634-fb03582bd745",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "You may choose 0 as the value of X as you activate Imbraham’s last ability. If you do, you will not exile any cards from your library. However, you may still put a card previously exiled with a study counter on it into your hand."
+    },
+    {
+      "oracle_id": "9eab65ee-e8be-4fa6-9634-fb03582bd745",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "The second abilities of both Kianne and Imbraham look at all cards you own in exile with study counters, even if they were exiled by a different permanent, such as another Kianne or Imbraham."
+    },
+    {
+      "oracle_id": "9eab65ee-e8be-4fa6-9634-fb03582bd745",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Cards are exiled face up unless an effect states otherwise."
+    },
+    {
+      "oracle_id": "9eab65ee-e8be-4fa6-9634-fb03582bd745",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Exiled cards with study counters on them retain their study counters even if Kianne or Imbraham leave the battlefield."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "The exiled cards remain exiled with cage counters when Mairsil leaves the battlefield. If Mairsil returns to the battlefield, it will see all of those exiled cards with cage counters on them."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keyword abilities (such as equip) are activated abilities and will have colons in their reminder text. Mairsil won't gain triggered abilities (which start with \"when,\" \"whenever,\" or \"at\")."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If an activated ability of a card in exile with a cage counter on it references the card it's printed on by name, treat Mairsil's instance of that ability as though it referenced Mairsil by name instead. For instance, if Mairsil exiles Magus of the Mind, the cost to activate the ability includes sacrificing Mairsil, not sacrificing Magus of the Mind."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If Mairsil has an equip ability, activating it won't cause anything to happen. Mairsil doesn't become attached to a creature. They may remain friends."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If you have a creature enter the battlefield as a copy of Mairsil, its first ability triggers. You won't be able to activate any abilities before the \"legend rule\" applies, but the triggered ability will still let you exile another card with a cage counter regardless of which Mairsil you keep."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If Mairsil gains an activated ability that's normally linked to another activated ability of the card it came from, those two abilities Mairsil gains are linked for as long as Mairsil remains on the battlefield. For example, if Mairsil exiles Izzet Chemister, cards exiled with the first ability Mairsil gained from Izzet Chemister can be cast if you activate the second ability it gained that way. Izzet Chemister itself can't be cast this way, and if Mairsil leaves the battlefield before activating that second ability, the cards exiled with that first ability are lost forever."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If multiple cards exiled with cage counters on them have the same ability, Mairsil will have multiple instances of that ability. Each may be activated once each turn."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If another player gains control of Mairsil, it will have the abilities of only cards that player owns in exile with cage counters on them."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If Mairsil gains an activated ability that's normally linked to a non-activated ability of the card it came from, the ability Mairsil has isn't linked to any ability. For example, if Mairsil exiles Prototype Portal, the activated ability creates no tokens at all; it doesn't create Prototype Portal tokens."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If one of Mairsil's abilities doesn't resolve, most likely because its target became illegal before it resolved, it can't be activated again in the same turn."
+    },
+    {
+      "oracle_id": "ed5fbae0-2dca-44a5-84dc-62674b3a92a6",
+      "published_at": "2017-08-25",
+      "source": "wotc",
+      "comment": "If Mairsil has a crew ability, creatures can crew Mairsil. It'll become an artifact creature, but its power and toughness remain unchanged."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Once the number of lore counters on a Saga is greater than or equal to the greatest number among its chapter abilities, the Saga’s controller sacrifices it as soon as its chapter ability has left the stack, most likely by resolving or being countered. This state-based action doesn’t use the stack."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Removing lore counters won’t cause a previous chapter ability to trigger. If lore counters are removed from a Saga, the appropriate chapter abilities will trigger again when the Saga receives more lore counters."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "As a Saga enters the battlefield, its controller puts a lore counter on it. As your precombat main phase begins (immediately after your draw step), you put another lore counter on each Saga you control. Putting a lore counter on a Saga in either of these ways doesn’t use the stack."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If multiple chapter abilities trigger at the same time, their controller puts them on the stack in any order. If any of them require targets, those targets are chosen as you put the abilities on the stack, before any of those abilities resolve."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Each symbol on the left of a Saga’s text box represents a chapter ability. A chapter ability is a triggered ability that triggers when a lore counter that is put on the Saga causes the number of lore counters on the Saga to become equal to or greater than the ability’s chapter number. Chapter abilities are put onto the stack and may be responded to."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Because exiling a card with foretell from your hand is a special action, you can do so any time you have priority during your turn, including in response to spells and abilities. Once you announce you’re taking the action, no other player can respond by trying to remove the card from your hand."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Casting a foretold card from exile follows the timing rules for that card. If you foretell an instant card, you can cast it as soon as the next player’s turn. In most cases, if you foretell a card that isn’t an instant (or doesn’t have flash), you’ll have to wait until your next turn to cast it."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "A chapter ability doesn’t trigger if a lore counter is put on a Saga that already had a number of lore counters greater than or equal to that chapter’s number. For example, the third lore counter put on a Saga causes the chapter III ability to trigger, but chapters I and II won’t trigger again."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The mana added by the chapter II ability can be spent to cast a spell that has foretell no matter where you’re casting it from. It doesn’t have to be a foretold card you’re casting from exile."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If you’re casting a foretold card from exile for its foretell cost, you can’t choose to cast it for any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "e79bf038-071e-448e-ad95-234c207a9575",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Once a chapter ability has triggered, the ability on the stack won’t be affected if the Saga gains or loses counters, or if it leaves the battlefield."
+    },
+    {
+      "oracle_id": "21fa2442-6eac-4dce-a9cc-76f0053fdb8f",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "The life lost is rounded up, not the remaining life total. For example, if the target player has 7 life, they lose 4 life and end up with 3. Similarly, the number of cards drawn is rounded up, not the number of cards remaining in the library."
+    },
+    {
+      "oracle_id": "21fa2442-6eac-4dce-a9cc-76f0053fdb8f",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "To draw the cards, first the player determines how many cards to draw, then draws them. This event may be modified so that a different number of cards are actually drawn."
+    },
+    {
+      "oracle_id": "f29f4c73-5e5c-4341-8582-2873fbe5c5a3",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "The triggered ability of Ral's emblem resolves before the spell that caused it to trigger. It resolves even if that spell is countered."
+    },
+    {
+      "oracle_id": "f29f4c73-5e5c-4341-8582-2873fbe5c5a3",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If any exiled cards you own are face down, they have no characteristics. If they're normally instants or sorceries, they won't be counted for Ral's second ability."
+    },
+    {
+      "oracle_id": "f29f4c73-5e5c-4341-8582-2873fbe5c5a3",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "The emblem created by Ral's last ability is colorless. The damage it deals is from a colorless source."
+    },
+    {
+      "oracle_id": "f29f4c73-5e5c-4341-8582-2873fbe5c5a3",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If you have only one card in your library, Ral's first ability puts it into your hand. Nothing is put into your graveyard."
+    },
+    {
+      "oracle_id": "f29f4c73-5e5c-4341-8582-2873fbe5c5a3",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If the target permanent or player becomes an illegal target for the triggered ability of Ral's emblem, the ability doesn't resolve. You don't draw two cards."
+    },
+    {
+      "oracle_id": "ccb66cdc-909a-42c1-a10f-3886e9ed1936",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "If Realm Seekers enters the battlefield directly from a player's hand without being cast, it counts itself when determining the value of X."
+    },
+    {
+      "oracle_id": "ccb66cdc-909a-42c1-a10f-3886e9ed1936",
+      "published_at": "2014-05-29",
+      "source": "wotc",
+      "comment": "The value of X is determined as Realm Seekers enters the battlefield. Players can cast spells and activate abilities while Realm Seekers is on the stack to remove cards from their hands if they wish, and this will result in fewer counters being placed on Realm Seekers as it enters the battlefield."
+    },
+    {
+      "oracle_id": "a46454ad-d912-42f7-b228-492796161d82",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The abilities that transform a Werewolf back and forth look at the entire previous turn, even if the Werewolf with that ability wasn't on the battlefield for some or all of that turn."
+    },
+    {
+      "oracle_id": "a46454ad-d912-42f7-b228-492796161d82",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If you have no cards in hand after Sage of Ancient Lore enters the battlefield, it will be put into your graveyard before its first triggered ability resolves. You'll draw a card, but Sage of Ancient Lore will already be gone."
+    },
+    {
+      "oracle_id": "a46454ad-d912-42f7-b228-492796161d82",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "To trigger the Werewolf's back face's transform ability, a single player must have cast two or more spells during the previous turn. If multiple players each cast just one spell during the previous turn, the ability won't trigger."
+    },
+    {
+      "oracle_id": "90edaf33-d0ab-47e0-8f6a-6fba38286e6e",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Because exiling a card with foretell from your hand is a special action, you can do so any time you have priority during your turn, including in response to spells and abilities. Once you announce you’re taking the action, no other player can respond by trying to remove the card from your hand."
+    },
+    {
+      "oracle_id": "90edaf33-d0ab-47e0-8f6a-6fba38286e6e",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Casting a foretold card from exile follows the timing rules for that card. If you foretell an instant card, you can cast it as soon as the next player’s turn. In most cases, if you foretell a card that isn’t an instant (or doesn’t have flash), you’ll have to wait until your next turn to cast it."
+    },
+    {
+      "oracle_id": "90edaf33-d0ab-47e0-8f6a-6fba38286e6e",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If you’re casting a foretold card from exile for its foretell cost, you can’t choose to cast it for any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "While a spell is on the stack, it is neither in your graveyard nor in exile, so it won't contribute to the Elemental's power and toughness. For example, with Seize the Storm in your graveyard and no cards in exile, the 1/1 Elemental in the above scenario will become 0/0 and die if you cast Seize the Storm from your graveyard using flashback."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "The power and toughness of the Elemental token will change as the number of instant and sorcery cards in your graveyard and the number of cards with flashback you own in exile change."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "d3455e93-3a05-42db-945d-c4c85f4ac827",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If you cast Seize the Storm with no instant or sorcery cards in your graveyard and no cards with flashback in exile, the Elemental will start as a 0/0 creature. However, state-based actions won't be checked until after Seize the Storm has finished resolving. The Elemental will then be a 1/1 creature and survive because Seize the Storm will either be in your graveyard or in exile."
+    },
+    {
+      "oracle_id": "683775ac-481e-4c26-ab2f-5d2813af0268",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "You must choose at least one mode if you can. If there are no legal targets available for the first two modes, you must choose the last mode. Notably, the last mode can target any player, even one who has no cards in their graveyard. In the unusual case there are no appropriate cards in exile to target and no player may legally be chosen as a target, the ability is removed from the stack with no effect."
+    },
+    {
+      "oracle_id": "683775ac-481e-4c26-ab2f-5d2813af0268",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "The first and second modes of Sentinel of Lost Lore's ability can target any face-up exiled card that has an Adventure as long as it's owned by an appropriate player. It doesn't matter whether the card was cast as an Adventure."
+    },
+    {
+      "oracle_id": "e07ed462-17b8-46ec-8a3f-3f5c89f4bf78",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Serpentine Curve itself is not yet in your graveyard when you determine the value of X."
+    },
+    {
+      "oracle_id": "e07ed462-17b8-46ec-8a3f-3f5c89f4bf78",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you own face-down cards in exile, they won’t count toward the value of X, even if you’re allowed to look at them and you know they are instant or sorcery cards."
+    },
+    {
+      "oracle_id": "b53597f4-1a0f-4fa8-9c17-29178cdc4d2b",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The last ability of Slime Against Humanity lets you ignore the \"four-of\" rule. It doesn't let you ignore format legality. For example, during a Murders at Karlov Manor Limited event, you can't add Slime Against Humanity from your personal collection."
+    },
+    {
+      "oracle_id": "b53597f4-1a0f-4fa8-9c17-29178cdc4d2b",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "If you own face-down cards in exile, they won't count toward the value of X, even if you're allowed to look at them and you know they are Ooze cards or cards named Slime Against Humanity."
+    },
+    {
+      "oracle_id": "b53597f4-1a0f-4fa8-9c17-29178cdc4d2b",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "The last ability of Slime Against Humanity also lets you ignore the \"singleton\" rule in formats like Commander."
+    },
+    {
+      "oracle_id": "b53597f4-1a0f-4fa8-9c17-29178cdc4d2b",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "Slime Against Humanity isn't put into your graveyard until after it finishes resolving, so it doesn't count itself for its own effect."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color. Colorless back faces, such as lands, do not."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You can activate one of Tamiyo, Seasoned Scholar's loyalty abilities the turn she enters the battlefield. However, you may do so only during one of your main phases when the stack is empty. For example, if Tamiyo, Seasoned Scholar enters the battlefield during combat, there will be an opportunity for your opponent to remove her before you can activate one of her abilities."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Each transforming double-faced card in this set is cast with its front face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "In some rare cases, a spell or ability may cause Tamiyo, Inquisitive Student to transform while she's a creature (front face up) on the battlefield. If this happens, Tamiyo, Seasoned Scholar won't have any loyalty counters on her and will subsequently be put into her owner's graveyard."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered. For example, Ral, Monsoon Mage's color identity is blue and red, since its front face is red and its back face has a blue and red color indicator."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or allows you to cast it transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Ral, Monsoon Mage, choosing to exile that permanent during the resolution of its triggered ability will cause it to remain in exile."
+    },
+    {
+      "oracle_id": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If multiple effects modify your hand size, apply them in timestamp order. For example, if you put Necrodominance (an enchantment that says your maximum hand size is five) onto the battlefield and then activate Tamiyo, Seasoned Scholar's last ability, you'll have no maximum hand size. However, if the emblem from Tamiyo, Seasoned Scholar's last ability was created before you put Necrodominance onto the battlefield, your maximum hand size would be five."
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Colorless and generic mana symbols ({C}, {0}, {1}, {2}, {X}, and so on) in mana costs of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you put an Aura on an opponent's permanent, you still control the Aura, and mana symbols in its mana cost count towards your devotion."
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it's still on the battlefield at that time."
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If your devotion to blue is zero at the time the triggered ability of Thassa's Oracle resolves, you don't look at or move any cards in your library. If you have no cards in your library, you win the game."
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s)."
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Mana symbols in the text boxes of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "You may look at the cards you exile with The Dragon-Kami Reborn's first two chapter abilities, and you may continue to do so after it has left the battlefield."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If Dragon-Kami's Egg and one or more Dragons you control die at the same time, the ability of Dragon-Kami's Egg will trigger once for each of them. Each time one of those abilities resolves, you'll be able to cast a creature spell from among cards you own in exile with hatchling counters on them."
+    },
+    {
+      "oracle_id": "c3a46eb3-38d9-4f47-9b71-26c9ea7ef1ce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up."
+    }
+  ]
+}

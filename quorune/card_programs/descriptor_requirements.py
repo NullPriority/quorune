@@ -37,6 +37,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *resolution_mana_choice_dependencies(value))
         from ..created_token_counter_model import created_token_counter_payload_dependencies
         own = (*own, *created_token_counter_payload_dependencies(value))
+        from ..public_zone_quantity_model import public_zone_quantity_dependencies
+        own = (*own, *public_zone_quantity_dependencies(value))
         from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
         own = (*own, *token_definition_payload_dependencies(value,mechanics))
         from ..conditional_recipient_model import conditional_recipient_capabilities
@@ -56,7 +58,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
             return (PUBLIC_QUANTITY_MANA_CAPABILITY,)
         if value.get('kind') == PUBLIC_QUERY_AMOUNT_KIND:
             spec = PublicQueryAmountSpec.from_dict(value)
-            return tuple(sorted({PUBLIC_QUERY_AMOUNT_CAPABILITY,
+            return tuple(sorted({*own,PUBLIC_QUERY_AMOUNT_CAPABILITY,
                                  *((DECLARED_AMOUNT_CAPABILITY,) if spec.schema_version == 2 else ())}))
         if value.get('kind') == 'scalar_effect_amount':
             from ..scalar_effect_amount_model import ScalarEffectAmountSpec, SCALAR_AMOUNT_CAPABILITY

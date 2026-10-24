@@ -17,6 +17,16 @@ existing reduction fields and adds no GameState field. Quantity versions one
 through three retain their encoded forms; the new scopes are reserved for
 modifiers rather than characteristic-defining abilities.
 
+Quantity version five adds card counts across explicitly owned exile and
+graveyard collections, raw hand and library sizes, and maximum opponent hand
+size. Current owner-zone lists and the active player roster define membership.
+Tokens and copies are excluded; a card matching both instant and sorcery counts
+once. Face-down exiled cards count only in an unqualified card count. Filtered
+counts never inspect their characteristics. Hand and library sizes read only
+public card-object metadata, without inspecting hidden characteristics or order.
+Independent producer capabilities bind these quantities to their consumers.
+Versions one through four retain their existing encodings and behavior.
+
 Live public-set modifiers use the registered quantified anthem descriptor.
 Its existing fixed-query condition identifies the affected creatures; its
 modifier holds integer coefficients, the typed quantity, and an explicit

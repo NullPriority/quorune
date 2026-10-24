@@ -81,6 +81,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/cast_cost_modifiers.py",
         "quorune/activation_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
+        "quorune/public_zone_quantity_model.py",
         "quorune/all_colors.py",
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
@@ -331,6 +332,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/destruction_replacement_planning.py",
         "quorune/state_based_replacement_coordination.py",
         "quorune/dynamic_characteristics.py",
+        "quorune/public_zone_quantities.py",
         "quorune/public_characteristic_aggregates.py",
         "quorune/live_battlefield_quantities.py",
         "quorune/event_counter_reference.py",
@@ -605,6 +607,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/ability_fragments.py",
         "quorune/protection_attachment_exceptions.py",
         "quorune/characteristic_fragments.py",
+        "quorune/public_zone_quantity_model.py",
         "quorune/compiled_ability_fragments.py",
         "quorune/static_component_scope.py",
     }:
@@ -726,6 +729,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/declaration_rule_effects.py",
         "quorune/dynamic_characteristics.py",
+        "quorune/public_zone_quantities.py",
         "quorune/devotion.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/public_quantity_reductions.py",

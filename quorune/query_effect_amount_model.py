@@ -56,6 +56,7 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
 
 
 def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec) -> bool:
+    if isinstance(quantity,CharacteristicQuantitySpec) and quantity.schema_version==5:return True
     if isinstance(quantity, LiveBattlefieldQuantitySpec):
         return True
     if quantity.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:

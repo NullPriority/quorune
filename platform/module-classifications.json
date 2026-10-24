@@ -5678,6 +5678,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/public_zone_quantities.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/qualified_hexproof_keywords.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10222,6 +10237,32 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/public_zone_quantities.py",
+      "layer": "rules",
+      "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/public_zone_quantity_model.py",
+      "layer": "domain",
+      "owning_subsystem": "ability_fragments",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -19381,5 +19422,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "2f6c3c370971f2e847e53615abfb1b1ff98e53f485534a34515f4efd5d6352aa"
+  "fingerprint": "45a3aaf1c2b6d093ed193757257b42a30737cb8ab7630c3ec503881c3ab72587"
 }

@@ -41,6 +41,7 @@ class CharacteristicQuantityScope(str, Enum):
 
 
 class CharacteristicQuantityReduction(str, Enum):
+    MAXIMUM_ZONE_SIZE = 'maximum_zone_size'
     OBJECT_COUNT = "object_count"
     DISTINCT_BASIC_LAND_TYPES = "distinct_basic_land_types"
     DISTINCT_CARD_TYPES = "distinct_card_types"
@@ -72,6 +73,11 @@ class CharacteristicQuantitySpec:
     def __post_init__(self) -> None:
         self._validate_reduction_version()
         self._validate_scope_and_exclusions()
+        if self.schema_version==5:
+            from .public_zone_quantity_model import validate_public_zone_quantity
+            try:validate_public_zone_quantity(self)
+            except ValueError as exc:raise CharacteristicFragmentError(str(exc)) from exc
+            return
         if self.schema_version == 4:
             self._validate_current_value()
             return
@@ -95,7 +101,7 @@ class CharacteristicQuantitySpec:
         self._validate_object_query()
 
     def _validate_reduction_version(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
@@ -103,6 +109,8 @@ class CharacteristicQuantitySpec:
             self.schema_version == 1 and (self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT or self.multiplier != 1 or self.offset != 0)
         ):
             raise CharacteristicFragmentError("Characteristic reduction requires its explicit versioned vocabulary")
+        if self.reduction is CharacteristicQuantityReduction.MAXIMUM_ZONE_SIZE and self.schema_version!=5:
+            raise CharacteristicFragmentError('Zone maxima require their explicit zone-cardinality version')
         if type(self.multiplier) is not int or self.multiplier < 1 or type(self.offset) is not int or self.offset < 0:
             raise CharacteristicFragmentError("Characteristic reduction arithmetic requires positive multiplier and nonnegative fixed offset")
         if self.reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS, CharacteristicQuantityReduction.DEVOTION}:
@@ -306,7 +314,7 @@ class CharacteristicQuantitySpec:
             "exclude_source": self.exclude_source,
             "exclude_attached_object": self.exclude_attached_object,
             **({"reduction": self.reduction.value, "multiplier": self.multiplier, "offset": self.offset,
-                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4} else {}),
+                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5} else {}),
             **({"terms": [term.to_dict() for term in self.terms]} if self.schema_version == 3 else {}),
         }
 
@@ -331,7 +339,7 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError(
                 "Characteristic quantities have a closed schema"
             )
-        if (value.get("schema_version") in {2, 3, 4}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
+        if (value.get("schema_version") in {2, 3, 4, 5}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
             raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
         try:
             scope = CharacteristicQuantityScope(value["scope"])
@@ -756,8 +764,10 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
     if isinstance(value, CharacteristicQuantitySpec):
         value = value.to_dict()
     if isinstance(value, Mapping):
+        from .public_zone_quantity_model import public_zone_quantity_dependencies
+        zone_capabilities=public_zone_quantity_dependencies(value)
         devotion = value.get('reduction') == 'devotion' or (value.get('kind') == 'devotion' and 'color' in value)
-        own = ('state_query.devotion.current',) if devotion else ()
+        own = (*zone_capabilities,*(('state_query.devotion.current',) if devotion else ()))
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
         if (value.get('schema_version')==4 and value.get('scope') in {'controller_life_total','opponent_poison_counters','attached_object'}
                 and {'scope','query','counter_name','exclude_source'}<=set(value)):
