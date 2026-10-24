@@ -19,6 +19,7 @@ def static_player_restriction_template(text: str):
     normalized = ' '.join(text.casefold().split())
     kind = None
     abilities = False
+    attached = normalized == "as long as this equipment is attached to a creature, your opponents can't cast spells during your turn."
     if normalized == 'players can cast spells only during their own turns.':
         kind = StaticPlayerRestrictionKind.ACTOR_OTHER_TURN
     elif normalized == 'players can cast spells and activate abilities only during their own turns.':
@@ -29,11 +30,13 @@ def static_player_restriction_template(text: str):
     elif normalized == "during your turn, your opponents can't cast spells or activate abilities of artifacts, creatures, or enchantments.":
         kind = StaticPlayerRestrictionKind.SOURCE_TURN_OPPONENTS
         abilities = True
+    elif attached:
+        kind = StaticPlayerRestrictionKind.SOURCE_TURN_OPPONENTS
     elif normalized == "each player who has cast a nonartifact spell this turn can't cast additional nonartifact spells.":
         kind = StaticPlayerRestrictionKind.NONARTIFACT_LIMIT
     if kind is None:
         return None
-    spec = StaticPlayerRestrictionSpec(kind)
+    spec=StaticPlayerRestrictionSpec(kind,schema_version=2,requires_source_attached_creature=True) if attached else StaticPlayerRestrictionSpec(kind)
     limited = kind is StaticPlayerRestrictionKind.NONARTIFACT_LIMIT
     opponents = kind in {StaticPlayerRestrictionKind.OPPONENT_NONHAND, StaticPlayerRestrictionKind.SOURCE_TURN_OPPONENTS}
     cast = _descriptor(handler_id=STATIC_CAST_LIMIT_HANDLER_ID if limited else STATIC_CAST_PROHIBITION_HANDLER_ID,

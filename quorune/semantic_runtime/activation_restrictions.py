@@ -194,6 +194,8 @@ class FixedPublicActivationProhibitionHandler:
     def validate(self, descriptor: Mapping[str, Any]) -> dict[str, Any]:
         restriction = (StaticPlayerRestrictionSpec.from_dict(descriptor['player_restriction'])
             if 'player_restriction' in descriptor else None)
+        if restriction is not None and restriction.schema_version!=1:
+            raise SemanticNodeError('Activation prohibitions do not represent attached-source cast restrictions')
         exact_fields(
             descriptor,
             {

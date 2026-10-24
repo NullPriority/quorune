@@ -9,7 +9,7 @@ from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-from ..attachments import attached_player_seat
+from ..attachments import attached_player_seat, attached_object_identity
 from ..card_program_faces import program_matches_face
 from ..cast_timing import CastTimingPermission
 from ..enchant_spec import (
@@ -67,6 +67,7 @@ class StaticCastRuleSourceContext:
     source_tapped: bool
     chosen_name: str
     attached_player: str | None
+    source_attached_creature: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,6 +88,7 @@ class StaticCastRule:
     source_chosen_name: str
     source_attached_player: str | None
     player_restriction: StaticPlayerRestrictionSpec | None = None
+    source_attached_creature: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -242,6 +244,7 @@ class StaticCastRuleHandler:
                 source_chosen_name=" ".join(context.chosen_name.casefold().split()),
                 source_attached_player=context.attached_player,
                 player_restriction=value['player_restriction'],
+                source_attached_creature=context.source_attached_creature,
             ),
         )
 
@@ -348,6 +351,16 @@ def split_second_is_active(host: StaticCastRuleHost) -> bool:
     return False
 
 
+def source_is_attached_to_creature(host: StaticCastRuleHost, source: Any) -> bool:
+    identity=attached_object_identity(host.state.cards,source)
+    if identity is None:return False
+    target=host.state.cards.get(identity.object_id)
+    if target is None or target.zone!='battlefield' or target.phased_out:return False
+    from ..characteristic_evaluation import type_parts
+    from ..continuous_effect_model import Layer
+    return 'creature' in type_parts(str(host._effective_card_data(target,maximum_layer=Layer.TYPE).get('type_line') or ''))[0]
+
+
 def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, ...]:
     registry = default_static_cast_rule_registry()
     rules: list[StaticCastRule] = []
@@ -381,6 +394,7 @@ def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, 
                 source_tapped=bool(source.tapped),
                 chosen_name=str(source.annotations.get("chosen_name") or ""),
                 attached_player=attached_player_seat(source),
+                source_attached_creature=source_is_attached_to_creature(host,source),
             )
             for descriptor in program.handlers:
                 if descriptor.get('handler_id')!=SPLIT_SECOND_HANDLER_ID and registry.describe(str(descriptor.get("handler_id") or "")):
@@ -538,7 +552,7 @@ def static_cast_prohibition_reason(
         restriction = rule.player_restriction
         if restriction is not None:
             if not restriction.applies(actor=player, active_player=host.state.active_player,
-                    source_controller=rule.source_controller):
+                    source_controller=rule.source_controller,source_attached_creature=rule.source_attached_creature):
                 continue
             if restriction.kind is StaticPlayerRestrictionKind.OPPONENT_NONHAND and card.zone == 'hand':
                 continue

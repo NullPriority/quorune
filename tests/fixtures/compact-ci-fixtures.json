@@ -25,6 +25,7 @@
     "tests/fixtures/any-source-counter-cost-cards.json",
     "tests/fixtures/as-unblocked-assignment-cards.json",
     "tests/fixtures/ascend-city-blessing-cards.json",
+    "tests/fixtures/attached-cast-restriction-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",
     "tests/fixtures/attached-object-keyword-cards.json",
     "tests/fixtures/attached-occurrence-cards.json",

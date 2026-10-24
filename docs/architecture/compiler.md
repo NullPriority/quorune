@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Attached-source casting restrictions opt in through version two of the existing
+player-restriction descriptor. The source-turn opponent rule reads a current
+reciprocal attachment to a battlefield creature, including its effective type;
+it does not capture an equip target or add an activation prohibition. Version
+one keeps its exact fields and behavior. Equipment controller, owner and
+equipped-creature controller remain distinct inputs to their existing owners.
+
 Fixed sacrifice-price spell promotion validates the canonical typed price and
 its declared authority separately from the independently closed result. The
 composed producer prefix is checked against that price before testing the

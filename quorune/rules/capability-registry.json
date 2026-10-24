@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 499,
+  "registry_version": 500,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -49023,6 +49023,100 @@
       "dependency_fail_closed_rationale": "Leaf spending primitive; verified own withdrawal and undeclared runtime minimum reject closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh shared spending-policy omission and creature-purpose widening fail actual Sunglasses/Vizier witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.prohibition.source_attachment",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "109.5",
+        "301.5",
+        "301.5a",
+        "301.5c",
+        "400.7",
+        "601.2e",
+        "611.3b",
+        "702.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Opt in to the existing source-turn opponent cast prohibition only while its source has a current reciprocal attachment to a battlefield creature.",
+        "inputs": [
+          "version2 source-turn restriction with required attachment fact",
+          "current source controller/active player/caster",
+          "live canonical attachment identity and current recipient creature type",
+          "current trusted source face and ability"
+        ],
+        "outputs": [
+          "shared advertised/accepted spell prohibition without activation restriction",
+          "immediate source/attachment/control/recipient re-evaluation",
+          "unchanged version1 player-restriction codec"
+        ],
+        "exclusions": [
+          "other source predicates",
+          "activation-prohibition use of schema2",
+          "captured or stale attachment targets",
+          "unrepresented siblings"
+        ]
+      },
+      "dependencies": [
+        "actions.restriction.static_player"
+      ],
+      "implementation_components": [
+        "quorune.static_player_restriction_model.StaticPlayerRestrictionSpec",
+        "quorune.compiler.static_player_restrictions.static_player_restriction_template",
+        "quorune.semantic_runtime.static_cast_rules.source_is_attached_to_creature",
+        "quorune.semantic_runtime.static_cast_rules.active_static_cast_rules",
+        "quorune.semantic_runtime.static_cast_rules.static_cast_prohibition_reason"
+      ],
+      "positive_tests": [
+        "test_schema2_is_opt_in_and_legacy_actor_scopes_stay_unchanged",
+        "test_current_attachment_query_rejects_one_sided_departed_and_noncreature",
+        "test_original_normal_admission_keeps_all_components_and_requires_own_minimum",
+        "test_real_cast_equip_response_move_fizzle_detach_and_reentry",
+        "test_real_equipment_controller_defines_colors_turn_and_opponents"
+      ],
+      "negative_tests": [
+        "test_schema2_is_opt_in_and_legacy_actor_scopes_stay_unchanged",
+        "test_current_attachment_query_rejects_one_sided_departed_and_noncreature",
+        "test_original_normal_admission_keeps_all_components_and_requires_own_minimum",
+        "test_real_cast_equip_response_move_fizzle_detach_and_reentry",
+        "test_real_equipment_controller_defines_colors_turn_and_opponents"
+      ],
+      "interaction_tests": [
+        "test_real_cast_equip_response_move_fizzle_detach_and_reentry",
+        "test_real_equipment_controller_defines_colors_turn_and_opponents"
+      ],
+      "multiplayer_tests": [
+        "test_real_cast_equip_response_move_fizzle_detach_and_reentry",
+        "test_real_equipment_controller_defines_colors_turn_and_opponents"
+      ],
+      "privacy_tests": [
+        "test_real_cast_equip_response_move_fizzle_detach_and_reentry",
+        "test_real_equipment_controller_defines_colors_turn_and_opponents"
+      ],
+      "replay_tests": [
+        "test_real_cast_equip_response_move_fizzle_detach_and_reentry",
+        "test_real_equipment_controller_defines_colors_turn_and_opponents"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonical verified own/base withdrawal and undeclared attached-source runtime minimum reject closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh live attachment fact omissions forcing false or true fail actual paid equip/response witnesses.",
       "blockers": [],
       "status": "trusted"
     }

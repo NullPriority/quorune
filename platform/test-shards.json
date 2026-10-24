@@ -62,6 +62,7 @@
       "test_ante_rules",
       "test_any_number_targets",
       "test_any_source_counter_costs",
+      "test_attached_cast_restriction",
       "test_attached_prevention",
       "test_attached_protection_exceptions",
       "test_banding",
