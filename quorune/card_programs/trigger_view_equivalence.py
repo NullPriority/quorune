@@ -33,6 +33,12 @@ def _effects(program):
     effects=deepcopy(_canonical_effects(program))
     for effect in effects:
         if effect.get('op')=='destroy' and isinstance(effect.get('reason'),str):effect.pop('reason')
+        if effect.get('op')=='create_token' and isinstance(effect.get('characteristics'),dict):
+            chars=effect['characteristics'];line=chars.get('type_line')
+            if isinstance(line,str) and line.startswith('Token '):
+                from ..characteristic_evaluation import type_parts
+                stripped=line.removeprefix('Token ')
+                if type_parts(line)==type_parts(stripped):chars['type_line']=stripped
     return effects
 
 

@@ -309,6 +309,7 @@
       "test_unearth_rules"
     ],
     "functional-06": [
+      "test_activation_view_equivalence",
       "test_all_counter_self_costs",
       "test_attack_keyword_compiler",
       "test_battlefield_target_reductions",

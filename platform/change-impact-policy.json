@@ -8161,6 +8161,24 @@
         "test_triggered_abilities",
         "test_zone_trigger_events"
       ]
+    },
+    {
+      "id": "current-activation-view-equivalence",
+      "patterns": [
+        "quorune/card_programs/activation_view_equivalence.py",
+        "quorune/card_programs/current_view_equivalence.py",
+        "quorune/card_programs/trigger_view_equivalence.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "tests/test_activation_view_equivalence.py",
+        "tests/fixtures/activation-view-equivalence-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_view_equivalence",
+        "test_trigger_view_equivalence",
+        "test_card_program_trust",
+        "test_fixed_extra_turns",
+        "test_energy_activation_costs"
+      ]
     }
   ],
   "symbol_rules": [

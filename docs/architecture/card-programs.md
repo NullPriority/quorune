@@ -64,6 +64,15 @@ Other result/source differences, missing predicates, or ambiguous matches do
 not establish equivalence. Existing private-draw defaults keep their current
 normalization; historical payloads are not rewritten.
 
+`activation_view_equivalence.py` handles same-key activated views only when the
+existing pinned catalog contains the same complete ability and reproduces the
+entire canonical price. The current result, targets, conditions, limits, role,
+source hashes, and dependency closure must remain equal. An absent explicit
+legacy cost schema never removes mana, sacrifice, energy, exile, tap, or other
+catalog costs. Token creation comparisons may omit only a leading `Token`
+display prefix when the existing type parser proves identical types; the
+creation operation still produces a token with all its own characteristics.
+
 Current typed modal activations can supersede catalog-only reviewed views only
 through `modal_catalog_equivalence.py`. It requires matching source hashes,
 ability identity and runtime role, exact catalog cost fields, one-mode
