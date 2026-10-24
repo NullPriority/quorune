@@ -8293,6 +8293,24 @@
         "test_card_program_trust",
         "test_opening_hand_battlefield"
       ]
+    },
+    {
+      "id": "scheduled-half-life-values",
+      "patterns": [
+        "quorune/compiler/scheduled_player_triggers.py",
+        "quorune/compiler/event_result_value_templates.py",
+        "quorune/rules/scheduled_player_shapes.py",
+        "quorune/rules/half_event_player_shapes.py",
+        "quorune/rules/fractional_player_result_shapes.py",
+        "tests/test_scheduled_half_life.py",
+        "tests/fixtures/scheduled-half-life-cards.json"
+      ],
+      "test_modules": [
+        "test_scheduled_half_life",
+        "test_scheduled_player_triggers",
+        "test_fractional_player_results",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 504,
+  "registry_version": 505,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -567,7 +567,7 @@
     },
     {
       "id": "life.loss.half_current_player",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "107.1a",
         "107.1b",
@@ -586,7 +586,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Lose half the represented player current life with explicit up/down rounding through the canonical life-change batch owner. An independently validated half-life amount composes with the existing event-player recipient contract, preserving subject/event compatibility and current instruction-time life.",
+        "summary": "Lose half the represented player current life with explicit up/down rounding through the canonical life-change batch owner. An independently validated half-life amount composes with the existing event-player recipient contract, preserving subject/event compatibility and current instruction-time life. The scheduled-player shell composes an independently validated explicit half-life amount while preserving the sealed recipient and reading current life at instruction time.",
         "inputs": [
           "closed half quantity with explicit rounding",
           "represented target/controller/APNAP player domain",
@@ -614,38 +614,49 @@
         "quorune.effect_runtime.fractional_life.apply_life_loss",
         "quorune.event_player_result_values.event_result_value_capabilities",
         "quorune.compiler.event_result_value_templates.event_result_instruction",
-        "quorune.rules.half_event_player_shapes.half_event_player_node_capabilities"
+        "quorune.rules.half_event_player_shapes.half_event_player_node_capabilities",
+        "quorune.compiler.event_result_value_templates.scheduled_fractional_life_instruction",
+        "quorune.rules.half_event_player_shapes.half_scheduled_player_node_capabilities"
       ],
       "positive_tests": [
         "test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
         "test_half_quantity_arithmetic_and_malformed_fields_are_closed",
-        "test_half_event_results_preserve_occurrence_recipient_and_typed_amount"
+        "test_half_event_results_preserve_occurrence_recipient_and_typed_amount",
+        "test_bound_half_values_keep_original_event_player_and_full_trigger_minima",
+        "test_original_normally_binds_both_static_and_scheduled_abilities"
       ],
       "negative_tests": [
         "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual",
         "test_fractional_binding_keeps_unsupported_antecedents_and_quantity_fields_residual",
-        "test_half_event_result_owner_withdrawal_prevents_whole_admission"
+        "test_half_event_result_owner_withdrawal_prevents_whole_admission",
+        "test_shape_and_wrong_subjects_keep_fraction_rounding_and_domain_boundaries",
+        "test_verified_each_owner_withdrawal_blocks_composition"
       ],
       "interaction_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
         "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
-        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure"
       ],
       "multiplayer_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
-        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+        "test_real_each_player_upkeeps_lose_their_own_current_half_once"
       ],
       "privacy_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
-        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure"
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure"
       ],
       "replay_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
         "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
-        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient"
+        "test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
+        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure",
+        "test_real_each_player_upkeeps_lose_their_own_current_half_once"
       ],
       "required_evidence": [
         "positive",
@@ -28306,7 +28317,7 @@
     },
     {
       "id": "trigger.event.scheduled_player_result",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "109.5",
         "503.1",
@@ -28321,7 +28332,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Bind fixed nontargeted draw/life/mill/damage results to the sealed active player of each-player or each-opponent upkeep and draw-step schedules, each-other-player draw schedules, or current enchanted-object controller upkeep, while preserving the trigger source controller.",
+        "summary": "Bind fixed nontargeted draw/life/mill/damage results to the sealed active player of each-player or each-opponent upkeep and draw-step schedules, each-other-player draw schedules, or current enchanted-object controller upkeep, while preserving the trigger source controller. The scheduled-player shell composes an independently validated explicit half-life amount while preserving the sealed recipient and reading current life at instruction time.",
         "inputs": [
           "one source-spanned scheduled trigger",
           "normalized step player and step",
@@ -28336,7 +28347,7 @@
         ],
         "exclusions": [
           "enchanted-player and monarch schedules",
-          "dynamic quantities",
+          "unreviewed dynamic quantities outside the exact typed half-life value",
           "open or conditional results",
           "new targets or arbitrary player references"
         ]
@@ -28347,7 +28358,9 @@
         "quorune.compiler.scheduled_player_triggers.scheduled_player_result",
         "quorune.rules.scheduled_player_shapes.scheduled_player_node_capabilities",
         "quorune.trigger_discovery.dispatch_semantic_event",
-        "quorune.scheduled_player.current_attachment_controller"
+        "quorune.scheduled_player.current_attachment_controller",
+        "quorune.compiler.event_result_value_templates.scheduled_fractional_life_instruction",
+        "quorune.rules.half_event_player_shapes.half_scheduled_player_node_capabilities"
       ],
       "positive_tests": [
         "test_each_player_and_opponent_results_are_nontargeted_context_bound",
@@ -28359,13 +28372,17 @@
         "test_controller_draw_step_additional_draw_retains_event_and_recipient",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_bound_half_values_keep_original_event_player_and_full_trigger_minima",
+        "test_original_normally_binds_both_static_and_scheduled_abilities"
       ],
       "negative_tests": [
         "test_unknown_bound_results_and_monarch_schedules_remain_residual",
         "test_mixed_scheduled_shape_rejects_malformed_second_player",
         "test_bound_player_damage_shape_requires_exact_player_and_positive_amount",
-        "test_additional_draw_step_missing_authority_stays_residual"
+        "test_additional_draw_step_missing_authority_stays_residual",
+        "test_shape_and_wrong_subjects_keep_fraction_rounding_and_domain_boundaries",
+        "test_verified_each_owner_withdrawal_blocks_composition"
       ],
       "interaction_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
@@ -28375,17 +28392,20 @@
         "test_mixed_upkeep_replays_from_before_triggering_step",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure"
       ],
       "multiplayer_tests": [
         "test_each_opponent_upkeep_filter_excludes_source_controller",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_real_each_player_upkeeps_lose_their_own_current_half_once"
       ],
       "privacy_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
-        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure"
       ],
       "replay_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
@@ -28394,7 +28414,9 @@
         "test_mixed_upkeep_replays_from_before_triggering_step",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure",
+        "test_real_each_player_upkeeps_lose_their_own_current_half_once"
       ],
       "required_evidence": [
         "positive",

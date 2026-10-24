@@ -22,3 +22,18 @@ def half_event_player_node_capabilities(*, effects, target_schema, mechanic_ids)
     ordinary = capability_dependencies_for_node(effects=proof, target_schema=target_schema,
         mechanic_ids=tuple(value for value in mechanic_ids if value != HALF_LIFE_MECHANIC))
     return tuple(sorted({*ordinary, *required})) if ordinary else ()
+
+
+def half_scheduled_player_node_capabilities(*, effects, target_schema, mechanic_ids):
+    """Prove the unchanged scheduled shell separately from its typed value."""
+    from .capabilities import capability_dependencies_for_node
+    from .scheduled_player_shapes import scheduled_player_node_capabilities
+    required = scheduled_player_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+    if not required or HALF_LIFE_CAPABILITY not in required:return ()
+    proof = []
+    for effect in effects:
+        extra = event_result_value_capabilities(effect.get('op'),'amount',effect.get('amount'))
+        proof.append({**effect,'amount':1} if extra and HALF_LIFE_CAPABILITY in extra else effect)
+    ordinary = capability_dependencies_for_node(effects=proof,target_schema=target_schema,
+        mechanic_ids=tuple(value for value in mechanic_ids if value != HALF_LIFE_MECHANIC))
+    return tuple(sorted({*ordinary,*required})) if ordinary else ()

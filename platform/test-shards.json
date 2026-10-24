@@ -360,6 +360,7 @@
       "test_receiver_query_unions",
       "test_rule_capabilities",
       "test_saga_counter_progression",
+      "test_scheduled_half_life",
       "test_self_cast_restrictions",
       "test_self_counter_keyword_actions",
       "test_server_architecture",

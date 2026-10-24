@@ -299,6 +299,7 @@
     "tests/fixtures/reveal-entry-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scalar-mill-wording-cards.json",
+    "tests/fixtures/scheduled-half-life-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",
     "tests/fixtures/scoped-basic-type-addition-cards.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",

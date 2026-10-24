@@ -114,6 +114,13 @@ certificates before execution. This complements the existing handler-declared
 complete-card boundary without changing historical programs that lack the new
 provenance declaration.
 
+Scheduled-player results can compose the existing typed half-life value after
+binding the scheduled subject. The compiler normalizes the value's pronoun
+without rebinding the player. The shape owner validates the fractional value
+and independently proves the unchanged trigger shell through its fixed-value
+contract. Resolution reads that player's current life with explicit rounding;
+source departure does not reassign an already-created trigger.
+
 Runtime dependency inference decodes persisted declaration cost, requirement
 and restriction fragments wherever they are nested in handlers or effects.
 Their registered combat-declaration capability remains mandatory when a query
