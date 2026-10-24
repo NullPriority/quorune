@@ -29,15 +29,21 @@ def attached_keyword_runtime_dependencies(program):
     return tuple(sorted(required))
 
 
-def _banding_descriptor_requirements(value):
+def _fragment_descriptor_requirements(value):
     from collections.abc import Mapping
     if isinstance(value, Mapping):
         keyword_arrays = (value.get(field, ()) for field in ('keywords', 'add_abilities', 'remove_abilities'))
-        own = ('combat.banding',) if any(isinstance(words, (list, tuple)) and 'Banding' in words
-            for words in keyword_arrays) else ()
-        return {*own, *(cap for child in value.values() for cap in _banding_descriptor_requirements(child))}
+        own = {'combat.banding'} if any(isinstance(words, (list, tuple)) and 'Banding' in words
+            for words in keyword_arrays) else set()
+        if value.get('kind') in {'declaration_cost','declaration_requirement','declaration_restriction'}:
+            from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
+            # Decode the actual persisted fragment; annotations cannot replace
+            # the capability required by a nested executable declaration rule.
+            ability_fragment_from_dict(value)
+            own.add(DECLARATION_COMPONENT_CAPABILITY_ID)
+        return {*own, *(cap for child in value.values() for cap in _fragment_descriptor_requirements(child))}
     if isinstance(value, (list, tuple)):
-        return {cap for child in value for cap in _banding_descriptor_requirements(child)}
+        return {cap for child in value for cap in _fragment_descriptor_requirements(child)}
     return set()
 
 
@@ -45,5 +51,5 @@ def keyword_runtime_dependencies(program):
     required = set(attached_keyword_runtime_dependencies(program))
     if 'banding' in program.coverage:
         required.add('combat.banding')
-    required.update(_banding_descriptor_requirements((program.handlers, program.effects)))
+    required.update(_fragment_descriptor_requirements((program.handlers, program.effects)))
     return tuple(sorted(required))

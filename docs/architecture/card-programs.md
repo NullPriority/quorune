@@ -114,6 +114,12 @@ certificates before execution. This complements the existing handler-declared
 complete-card boundary without changing historical programs that lack the new
 provenance declaration.
 
+Runtime dependency inference decodes persisted declaration cost, requirement
+and restriction fragments wherever they are nested in handlers or effects.
+Their registered combat-declaration capability remains mandatory when a query
+grant carries the fragment. Missing capability declarations and malformed
+fragment payloads fail binding before execution.
+
 Source-derived spell variants retain separate semantic identities within the
 same CardProgram. A fixed Overload alternative binds the normal and derived
 body fingerprints to its price. Both executable programs must be present and

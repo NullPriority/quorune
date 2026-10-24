@@ -8226,6 +8226,26 @@
         "test_shroud_targeting",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "additional-shared-continuous-carriers",
+      "patterns": [
+        "tests/test_additional_continuous_carriers.py",
+        "tests/fixtures/additional-continuous-carriers-cards.json",
+        "quorune/banding_model.py",
+        "quorune/combat_damage_assignment.py",
+        "quorune/compiler/conditional_granted_ability_templates.py",
+        "quorune/compiler/conditional_recipients.py",
+        "quorune/rules/keyword_runtime_requirements.py"
+      ],
+      "test_modules": [
+        "test_additional_continuous_carriers",
+        "test_banding",
+        "test_conditional_recipients",
+        "test_attack_keyword_triggers",
+        "test_optional_draw_choices",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
