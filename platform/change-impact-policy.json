@@ -8179,6 +8179,22 @@
         "test_fixed_extra_turns",
         "test_energy_activation_costs"
       ]
+    },
+    {
+      "id": "current-land-search-view-equivalence",
+      "patterns": [
+        "quorune/card_programs/battlefield_search_equivalence.py",
+        "quorune/card_programs/activation_view_equivalence.py",
+        "tests/test_land_search_view_equivalence.py",
+        "tests/fixtures/land-search-view-cards.json"
+      ],
+      "test_modules": [
+        "test_land_search_view_equivalence",
+        "test_activation_view_equivalence",
+        "test_fixed_library_searches",
+        "test_library_search_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

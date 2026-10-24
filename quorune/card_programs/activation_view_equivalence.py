@@ -4,12 +4,18 @@ from __future__ import annotations
 
 import hashlib
 from .current_view_equivalence import _catalog_preserves_cost,_same_current_source
+from .battlefield_search_equivalence import fixed_battlefield_search_results_equal
+
+
+def _results_equal(current,old):
+    from .reviewed_overlay import _canonical_effects
+    return (_canonical_effects(current)==_canonical_effects(old)
+        or fixed_battlefield_search_results_equal(current,old))
 
 
 def shadowed_reviewed_activation_view_keys(record,generated_programs,reviewed_programs,*,capability_registry=None,capability_profile='traditional'):
     if capability_registry is None or record.layout!='normal' or record.faces:return set()
     from .binding import bind_semantic_program_runtime
-    from .reviewed_overlay import _canonical_effects
     generated=tuple(generated_programs);reviewed=tuple(reviewed_programs);shadowed=set()
     oracle_hash=hashlib.sha256(record.oracle_text.encode('utf-8')).hexdigest()
     for old in reviewed:
@@ -24,7 +30,7 @@ def shadowed_reviewed_activation_view_keys(record,generated_programs,reviewed_pr
                     or current.event_condition!=old.event_condition or current.trigger_limit!=old.trigger_limit
                     or current.requires_arbiter or current.capability_closure.get('blockers')!=[]
                     or not _catalog_preserves_cost(current,old)
-                    or _canonical_effects(current)!=_canonical_effects(old)):continue
+                    or not _results_equal(current,old)):continue
             if bind_semantic_program_runtime(current,capability_registry=capability_registry,profile=capability_profile)['strict']:
                 matches.append(current)
         if len(matches)==1:shadowed.add(old.key)

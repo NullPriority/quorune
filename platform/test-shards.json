@@ -341,6 +341,7 @@
       "test_keyword_counter_composition",
       "test_kicker_rules",
       "test_land_condition_quantities",
+      "test_land_search_view_equivalence",
       "test_library_rules",
       "test_mulligan_and_turns",
       "test_multiplayer_rules",

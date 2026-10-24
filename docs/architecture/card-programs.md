@@ -73,6 +73,15 @@ catalog costs. Token creation comparisons may omit only a leading `Token`
 display prefix when the existing type parser proves identical types; the
 creation operation still produces a token with all its own characteristics.
 
+Fixed own-library search results may compare through
+`battlefield_search_equivalence.py` after that same full price proof. The
+existing counted-search and object-query codecs retain the exact selector and
+cardinality; only the search owner's controller and false-reveal defaults and
+its case-normalized type vocabulary are made explicit. Battlefield destination,
+explicit tapped entry, mandatory shuffle, and every other result field remain
+compared. Foreign libraries, unknown fields, changed qualities, optional counts,
+and changed result flags do not establish equivalence.
+
 Current typed modal activations can supersede catalog-only reviewed views only
 through `modal_catalog_equivalence.py`. It requires matching source hashes,
 ability identity and runtime role, exact catalog cost fields, one-mode
