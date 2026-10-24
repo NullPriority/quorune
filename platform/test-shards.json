@@ -50,6 +50,7 @@
       "test_upkeep_step_rules"
     ],
     "functional-02": [
+      "test_ability_label_composition",
       "test_action_proposals",
       "test_activation_restriction_material",
       "test_activation_restrictions",

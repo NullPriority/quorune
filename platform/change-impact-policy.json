@@ -4012,15 +4012,24 @@
     {
       "id": "flavor-named-trigger-contract",
       "patterns": [
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/compiler/declaration_nodes.py",
         "quorune/compiler/draw_templates.py",
-        "tests/fixtures/flavor-named-trigger-cards.json"
+        "quorune/compiler/oracle_source_text.py",
+        "tests/fixtures/ability-label-composition-cards.json",
+        "tests/fixtures/flavor-named-trigger-cards.json",
+        "tests/test_ability_label_composition.py"
       ],
       "test_modules": [
-        "test_fixed_counter_event_triggers",
-        "test_oracle_ir",
+        "test_ability_label_composition",
+        "test_ability_word_event_triggers",
         "test_bound_effect_programs",
+        "test_card_program_v2",
+        "test_combat_declaration_restrictions",
+        "test_conditional_query_declarations",
+        "test_fixed_counter_event_triggers",
         "test_fixed_token_creation_effects",
-        "test_card_program_v2"
+        "test_oracle_ir"
       ]
     },
     {

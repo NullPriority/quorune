@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 495,
+  "registry_version": 496,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12666,7 +12666,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 21,
+      "version": 22,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -12822,7 +12822,11 @@
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
         "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
-        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
+        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "negative_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -12871,7 +12875,11 @@
         "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
         "test_unrepresented_conditions_and_bodies_remain_residual",
         "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
-        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
+        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "interaction_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -12920,7 +12928,9 @@
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_subtype_attack_threshold_counts_distinct_event_time_objects",
         "test_turn_gated_attachment_and_anthem_compose",
-        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "multiplayer_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -12951,7 +12961,9 @@
         "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_turn_gated_attachment_and_anthem_compose",
-        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "privacy_tests": [
         "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
@@ -12968,7 +12980,9 @@
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
         "test_public_condition_queries_follow_authoritative_history_and_control",
-        "test_public_fact_conditions_recompute_and_replay"
+        "test_public_fact_conditions_recompute_and_replay",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "replay_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -13010,7 +13024,9 @@
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
-        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "required_evidence": [
         "positive",
@@ -13164,7 +13180,7 @@
     },
     {
       "id": "continuous.characteristics.query_count_modifier",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -13226,14 +13242,22 @@
         "test_query_gated_prefix_and_keyword_only_grammar_is_closed",
         "test_query_quantities_recompute_controller_correct_characteristics",
         "test_self_modifiers_compose_existing_collection_values_without_repeating_dual_type_cards",
-        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "negative_tests": [
         "test_query_characteristic_descriptors_fail_closed_without_behavior",
         "test_query_characteristic_grammar_keeps_ambiguous_families_residual",
         "test_query_gated_grammar_rejects_nonquery_and_open_modifiers",
         "test_self_collection_quantity_requires_precise_owner_and_complete_producer",
-        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed"
+        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "interaction_tests": [
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
@@ -13241,21 +13265,29 @@
         "test_query_ability_removal_sibling_withholds_runtime_admission",
         "test_query_counts_use_layer_five_types_and_compose_in_layer_seven_c",
         "test_query_fragment_copy_uses_current_source_and_controller",
-        "test_query_gate_recomputes_layer_six_and_seven_characteristics"
+        "test_query_gate_recomputes_layer_six_and_seven_characteristics",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "multiplayer_tests": [
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
         "test_original_upriser_counts_controller_aura_and_counter_modifications_once",
-        "test_query_quantities_recompute_controller_correct_characteristics"
+        "test_query_quantities_recompute_controller_correct_characteristics",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "privacy_tests": [
         "test_query_hand_count_projects_and_replays_without_hidden_identity",
-        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "replay_tests": [
         "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
         "test_original_upriser_counts_controller_aura_and_counter_modifications_once",
-        "test_query_hand_count_projects_and_replays_without_hidden_identity"
+        "test_query_hand_count_projects_and_replays_without_hidden_identity",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "required_evidence": [
         "positive",
@@ -16869,7 +16901,7 @@
     },
     {
       "id": "combat.declaration.typed_components",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "508.1c",
         "508.1d",
@@ -16949,7 +16981,13 @@
         "test_static_query_and_attachment_declaration_grants_compile_closed",
         "test_compound_self_restrictions_enforce_every_conjunct",
         "test_conditional_stats_and_declaration_result_preserve_one_live_condition",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "negative_tests": [
         "test_declaration_component_descriptors_reject_malformed_values",
@@ -16958,7 +16996,13 @@
         "test_malformed_temporary_restriction_rolls_back_without_effect",
         "test_static_declaration_grant_dependencies_fail_closed",
         "test_static_query_and_attachment_declaration_grants_compile_closed",
-        "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors"
+        "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "interaction_tests": [
         "test_global_maximum_constrains_requirement_solver",
@@ -16970,18 +17014,30 @@
         "test_attached_characteristics_and_requirement_end_with_attachment",
         "test_compound_self_restrictions_enforce_every_conjunct",
         "test_original_channeler_condition_controls_required_attack_and_replays",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "multiplayer_tests": [
         "test_prison_tax_is_projected_paid_atomically_and_replays",
         "test_four_player_projection_exposes_only_public_declaration_facts",
         "test_original_channeler_condition_controls_required_attack_and_replays",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "privacy_tests": [
         "test_four_player_projection_exposes_only_public_declaration_facts",
         "test_original_channeler_condition_controls_required_attack_and_replays",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "replay_tests": [
         "test_prison_tax_is_projected_paid_atomically_and_replays",
@@ -16989,7 +17045,11 @@
         "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
         "test_cleanup_expiration_is_exactly_replayable",
         "test_original_channeler_condition_controls_required_attack_and_replays",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking"
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "required_evidence": [
         "positive",
@@ -20801,24 +20861,85 @@
     },
     {
       "id": "trigger.event.normalized_self_attack",
-      "version": 1,
-      "official_rules": ["508.1", "508.1m", "603.2", "603.3"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "508.1",
+        "508.1m",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Derive one immutable source-pinned creature-attacks occurrence from each assignment in the canonical completed attack transition and dispatch represented self-attack triggers in the same ordinary APNAP batch.",
-        "inputs": ["validated completed attack transition", "attacking creature physical and logical identity", "public attack recipient and defending player", "current battlefield source program"],
-        "outputs": ["source-pinned creature.attacks occurrence", "sealed attack-transition context", "ordinary trigger-batch input", "exact replay"],
-        "exclusions": ["attacks-alone, one-or-more, and aggregate attack events", "another creature, equipped creature, or subtype-qualified attacks", "attack-recipient and defending-player predicates", "objects put onto the battlefield attacking", "intervening-if and reflexive conditions", "granted, copied, or removed abilities outside the shared typed ability-presence boundary"]
+        "inputs": [
+          "validated completed attack transition",
+          "attacking creature physical and logical identity",
+          "public attack recipient and defending player",
+          "current battlefield source program"
+        ],
+        "outputs": [
+          "source-pinned creature.attacks occurrence",
+          "sealed attack-transition context",
+          "ordinary trigger-batch input",
+          "exact replay"
+        ],
+        "exclusions": [
+          "attacks-alone, one-or-more, and aggregate attack events",
+          "another creature, equipped creature, or subtype-qualified attacks",
+          "attack-recipient and defending-player predicates",
+          "objects put onto the battlefield attacking",
+          "intervening-if and reflexive conditions",
+          "granted, copied, or removed abilities outside the shared typed ability-presence boundary"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.attack_transition_model.AttackTransitionEvent", "quorune.attack_transition_engine_adapter.attack_transition_stack_items", "quorune.trigger_discovery.dispatch_semantic_event"],
-      "positive_tests": ["test_closed_cast_and_source_attack_bindings_compile_exactly", "test_source_attack_trigger_uses_sealed_transition_and_replays"],
-      "negative_tests": ["test_fixed_typed_event_effect_trigger_variants_remain_material", "test_new_event_bindings_fail_closed_with_event_capability"],
-      "interaction_tests": ["test_source_attack_trigger_uses_sealed_transition_and_replays"],
-      "multiplayer_tests": ["test_source_attack_trigger_uses_sealed_transition_and_replays"],
-      "privacy_tests": ["test_source_attack_trigger_uses_sealed_transition_and_replays"],
-      "replay_tests": ["test_source_attack_trigger_uses_sealed_transition_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.attack_transition_model.AttackTransitionEvent",
+        "quorune.attack_transition_engine_adapter.attack_transition_stack_items",
+        "quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "positive_tests": [
+        "test_closed_cast_and_source_attack_bindings_compile_exactly",
+        "test_source_attack_trigger_uses_sealed_transition_and_replays",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+      ],
+      "negative_tests": [
+        "test_fixed_typed_event_effect_trigger_variants_remain_material",
+        "test_new_event_bindings_fail_closed_with_event_capability",
+        "test_originals_have_complete_admission_and_original_source_spans",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+      ],
+      "interaction_tests": [
+        "test_source_attack_trigger_uses_sealed_transition_and_replays",
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+      ],
+      "multiplayer_tests": [
+        "test_source_attack_trigger_uses_sealed_transition_and_replays",
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+      ],
+      "privacy_tests": [
+        "test_source_attack_trigger_uses_sealed_transition_and_replays",
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+      ],
+      "replay_tests": [
+        "test_source_attack_trigger_uses_sealed_transition_and_replays",
+        "test_real_numeric_flavor_trigger_buffs_exactly_one_combat_and_expires"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The source-pinned occurrence is derived directly from the already validated immutable attack transition; every consuming trigger declares its own placement and body dependencies.",
       "implementation_mutation_status": "killed",

@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+The static dispatcher removes a leading nonfunctional ability or flavor label
+before invoking its existing typed body owners. Declaration nodes keep the
+original labeled text and source span while parsing that complete material
+body. Numeric labels and their punctuation also precede ordinary triggered
+abilities. The same normalization applies to synthesized static abilities.
+Functional visit instructions remain outside this normalization;
+every condition, threshold and result in a body must still lower exactly.
+
 `compiler/live_modifier_quantities.py` lowers represented live player values,
 attached-recipient colors and mana value, attachment unions, and public-set
 power/toughness modifiers. It uses the existing source, attachment, public

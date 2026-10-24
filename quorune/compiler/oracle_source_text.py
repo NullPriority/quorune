@@ -42,6 +42,19 @@ _SNOW_MANA_REMINDER = re.compile(
 )
 
 
+def without_ability_word_label(text: str) -> str | None:
+    """Expose a complete ability body, rejecting functional or condition labels."""
+    match = re.fullmatch(r"(?P<label>[A-Z0-9][A-Za-z0-9, '’!?-]{0,79}) [—-] (?P<body>.+)", text, re.IGNORECASE)
+    if match is None:
+        return None if re.search(r" [—-] ", text) else text
+    label = match['label'].casefold()
+    if label == 'visit' or label.startswith((
+        'if ', 'when ', 'whenever ', 'as ', 'at ', 'this ', 'that ', 'you ', 'your ',
+    )):
+        return None
+    return match['body']
+
+
 def source_lines(text: str) -> Iterable[tuple[str, SourceSpan]]:
     offset = 0
     for line_number, raw in enumerate(text.splitlines(keepends=True), 1):

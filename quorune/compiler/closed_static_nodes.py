@@ -19,6 +19,7 @@ from .toughness_assignment_templates import static_toughness_assignment_handler
 from .block_capacity_templates import static_block_capacity_handler
 from .landwalk_permission_templates import static_landwalk_permission_handler
 from .ir_model import OracleNode, OracleResidual, SourceSpan
+from .oracle_source_text import without_ability_word_label
 from .kicker_nodes import fixed_kicked_entry_node
 from .permanent_additional_cost_nodes import permanent_additional_cost_node
 from .public_alternative_cost_nodes import (
@@ -92,6 +93,25 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
 
 
 def closed_static_or_replacement_node(
+    *, node_id: str, line: str, material_line: str, span: SourceSpan,
+    source_name: str, card_types: Iterable[str], permanent_card_types: set[str],
+    source_is_class: bool, capability_registry: CapabilityRegistry | None,
+    capability_profile: str, residuals: list[OracleResidual],
+) -> OracleNode | None:
+    """Normalize the shared static boundary before dispatching typed bodies."""
+    material = without_ability_word_label(material_line)
+    if material is None:
+        return None
+    return _closed_static_body_node(
+        node_id=node_id, line=line, material_line=material, span=span,
+        source_name=source_name, card_types=card_types,
+        permanent_card_types=permanent_card_types, source_is_class=source_is_class,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+        residuals=residuals,
+    )
+
+
+def _closed_static_body_node(
     *,
     node_id: str,
     line: str,
@@ -225,6 +245,7 @@ def closed_static_or_replacement_node(
     declaration = declaration_static_node(
         node_id=node_id,
         line=line,
+        material_line=material_line,
         card_name=source_name,
         span=span,
         residuals=residuals,
