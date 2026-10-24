@@ -518,6 +518,18 @@ def _shared_color_creatures(normalized: str) -> PreventionTemplate | None:
 
 
 def _ordinary_shield(normalized: str) -> PreventionTemplate | None:
+    recipients = re.fullmatch(
+        r'prevent the next (?P<amount>\d+) damage that would be dealt to '
+        r'each creature and each player this turn\.?', normalized, re.IGNORECASE,
+    )
+    if recipients is not None and int(recipients['amount']) > 0:
+        from ..prevention_recipient_sets import RECIPIENT_SET_KIND
+        return ('damage-prevention-current-recipient-set-v1', ({
+            'op': 'create_damage_prevention_shield', 'source': '$source',
+            'subject': '*', 'mode': 'amount', 'amount': int(recipients['amount']),
+            'duration': 'until_end_of_turn',
+            'selector': {'kind': RECIPIENT_SET_KIND, 'schema_version': 1},
+        },), None, _rules(None))
     match = re.fullmatch(
         r"prevent the next (?P<amount>\d+|x) damage that would be dealt to "
         rf"(?P<subject>{_SUBJECT_PATTERN}) "

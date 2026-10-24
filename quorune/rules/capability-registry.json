@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 491,
+  "registry_version": 492,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -48163,6 +48163,108 @@
       "dependency_fail_closed_rationale": "Leaf producer uses an explicit closed version and current validated zone authority; missing/withdrawn own producer is rejected by payload-derived minima.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh native Body of Research and Crackling Drake witnesses fail when their actual library or owned collection count is omitted.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "damage.prevention.fixed_recipient_set",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "400.7",
+        "615.1",
+        "615.3",
+        "615.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Snapshot current public creatures and active players once on resolution, with an independent ordinary fixed-amount shield per recipient.",
+        "inputs": [
+          "closed version-one recipient-set selector",
+          "current public battlefield characteristics and active roster",
+          "fixed positive prevention amount"
+        ],
+        "outputs": [
+          "one ordinary creation request with pinned independent recipient allocations",
+          "existing canonical shield identities, lifetime and replay"
+        ],
+        "exclusions": [
+          "future entrants or later animation",
+          "hidden card queries",
+          "recipient targeting",
+          "unknown selector kinds or versions"
+        ]
+      },
+      "dependencies": [
+        "damage.prevention.persistent_amount"
+      ],
+      "implementation_components": [
+        "quorune.prevention_recipient_sets.validate_prevention_recipient_set",
+        "quorune.effect_runtime.damage_modifiers._selected_prevention_subjects",
+        "quorune.compiler.prevention_templates._ordinary_shield"
+      ],
+      "positive_tests": [
+        "test_original_admission_and_payload_owned_minimum",
+        "test_closed_selector_shape_and_legacy_selector_remain_distinct",
+        "test_real_cast_snapshots_each_player_creature_and_token_before_late_entry",
+        "test_real_pending_source_departure_and_player_departure_exclude_later_animation",
+        "test_real_bounce_and_recast_does_not_reuse_old_incarnation_shield",
+        "test_real_two_resolutions_keep_independent_amount_for_each_recipient",
+        "test_real_unused_shields_expire_before_next_turn_damage"
+      ],
+      "negative_tests": [
+        "test_original_admission_and_payload_owned_minimum",
+        "test_closed_selector_shape_and_legacy_selector_remain_distinct",
+        "test_real_cast_snapshots_each_player_creature_and_token_before_late_entry",
+        "test_real_pending_source_departure_and_player_departure_exclude_later_animation",
+        "test_real_bounce_and_recast_does_not_reuse_old_incarnation_shield",
+        "test_real_two_resolutions_keep_independent_amount_for_each_recipient",
+        "test_real_unused_shields_expire_before_next_turn_damage"
+      ],
+      "interaction_tests": [
+        "test_real_cast_snapshots_each_player_creature_and_token_before_late_entry",
+        "test_real_pending_source_departure_and_player_departure_exclude_later_animation",
+        "test_real_bounce_and_recast_does_not_reuse_old_incarnation_shield",
+        "test_real_two_resolutions_keep_independent_amount_for_each_recipient",
+        "test_real_unused_shields_expire_before_next_turn_damage"
+      ],
+      "multiplayer_tests": [
+        "test_real_cast_snapshots_each_player_creature_and_token_before_late_entry",
+        "test_real_pending_source_departure_and_player_departure_exclude_later_animation",
+        "test_real_bounce_and_recast_does_not_reuse_old_incarnation_shield",
+        "test_real_two_resolutions_keep_independent_amount_for_each_recipient",
+        "test_real_unused_shields_expire_before_next_turn_damage"
+      ],
+      "privacy_tests": [
+        "test_real_cast_snapshots_each_player_creature_and_token_before_late_entry",
+        "test_real_pending_source_departure_and_player_departure_exclude_later_animation",
+        "test_real_bounce_and_recast_does_not_reuse_old_incarnation_shield",
+        "test_real_two_resolutions_keep_independent_amount_for_each_recipient",
+        "test_real_unused_shields_expire_before_next_turn_damage"
+      ],
+      "replay_tests": [
+        "test_real_cast_snapshots_each_player_creature_and_token_before_late_entry",
+        "test_real_pending_source_departure_and_player_departure_exclude_later_animation",
+        "test_real_bounce_and_recast_does_not_reuse_old_incarnation_shield",
+        "test_real_two_resolutions_keep_independent_amount_for_each_recipient",
+        "test_real_unused_shields_expire_before_next_turn_damage"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal of the actual base shield producer rejects the whole original. The selector independently requires its new producer by payload-derived minima.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh actual original cast/activation witness fails when creature recipients are omitted from the snapshot.",
       "blockers": [],
       "status": "trusted"
     }

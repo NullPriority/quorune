@@ -64,8 +64,10 @@ def effect_node_capabilities(
     from .library_search_rule_shapes import temporary_library_search_node_capabilities
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
     from .occurrence_object_results import occurrence_object_node_capabilities
+    from .prevention_component_shapes import fixed_prevention_component_capabilities
     dependencies: set[str] = set()
     for resolver in (
+        fixed_prevention_component_capabilities,
         created_token_counter_node_capabilities,
         temporary_library_search_node_capabilities,
         occurrence_object_node_capabilities,

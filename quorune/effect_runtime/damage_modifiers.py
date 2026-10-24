@@ -149,6 +149,20 @@ def _selected_prevention_subjects(
 
     selector = effect.get("selector")
     if selector is not None:
+        from ..prevention_recipient_sets import RECIPIENT_SET_KIND, validate_prevention_recipient_set
+        if isinstance(selector, Mapping) and selector.get('kind') == RECIPIENT_SET_KIND:
+            validate_prevention_recipient_set(selector)
+            if mode is not PreventionMode.AMOUNT:
+                raise GameRuleError('Finite recipient selectors require amount shields')
+            refs = [seat for seat, player in host.state.players.items() if player.in_game]
+            for card in host.state.cards.values():
+                if card.zone != 'battlefield' or card.phased_out:
+                    continue
+                data = host._effective_card_data(card)
+                types, _, _ = host._type_parts(str(data.get('type_line') or ''))
+                if 'creature' in types:
+                    refs.append(card.ref)
+            return tuple(PreventionSubjectAllocation(ref, amount) for ref in sorted(set(refs)))
         if not isinstance(selector, Mapping) or set(selector) != {
             "kind",
             "anchor",

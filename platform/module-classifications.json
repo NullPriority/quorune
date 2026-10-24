@@ -9998,6 +9998,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/prevention_recipient_sets.py",
+      "layer": "domain",
+      "owning_subsystem": "damage",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/prevention_triggers.py",
       "layer": "domain",
       "owning_subsystem": "damage",
@@ -19422,5 +19434,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "45a3aaf1c2b6d093ed193757257b42a30737cb8ab7630c3ec503881c3ab72587"
+  "fingerprint": "1c8589172937bc7ac641dcc9649b93aa496fd48af0ee04bfbedd5a6b628671f9"
 }

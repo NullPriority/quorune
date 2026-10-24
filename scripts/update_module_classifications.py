@@ -90,6 +90,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/damage_source.py",
         "quorune/damage_scope_facts.py",
         "quorune/damage_modifier_state.py",
+        "quorune/prevention_recipient_sets.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
         "quorune/fixed_blocker_restrictions.py",
@@ -687,6 +688,7 @@ def _owner(relative: str, layer: str) -> str:
         return "combat_transitions"
     if relative in {
         "quorune/damage_modifier_state.py",
+        "quorune/prevention_recipient_sets.py",
         "quorune/damage_source.py",
         "quorune/creature_power_damage_model.py",
         "quorune/prevention_triggers.py",

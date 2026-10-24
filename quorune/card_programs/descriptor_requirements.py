@@ -39,6 +39,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *created_token_counter_payload_dependencies(value))
         from ..public_zone_quantity_model import public_zone_quantity_dependencies
         own = (*own, *public_zone_quantity_dependencies(value))
+        from ..prevention_recipient_sets import prevention_recipient_set_dependencies
+        own = (*own, *prevention_recipient_set_dependencies(value))
         from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
         own = (*own, *token_definition_payload_dependencies(value,mechanics))
         from ..conditional_recipient_model import conditional_recipient_capabilities

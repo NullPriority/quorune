@@ -93,6 +93,7 @@
       "test_end_of_combat_rules",
       "test_entry_value_consumers",
       "test_exact_deck_interactions",
+      "test_finite_prevention_recipients",
       "test_fixed_affected_player_sacrifices",
       "test_fixed_counter_additional_costs",
       "test_fixed_counter_event_triggers",

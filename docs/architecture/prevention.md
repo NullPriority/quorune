@@ -62,6 +62,14 @@ created shields remain distinct even when they share a source and label, so the
 selected shield alone owns its aftermath or triggered consequence. Each sibling
 scope remains independently available for later nonoverlapping events.
 
+Finite recipient-set prevention uses a closed version-one selector to capture
+current creatures and active players when its instruction resolves. It creates
+one ordinary fixed-amount shield for each recipient, including creature tokens.
+Phased-out objects and noncreatures receive no shield. Later entrants, later
+animation and new object incarnations cannot inherit those shields. The
+selector has an independent producer capability; existing selectors and shield
+records keep their encoded forms and canonical lifetime and consumption owners.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial

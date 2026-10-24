@@ -1,0 +1,620 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned finite recipient snapshot and independent shield witnesses",
+  "cards": [
+    {
+      "oracle_id": "ed854708-5a65-4293-bebc-d7c639407ba5",
+      "name": "Kitsune Palliator",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Fox Cleric",
+      "oracle_text": "{T}: Prevent the next 1 damage that would be dealt to each creature and each player this turn.",
+      "power": "0",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bd6ce147-c991-40ac-b276-65b630fad8b6",
+      "name": "Volcanic Fallout",
+      "mana_cost": "{1}{R}{R}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "This spell can't be countered.\nVolcanic Fallout deals 2 damage to each creature and each player.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4281a153-665b-44cf-bcff-9cf88c14c2b5",
+      "name": "Tremor",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Tremor deals 1 damage to each creature without flying.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-07-28",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ee243f81-f51c-4d9a-a396-f7cef84b46c1",
+      "name": "Call of the Herd",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a 3/3 green Elephant creature token.\nFlashback {3}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3501a839-eef5-44e4-8637-b5754780454e",
+      "name": "Expedite",
+      "mana_cost": "{R}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature gains haste until end of turn.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "28479aa8-d1cd-421a-8bbb-0594bb4dd410",
+      "name": "Flame Rift",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Flame Rift deals 4 damage to each player.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "40d45c02-6416-4e19-8fe3-0ddadf5ba627",
+      "name": "Blinkmoth Nexus",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "{T}: Add {C}.\n{1}: This land becomes a 1/1 Blinkmoth artifact creature with flying until end of turn. It's still a land.\n{1}, {T}: Target Blinkmoth creature gets +1/+1 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "5963e0ef-e0bc-4611-ad4f-813a4c0eacfb",
+      "name": "Mishra's Factory",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "{T}: Add {C}.\n{1}: This land becomes a 2/2 Assembly-Worker artifact creature until end of turn. It's still a land.\n{T}: Target Assembly-Worker creature gets +1/+1 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "ed854708-5a65-4293-bebc-d7c639407ba5",
+      "published_at": "2005-02-01",
+      "source": "wotc",
+      "comment": "Kitsune Palliator's ability creates prevention shields for every creature and player when it resolves. It doesn't affect creatures that enter (or become creatures) later."
+    },
+    {
+      "oracle_id": "bd6ce147-c991-40ac-b276-65b630fad8b6",
+      "published_at": "2009-02-01",
+      "source": "wotc",
+      "comment": "Volcanic Fallout can be targeted by spells that try to counter it (such as Countersquall). Those spells will still resolve, but the part of their effect that would counter Volcanic Fallout won't do anything. Any other effects those spells have will work as normal."
+    },
+    {
+      "oracle_id": "ee243f81-f51c-4d9a-a396-f7cef84b46c1",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "ee243f81-f51c-4d9a-a396-f7cef84b46c1",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "ee243f81-f51c-4d9a-a396-f7cef84b46c1",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "ee243f81-f51c-4d9a-a396-f7cef84b46c1",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "ee243f81-f51c-4d9a-a396-f7cef84b46c1",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "ee243f81-f51c-4d9a-a396-f7cef84b46c1",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "“Flashback [cost]” means “You may cast this card from your graveyard by paying [cost] rather than paying its mana cost” and “If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.”"
+    },
+    {
+      "oracle_id": "40d45c02-6416-4e19-8fe3-0ddadf5ba627",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "Blinkmoth Nexus can be the target of its last ability after activating its middle ability. Activating it after it has blocked a creature won't remove it from combat or stop it from dealing and being dealt combat damage."
+    },
+    {
+      "oracle_id": "40d45c02-6416-4e19-8fe3-0ddadf5ba627",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature."
+    },
+    {
+      "oracle_id": "5963e0ef-e0bc-4611-ad4f-813a4c0eacfb",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "After it becomes a creature, Mishra's Factory will still have all its abilities."
+    },
+    {
+      "oracle_id": "5963e0ef-e0bc-4611-ad4f-813a4c0eacfb",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A noncreature permanent that becomes a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature. Notably, if you turn Mishra's Factory into a creature on the turn it entered the battlefield, you won't be able to then activate its first or last abilities."
+    }
+  ]
+}
