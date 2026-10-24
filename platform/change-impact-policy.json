@@ -6602,6 +6602,22 @@
         "test_game_record_v3",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "static-damage-current-ability",
+      "patterns": [
+        "quorune/compiler/runtime_templates.py",
+        "tests/test_static_damage_ability_presence.py",
+        "tests/fixtures/static-damage-ability-presence-cards.json"
+      ],
+      "test_modules": [
+        "test_static_damage_ability_presence",
+        "test_damage_replacement_model",
+        "test_fixed_counter_prevention",
+        "test_bound_effect_programs",
+        "test_card_program_trust",
+        "test_damage_replacement_integration"
+      ]
     }
   ],
   "symbol_rules": [

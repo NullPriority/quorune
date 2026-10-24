@@ -119657,6 +119657,48 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_collector_respects_current_marker_and_retains_unmarked_historical_behavior",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_damage_replacement_multiplayer.DamageReplacementMultiplayerTests.test_four_player_fixed_prevention_applies_per_controller",
       "official_rule_ids": [
@@ -119699,6 +119741,27 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_damage_replacement_prevention_mutants_are_killed",
       "official_rule_ids": [
@@ -119738,6 +119801,27 @@
         "commander_review"
       ],
       "applicability_note": "FixedpreventionV2 shares existing extended frozen-source predicate withtypedcolors. Allfivecolors lower; boolschema/amount, wrongversion/unknowncolor, unsupportedtails andwithdrawncapabilities reject; compileromission killed whileV1 unchanged."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_fresh_current_presence_omission_is_detected",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
     },
     {
       "capability_id": "damage.prevention.static_fixed",
@@ -119825,6 +119909,48 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_unknown_siblings_and_open_prevention_variants_remain_residual",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_verified_static_damage_owners_withdrawal_stays_fail_closed",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "positive",
       "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_static_prevention_applies_to_each_simultaneous_event",
       "official_rule_ids": [
@@ -119909,6 +120035,69 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_collector_respects_current_marker_and_retains_unmarked_historical_behavior",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_new_static_damage_versions_require_current_ability_presence",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_originals_have_complete_normal_registration_and_current_component_identity",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "privacy",
       "test_id": "tests.test_damage_replacement_integration.DamageReplacementIntegrationTests.test_combat_replacement_choice_is_seat_scoped_and_precommit",
       "official_rule_ids": [
@@ -119951,6 +120140,27 @@
     },
     {
       "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_damage_replacement_integration.DamageReplacementIntegrationTests.test_semantic_damage_replacement_choice_replays_exactly",
       "official_rule_ids": [
@@ -119990,6 +120200,27 @@
         "commander_review"
       ],
       "applicability_note": "Original Sphere of Law is cast. Actual red LightningBolt3 to its controller commits1, a constructed whole blue damage3 commits3, reddamage to anotherplayercommits3, and actualDisenchantsource departure endsprevention beforeanother red3. Wrongprincipal rollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "damage.prevention.static_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay",
+      "official_rule_ids": [
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current fixed-prevention component presence, normal Guardian Seraph/Humble/cleanup behavior and explicit unmarked historical program compatibility."
     },
     {
       "capability_id": "damage.prevention.triggered_results",
@@ -120049,11 +120280,45 @@
     },
     {
       "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_damage_redirection.DamageRedirectionTests.test_static_redirection_redirects_simultaneous_multiplayer_damage",
       "official_rule_ids": ["614.1", "614.9", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Redirect matching damage to the current damageable battlefield source."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
     },
     {
       "capability_id": "damage.redirection.static_to_source",
@@ -120065,11 +120330,45 @@
     },
     {
       "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_fresh_current_presence_omission_is_detected",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
       "evidence_class": "negative",
       "test_id": "tests.test_damage_redirection.DamageRedirectionTests.test_static_redirection_stops_when_source_leaves",
       "official_rule_ids": ["614.1", "614.9", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Redirect matching damage to the current damageable battlefield source."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_verified_static_damage_owners_withdrawal_stays_fail_closed",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
     },
     {
       "capability_id": "damage.redirection.static_to_source",
@@ -120081,11 +120380,79 @@
     },
     {
       "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_new_static_damage_versions_require_current_ability_presence",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_originals_have_complete_normal_registration_and_current_component_identity",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
       "evidence_class": "replay",
       "test_id": "tests.test_damage_redirection.DamageRedirectionTests.test_static_redirection_command_replays_exactly",
       "official_rule_ids": ["614.1", "614.9", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Redirect matching damage to the current damageable battlefield source."
+    },
+    {
+      "capability_id": "damage.redirection.static_to_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
     },
     {
       "capability_id": "damage.replacement.order",
@@ -120140,6 +120507,24 @@
     },
     {
       "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_damage_replacement_multiplayer.DamageReplacementMultiplayerTests.test_four_player_damage_replacement_choices_follow_apnap",
       "official_rule_ids": [
@@ -120176,6 +120561,24 @@
     },
     {
       "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_damage_replacement_prevention_mutants_are_killed",
       "official_rule_ids": [
@@ -120191,6 +120594,24 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed static damage-quantity replacements to every represented combat and noncombat damage proposal before any result."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_fresh_current_presence_omission_is_detected",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
     },
     {
       "capability_id": "damage.replacement.static_quantity",
@@ -120245,6 +120666,24 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed static damage-quantity replacements to every represented combat and noncombat damage proposal before any result."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_verified_static_damage_owners_withdrawal_stays_fail_closed",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
     },
     {
       "capability_id": "damage.replacement.static_quantity",
@@ -120320,6 +120759,42 @@
     },
     {
       "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_new_static_damage_versions_require_current_ability_presence",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_originals_have_complete_normal_registration_and_current_component_identity",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
       "evidence_class": "privacy",
       "test_id": "tests.test_damage_replacement_integration.DamageReplacementIntegrationTests.test_additive_and_double_damage_order_is_scoped_and_replays_exactly",
       "official_rule_ids": [
@@ -120356,6 +120831,24 @@
     },
     {
       "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
       "evidence_class": "replay",
       "test_id": "tests.test_damage_replacement_integration.DamageReplacementIntegrationTests.test_additive_and_double_damage_order_is_scoped_and_replays_exactly",
       "official_rule_ids": [
@@ -120389,6 +120882,24 @@
         "commander_review"
       ],
       "applicability_note": "Apply trusted generic or reviewed static damage-quantity replacements to every represented combat and noncombat damage proposal before any result."
+    },
+    {
+      "capability_id": "damage.replacement.static_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays",
+      "official_rule_ids": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local current static-damage component, independently reproduced loss defect, actual paid Humble/damage and full principal-correct replay."
     },
     {
       "capability_id": "damage.result.battle_defense",

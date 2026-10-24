@@ -251,6 +251,7 @@
     "tests/fixtures/static-attached-control.json",
     "tests/fixtures/static-characteristic-labels.json",
     "tests/fixtures/static-characteristic-setting-cards.json",
+    "tests/fixtures/static-damage-ability-presence-cards.json",
     "tests/fixtures/static-keyword-removal-cards.json",
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/storm-cards.json",

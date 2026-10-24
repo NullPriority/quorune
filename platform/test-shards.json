@@ -275,6 +275,7 @@
       "test_self_counter_keyword_actions",
       "test_server_architecture",
       "test_static_abilities",
+      "test_static_damage_ability_presence",
       "test_target_restrictions",
       "test_targeted_counter_effect_clauses",
       "test_targeted_graveyard_return_effect_clauses",
