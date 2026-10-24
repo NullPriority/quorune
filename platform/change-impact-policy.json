@@ -8106,6 +8106,24 @@
         "test_exact_keyword_families",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-additional-token-definitions",
+      "patterns": [
+        "quorune/compiler/token_templates.py",
+        "quorune/card_programs/additional_token_equivalence.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "tests/test_additional_token_definitions.py",
+        "tests/fixtures/additional-token-definition-cards.json"
+      ],
+      "test_modules": [
+        "test_additional_token_definitions",
+        "test_additional_token_compiler",
+        "test_additional_token_status",
+        "test_token_creation_replacements",
+        "test_card_program_trust",
+        "test_fixed_token_production"
+      ]
     }
   ],
   "symbol_rules": [

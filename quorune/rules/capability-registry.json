@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 501,
+  "registry_version": 502,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -9197,7 +9197,7 @@
     },
     {
       "id": "token.creation.additional_replacement",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "111.2",
         "614.1",
@@ -9245,7 +9245,9 @@
         "quorune.replacement.application._apply_additional_token",
         "quorune.token_creation.create_tokens",
         "CommanderEngine.create_token",
-        "quorune.replacement.application._shared_token_creation_status"
+        "quorune.replacement.application._shared_token_creation_status",
+        "quorune.compiler.token_templates._fixed_additional_token_definition",
+        "quorune.card_programs.additional_token_equivalence.shadowed_reviewed_additional_token_keys"
       ],
       "positive_tests": [
         "test_registered_additional_token_components_replace_without_name_dispatch",
@@ -9256,7 +9258,17 @@
         "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
         "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
         "test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics",
-        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back"
+        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back",
+        "test_complete_definition_producer_preserves_old_payloads_and_rejects_riders",
+        "test_all_originals_register_normally_with_independent_replacement_authority",
+        "test_only_exact_current_capability_bound_views_supersede_reviewed_programs",
+        "test_real_donatello_both_orders_mutagen_ability_and_source_departure_replay",
+        "test_real_quina_adds_one_frog_per_event_and_pays_its_frog_price",
+        "test_real_queen_filters_creature_tokens_and_updates_its_live_definition",
+        "test_real_stridehangar_uses_generated_authority_and_anthem_without_double_replacement",
+        "test_real_control_change_uses_controller_instead_of_owner",
+        "test_added_mutagen_inherits_creation_tap_and_cannot_pay_tap_while_tapped",
+        "test_verified_withdrawal_and_fresh_runtime_or_retirement_omissions_fail_closed"
       ],
       "negative_tests": [
         "test_additional_token_component_rejects_malformed_or_nonmatching_events",
@@ -9267,7 +9279,17 @@
         "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
         "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
         "test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics",
-        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back"
+        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back",
+        "test_complete_definition_producer_preserves_old_payloads_and_rejects_riders",
+        "test_all_originals_register_normally_with_independent_replacement_authority",
+        "test_only_exact_current_capability_bound_views_supersede_reviewed_programs",
+        "test_real_donatello_both_orders_mutagen_ability_and_source_departure_replay",
+        "test_real_quina_adds_one_frog_per_event_and_pays_its_frog_price",
+        "test_real_queen_filters_creature_tokens_and_updates_its_live_definition",
+        "test_real_stridehangar_uses_generated_authority_and_anthem_without_double_replacement",
+        "test_real_control_change_uses_controller_instead_of_owner",
+        "test_added_mutagen_inherits_creation_tap_and_cannot_pay_tap_while_tapped",
+        "test_verified_withdrawal_and_fresh_runtime_or_retirement_omissions_fail_closed"
       ],
       "interaction_tests": [
         "test_multiple_additional_token_components_share_one_creation_timestamp",
@@ -9282,21 +9304,39 @@
         "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
         "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
         "test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics",
-        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back"
+        "test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back",
+        "test_real_donatello_both_orders_mutagen_ability_and_source_departure_replay",
+        "test_real_quina_adds_one_frog_per_event_and_pays_its_frog_price",
+        "test_real_queen_filters_creature_tokens_and_updates_its_live_definition",
+        "test_real_stridehangar_uses_generated_authority_and_anthem_without_double_replacement",
+        "test_real_control_change_uses_controller_instead_of_owner",
+        "test_added_mutagen_inherits_creation_tap_and_cannot_pay_tap_while_tapped"
       ],
       "multiplayer_tests": [
         "test_four_player_replacement_choice_is_affected_seat_scoped",
         "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
         "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
         "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
-        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load"
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
+        "test_real_donatello_both_orders_mutagen_ability_and_source_departure_replay",
+        "test_real_quina_adds_one_frog_per_event_and_pays_its_frog_price",
+        "test_real_queen_filters_creature_tokens_and_updates_its_live_definition",
+        "test_real_stridehangar_uses_generated_authority_and_anthem_without_double_replacement",
+        "test_real_control_change_uses_controller_instead_of_owner",
+        "test_added_mutagen_inherits_creation_tap_and_cannot_pay_tap_while_tapped"
       ],
       "privacy_tests": [
         "test_resolution_suspends_for_seat_scoped_replacement_order",
         "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
         "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
         "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
-        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load"
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
+        "test_real_donatello_both_orders_mutagen_ability_and_source_departure_replay",
+        "test_real_quina_adds_one_frog_per_event_and_pays_its_frog_price",
+        "test_real_queen_filters_creature_tokens_and_updates_its_live_definition",
+        "test_real_stridehangar_uses_generated_authority_and_anthem_without_double_replacement",
+        "test_real_control_change_uses_controller_instead_of_owner",
+        "test_added_mutagen_inherits_creation_tap_and_cannot_pay_tap_while_tapped"
       ],
       "replay_tests": [
         "test_additional_token_component_replays_exactly",
@@ -9304,7 +9344,13 @@
         "test_normal_registered_tapped_creation_applies_to_added_map_and_replays",
         "test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain",
         "test_nonmatching_controller_and_type_do_not_receive_additional_tokens",
-        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load"
+        "test_status_survives_both_legal_quantity_replacement_orders_and_pending_load",
+        "test_real_donatello_both_orders_mutagen_ability_and_source_departure_replay",
+        "test_real_quina_adds_one_frog_per_event_and_pays_its_frog_price",
+        "test_real_queen_filters_creature_tokens_and_updates_its_live_definition",
+        "test_real_stridehangar_uses_generated_authority_and_anthem_without_double_replacement",
+        "test_real_control_change_uses_controller_instead_of_owner",
+        "test_added_mutagen_inherits_creation_tap_and_cannot_pay_tap_while_tapped"
       ],
       "required_evidence": [
         "positive",

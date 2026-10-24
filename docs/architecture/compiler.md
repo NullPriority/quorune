@@ -3011,6 +3011,14 @@ Counted token instructions retain supported trailing keyword abilities as part
 of the complete fixed token definition before lowering the separate quantity.
 The existing token compiler still rejects unrepresented abilities and definitions.
 
+Fixed additional-token replacements reuse that same complete definition owner.
+Their creator/controller frames accept one fixed addition, retain artifact,
+creature, or Treasure filters, and apply once per creation event. Predefined
+profiles keep their canonical descriptors; other fixed creature definitions must
+fit the existing additional-token codec without separate creation riders.
+Optional additions, variable amounts, unsupported definitions, and extra result
+instructions remain residual.
+
 `compiler/recipient_modifiers.py` lowers fixed modifiers calculated separately
 for each creature in a closed battlefield set. Its typed scalar reads that
 recipient's current colors, fixed named counters, colored symbols in its

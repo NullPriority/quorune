@@ -20,19 +20,16 @@ from .fixed_token_production_templates import (
 )
 
 
-_ADDITIONAL_DEFINITION = (
-    r"(?P<definition>Treasure token|Food token|Map token|"
-    r"1/1 colorless Thopter artifact creature token with flying)"
-)
+_ADDITIONAL_DEFINITION = r"(?P<definition>.+?)"
 _CREATOR_FRAME = re.compile(
     r"^If you would create one or more "
-    r"(?:(?P<quality>Treasure|artifact) )?tokens, instead create those "
-    rf"tokens plus an additional {_ADDITIONAL_DEFINITION}\.?$",
+    r"(?:(?P<quality>Treasure|artifact|creature) )?tokens, instead create those "
+    rf"tokens plus (?:an additional|a) {_ADDITIONAL_DEFINITION}\.?$",
     re.IGNORECASE,
 )
 _CONTROLLED_FRAME = re.compile(
-    r"^If one or more (?:(?P<quality>artifact) )?tokens would be created "
-    r"under your control, those tokens plus an additional "
+    r"^If one or more (?:(?P<quality>artifact|creature) )?tokens would be created "
+    r"under your control, those tokens plus (?:an additional|a) "
     rf"{_ADDITIONAL_DEFINITION} are created instead\.?$",
     re.IGNORECASE,
 )
@@ -490,6 +487,25 @@ def static_token_quantity_replacement_handler(text: str):
     }, ('token.creation.quantity_replacement',)
 
 
+def _fixed_additional_token_definition(text: str) -> Mapping[str, Any] | None:
+    """Reuse the complete fixed producer; reject unrepresented creation riders."""
+    normalized=" ".join(text.casefold().split())
+    if normalized in _TOKEN_DEFINITIONS:return _TOKEN_DEFINITIONS[normalized]
+    template=_single_fixed_token_creation_effect_template('Create a '+text+'.')
+    if template is None:return None
+    effect=template.effect
+    if (set(effect)!={'op','controller','name','quantity','characteristics'}
+            or effect['op']!='create_token' or effect['controller']!='$controller'
+            or type(effect['quantity']) is not int or effect['quantity']!=1):
+        return None
+    definition={'name':effect['name'],**effect['characteristics']}
+    from ..semantic_runtime.token_replacements import TokenDefinition
+    from ..semantic_runtime.context import SemanticNodeError
+    try:TokenDefinition.from_mapping(definition).characteristics()
+    except (SemanticNodeError,TypeError,ValueError):return None
+    return definition
+
+
 def static_additional_token_replacement_handler(
     text: str,
 ) -> tuple[str, Mapping[str, Any], str] | None:
@@ -503,13 +519,10 @@ def static_additional_token_replacement_handler(
         return None
 
     quality = str(match.group("quality") or "").casefold()
-    definition_key = " ".join(
-        match.group("definition").casefold().split()
-    )
-    definition = _TOKEN_DEFINITIONS.get(definition_key)
+    definition = _fixed_additional_token_definition(match.group("definition"))
     if definition is None:
         return None
-    created_types = ["artifact"] if quality == "artifact" else []
+    created_types = [quality] if quality in {'artifact','creature'} else []
     treasure_subtype = _TOKEN_TREASURE.casefold()
     created_subtypes = [treasure_subtype] if quality == treasure_subtype else []
     filter_label = quality or "any"

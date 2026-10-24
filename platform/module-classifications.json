@@ -810,6 +810,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/card_programs/additional_token_equivalence.py",
+      "layer": "semantics",
+      "owning_subsystem": "card_programs",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/card_programs/admission.py",
       "layer": "semantics",
       "owning_subsystem": "card_programs",
@@ -19547,5 +19562,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "78861d3fd82bfeeddf678521591bc54b552af690c237e8cdad9b5804e9e66440"
+  "fingerprint": "62051da821716aa2ba42924d648fff87e7aad05138db8593d40b420a536aa70b"
 }

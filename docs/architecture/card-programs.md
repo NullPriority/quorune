@@ -37,6 +37,14 @@ source data, unknown dependencies, material residuals, or fingerprint drift
 fail closed. Historical semantic-pack records remain compatibility inputs, not
 a second current runtime authority.
 
+Current fixed additional-token programs can supersede a source-identical
+reviewed view through `additional_token_equivalence.py`. The generated program
+must have trusted closure and the same complete handler, schemas, conditions,
+and execution role, with matching Oracle and rulings hashes. Only after that
+equivalence is established may a source-matched empty normal-permanent cast
+view yield to the existing card-form owner. Nonempty, stale, conditional,
+multiface, or provisional compatibility views remain intact.
+
 Current typed modal activations can supersede catalog-only reviewed views only
 through `modal_catalog_equivalence.py`. It requires matching source hashes,
 ability identity and runtime role, exact catalog cost fields, one-mode
