@@ -17084,6 +17084,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/hand_visibility.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/handlers.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -19476,5 +19491,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "d79990b7ae36f1108606073191ac61baddc42cd7597cbe2718861a755738fd35"
+  "fingerprint": "9d1dd431e36869715567e7dbc271640697faf418919f43287d2dad078b54826d"
 }

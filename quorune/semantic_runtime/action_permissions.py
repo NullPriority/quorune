@@ -40,6 +40,7 @@ OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
 
 
 class ActionPermissionKind(StrEnum):
+    PUBLIC_HAND = 'public_hand'
     OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
     OPENING_HAND_REVEAL = "opening_hand_reveal"
     LAND_PLAY_FROM_OWN_GRAVEYARD = "land_play_from_own_graveyard"
@@ -432,9 +433,11 @@ class ActionPermissionRegistry(
 @lru_cache(maxsize=1)
 def default_action_permission_registry() -> ActionPermissionRegistry:
     from .library_search_rules import LibrarySearchRuleHandler
+    from .hand_visibility import StaticHandVisibilityHandler
     registry = ActionPermissionRegistry(
         (
             LibrarySearchRuleHandler(),
+            StaticHandVisibilityHandler(),
             OpeningHandBattlefieldPermissionHandler(),
             OpeningHandRevealPermissionHandler(),
             StaticActionPermissionHandler(

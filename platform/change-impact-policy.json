@@ -5439,28 +5439,33 @@
     {
       "id": "opening-hand-battlefield-contract",
       "patterns": [
-        "quorune/opening_hand.py",
+        "quorune/aura/decisions.py",
         "quorune/compiler/action_permission_templates.py",
         "quorune/compiler/runtime_templates.py",
-        "quorune/semantic_runtime/action_permissions.py",
-        "quorune/turn_step_owner.py",
         "quorune/engine.py",
+        "quorune/opening_hand.py",
         "quorune/replacement/replay.py",
         "quorune/replacement_decisions.py",
-        "quorune/aura/decisions.py",
+        "quorune/semantic_runtime/action_permissions.py",
+        "quorune/semantic_runtime/hand_visibility.py",
+        "quorune/turn_step_owner.py",
+        "tests/fixtures/opening-hand-battlefield-cards.json",
+        "tests/fixtures/persistent-hand-visibility-cards.json",
         "tests/test_opening_hand_battlefield.py",
-        "tests/fixtures/opening-hand-battlefield-cards.json"
+        "tests/test_persistent_hand_visibility.py"
       ],
       "test_modules": [
-        "test_opening_hand_battlefield",
-        "test_mulligan_and_turns",
-        "test_static_action_rules",
-        "test_card_program_trust",
-        "test_replacement_model_hardening",
-        "test_entry_keyword_counter_choices",
         "test_aura_targeting_entry",
-        "test_trigger_batches",
-        "test_game_record_v3"
+        "test_card_program_trust",
+        "test_entry_keyword_counter_choices",
+        "test_fixed_hand_inspection",
+        "test_game_record_v3",
+        "test_mulligan_and_turns",
+        "test_opening_hand_battlefield",
+        "test_persistent_hand_visibility",
+        "test_replacement_model_hardening",
+        "test_static_action_rules",
+        "test_trigger_batches"
       ]
     },
     {

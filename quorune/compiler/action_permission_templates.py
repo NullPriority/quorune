@@ -239,6 +239,12 @@ def static_action_permission_handler(
     """Lower one closed controller/public action-permission sentence."""
 
     normalized = text.strip()
+    from ..semantic_runtime.hand_visibility import HAND_VISIBILITY_CAPABILITY, HAND_VISIBILITY_HANDLER
+    hand_scopes = {'players play with their hands revealed': 'all_players',
+                   'your opponents play with their hands revealed': 'source_opponents'}
+    if (scope := hand_scopes.get(' '.join(normalized.casefold().split()).removesuffix('.'))) is not None:
+        return ('public-hand-visibility-v1', {'handler_id': HAND_VISIBILITY_HANDLER,
+            'schema_version': 1, 'event': ACTION_PERMISSION_EVENT, 'scope': scope}, HAND_VISIBILITY_CAPABILITY)
     if _PLAY_LANDS_FROM_GRAVEYARD.fullmatch(normalized) is not None:
         return (
             "land-play-from-own-graveyard-permission-v1",

@@ -13,6 +13,7 @@ from ..connive import connive_discard_characteristic_ids, bind_connive_instructi
 from ..object_query import object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
+from ..semantic_runtime.hand_visibility import hand_card_is_known_to, public_hand_owners
 from ..semantic_runtime import (
     IntentPlan,
     prepare_draw_resolution,
@@ -61,7 +62,9 @@ class SemanticChoiceCoordinationMixin:
         if inspected_hand_owner not in self.active_seats:
             inspected_hand_owner = ""
         rows: list[ChoiceObjectView] = []
+        public_hands = public_hand_owners(self)
         for card in self.state.cards.values():
+            known_hand = card.owner in self.active_seats and hand_card_is_known_to(self, card, actor, public_owners=public_hands)
             inspected_hidden_card = (
                 card.zone == "hand" and card.owner == inspected_hand_owner
             )
@@ -69,6 +72,7 @@ class SemanticChoiceCoordinationMixin:
                 card.zone not in public_zones
                 and card.owner != actor
                 and not inspected_hidden_card
+                and not known_hand
             ):
                 continue
             effective = self._effective_card_data(card)
@@ -83,6 +87,7 @@ class SemanticChoiceCoordinationMixin:
                     actor in card.known_to
                     or card.zone in public_zones
                     or inspected_hidden_card
+                    or known_hand
                 ),
                 attached_to_ref=(
                     self.state.cards[card.attached_to].ref

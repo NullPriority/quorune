@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 497,
+  "registry_version": 498,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -48782,6 +48782,122 @@
       "dependency_fail_closed_rationale": "Verified withdrawal of the actual entry-designation or base shield producer rejects the whole original; payload-derived own minimum cannot be omitted.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh actual Story Circle cast/entry/activation fails when a wrong captured choice or wildcard predicate substitutes for its chosen color.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "hand.visibility.static",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "113.6",
+        "402.1",
+        "402.3",
+        "611.3b",
+        "701.20a",
+        "701.20b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Derive ongoing public visibility of every active hand or the current source controller's opponents' hands from trusted live battlefield ability sources.",
+        "inputs": [
+          "closed all-player/source-opponent hand descriptor",
+          "phased-in current battlefield source, controller and face",
+          "current layer-6 ability presence",
+          "current hand membership",
+          "authenticated viewer or choice actor"
+        ],
+        "outputs": [
+          "existing known-hand card views for players and spectators",
+          "principal-consistent known-to-actor hand queries and rule inspection",
+          "newly arrived hand cards exposed only while permitted",
+          "revocation without altering recorded reveal/private-inspection knowledge"
+        ],
+        "exclusions": [
+          "temporary or conditional hand grants",
+          "arbitrary viewers, card lists or other hidden zones",
+          "client-authored visibility",
+          "unrepresented sibling abilities"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.action_permission_templates.static_action_permission_handler",
+        "quorune.semantic_runtime.hand_visibility.StaticHandVisibilityHandler",
+        "quorune.semantic_runtime.hand_visibility.hand_is_public",
+        "quorune.semantic_runtime.hand_visibility.hand_card_is_known_to",
+        "quorune.projection.StateProjector",
+        "quorune.session._state_projector",
+        "quorune.semantic_choices.engine_coordination.SemanticChoiceCoordinationMixin"
+      ],
+      "positive_tests": [
+        "test_closed_scopes_and_legacy_visibility_descriptor_remain_sealed",
+        "test_originals_have_complete_normal_admission_and_undeclared_minimum_rejects",
+        "test_real_wandering_eye_reveals_new_hands_and_humble_revokes_new_information",
+        "test_real_telepathy_recomputes_opponents_after_actual_control_change",
+        "test_real_revelation_world_replacement_ends_public_access",
+        "test_real_seer_sacrifice_keeps_private_choice_after_new_draw",
+        "test_real_clone_keeps_copied_visibility_after_original_departure",
+        "test_real_token_copy_keeps_visibility_until_its_own_departure"
+      ],
+      "negative_tests": [
+        "test_closed_scopes_and_legacy_visibility_descriptor_remain_sealed",
+        "test_originals_have_complete_normal_admission_and_undeclared_minimum_rejects",
+        "test_real_wandering_eye_reveals_new_hands_and_humble_revokes_new_information",
+        "test_real_telepathy_recomputes_opponents_after_actual_control_change",
+        "test_real_revelation_world_replacement_ends_public_access",
+        "test_real_seer_sacrifice_keeps_private_choice_after_new_draw",
+        "test_real_clone_keeps_copied_visibility_after_original_departure",
+        "test_real_token_copy_keeps_visibility_until_its_own_departure"
+      ],
+      "interaction_tests": [
+        "test_real_wandering_eye_reveals_new_hands_and_humble_revokes_new_information",
+        "test_real_telepathy_recomputes_opponents_after_actual_control_change",
+        "test_real_revelation_world_replacement_ends_public_access",
+        "test_real_seer_sacrifice_keeps_private_choice_after_new_draw",
+        "test_real_clone_keeps_copied_visibility_after_original_departure",
+        "test_real_token_copy_keeps_visibility_until_its_own_departure"
+      ],
+      "multiplayer_tests": [
+        "test_real_wandering_eye_reveals_new_hands_and_humble_revokes_new_information",
+        "test_real_telepathy_recomputes_opponents_after_actual_control_change",
+        "test_real_revelation_world_replacement_ends_public_access",
+        "test_real_seer_sacrifice_keeps_private_choice_after_new_draw",
+        "test_real_clone_keeps_copied_visibility_after_original_departure",
+        "test_real_token_copy_keeps_visibility_until_its_own_departure"
+      ],
+      "privacy_tests": [
+        "test_real_wandering_eye_reveals_new_hands_and_humble_revokes_new_information",
+        "test_real_telepathy_recomputes_opponents_after_actual_control_change",
+        "test_real_revelation_world_replacement_ends_public_access",
+        "test_real_seer_sacrifice_keeps_private_choice_after_new_draw",
+        "test_real_clone_keeps_copied_visibility_after_original_departure",
+        "test_real_token_copy_keeps_visibility_until_its_own_departure"
+      ],
+      "replay_tests": [
+        "test_real_wandering_eye_reveals_new_hands_and_humble_revokes_new_information",
+        "test_real_telepathy_recomputes_opponents_after_actual_control_change",
+        "test_real_revelation_world_replacement_ends_public_access",
+        "test_real_seer_sacrifice_keeps_private_choice_after_new_draw",
+        "test_real_clone_keeps_copied_visibility_after_original_departure",
+        "test_real_token_copy_keeps_visibility_until_its_own_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Leaf hand-visibility authority; own verified withdrawal and undeclared runtime minimum reject closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Fresh actual grant omission, opponent-scope widening and current-ability applicability-bypass mutants fail native Wandering Eye/Telepathy witnesses.",
       "blockers": [],
       "status": "trusted"
     }
