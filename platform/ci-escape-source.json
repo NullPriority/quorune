@@ -1706,6 +1706,95 @@
         "test_change_impact.ChangeImpactTests.test_manifest_zone_sources_select_current_zone_contracts"
       ],
       "resolution": "Map every stale reference to its actual owned module: existing Oracle IR and mechanic-contract classes reside in test_oracle_ir; zone consumers cover the canonical transition owner, single-object plans, general zone rules, and designation reset. Extend the existing pre-corpus impact sentinel to validate all path/symbol test module and suite references against the canonical shard manifest, including unselected rules. Keep the complete high-risk certification gate for this selection-authority correction."
+    },
+    {
+      "id": "ci-20261024-pr536-explicit-text-encoding",
+      "run_id": 40143670144,
+      "head_sha": "dcd1289b33c641e10e40705fa74ca6157033457f",
+      "category": "source_correctness",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "Generated cloud / Resolve source failed its Require cheap sentinels before any corpus census step: explicit-text-encoding rejected two new metadata read_text calls without an encoding in test_static_damage_ability_presence.py. The normal pre-push path accepted a current finalization receipt without invoking this existing changed-file sentinel; the dry-run already listed the obligation.",
+      "failed_surfaces": [
+        "Generated cloud / Resolve source: explicit-text-encoding"
+      ],
+      "regressions": [
+        "test_ci_pipeline.CiPipelineTests.test_pre_corpus_validates_pinned_contracts_without_opening_the_database",
+        "test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_verified_static_damage_owners_withdrawal_stays_fail_closed"
+      ],
+      "resolution": "Specify UTF-8 on both metadata reads and invoke the existing changed-file text-I/O validator on every pre-push path before shard/dependency validation and receipt acceptance. Keep the existing validator and impact selection intact, run the exact sentinel plus its direct checker/withdrawal controls, preserve the completed semantic census, and publish one corrected exact head. Cancel the superseded matrix instead of rerunning the unchanged failed source."
+    },
+    {
+      "id": "ci-20261024-pr536-scoped-server-cookies",
+      "run_id": 40143670135,
+      "head_sha": "dcd1289b33c641e10e40705fa74ca6157033457f",
+      "category": "windows_compatibility",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "The Windows compatibility job failed three server tests when manual cookie setters added empty-domain cookies alongside the response host cookies. HTTPX 2.16.0/Starlette 1.10.0 orders those duplicate names differently from the older local HTTPX 2.12.0/Starlette 1.6.0 pair, yielding the last guest principal, a CSRF mismatch and a spectator socket error. Matching local dependencies to CI reproduced all three failures before the fixture repair; bearer-authenticated REST projections and production authentication remain unchanged.",
+      "failed_surfaces": [
+        "PR / Windows / compatibility",
+        "PR / Windows Certification (failed dependency)",
+        "PR / Certification (failed dependency and superseded-run cancellation)"
+      ],
+      "regressions": [
+        "test_server_app.ServerApplicationTests.test_four_seat_projection_websocket_reconnect_and_exact_replay",
+        "test_server_app.ServerApplicationTests.test_guest_csrf_room_and_atomic_seat_claims",
+        "test_server_app.ServerApplicationTests.test_spectator_projection_public_log_and_restart_are_read_only",
+        "test_server_app.ServerApplicationTests.test_stale_game_websocket_stops_reconnecting_with_terminal_message"
+      ],
+      "resolution": "Keep every existing authentication, CSRF, principal, privacy, rollback and replay assertion. Route manual fixture cookie updates through the single server-set domain/path, assert one existing cookie scope and replace its value in that scope instead of adding an ambiguous cookie. Verify the exact failed cases with the CI dependency versions plus tab-identity and stale-socket controls; change no server authentication code or dependency requirements."
+    },
+    {
+      "id": "ci-20261025-pr536-prepush-contract",
+      "run_id": 40146602116,
+      "head_sha": "407db1bb41d6e4c68877cc1a1a2f969370d38d5e",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "Windows generated-validation executed3859tests and found one stale hook-order assertion after the always-on encoding guard was added. The existing contract located the first quick_gate.py occurrence, assuming it was the checkpoint-only pre-corpus call; it now identified the earlier intended encoding call instead. Cloud generation for this exact head succeeded and the remaining failure was the directly owned contract test.",
+      "failed_surfaces": [
+        "PR / Windows / generated-validation: Run sequential generated and governance shard"
+      ],
+      "regressions": [
+        "test_generated_artifacts.GeneratedArtifactFinalizationTests.test_generated_pre_push_hook_uses_worktree_python_and_stops_on_changes"
+      ],
+      "resolution": "Keep the clean-tracked-tree check before the checkpoint pre-corpus sentinel, locating that phase explicitly instead of the first shared script name. Also assert that the always-on encoding sentinel precedes shard validation and receipt acceptance. Run this exact owned hook contract and the existing encoding-plan control before republishing; retain all other assertions and avoid rerunning the superseded matrix."
+    },
+    {
+      "run_id": 40149579140,
+      "head_sha": "211d4a90f22ac1ae275028d73930ef38d84a60a1",
+      "impact_edge_status": "not_applicable",
+      "id": "ci-20261025-pr536-private-reference-token-collision",
+      "category": "flaky_test",
+      "deterministic": false,
+      "summary": "Ubuntu functional-06 passed798tests and1413subtests, but the private discard projection assertion matched the short hidden card reference C07 inside an authorized random opaque capability token. The actual projection data contained only the acting seat choices.",
+      "failed_surfaces": [
+        "PR / Python / functional-06: Run functional shard"
+      ],
+      "regressions": [
+        "test_fixed_affected_player_discards.FixedAffectedPlayerDiscardRuntimeTests.test_private_apnap_discard_aura_attachment_zone_replacement_and_replay"
+      ],
+      "resolution": "Assign the three private fixture references a colon-delimited value before the initial checkpoint. The separator is absent from base64url capabilities; retain every original full-decision privacy, principal, ordering, zone-replacement and replay assertion. The exact native method passes."
+    },
+    {
+      "run_id": 40149579140,
+      "head_sha": "211d4a90f22ac1ae275028d73930ef38d84a60a1",
+      "impact_edge_status": "not_applicable",
+      "id": "ci-20261025-pr536-unrelated-history-certification-scope",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Generated and architecture passed3859tests then repository validation scanned every fetched ref, finding oversized capability evidence on an unrelated feature branch. No oversized blob is reachable from the exact PR head. The check therefore depended on unrelated remote refs rather than certified content.",
+      "failed_surfaces": [
+        "PR / Generated and architecture: Verify architecture, documentation, and repository policy"
+      ],
+      "regressions": [
+        "test_repository_history.RepositoryHistoryTests.test_unrelated_branch_artifacts_cannot_change_checked_revision_result",
+        "test_repository_history.RepositoryHistoryTests.test_deleted_oversized_blob_in_checked_ancestry_still_fails",
+        "test_repository_history.RepositoryHistoryTests.test_deleted_forbidden_path_in_checked_ancestry_still_fails",
+        "test_repository_history.RepositoryHistoryTests.test_uncommitted_oversized_tracked_source_still_fails"
+      ],
+      "resolution": "Resolve the exact checked HEAD once and use that immutable revision for both history scans. Keep the existing forbidden paths, secret patterns and10MiB limits. Actual temporary Git repositories prove unrelated branches do not affect certification while oversized tracked files and deleted forbidden/oversized ancestry still fail. Run the full repository validator after canonical finalization before republishing."
     }
   ],
   "recent_pull_requests": [

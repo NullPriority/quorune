@@ -62,6 +62,11 @@ created shields remain distinct even when they share a source and label, so the
 selected shield alone owns its aftermath or triggered consequence. Each sibling
 scope remains independently available for later nonoverlapping events.
 
+Fixed-amount static prevention shares the
+[current source-ability contract](damage.md) of other static damage components.
+It remains a separate fixed reduction for each applicable event and does not
+create or consume a finite shield.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial

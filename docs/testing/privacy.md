@@ -33,3 +33,9 @@ can coincidentally contain short references. Keep capability presence and
 nonacting-seat exclusion assertions, and prove that an injected private
 reference in a real projection field still fails. Do not omit other fields or
 ignore capability exposure to unauthorized principals.
+
+For a fixture that scans the entire decision unchanged, assign private card
+references containing a colon before creating the initial checkpoint. That
+separator cannot occur in a base64url capability token, so a random token cannot
+masquerade as a leaked fixture reference. Keep all card-data and principal
+exclusion assertions intact.

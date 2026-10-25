@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 416,
+  "registry_version": 417,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -22542,24 +22542,92 @@
     },
     {
       "id": "damage.replacement.static_quantity",
-      "version": 2,
-      "official_rules": ["120.4b", "614.1", "614.5", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "120.4b",
+        "614.1",
+        "614.5",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Apply trusted generic or reviewed static damage-quantity replacements to every represented combat and noncombat damage proposal before any result.",
-        "inputs": ["typed positive damage proposal", "trusted battlefield runtime component", "affected subject replacement order"],
-        "outputs": ["choice-complete replayable damage event", "replacement journal"],
-        "exclusions": ["replacement with a non-damage event", "persistent prevention shields", "damage-result replacement", "mana-result damage requiring an explicit replacement choice"]
+        "summary": "Apply trusted generic or reviewed static damage-quantity replacements to every represented combat and noncombat damage proposal before any result. Newly compiled battlefield components require their current source ability; losing or restoring it removes or restores this static rule while unmarked persisted programs retain their declared replay contract.",
+        "inputs": [
+          "typed positive damage proposal",
+          "trusted battlefield runtime component",
+          "affected subject replacement order"
+        ],
+        "outputs": [
+          "choice-complete replayable damage event",
+          "replacement journal"
+        ],
+        "exclusions": [
+          "replacement with a non-damage event",
+          "persistent prevention shields",
+          "damage-result replacement",
+          "mana-result damage requiring an explicit replacement choice"
+        ]
       },
-      "dependencies": ["damage.amount.positive"],
-      "implementation_components": ["quorune.damage.prepare_damage_batch", "quorune.semantic_runtime.damage_replacements.DamageQuantityReplacementHandler", "quorune.semantic_runtime.damage_replacements.DamageQuantityReplacementV2Handler", "quorune.replacement.ordering.advance_replacement_batch", "quorune.compiler.damage_templates.static_damage_handler"],
-      "positive_tests": ["test_furnace_and_daunting_order_changes_final_damage", "test_exact_generic_damage_handler_is_trusted_and_active_in_session", "test_fixed_additive_damage_replacements_lower_with_typed_scope", "test_torbran_adds_only_to_red_sources_hitting_opposing_subjects"],
-      "negative_tests": ["test_validation_failure_is_atomic_before_any_damage_result", "test_static_damage_replacement_wording_lowers_to_generic_handlers", "test_additive_damage_v2_matches_color_or_type_and_excludes_self"],
-      "interaction_tests": ["test_static_prevention_applies_to_each_simultaneous_event", "test_additive_and_double_damage_order_is_scoped_and_replays_exactly"],
-      "multiplayer_tests": ["test_four_player_each_opponent_damage_uses_one_typed_batch", "test_four_player_damage_replacement_choices_follow_apnap"],
-      "privacy_tests": ["test_combat_replacement_choice_is_seat_scoped_and_precommit", "test_additive_and_double_damage_order_is_scoped_and_replays_exactly"],
-      "replay_tests": ["test_semantic_damage_replacement_choice_replays_exactly", "test_additive_and_double_damage_order_is_scoped_and_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "damage.amount.positive"
+      ],
+      "implementation_components": [
+        "quorune.damage.prepare_damage_batch",
+        "quorune.semantic_runtime.damage_replacements.DamageQuantityReplacementHandler",
+        "quorune.semantic_runtime.damage_replacements.DamageQuantityReplacementV2Handler",
+        "quorune.replacement.ordering.advance_replacement_batch",
+        "quorune.compiler.damage_templates.static_damage_handler",
+        "quorune.compiler.runtime_templates.static_runtime_template",
+        "quorune.compiler.runtime_templates._static_damage_runtime_template",
+        "quorune.semantic_runtime.current_ability_components.program_has_current_ability_fragments"
+      ],
+      "positive_tests": [
+        "test_furnace_and_daunting_order_changes_final_damage",
+        "test_exact_generic_damage_handler_is_trusted_and_active_in_session",
+        "test_fixed_additive_damage_replacements_lower_with_typed_scope",
+        "test_torbran_adds_only_to_red_sources_hitting_opposing_subjects",
+        "test_new_static_damage_versions_require_current_ability_presence",
+        "test_originals_have_complete_normal_registration_and_current_component_identity"
+      ],
+      "negative_tests": [
+        "test_validation_failure_is_atomic_before_any_damage_result",
+        "test_static_damage_replacement_wording_lowers_to_generic_handlers",
+        "test_additive_damage_v2_matches_color_or_type_and_excludes_self",
+        "test_verified_static_damage_owners_withdrawal_stays_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_static_prevention_applies_to_each_simultaneous_event",
+        "test_additive_and_double_damage_order_is_scoped_and_replays_exactly",
+        "test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_each_opponent_damage_uses_one_typed_batch",
+        "test_four_player_damage_replacement_choices_follow_apnap",
+        "test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays"
+      ],
+      "privacy_tests": [
+        "test_combat_replacement_choice_is_seat_scoped_and_precommit",
+        "test_additive_and_double_damage_order_is_scoped_and_replays_exactly",
+        "test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays"
+      ],
+      "replay_tests": [
+        "test_semantic_damage_replacement_choice_replays_exactly",
+        "test_additive_and_double_damage_order_is_scoped_and_replays_exactly",
+        "test_real_paid_torbran_stops_extra_damage_after_ability_loss_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "",
       "implementation_mutation_status": "killed",
@@ -22569,7 +22637,7 @@
     },
     {
       "id": "damage.prevention.static_fixed",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "120.4b",
         "615.1",
@@ -22586,7 +22654,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order.",
+        "summary": "Apply trusted generic or reviewed fixed static prevention and represented protection prevention to each typed damage event in affected-subject order. Newly compiled fixed prevention requires its own current static-ability component, stops during ability loss and resumes after restoration; unmarked persisted programs retain their existing replay coverage contract.",
         "inputs": [
           "typed positive damage proposal",
           "trusted fixed prevention component or represented protection",
@@ -22613,36 +22681,49 @@
         "quorune.damage.commit_prepared_damage_batch",
         "quorune.semantic_runtime.damage_replacements.FixedDamagePreventionHandler",
         "quorune.oracle_ir._static_damage_handler",
-        "quorune.semantic_runtime.damage_replacements.FixedDamagePreventionV2Handler"
+        "quorune.semantic_runtime.damage_replacements.FixedDamagePreventionV2Handler",
+        "quorune.compiler.runtime_templates.static_runtime_template",
+        "quorune.semantic_runtime.current_ability_components.program_has_current_ability_fragments",
+        "quorune.compiler.runtime_templates._static_damage_runtime_template"
       ],
       "positive_tests": [
         "test_fixed_prevention_colored_source_reuses_versioned_public_damage_predicate",
         "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
         "test_static_damage_replacement_wording_lowers_to_generic_handlers",
-        "test_static_prevention_applies_to_each_simultaneous_event"
+        "test_static_prevention_applies_to_each_simultaneous_event",
+        "test_new_static_damage_versions_require_current_ability_presence",
+        "test_originals_have_complete_normal_registration_and_current_component_identity",
+        "test_collector_respects_current_marker_and_retains_unmarked_historical_behavior"
       ],
       "negative_tests": [
         "test_colored_fixed_prevention_schema_dependencies_and_omission_fail_closed",
         "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
         "test_static_damage_replacement_wording_lowers_to_generic_handlers",
-        "test_unpreventable_damage_applies_prevention_without_reducing_damage"
+        "test_unpreventable_damage_applies_prevention_without_reducing_damage",
+        "test_unknown_siblings_and_open_prevention_variants_remain_residual",
+        "test_verified_static_damage_owners_withdrawal_stays_fail_closed"
       ],
       "interaction_tests": [
         "test_furnace_and_daunting_order_changes_final_damage",
         "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
-        "test_protection_prevents_player_and_colored_permanent_damage"
+        "test_protection_prevents_player_and_colored_permanent_damage",
+        "test_collector_respects_current_marker_and_retains_unmarked_historical_behavior",
+        "test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay"
       ],
       "multiplayer_tests": [
         "test_four_player_fixed_prevention_applies_per_controller",
-        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay"
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+        "test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay"
       ],
       "privacy_tests": [
         "test_combat_replacement_choice_is_seat_scoped_and_precommit",
-        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay"
+        "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
+        "test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay"
       ],
       "replay_tests": [
         "test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay",
-        "test_semantic_damage_replacement_choice_replays_exactly"
+        "test_semantic_damage_replacement_choice_replays_exactly",
+        "test_real_paid_prevention_stops_after_humble_and_resumes_after_cleanup_with_replay"
       ],
       "required_evidence": [
         "positive",
@@ -22937,24 +23018,83 @@
     },
     {
       "id": "damage.redirection.static_to_source",
-      "version": 1,
-      "official_rules": ["614.1", "614.9", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "614.1",
+        "614.9",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Redirect all matching damage from a player and optionally their other permanents to the current damageable battlefield source using a complete recipient snapshot.",
-        "inputs": ["trusted battlefield runtime component", "typed damage event", "current damageable source object"],
-        "outputs": ["replacement-journaled complete recipient substitution", "rediscovered affected-subject ordering"],
-        "exclusions": ["finite partial redirection", "chosen-source redirection", "combat-only redirection", "attached or equipped destinations", "several alternate destinations"]
+        "summary": "Redirect all matching damage from a player and optionally their other permanents to the current damageable battlefield source using a complete recipient snapshot. Newly compiled battlefield components require their current source ability; losing or restoring it removes or restores this static rule while unmarked persisted programs retain their declared replay contract.",
+        "inputs": [
+          "trusted battlefield runtime component",
+          "typed damage event",
+          "current damageable source object"
+        ],
+        "outputs": [
+          "replacement-journaled complete recipient substitution",
+          "rediscovered affected-subject ordering"
+        ],
+        "exclusions": [
+          "finite partial redirection",
+          "chosen-source redirection",
+          "combat-only redirection",
+          "attached or equipped destinations",
+          "several alternate destinations"
+        ]
       },
-      "dependencies": ["damage.amount.positive", "damage.replacement.static_quantity"],
-      "implementation_components": ["quorune.semantic_runtime.damage_replacements.StaticDamageRedirectionHandler", "quorune.replacement.operations.RedirectDamage", "quorune.damage.prepare_damage_batch", "quorune.compiler.damage_templates.static_damage_handler"],
-      "positive_tests": ["test_runtime_components_validate_exact_bounded_shapes", "test_static_redirection_compiles_and_runs_from_card_program"],
-      "negative_tests": ["test_departed_destination_makes_redirection_do_nothing", "test_static_redirection_stops_when_source_leaves"],
-      "interaction_tests": ["test_static_redirection_uses_complete_recipient_snapshot"],
-      "multiplayer_tests": ["test_static_redirection_redirects_simultaneous_multiplayer_damage"],
-      "privacy_tests": [],
-      "replay_tests": ["test_static_redirection_command_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "dependencies": [
+        "damage.amount.positive",
+        "damage.replacement.static_quantity"
+      ],
+      "implementation_components": [
+        "quorune.semantic_runtime.damage_replacements.StaticDamageRedirectionHandler",
+        "quorune.replacement.operations.RedirectDamage",
+        "quorune.damage.prepare_damage_batch",
+        "quorune.compiler.damage_templates.static_damage_handler",
+        "quorune.compiler.runtime_templates.static_runtime_template",
+        "quorune.compiler.runtime_templates._static_damage_runtime_template",
+        "quorune.semantic_runtime.current_ability_components.program_has_current_ability_fragments"
+      ],
+      "positive_tests": [
+        "test_runtime_components_validate_exact_bounded_shapes",
+        "test_static_redirection_compiles_and_runs_from_card_program",
+        "test_new_static_damage_versions_require_current_ability_presence",
+        "test_originals_have_complete_normal_registration_and_current_component_identity"
+      ],
+      "negative_tests": [
+        "test_departed_destination_makes_redirection_do_nothing",
+        "test_static_redirection_stops_when_source_leaves",
+        "test_verified_static_damage_owners_withdrawal_stays_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_static_redirection_uses_complete_recipient_snapshot",
+        "test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_static_redirection_redirects_simultaneous_multiplayer_damage",
+        "test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays"
+      ],
+      "privacy_tests": [
+        "test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays"
+      ],
+      "replay_tests": [
+        "test_static_redirection_command_replays_exactly",
+        "test_real_paid_palisade_does_not_redirect_after_ability_loss_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "",
       "implementation_mutation_status": "killed",
